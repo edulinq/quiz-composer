@@ -104,6 +104,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         _, inner_text = self.create_groups(container)
 
         inner_context = container.to_dict()
+        inner_context['total_points'] = container.total_points()
         inner_context['description_text'] = self._format_doc(container.description.document)
 
         context = {

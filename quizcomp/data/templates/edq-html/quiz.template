@@ -11,6 +11,7 @@
                 <h1>{{ quiz.title }}</h1>
                 <p>{{ quiz.course_title }} -- {{ quiz.term_title }}</p>
                 <p>{{ quiz.date }}</p>
+                <p>Total Points: {{ quiz.total_points }}</p>
             </div>
 
             <div class='qg-quiz-description'>

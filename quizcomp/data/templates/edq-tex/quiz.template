@@ -181,6 +181,8 @@
 
 \vspace{1.0cm}
 
+\textbf{Total Points: << quiz.total_points >>}
+
 << quiz.description_text >>
 
 \vspace{1.0cm}

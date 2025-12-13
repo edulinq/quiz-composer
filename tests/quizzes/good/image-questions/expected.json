@@ -5,6 +5,7 @@
     "term_title": "",
     "description": "Image Questions",
     "date": "2025-02-25",
+    "total_points": 10,
     "time_limit_mins": null,
     "shuffle_answers": false,
     "pick_with_replacement": true,

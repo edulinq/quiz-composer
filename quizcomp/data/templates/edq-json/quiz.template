@@ -5,6 +5,7 @@
         "term_title": {{ quiz.term_title | tojson }},
         "description": {{ quiz.description | tojson }},
         "date": {{ quiz.date | tojson }},
+        "total_points": {{ quiz.total_points | tojson }},
         "time_limit_mins": {{ quiz.time_limit_mins | tojson }},
         "shuffle_answers": {{ quiz.shuffle_answers | tojson }},
         "pick_with_replacement": {{ quiz.pick_with_replacement | tojson }},

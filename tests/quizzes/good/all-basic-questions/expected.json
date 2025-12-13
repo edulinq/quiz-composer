@@ -529,6 +529,7 @@
         "term_title": "",
         "time_limit_mins": null,
         "title": "All Basic Questions",
+        "total_points": 110,
         "version": "test"
     }
 }

@@ -60,6 +60,7 @@
         "term_title": "",
         "time_limit_mins": null,
         "title": "Single Question",
+        "total_points": 10,
         "version": "test"
     }
 }

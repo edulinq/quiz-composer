@@ -206,3 +206,15 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         data['_skip_class_validations'] = [Quiz]
 
         return quizcomp.variant.Variant(**data)
+    
+    def total_points(self):
+        """
+        Calculate the total points for the quiz based on question groups.
+        """
+
+        total = 0
+
+        for group in self.groups:
+            total += group.pick_count * group.points
+
+        return total
