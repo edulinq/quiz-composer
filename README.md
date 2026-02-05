@@ -30,6 +30,7 @@ Documentation Table of Contents:
    - [Parsing a Specific File](#parsing-a-specific-file)
    - [Uploading a Quiz to Canvas](#uploading-a-quiz-to-canvas)
    - [Uploading a Quiz to GradeScope](#uploading-a-quiz-to-gradescope)
+ - [Canvas Options](/docs/canvas.md)
  - [Quiz Format](#quiz-format)
    - [Answer Shuffling](#answer-shuffling)
    - [Question Selection from Groups](#question-selection-from-groups)
