@@ -32,6 +32,7 @@ QUESTION_TYPE_MAP = {
     # Indirect Mappings
     quizcomp.constants.QUESTION_TYPE_FITB: 'short_answer_question',
     quizcomp.constants.QUESTION_TYPE_SA: 'essay_question',
+    quizcomp.constants.QUESTION_TYPE_MEDIUM_ANSWER: 'essay_question',
 }
 
 TEMPLATE_FILENAME_ASSESSMENT_META = 'qti_assessment_meta.template'

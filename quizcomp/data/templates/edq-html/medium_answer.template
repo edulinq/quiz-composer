@@ -1,0 +1,10 @@
+{% extends "partials/question.template" %}
+
+{% block directions %}
+    Place your answer within the textbox below.
+{% endblock %}
+
+{% block body %}
+    {% set solution = question.answers[0].clean if answer_key else '' %}
+    <textarea id='answer-{{ question.id }}' name='question-{{ question.id }}' rows='10'>{{ solution }}</textarea>
+{% endblock %}
