@@ -118,7 +118,6 @@
             }
         }
     },
-
     {
         "name": "Table with GFM Alignment",
         "text": "| 1 | 2 | 3 |\n|:---|:---:|---:|\n| a | b | c |",
@@ -244,13 +243,12 @@
             }
         }
     },
-
     {
         "name": "Table with Differnet Text Types",
         "text": "| 1 | -2 | 3^ |\n|-----|-------|-------------------|\n| *a* | **b** | `c()` and $ d() $ |",
         "formats": {
             "md": "| 1   | -2    | 3^                |\n| --- | ----- | ----------------- |\n| *a* | **b** | `c()` and $ d() $ |",
-            "html": "<table style='border-collapse: collapse; border-style: hidden'><thead style='border-bottom: 1px solid black'><tr><th style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em; font-weight: bold'>1</th><th style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em; font-weight: bold'>-2</th><th style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em; font-weight: bold'>3^</th></tr></thead><tbody><tr><td style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em'><em>a</em></td><td style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em'><strong>b</strong></td><td style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em'><code style=\"margin-left: 0.25em; margin-right: 0.25em\">c()</code> and <span style=\"margin-left: 0.25em; margin-right: 0.25em\"><code>d()</code></span></td></tr></tbody></table>",
+            "html": "<table style='border-collapse: collapse; border-style: hidden'><thead style='border-bottom: 1px solid black'><tr><th style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em; font-weight: bold'>1</th><th style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em; font-weight: bold'>-2</th><th style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em; font-weight: bold'>3^</th></tr></thead><tbody><tr><td style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em'><em>a</em></td><td style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em'><strong>b</strong></td><td style='padding-top: 0.25em; padding-bottom: 0.25em; padding-left: 0.25em; padding-right: 0.25em'><code style=\"font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 0.875em; background-color: #eef2ff; color: #3730a3; padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid #c7d2fe; margin-left: 0.15em; margin-right: 0.15em\">c()</code> and <span style=\"margin-left: 0.3em; margin-right: 0.3em\"><code>d()</code></span></td></tr></tbody></table>",
             "tex": "\\begingroup\n\\setlength{\\tabcolsep}{1.50em}\n\\begingroup\n\\renewcommand{\\arraystretch}{1.50}\n\\begin{tabular}{ ccc }\n\\textbf{1} & \\textbf{-2} & \\textbf{3\\^} \\\\\n\\hline\n\\textit{a} & \\textbf{b} & \\verb|c()| and $ d() $ \\\\\n\\end{tabular}\n\\endgroup\n\\endgroup",
             "text": "",
             "json": {
@@ -382,5 +380,4 @@
             }
         }
     }
-
 ]

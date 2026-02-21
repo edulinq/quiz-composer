@@ -1,35 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{ quiz.title }}</title>
+
+        {% if style_config.include_default_css %}
+            {% if style_config.inline_css %}
+                <style>
+                    {{ style_config._default_css }}
+                    {% if style_config.extra_css %}
+                        {{ style_config.extra_css }}
+                    {% endif %}
+                </style>
+            {% else %}
+                <link rel="stylesheet" href="{{ style_config._css_path }}">
+                {% if style_config.extra_css %}
+                    <style>{{ style_config.extra_css }}</style>
+                {% endif %}
+            {% endif %}
+        {% elif style_config.extra_css %}
+            <style>{{ style_config.extra_css }}</style>
+        {% endif %}
     </head>
     <body>
         <div class='qg-quiz'>
-            <div class='qg-quiz-header'>
-                <h1>{{ quiz.title }}</h1>
-                <p>{{ quiz.course_title }} -- {{ quiz.term_title }}</p>
-                <p>{{ quiz.date }}</p>
-                <p>Total Points: {{ quiz.total_points }}</p>
-            </div>
+            <form class='qg-quiz-form'>
+                <div class='qg-quiz-header'>
+                    <h1>{{ quiz.title }}</h1>
+                    <p>{{ quiz.course_title }} &mdash; {{ quiz.term_title }}</p>
+                    <p>{{ quiz.date }}</p>
+                    <p>Total Points: {{ quiz.total_points }}</p>
+                </div>
 
-            <div class='qg-quiz-description'>
-                {{ quiz.description_text }}
-            </div>
+                {% if quiz.description_text %}
+                <div class='qg-quiz-description'>
+                    {{ quiz.description_text }}
+                </div>
+                {% endif %}
 
-            <hr>
-            <hr>
-
-            <div class='qg-quiz-body'>
-                <form class='qg-quiz-form'>
+                <div class='qg-quiz-body'>
                     {{ inner_text }}
 
                     <hr>
 
                     <input type='submit' value='Submit Quiz' />
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </body>
 </html>

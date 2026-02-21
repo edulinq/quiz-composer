@@ -1,6 +1,6 @@
-<div class='qg-quiz-question' data-type='{{ question.question_type }}' data-number='{{ question.number }}' data-name='{{ question.name }}' data-points='{{ question.points }}'>
+<div class='qg-quiz-question{% if answer_key %} qg-answer-key{% endif %}' data-type='{{ question.question_type }}' data-number='{{ question.number }}' data-name='{{ question.name }}' data-points='{{ question.points }}'>
     {% if question.custom_header is none %}
-        <h2 class='qg-quiz-question-name'>Question {{ question.number }} ({{ question.points }} Points)</h2>
+        <h2 class='qg-quiz-question-name'>Question {{ question.number }} <span style="font-weight: 400; color: #7b8ab8;">({{ question.points }} Points)</span></h2>
     {% elif question.custom_header != '' %}
         <h2 class='qg-quiz-question-name'>{{ question.custom_header }}</h2>
     {% else %}

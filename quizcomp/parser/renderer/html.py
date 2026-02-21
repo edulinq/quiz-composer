@@ -24,12 +24,19 @@ ADDITIONAL_STYLE = {
         'margin-top: 0',
     ],
     'code_inline': [
-        'margin-left: 0.25em',
-        'margin-right: 0.25em',
+        'font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace',
+        'font-size: 0.875em',
+        'background-color: #eef2ff',
+        'color: #3730a3',
+        'padding: 0.15em 0.4em',
+        'border-radius: 4px',
+        'border: 1px solid #c7d2fe',
+        'margin-left: 0.15em',
+        'margin-right: 0.15em',
     ],
     'math_inline': [
-        'margin-left: 0.25em',
-        'margin-right: 0.25em',
+        'margin-left: 0.3em',
+        'margin-right: 0.3em',
     ],
 }
 
