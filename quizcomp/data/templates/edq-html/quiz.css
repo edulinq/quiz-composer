@@ -114,6 +114,11 @@
     letter-spacing: 0.01em;
 }
 
+.qg-quiz-question-points {
+    font-weight: 400;
+    color: var(--qg-color-muted);
+}
+
 .qg-quiz-question-prompt {
     font-size: 1rem;
     color: var(--qg-color-text);
