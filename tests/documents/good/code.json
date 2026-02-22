@@ -4,7 +4,7 @@
         "text": "`inline_code();`",
         "formats": {
             "md": "`inline_code();`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 0.875em; background-color: #eef2ff; color: #3730a3; padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid #c7d2fe; margin-left: 0.15em; margin-right: 0.15em\">inline_code();</code></p>",
+            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code();</code></p>",
             "tex": "\\verb|inline_code();|",
             "text": "",
             "json": {
@@ -28,7 +28,7 @@
         "text": "Inline `code()`.",
         "formats": {
             "md": "Inline `code()`.",
-            "html": "<p style=\"margin-top: 0\">Inline <code style=\"font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 0.875em; background-color: #eef2ff; color: #3730a3; padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid #c7d2fe; margin-left: 0.15em; margin-right: 0.15em\">code()</code>.</p>",
+            "html": "<p style=\"margin-top: 0\">Inline <code style=\"margin-left: 0.25em; margin-right: 0.25em\">code()</code>.</p>",
             "tex": "Inline \\verb|code()|.",
             "text": "Inline",
             "json": {
@@ -60,7 +60,7 @@
         "text": "`inline_code(\"\\*\");`",
         "formats": {
             "md": "`inline_code(\"\\*\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 0.875em; background-color: #eef2ff; color: #3730a3; padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid #c7d2fe; margin-left: 0.15em; margin-right: 0.15em\">inline_code(\"\\*\");</code></p>",
+            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"\\*\");</code></p>",
             "tex": "\\verb|inline_code(\"\\*\");|",
             "text": "",
             "json": {
@@ -84,7 +84,7 @@
         "text": "`inline_code(\"*\");`",
         "formats": {
             "md": "`inline_code(\"*\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 0.875em; background-color: #eef2ff; color: #3730a3; padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid #c7d2fe; margin-left: 0.15em; margin-right: 0.15em\">inline_code(\"*\");</code></p>",
+            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"*\");</code></p>",
             "tex": "\\verb|inline_code(\"*\");|",
             "text": "",
             "json": {
@@ -108,7 +108,7 @@
         "text": "`inline_code(\"|\");`",
         "formats": {
             "md": "`inline_code(\"|\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 0.875em; background-color: #eef2ff; color: #3730a3; padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid #c7d2fe; margin-left: 0.15em; margin-right: 0.15em\">inline_code(\"|\");</code></p>",
+            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"|\");</code></p>",
             "tex": "\\verb!inline_code(\"|\");!",
             "text": "",
             "json": {
@@ -206,7 +206,7 @@
         "text": "`<test`",
         "formats": {
             "md": "`<test`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 0.875em; background-color: #eef2ff; color: #3730a3; padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid #c7d2fe; margin-left: 0.15em; margin-right: 0.15em\">&lt;test</code></p>",
+            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">&lt;test</code></p>",
             "tex": "\\verb|<test|",
             "text": "",
             "json": {

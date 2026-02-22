@@ -6,23 +6,9 @@
 
         <title>{{ quiz.title }}</title>
 
-        {% if style_config.include_default_css %}
-            {% if style_config.inline_css %}
-                <style>
-                    {{ style_config._default_css }}
-                    {% if style_config.extra_css %}
-                        {{ style_config.extra_css }}
-                    {% endif %}
-                </style>
-            {% else %}
-                <link rel="stylesheet" href="{{ style_config._css_path }}">
-                {% if style_config.extra_css %}
-                    <style>{{ style_config.extra_css }}</style>
-                {% endif %}
-            {% endif %}
-        {% elif style_config.extra_css %}
-            <style>{{ style_config.extra_css }}</style>
-        {% endif %}
+        <style>
+            {{ css_content }}
+        </style>
     </head>
     <body>
         <div class='qg-quiz'>
