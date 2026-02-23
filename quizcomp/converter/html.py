@@ -19,6 +19,9 @@ class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
         super().__init__(format, template_dir, **kwargs)
 
         css_path = os.path.join(template_dir, CSS_FILENAME)
+        if (not os.path.isfile(css_path)):
+            raise ValueError("Could not find CSS file: '%s'" % (css_path))
+
         with open(css_path, 'r', encoding = 'utf-8') as css_file:
             self.env.globals['css_content'] = css_file.read()
 
