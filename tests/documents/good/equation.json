@@ -4,7 +4,7 @@
         "text": "$ f(x) = x_i + x^2 \\alpha $",
         "formats": {
             "md": "$ f(x) = x_i + x^2 \\alpha $",
-            "html": "<p style=\"margin-top: 0\"><span style=\"margin-left: 0.3em; margin-right: 0.3em\"><code>f(x) = x_i + x^2 \\alpha</code></span></p>",
+            "html": "<p><span class=\"qg-math\"><code>f(x) = x_i + x^2 \\alpha</code></span></p>",
             "tex": "$ f(x) = x_i + x^2 \\alpha $",
             "text": "",
             "json": {
@@ -28,7 +28,7 @@
         "text": "Inline$\\text{equation}$.",
         "formats": {
             "md": "Inline$ \\text{equation} $.",
-            "html": "<p style=\"margin-top: 0\">Inline<span style=\"margin-left: 0.3em; margin-right: 0.3em\"><code>\\text{equation}</code></span>.</p>",
+            "html": "<p>Inline<span class=\"qg-math\"><code>\\text{equation}</code></span>.</p>",
             "tex": "Inline$ \\text{equation} $.",
             "text": "Inline",
             "json": {
@@ -60,7 +60,7 @@
         "text": "$f(\\$a)$",
         "formats": {
             "md": "$ f(\\$a) $",
-            "html": "<p style=\"margin-top: 0\"><span style=\"margin-left: 0.3em; margin-right: 0.3em\"><code>f(\\$a)</code></span></p>",
+            "html": "<p><span class=\"qg-math\"><code>f(\\$a)</code></span></p>",
             "tex": "$ f(\\$a) $",
             "text": "",
             "json": {
@@ -84,7 +84,7 @@
         "text": "$$equation + block$$",
         "formats": {
             "md": "$$\nequation + block\n$$",
-            "html": "<p style=\"margin-top: 0\"><code>equation + block</code></p>",
+            "html": "<p class=\"qg-math\"><code>equation + block</code></p>",
             "tex": "$$\nequation + block\n$$",
             "text": "",
             "json": {
@@ -98,7 +98,7 @@
         "text": "$$ equation + - * / block() $$",
         "formats": {
             "md": "$$\n equation + - * / block() \n$$",
-            "html": "<p style=\"margin-top: 0\"><code> equation + - * / block() </code></p>",
+            "html": "<p class=\"qg-math\"><code> equation + - * / block() </code></p>",
             "tex": "$$\nequation + - * / block()\n$$",
             "text": "",
             "json": {
@@ -112,7 +112,7 @@
         "text": "$$\nf(x)\n$$",
         "formats": {
             "md": "$$\n\nf(x)\n\n$$",
-            "html": "<p style=\"margin-top: 0\"><code>\nf(x)\n</code></p>",
+            "html": "<p class=\"qg-math\"><code>\nf(x)\n</code></p>",
             "tex": "$$\nf(x)\n$$",
             "text": "",
             "json": {
@@ -126,7 +126,7 @@
         "text": "$$ f(x)\ng(x) $$",
         "formats": {
             "md": "$$\n f(x)\ng(x) \n$$",
-            "html": "<p style=\"margin-top: 0\"><code> f(x)\ng(x) </code></p>",
+            "html": "<p class=\"qg-math\"><code> f(x)\ng(x) </code></p>",
             "tex": "$$\nf(x)\ng(x)\n$$",
             "text": "",
             "json": {
@@ -144,7 +144,7 @@
         },
         "formats": {
             "md": "$ f(x) = x + 2 $",
-            "html": "<p style=\"margin-top: 0\"><span style=\"margin-left: 0.3em; margin-right: 0.3em\"><code>f(x) = x + 2</code></span></p>",
+            "html": "<p><span class=\"qg-math\"><code>f(x) = x + 2</code></span></p>",
             "tex": "$ f(x) = x + 2 $",
             "text": "f(x) = x + 2",
             "json": {
@@ -168,7 +168,7 @@
         "text": "$ a < b > c $",
         "formats": {
             "md": "$ a < b > c $",
-            "html": "<p style=\"margin-top: 0\"><span style=\"margin-left: 0.3em; margin-right: 0.3em\"><code>a &lt; b &gt; c</code></span></p>",
+            "html": "<p><span class=\"qg-math\"><code>a &lt; b &gt; c</code></span></p>",
             "tex": "$ a < b > c $",
             "text": "",
             "json": {

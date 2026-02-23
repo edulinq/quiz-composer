@@ -4,7 +4,7 @@
         "text": "`inline_code();`",
         "formats": {
             "md": "`inline_code();`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code();</code></p>",
+            "html": "<p><code>inline_code();</code></p>",
             "tex": "\\verb|inline_code();|",
             "text": "",
             "json": {
@@ -28,7 +28,7 @@
         "text": "Inline `code()`.",
         "formats": {
             "md": "Inline `code()`.",
-            "html": "<p style=\"margin-top: 0\">Inline <code style=\"margin-left: 0.25em; margin-right: 0.25em\">code()</code>.</p>",
+            "html": "<p>Inline <code>code()</code>.</p>",
             "tex": "Inline \\verb|code()|.",
             "text": "Inline",
             "json": {
@@ -60,7 +60,7 @@
         "text": "`inline_code(\"\\*\");`",
         "formats": {
             "md": "`inline_code(\"\\*\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"\\*\");</code></p>",
+            "html": "<p><code>inline_code(\"\\*\");</code></p>",
             "tex": "\\verb|inline_code(\"\\*\");|",
             "text": "",
             "json": {
@@ -84,7 +84,7 @@
         "text": "`inline_code(\"*\");`",
         "formats": {
             "md": "`inline_code(\"*\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"*\");</code></p>",
+            "html": "<p><code>inline_code(\"*\");</code></p>",
             "tex": "\\verb|inline_code(\"*\");|",
             "text": "",
             "json": {
@@ -108,7 +108,7 @@
         "text": "`inline_code(\"|\");`",
         "formats": {
             "md": "`inline_code(\"|\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"|\");</code></p>",
+            "html": "<p><code>inline_code(\"|\");</code></p>",
             "tex": "\\verb!inline_code(\"|\");!",
             "text": "",
             "json": {
@@ -176,7 +176,7 @@
         "text": "a\n\n    code_block();",
         "formats": {
             "md": "a\n\n```\ncode_block();\n```",
-            "html": "<p style=\"margin-top: 0\">a</p><pre><code>code_block();\n</code></pre>",
+            "html": "<p>a</p><pre><code>code_block();\n</code></pre>",
             "tex": "a\n\n\\begin{lstlisting}\ncode_block();\n\\end{lstlisting}",
             "text": "a",
             "json": [
@@ -206,7 +206,7 @@
         "text": "`<test`",
         "formats": {
             "md": "`<test`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">&lt;test</code></p>",
+            "html": "<p><code>&lt;test</code></p>",
             "tex": "\\verb|<test|",
             "text": "",
             "json": {

@@ -46,10 +46,9 @@ def _render_html(text, inline, context):
         content = f"<code>{text}</code>"
 
     element = 'span'
-    attributes = 'style="margin-left: 0.3em; margin-right: 0.3em"'
+    attributes = 'class="qg-math"'
     if (not inline):
         element = 'p'
-        attributes = 'style="margin-top: 0"'
 
     return f"<{element} {attributes}>{content}</{element}>"
 

@@ -24,9 +24,9 @@
         "name": "HTML Inline",
         "text": "<placeholder>answer</placeholder>",
         "formats": {
-            "canvas": "<p style=\"margin-top: 0\">[answer]</p>",
+            "canvas": "<p>[answer]</p>",
             "md": "<placeholder>answer</placeholder>",
-            "html": "<p style=\"margin-top: 0\"><placeholder>answer</placeholder></p>",
+            "html": "<p><placeholder>answer</placeholder></p>",
             "tex": "\\textsc{<answer>}",
             "text": "answer",
             "json": {
@@ -50,9 +50,9 @@
         "name": "Underscore",
         "text": "<placeholder>answer_reference</placeholder>",
         "formats": {
-            "canvas": "<p style=\"margin-top: 0\">[answer_reference]</p>",
+            "canvas": "<p>[answer_reference]</p>",
             "md": "<placeholder>answer_reference</placeholder>",
-            "html": "<p style=\"margin-top: 0\"><placeholder>answer_reference</placeholder></p>",
+            "html": "<p><placeholder>answer_reference</placeholder></p>",
             "tex": "\\textsc{<answer\\_reference>}",
             "text": "answer_reference",
             "json": {
@@ -76,9 +76,9 @@
         "name": "Space",
         "text": "<placeholder>answer reference</placeholder>",
         "formats": {
-            "canvas": "<p style=\"margin-top: 0\">[answer_reference]</p>",
+            "canvas": "<p>[answer_reference]</p>",
             "md": "<placeholder>answer reference</placeholder>",
-            "html": "<p style=\"margin-top: 0\"><placeholder>answer reference</placeholder></p>",
+            "html": "<p><placeholder>answer reference</placeholder></p>",
             "tex": "\\textsc{<answer reference>}",
             "text": "answer reference",
             "json": {
@@ -102,9 +102,9 @@
         "name": "One Character",
         "text": "<placeholder>A</placeholder>",
         "formats": {
-            "canvas": "<p style=\"margin-top: 0\">[A]</p>",
+            "canvas": "<p>[A]</p>",
             "md": "<placeholder>A</placeholder>",
-            "html": "<p style=\"margin-top: 0\"><placeholder>A</placeholder></p>",
+            "html": "<p><placeholder>A</placeholder></p>",
             "tex": "\\textsc{<A>}",
             "text": "A",
             "json": {

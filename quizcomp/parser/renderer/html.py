@@ -13,41 +13,8 @@ import quizcomp.parser.style
 
 HTML_BORDER_SPEC = '1px solid black'
 
-ADDITIONAL_STYLE = {
-    'paragraph_open': [
-        'margin-top: 0',
-    ],
-    'fence_open': [
-        'margin-top: 0',
-    ],
-    'code_block_open': [
-        'margin-top: 0',
-    ],
-    'code_inline': [
-        'margin-left: 0.25em',
-        'margin-right: 0.25em',
-    ],
-    'math_inline': [
-        'margin-left: 0.3em',
-        'margin-right: 0.3em',
-    ],
-}
 
 class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML):
-    def render(self, tokens, options, env):
-        # Override the main rendering function to attatch style.
-        self._style_override_helper(tokens)
-        return super().render(tokens, options, env)
-
-    def _style_override_helper(self, tokens):
-        if (tokens is None):
-            return
-
-        for token in tokens:
-            if (token.type in ADDITIONAL_STYLE):
-                _join_html_style(token, ADDITIONAL_STYLE.get(token.type, []))
-
-            self._style_override_helper(token.children)
 
     def image(self, tokens, idx, options, env,
             force_raw_image_src = False, process_token = None):

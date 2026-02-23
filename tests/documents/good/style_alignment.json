@@ -4,7 +4,7 @@
         "text": "<style>\n\"content-align\": \"center\"\n</style>\nText",
         "formats": {
             "md": "Text",
-            "html": "<div class='qg-root-block qg-block' style='display: flex; flex-direction: column; justify-content: flex-start; align-items: center'><p style=\"margin-top: 0\">Text</p></div>",
+            "html": "<div class='qg-root-block qg-block' style='display: flex; flex-direction: column; justify-content: flex-start; align-items: center'><p>Text</p></div>",
             "tex": "\\begin{center}\n\nText\n\n\\end{center}",
             "text": "Text",
             "json": {
@@ -38,7 +38,7 @@
         "text": "<style>\n\"content-align\": \"left\"\n</style>\nText",
         "formats": {
             "md": "Text",
-            "html": "<div class='qg-root-block qg-block' style='display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start'><p style=\"margin-top: 0\">Text</p></div>",
+            "html": "<div class='qg-root-block qg-block' style='display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start'><p>Text</p></div>",
             "tex": "\\begin{flushleft}\n\nText\n\n\\end{flushleft}",
             "text": "Text",
             "json": {
@@ -72,7 +72,7 @@
         "text": "<style>\n\"content-align\": \"right\"\n</style>\nText",
         "formats": {
             "md": "Text",
-            "html": "<div class='qg-root-block qg-block' style='display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-end'><p style=\"margin-top: 0\">Text</p></div>",
+            "html": "<div class='qg-root-block qg-block' style='display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-end'><p>Text</p></div>",
             "tex": "\\begin{flushright}\n\nText\n\n\\end{flushright}",
             "text": "Text",
             "json": {
@@ -139,7 +139,7 @@
         "text": "<style>\n\"text-align\": \"center\"\n</style>\nText",
         "formats": {
             "md": "Text",
-            "html": "<div class='qg-root-block qg-block' style='text-align: center'><p style=\"margin-top: 0\">Text</p></div>",
+            "html": "<div class='qg-root-block qg-block' style='text-align: center'><p>Text</p></div>",
             "tex": "Text",
             "text": "Text",
             "json": {
@@ -173,7 +173,7 @@
         "text": "<style>\n\"text-align\": \"left\"\n</style>\nText",
         "formats": {
             "md": "Text",
-            "html": "<div class='qg-root-block qg-block' style='text-align: left'><p style=\"margin-top: 0\">Text</p></div>",
+            "html": "<div class='qg-root-block qg-block' style='text-align: left'><p>Text</p></div>",
             "tex": "Text",
             "text": "Text",
             "json": {
