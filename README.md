@@ -20,6 +20,8 @@ Documentation Table of Contents:
    - [Math Equations in HTML](#math-equations-in-html)
    - [Canvas Uploading](#canvas-uploading)
    - [GradeScope Uploading](#gradescope-uploading)
+ - [Testing](#testing)
+   - [Optional TeX Compilation Tests (Good Question Fixtures)](#optional-tex-compilation-tests-good-question-fixtures)
  - [Usage](#usage)
    - [Parsing a Specific Quiz](#parsing-a-specific-quiz)
      - [Outputting a JSON Quiz](#outputting-a-json-quiz)
@@ -113,6 +115,29 @@ To upload quizzes to GradeScope, you will need three things:
    - If you normally log into GradeScope through an organization account (like via a university email), then you will just need to create a GradeScope password.
      This can be done via the [password reset page](https://www.gradescope.com/reset_password), which in this case will allow you to create a new password.
  - A GradeScope Course ID
+
+## Testing
+
+The primary test command is:
+```
+./run_tests.py
+```
+
+### Optional TeX Compilation Tests (Good Question Fixtures)
+
+TeX compilation is slower than normal parser/conversion tests, so this is kept outside of
+the standard Python unittest flow. The script below generates TeX for each good question
+fixture and compiles it to verify that the generated TeX is valid.
+
+Run with local `pdflatex`:
+```
+./scripts/test_tex_compilation_questions.sh
+```
+
+Run with Docker (if local `pdflatex` is unavailable):
+```
+./scripts/test_tex_compilation_questions.sh --use-docker
+```
 
 ## Usage
 
