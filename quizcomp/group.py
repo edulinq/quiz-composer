@@ -44,8 +44,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
             raise quizcomp.common.QuizValidationError('Error while validating group.', ids = ids) from ex
 
     def _validate(self, **kwargs):
-        if ((self.name is None) or (self.name == "")):
-            raise quizcomp.common.QuizValidationError("Name cannot be empty.")
+        quizcomp.common.validate_name(self.name, "Group name", allow_empty=False)
 
         if (self.pick_count < 0):
             raise quizcomp.common.QuizValidationError("Pick count cannot be negative.")
@@ -123,6 +122,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
         if (len(questions) > 1):
             for i in range(len(questions)):
                 questions[i].name = "%s - %d" % (self.name, i + 1)
+                quizcomp.common.validate_name(questions[i].name, "Generated Question name", allow_empty=True)
 
         # Inherit position-specific hints.
         questions[0].add_hints(self.hints_first)

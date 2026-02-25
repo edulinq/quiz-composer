@@ -242,6 +242,8 @@ All the same options for creating PDFs (`quizcomp.cli.pdf.create`) can be used.
 
 ## Quiz Format
 
+A **Plain String** is a string that contains only ASCII alphanumerics (`A-Z`, `a-z`, `0-9`), space (` `), dash (`-`), underscore (`_`), and period (`.`). It cannot contain tabs or newlines, and cannot have leading or trailing spaces. Depending on the context (like a group name), a Plain String may be required to be non-empty, while in other contexts (like an optional question name) it may be empty.
+
 Below are some common fields used in the **quiz** JSON configuration.
 
 | Key                     | Type           | Required? | Default      | Description |

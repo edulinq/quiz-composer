@@ -80,6 +80,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
             raise quizcomp.common.QuizValidationError('Error while validating question.', ids = ids) from ex
 
     def _validate(self):
+        quizcomp.common.validate_name(self.name, "Question name", allow_empty=True)
         self._validate_prompt()
         self._validate_question_feedback()
         self._validate_answers()
@@ -145,6 +146,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         self.points = group.points
         self.name = group.name
+        quizcomp.common.validate_name(self.name, "Inherited Question name", allow_empty=True)
 
         if (group.custom_header is not None):
             self.custom_header = group.custom_header
