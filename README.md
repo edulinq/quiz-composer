@@ -120,23 +120,23 @@ To upload quizzes to GradeScope, you will need three things:
 
 The primary test command is:
 ```
-./run_tests.py
+./run_tests.py [test_pattern]
 ```
+When `test_pattern` is provided,
+it is used as a regex filter over test IDs.
 
 ### Optional TeX Compilation Tests (Good Question Fixtures)
 
-TeX compilation is slower than normal parser/conversion tests, so this is kept outside of
-the standard Python unittest flow. The script below generates TeX for each good question
-fixture and compiles it to verify that the generated TeX is valid.
+TeX compilation tests are slower than normal tests.
+They also require extra dependencies (notably `pdflatex`).
+So these tests are kept outside of the standard Python unittest flow.
+
+The script below generates TeX for each good question fixture
+and compiles it to verify that the generated TeX is valid.
 
 Run with local `pdflatex`:
 ```
 ./scripts/test_tex_compilation_questions.sh
-```
-
-Run with Docker (if local `pdflatex` is unavailable):
-```
-./scripts/test_tex_compilation_questions.sh --use-docker
 ```
 
 ## Usage
