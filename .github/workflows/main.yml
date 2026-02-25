@@ -102,6 +102,10 @@ jobs:
         shell: bash
         run: ./run_tests.py
 
+      - name: Run TeX Compilation Tests
+        shell: bash
+        run: ./scripts/test_tex_compilation_questions.sh
+
   deploy:
     needs: advanced-test
 
