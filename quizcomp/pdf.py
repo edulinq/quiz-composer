@@ -7,9 +7,11 @@ import traceback
 
 import quizcomp.converter.tex
 import quizcomp.latex
+import quizcomp.question.base
 import quizcomp.util.dirent
 import quizcomp.util.json
 import quizcomp.quiz
+import quizcomp.variant
 
 OPTIONS_FILENAME = 'options.json'
 
@@ -34,6 +36,39 @@ def make_with_args(args, **kwargs):
 def make_with_path(quiz_path, **kwargs):
     quiz = quizcomp.quiz.Quiz.from_path(quiz_path)
     return make(quiz, quiz_path = quiz_path, **kwargs)
+
+def make_question_with_path(question_path, **kwargs):
+    if (not os.path.exists(question_path)):
+        raise ValueError(f"Provided path '{question_path}' does not exist.")
+
+    if (not os.path.isfile(question_path)):
+        raise ValueError(f"Provided path '{question_path}' is not a file.")
+
+    question = quizcomp.question.base.Question.from_path(question_path)
+    return make_question(question, question_path = question_path, **kwargs)
+
+def make_question(question, question_path = None, out_dir = None,
+        answer_key = False, skip_tex = False, skip_pdf = False):
+    if (out_dir is None):
+        out_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_question_', rm = False)
+
+    os.makedirs(out_dir, exist_ok = True)
+
+    variant = quizcomp.variant.Variant.get_dummy(question)
+
+    title = question.name
+    if ((title is None) or (title.strip() == '')):
+        title = 'Question'
+        if (question_path is not None):
+            title = os.path.basename(os.path.dirname(question_path))
+
+    variant.title = title
+    if (answer_key):
+        variant.title = "%s -- Answer Key" % (variant.title)
+
+    make_pdf(variant, out_dir = out_dir, is_key = answer_key, skip_tex = skip_tex, skip_pdf = skip_pdf)
+
+    return (variant, out_dir)
 
 def make(quiz,
         quiz_path = None, base_out_dir = None,
