@@ -21,7 +21,7 @@ Documentation Table of Contents:
    - [Canvas Uploading](#canvas-uploading)
    - [GradeScope Uploading](#gradescope-uploading)
  - [Testing](#testing)
-   - [Optional TeX Compilation Tests (Good Question Fixtures)](#optional-tex-compilation-tests-good-question-fixtures)
+   - [Optional TeX Compilation Tests](#optional-tex-compilation-tests)
  - [Usage](#usage)
    - [Parsing a Specific Quiz](#parsing-a-specific-quiz)
      - [Outputting a JSON Quiz](#outputting-a-json-quiz)
@@ -118,21 +118,22 @@ To upload quizzes to GradeScope, you will need three things:
 
 ## Testing
 
-The primary test command is:
+You can run tests with:
 ```
 ./run_tests.py [test_pattern]
 ```
 When `test_pattern` is provided,
-it is used as a regex filter over test IDs.
+it is passed directly to `re.search()`
+to determine whether each test runs.
 
-### Optional TeX Compilation Tests (Good Question Fixtures)
+### Optional TeX Compilation Tests
 
 TeX compilation tests are slower than normal tests.
 They also require extra dependencies (notably `pdflatex`).
 So these tests are kept outside of the standard Python unittest flow.
 
-The script below generates TeX for each good question fixture
-and compiles it to verify that the generated TeX is valid.
+The script below compiles the good question and quiz test cases
+and verifies that PDF output is produced.
 
 Run with local `pdflatex`:
 ```
