@@ -130,9 +130,9 @@ to determine whether each test runs.
 
 TeX compilation tests are slower than normal tests.
 They also require extra dependencies (notably `pdflatex`).
-So these tests are kept outside of the standard Python unittest flow.
+For these reasons, they are kept outside the standard Python unittest flow.
 
-This script compiles the good question and quiz test cases
+The script below compiles the good question and quiz test cases
 and verifies that PDF output is produced.
 
 Run with local `pdflatex`:
