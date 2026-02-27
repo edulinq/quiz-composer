@@ -128,6 +128,8 @@ to determine whether each test runs.
 
 ### Optional TeX Compilation Tests
 
+This optional script validates end-to-end TeX/PDF generation for good test fixtures.
+
 TeX compilation tests are slower than normal tests.
 They also require extra dependencies (notably `pdflatex`).
 For these reasons, they are kept outside the standard Python unittest flow.

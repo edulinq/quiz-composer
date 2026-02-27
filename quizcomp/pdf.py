@@ -37,7 +37,25 @@ def make_with_path(quiz_path, **kwargs):
     quiz = quizcomp.quiz.Quiz.from_path(quiz_path)
     return make(quiz, quiz_path = quiz_path, **kwargs)
 
-def make_question_with_path(question_path, **kwargs):
+def make_from_question_with_args(args, **kwargs):
+    """
+    Use a standard args object to make a PDF from a single question.
+    """
+
+    if (not os.path.exists(args.path)):
+        raise ValueError(f"Provided path '{args.path}' does not exist.")
+
+    if (not os.path.isfile(args.path)):
+        raise ValueError(f"Provided path '{args.path}' is not a file.")
+
+    return make_from_question_with_path(args.path,
+            out_dir = args.out_dir,
+            answer_key = args.answer_key,
+            skip_tex = args.skip_tex,
+            skip_pdf = args.skip_pdf,
+            **kwargs)
+
+def make_from_question_with_path(question_path, **kwargs):
     if (not os.path.exists(question_path)):
         raise ValueError(f"Provided path '{question_path}' does not exist.")
 
@@ -45,9 +63,9 @@ def make_question_with_path(question_path, **kwargs):
         raise ValueError(f"Provided path '{question_path}' is not a file.")
 
     question = quizcomp.question.base.Question.from_path(question_path)
-    return make_question(question, question_path = question_path, **kwargs)
+    return make_from_question(question, **kwargs)
 
-def make_question(question, question_path = None, out_dir = None,
+def make_from_question(question, out_dir = None,
         answer_key = False, skip_tex = False, skip_pdf = False):
     if (out_dir is None):
         out_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_question_', rm = False)
@@ -55,16 +73,6 @@ def make_question(question, question_path = None, out_dir = None,
     os.makedirs(out_dir, exist_ok = True)
 
     variant = quizcomp.variant.Variant.get_dummy(question)
-
-    title = question.name
-    if ((title is None) or (title.strip() == '')):
-        title = 'Question'
-        if (question_path is not None):
-            title = os.path.basename(os.path.dirname(question_path))
-
-    variant.title = title
-    if (answer_key):
-        variant.title = "%s -- Answer Key" % (variant.title)
 
     make_pdf(variant, out_dir = out_dir, is_key = answer_key, skip_tex = skip_tex, skip_pdf = skip_pdf)
 
@@ -198,5 +206,29 @@ def set_cli_args(parser):
     parser.add_argument('--seed', dest = 'seed',
         action = 'store', type = int, default = None,
         help = 'The random seed to use (defaults to a random seed).')
+
+    return parser
+
+def set_cli_question_args(parser):
+    parser.add_argument('path', metavar = 'PATH',
+        type = str,
+        help = 'The path to a question json file.')
+
+    parser.add_argument('--outdir', dest = 'out_dir',
+        action = 'store', type = str, default = '.',
+        help = ('The directory to put the question PDF output.'
+                + ' (default: %(default)s).'))
+
+    parser.add_argument('--key', dest = 'answer_key',
+        action = 'store_true', default = False,
+        help = 'Create an answer key PDF (default: %(default)s).')
+
+    parser.add_argument('--skip-tex', dest = 'skip_tex',
+        action = 'store_true', default = False,
+        help = 'Skip creating TeX files (default: %(default)s).')
+
+    parser.add_argument('--skip-pdf', dest = 'skip_pdf',
+        action = 'store_true', default = False,
+        help = 'Skip compiling PDFs from TeX (default: %(default)s).')
 
     return parser
