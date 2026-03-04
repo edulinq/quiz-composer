@@ -36,6 +36,7 @@ Documentation Table of Contents:
    - [Question Prompts](#question-prompts)
    - [Quiz Descriptions](#quiz-descriptions)
  - [Question Types](/docs/question-types.md)
+ - [Canvas Quiz Options](/docs/canvas-options.md)
  - [QuizComp Markdown Syntax](/docs/syntax.md)
  - [Builtin Templates and Hints](/docs/builtin-templates.md)
  - [Styling](/docs/styling.md)
@@ -215,7 +216,10 @@ The basic usage is as follows:
 python3 -m quizcomp.cli.canvas.upload <path to quiz JSON file> --course <canvas course id> --token <canvas access token>
 ```
 
-If an existing quiz with the same name is found, then nothing will be uploaded unless the `--force` flag is given..
+If an existing quiz with the same name is found, then nothing will be uploaded unless the `--force` flag is given.
+
+For information on customizing quiz-specific Canvas behavior (such as whether the quiz is published, whether students see correct answers, and allowing multiple attempts),
+see the [Canvas Quiz Options documentation](/docs/canvas-options.md).
 
 ### Creating a PDF Quiz
 
