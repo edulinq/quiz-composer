@@ -1,168 +1,89 @@
 # Canvas Quiz Options
 
-Canvas is a learning management system (LMS) with its own quiz model.
-The Quiz Composer uploads quizzes to Canvas, but you can customize how the quiz behaves in Canvas using the `canvas` configuration object.
+Quiz behavior in Canvas is controlled through the `canvas` key.
 
 Table of Contents:
- - [Configuration Basics](#configuration-basics)
- - [Quiz Type and Publishing](#quiz-type-and-publishing)
- - [Student Interactions](#student-interactions)
- - [Multiple Attempts](#multiple-attempts)
- - [Organization](#organization)
+ - [practice](#practice)
+ - [published](#published)
+ - [show_correct_answers](#show_correct_answers)
+ - [hide_results](#hide_results)
+ - [allowed_attempts](#allowed_attempts)
+ - [scoring_policy](#scoring_policy)
+ - [assignment_group_name](#assignment_group_name)
+ - [Example](#example)
 
-## Configuration Basics
+| Option | Default | Type | Description |
+|--------|---------|------|-------------|
+| `practice` | `true` | Boolean | Ungraded (practice) or graded (assignment) |
+| `published` | `false` | Boolean | Whether quiz is visible after upload |
+| `show_correct_answers` | `true` | Boolean | Whether correct answers are shown |
+| `hide_results` | `null` | String or null | When students can view results |
+| `allowed_attempts` | `1` | Integer | Number of quiz attempts allowed |
+| `scoring_policy` | `"keep_highest"` | String | Which attempt score is recorded |
+| `assignment_group_name` | `"Quizzes"` | String | Assignment group for quiz placement |
 
-Canvas options are specified in your quiz configuration using the `canvas` object.
-Only the options you want to customize need to be included; the rest will use sensible defaults.
 
-Here is an overview of all available options:
+## practice
 
-| Option | Type | Default |
-|--------|------|---------|
-| `practice` | Boolean | `true` |
-| `published` | Boolean | `false` |
-| `show_correct_answers` | Boolean | `true` |
-| `hide_results` | String or null | `null` |
-| `allowed_attempts` | Integer | `1` |
-| `scoring_policy` | String | `"keep_highest"` |
-| `assignment_group_name` | String | `"Quizzes"` |
+When `true`, the quiz is ungraded for student practice (doesn't affect the gradebook).
+When `false`, the quiz is graded (scores count toward the student's grade and appears as an assignment in Canvas).
 
-## Quiz Type and Publishing
+## published
 
-### Quiz Type (Practice vs Assignment)
+When `false`, the quiz is hidden from students after upload (publish it manually when ready).
+When `true`, the quiz is immediately visible and available to students.
 
-The `practice` option controls whether your quiz appears as a practice quiz or a graded assignment in Canvas.
+## show_correct_answers
 
- - `practice: true` - Creates a practice quiz. Students can use this to study without affecting their grade. Practice quizzes do not contribute to the gradebook.
- - `practice: false` - Creates a graded assignment. Student scores will be recorded in the Canvas gradebook.
+When `true`, Canvas displays correct answers after students complete the quiz.
+When `false`, correct answers are not revealed.
 
-Choose `practice: true` for study materials, review sessions, or self-assessments where grades don't matter.
-Choose `practice: false` when you want to grade students on their performance.
+## hide_results
 
-### Publishing
+Controls when students can view their quiz results and score.
 
-The `published` option determines whether the quiz is available to students immediately after you upload it.
+ - `null` (default) - Results visible immediately after completion
+ - `"always"` - Results hidden from students permanently
+ - `"until_after_last_attempt"` - Results hidden until all attempts are exhausted
 
- - `published: false` - The quiz is uploaded but remains hidden from students. You can review it and publish it manually later through Canvas.
- - `published: true` - The quiz is immediately visible to students and ready to take.
+## allowed_attempts
 
-Most of the time, you'll want `published: false` so you can verify the quiz looks correct before students see it.
+Controls how many times students can attempt the quiz.
 
-## Student Interactions
+ - Positive integer (default `1`) - That many attempts allowed
+ - `-1` - Unlimited attempts
+ - `0` or negative values other than `-1` - Invalid
 
-### Viewing Correct Answers
+## scoring_policy
 
-The `show_correct_answers` option controls whether students can see which answers are correct after they complete the quiz.
+When `allowed_attempts` is greater than 1, determines which attempt's score is recorded in the gradebook.
 
- - `show_correct_answers: true` - After completing the quiz, Canvas will highlight correct answers for the student.
- - `show_correct_answers: false` - Students cannot see which answers were correct.
+ - `"keep_highest"` - Records the best score across all attempts
+ - `"keep_latest"` - Records the most recent attempt's score
 
-Use `show_correct_answers: false` for high-stakes exams where you want to maintain answer security.
-Use `show_correct_answers: true` for practice quizzes or assessments where students should learn from their mistakes.
+This setting has no effect when `allowed_attempts` is `1`.
 
-### Hiding Results
+## assignment_group_name
 
-The `hide_results` option allows you to prevent students from viewing their quiz results until a certain point.
+Specifies the Canvas assignment group where the quiz will be placed.
+Canvas searches for a group with this name. If not found, the quiz uses Canvas's default location.
 
-This option accepts three values:
-
- - `null` - Students can view their results at any time after completing the quiz.
- - `"always"` - Results are completely hidden. Students will never see their score or feedback.
- - `"until_after_last_attempt"` - Results remain hidden until the student has exhausted all their allowed attempts.
-
-The last option is useful when you allow multiple attempts and want to prevent students from learning their initial score before their final attempt.
-
-## Multiple Attempts
-
-### Number of Attempts
-
-The `allowed_attempts` option controls how many times students can take the quiz.
-
- - Any positive integer - Students can attempt the quiz up to that many times.
- - `-1` - Students have unlimited attempts.
- - `1` (default) - Students get one chance only.
-
-For practice quizzes, unlimited attempts (`-1`) works well.
-For graded assessments, you might allow 2-3 attempts, or restrict to a single attempt for exams.
-
-### Scoring Policy for Multiple Attempts
-
-When students can take the quiz more than once, the `scoring_policy` option determines which attempt's score goes in the gradebook.
-
- - `"keep_highest"` - Canvas records the highest score across all attempts. This rewards students who improve over time.
- - `"keep_latest"` - Canvas records the most recent attempt's score. This is useful when the quiz itself changes between attempts.
-
-The `scoring_policy` only matters when `allowed_attempts` is greater than 1.
-If students only get one attempt, this setting has no effect.
-
-## Organization
-
-### Assignment Group
-
-The `assignment_group_name` option allows you to place the quiz into a specific assignment group in Canvas.
-Assignment groups are used to organize grades by category (for example, "Quizzes", "Exams", "Homework").
-
-Canvas looks for an assignment group matching the name you specify.
-If one exists, your quiz will be placed there.
-If no matching group is found, the quiz will be placed in Canvas's default location.
-
-## Examples
-
-### Practice Quiz for Self-Assessment
-
-This is perfect for study materials that students can use to practice without grades.
-
-```json
-{
-    "title": "Chapter 2 Study Guide",
-    "canvas": {
-        "practice": true,
-        "allowed_attempts": -1,
-        "show_correct_answers": true
-    }
-}
-```
-
-In this setup, students can attempt the quiz unlimited times and immediately see the correct answers to learn from their mistakes.
-
-### Graded Exam with Answer Security
-
-This configuration is appropriate for high-stakes exams where you want to maintain answer security.
+## Example
 
 ```json
 {
     "title": "Midterm Exam",
     "canvas": {
         "practice": false,
-        "published": false,
-        "allowed_attempts": 1,
-        "show_correct_answers": false,
-        "hide_results": "always"
-    }
-}
-```
-
-The quiz is not automatically published, so you can review it before students see it.
-Students get one attempt, cannot see correct answers, and cannot view their results (you can share results manually).
-
-### Multiple-Attempt Quiz with Best Score
-
-This works well for lower-stakes quizzes where you want to encourage students to study and try again.
-
-```json
-{
-    "title": "Weekly Concept Check",
-    "canvas": {
-        "practice": false,
         "published": true,
-        "allowed_attempts": 3,
+        "allowed_attempts": 2,
         "scoring_policy": "keep_highest",
         "show_correct_answers": true,
-        "assignment_group_name": "Quizzes"
-    }
+        "hide_results": "until_after_last_attempt",
+        "assignment_group_name": "Exams"
+    },
+    "groups": [...]
 }
 ```
 
-Students get three attempts, and their best score is recorded.
-They can see correct answers to help them study between attempts.
-The quiz is published immediately and placed in your "Quizzes" assignment group.
+A graded quiz with two attempts (best score recorded), answers revealed after all attempts used, placed in the "Exams" assignment group.
