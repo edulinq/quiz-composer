@@ -12,8 +12,8 @@ Table of Contents:
  - [assignment_group_name](#assignment_group_name)
  - [Example](#example)
 
-| Option | Default | Type | Description |
-|--------|---------|------|-------------|
+| Key | Default Value | Type | Description |
+|-----|---------------|------|-------------|
 | `practice` | `true` | Boolean | Ungraded (practice) or graded (assignment) |
 | `published` | `false` | Boolean | Whether quiz is visible after upload |
 | `show_correct_answers` | `true` | Boolean | Whether correct answers are shown |
