@@ -20,12 +20,6 @@ def make_with_args(args, **kwargs):
     Use a standard args object from set_cli_args() to make a PDF quiz.
     """
 
-    if (not os.path.exists(args.path)):
-        raise ValueError(f"Provided path '{args.path}' does not exist.")
-
-    if (not os.path.isfile(args.path)):
-        raise ValueError(f"Provided path '{args.path}' is not a file.")
-
     if ((args.variants < 1) or (args.variants >= len(string.ascii_uppercase))):
         raise ValueError("Number of variants must be in [1, %d), found %d." % (len(string.ascii_uppercase), args.variants))
 
@@ -34,6 +28,12 @@ def make_with_args(args, **kwargs):
             **kwargs)
 
 def make_with_path(quiz_path, **kwargs):
+    if (not os.path.exists(quiz_path)):
+        raise ValueError(f"Provided path '{quiz_path}' does not exist.")
+
+    if (not os.path.isfile(quiz_path)):
+        raise ValueError(f"Provided path '{quiz_path}' is not a file.")
+
     quiz = quizcomp.quiz.Quiz.from_path(quiz_path)
     return make(quiz, quiz_path = quiz_path, **kwargs)
 
@@ -41,12 +41,6 @@ def make_from_question_with_args(args, **kwargs):
     """
     Use a standard args object to make a PDF from a single question.
     """
-
-    if (not os.path.exists(args.path)):
-        raise ValueError(f"Provided path '{args.path}' does not exist.")
-
-    if (not os.path.isfile(args.path)):
-        raise ValueError(f"Provided path '{args.path}' is not a file.")
 
     return make_from_question_with_path(args.path,
             out_dir = args.out_dir,
@@ -66,11 +60,14 @@ def make_from_question_with_path(question_path, **kwargs):
     return make_from_question(question, **kwargs)
 
 def make_from_question(question, out_dir = None,
-        answer_key = False, skip_tex = False, skip_pdf = False):
+        answer_key = False, skip_tex = False, skip_pdf = False,
+        **kwargs):
     if (out_dir is None):
         out_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_question_', rm = False)
 
     os.makedirs(out_dir, exist_ok = True)
+
+    logging.info("Writing question PDF to '%s'.", out_dir)
 
     variant = quizcomp.variant.Variant.get_dummy(question)
 
@@ -178,30 +175,33 @@ def make_pdf(variant,
 
     return out_dir
 
+def _set_cli_common_args(parser):
+    parser.add_argument('--outdir', dest = 'out_dir',
+        action = 'store', type = str, default = '.',
+        help = 'The directory to put the output (default: %(default)s).')
+
+    parser.add_argument('--skip-tex', dest = 'skip_tex',
+        action = 'store_true', default = False,
+        help = 'Skip creating TeX files (default: %(default)s).')
+
+    parser.add_argument('--skip-pdf', dest = 'skip_pdf',
+        action = 'store_true', default = False,
+        help = 'Skip compiling PDFs from TeX (default: %(default)s).')
+
 def set_cli_args(parser):
     parser.add_argument('path', metavar = 'PATH',
         type = str,
         help = 'The path to a quiz json file.')
 
+    _set_cli_common_args(parser)
+
     parser.add_argument('--variants', dest = 'variants',
         action = 'store', type = int, default = 1,
         help = 'The number of quiz variants to create (default: %(default)s).')
 
-    parser.add_argument('--outdir', dest = 'out_dir',
-        action = 'store', type = str, default = '.',
-        help = 'The directory to put the quiz creation output (which will be another directory) (default: %(default)s).')
-
     parser.add_argument('--skip-key', dest = 'skip_key',
         action = 'store_true', default = False,
         help = 'Skip creating the answer key (default: %(default)s).')
-
-    parser.add_argument('--skip-tex', dest = 'skip_tex',
-        action = 'store_true', default = False,
-        help = 'Skip creating TeX files (assumes the TeX files already exist) (default: %(default)s).')
-
-    parser.add_argument('--skip-pdf', dest = 'skip_pdf',
-        action = 'store_true', default = False,
-        help = 'Skip compiling PDFs from TeX (assumes the PDFs already exist) (default: %(default)s).')
 
     parser.add_argument('--seed', dest = 'seed',
         action = 'store', type = int, default = None,
@@ -214,21 +214,10 @@ def set_cli_question_args(parser):
         type = str,
         help = 'The path to a question json file.')
 
-    parser.add_argument('--outdir', dest = 'out_dir',
-        action = 'store', type = str, default = '.',
-        help = ('The directory to put the question PDF output.'
-                + ' (default: %(default)s).'))
+    _set_cli_common_args(parser)
 
     parser.add_argument('--key', dest = 'answer_key',
         action = 'store_true', default = False,
         help = 'Create an answer key PDF (default: %(default)s).')
-
-    parser.add_argument('--skip-tex', dest = 'skip_tex',
-        action = 'store_true', default = False,
-        help = 'Skip creating TeX files (default: %(default)s).')
-
-    parser.add_argument('--skip-pdf', dest = 'skip_pdf',
-        action = 'store_true', default = False,
-        help = 'Skip compiling PDFs from TeX (default: %(default)s).')
 
     return parser
