@@ -15,7 +15,7 @@ def _get_parser():
     parser = quizcomp.args.Parser(description =
         "Create a PDF from a single question.")
 
-    quizcomp.pdf.set_cli_question_args(parser)
+    quizcomp.pdf.set_cli_args(parser)
 
     return parser
 

@@ -11,6 +11,9 @@ DUMMY_QUIZ_DATA = {
 
 DUMMY_GROUP_DATA = {
     'name': 'Dummy Question',
+    'hints': {},
+    'hints_first': {},
+    'hints_last': {},
 }
 
 class Variant(quizcomp.quiz.Quiz):

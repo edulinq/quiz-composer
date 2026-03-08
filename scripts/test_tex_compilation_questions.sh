@@ -13,18 +13,18 @@ readonly GOOD_QUIZZES_DIR="${ROOT_DIR}/tests/quizzes/good"
 readonly OUTPUT_DIR="${TMPDIR:-/tmp}/quizcomp-tex-compilation"
 readonly LOG_TAIL_LINES=20
 
-NUM_PASS=0
-NUM_FAIL=0
+num_pass=0
+num_fail=0
 
 function check_requirements() {
     if ! command -v python3 >/dev/null 2>&1 ; then
         echo "ERROR: Could not find python3." >&2
-        return 10
+        exit 10
     fi
 
     if ! command -v pdflatex >/dev/null 2>&1 ; then
         echo "ERROR: Could not find pdflatex." >&2
-        return 11
+        exit 11
     fi
 }
 
@@ -61,40 +61,40 @@ function run_tests() {
         if (( status != 0 )) ; then
             echo "    FAIL: PDF creation failed." >&2
             tail -n "${LOG_TAIL_LINES}" "${log_path}" || true
-            NUM_FAIL=$((NUM_FAIL + 1))
+            num_fail=$((num_fail + 1))
             continue
         fi
 
-        local pdf_count
-        pdf_count="$(find "${case_dir}" -type f -name "*.pdf" | wc -l)"
+        local pdf_count="$(find "${case_dir}" -type f -name "*.pdf" | wc -l)"
         if (( pdf_count == 0 )) ; then
             echo "    FAIL: PDF creation failed." >&2
-            NUM_FAIL=$((NUM_FAIL + 1))
+            num_fail=$((num_fail + 1))
             continue
         fi
 
-        NUM_PASS=$((NUM_PASS + 1))
+        num_pass=$((num_pass + 1))
     done
 }
 
 function main() {
     cd "${ROOT_DIR}"
 
-    check_requirements || return $?
+    check_requirements
 
     mkdir -p "${OUTPUT_DIR}"
+    echo "Running TeX compilation tests."
     echo "Output directory: ${OUTPUT_DIR}"
     echo ''
 
     run_tests "question" "${GOOD_QUESTIONS_DIR}" "question.json" "quizcomp.cli.pdf.create_question"
     run_tests "quiz" "${GOOD_QUIZZES_DIR}" "quiz.json" "quizcomp.cli.pdf.create"
 
-    local total_count=$((NUM_PASS + NUM_FAIL))
+    local total_count=$((num_pass + num_fail))
 
     echo ''
-    echo "TeX compilation test summary: pass=${NUM_PASS}, fail=${NUM_FAIL}, total=${total_count}"
+    echo "TeX compilation test summary: pass=${num_pass}, fail=${num_fail}, total=${total_count}"
 
-    if (( NUM_FAIL > 0 )) ; then
+    if (( num_fail > 0 )) ; then
         return 1
     fi
 }

@@ -30,6 +30,7 @@ Documentation Table of Contents:
      - [Outputting a QTI Quiz](#outputting-a-qti-quiz)
    - [Parsing a Specific Question](#parsing-a-specific-question)
    - [Parsing a Specific File](#parsing-a-specific-file)
+   - [Creating a PDF Quiz](#creating-a-pdf-quiz)
    - [Uploading a Quiz to Canvas](#uploading-a-quiz-to-canvas)
    - [Uploading a Quiz to GradeScope](#uploading-a-quiz-to-gradescope)
  - [Quiz Format](#quiz-format)
@@ -129,13 +130,13 @@ to determine whether each test runs.
 ### Optional TeX Compilation Tests
 
 TeX compilation tests validate end-to-end TeX/PDF generation
-for the question and quiz test cases.
+for question and quiz test cases.
 
 These tests are slower than normal tests
 and require extra dependencies (notably `pdflatex`),
 so they are kept outside the standard Python unittest flow.
 
-To compile all question and quiz test cases and verify that PDF output is produced, run:
+Run these tests with:
 ```
 ./scripts/test_tex_compilation_questions.sh
 ```
@@ -233,16 +234,6 @@ This command will output the fully parsed file in for format controlled by the `
 and will exit with a non-zero status if the parse failed.
 This can be used to parse prompt markdown files.
 
-### Uploading a Quiz to Canvas
-
-To upload a quiz to Canvas, the `quizcomp.cli.canvas.upload` module can be used.
-The basic usage is as follows:
-```
-python3 -m quizcomp.cli.canvas.upload <path to quiz JSON file> --course <canvas course id> --token <canvas access token>
-```
-
-If an existing quiz with the same name is found, then nothing will be uploaded unless the `--force` flag is given..
-
 ### Creating a PDF Quiz
 
 To create a PDF version of a quiz, `quizcomp.cli.pdf.create` module can be used.
@@ -254,6 +245,16 @@ python3 -m quizcomp.cli.pdf.create <path to quiz JSON file>
 Some additional options that may be useful:
  - `--outdir <dir>` -- Choose where the output (TeX, PDF, etc) will be written to.
  - `--variants <X>` -- Create X variants (alternate versions) if the quiz. X may be in [1, 26].
+
+### Uploading a Quiz to Canvas
+
+To upload a quiz to Canvas, the `quizcomp.cli.canvas.upload` module can be used.
+The basic usage is as follows:
+```
+python3 -m quizcomp.cli.canvas.upload <path to quiz JSON file> --course <canvas course id> --token <canvas access token>
+```
+
+If an existing quiz with the same name is found, then nothing will be uploaded unless the `--force` flag is given..
 
 ### Uploading a Quiz to GradeScope
 

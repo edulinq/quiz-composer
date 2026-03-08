@@ -42,11 +42,12 @@ def make_from_question_with_args(args, **kwargs):
     Use a standard args object to make a PDF from a single question.
     """
 
+    if ((args.variants < 1) or (args.variants >= len(string.ascii_uppercase))):
+        raise ValueError("Number of variants must be in [1, %d), found %d." % (len(string.ascii_uppercase), args.variants))
+
     return make_from_question_with_path(args.path,
-            out_dir = args.out_dir,
-            answer_key = args.answer_key,
-            skip_tex = args.skip_tex,
-            skip_pdf = args.skip_pdf,
+            base_out_dir = args.out_dir, seed = args.seed, num_variants = args.variants,
+            skip_key = args.skip_key, skip_tex = args.skip_tex, skip_pdf = args.skip_pdf,
             **kwargs)
 
 def make_from_question_with_path(question_path, **kwargs):
@@ -59,21 +60,9 @@ def make_from_question_with_path(question_path, **kwargs):
     question = quizcomp.question.base.Question.from_path(question_path)
     return make_from_question(question, **kwargs)
 
-def make_from_question(question, out_dir = None,
-        answer_key = False, skip_tex = False, skip_pdf = False,
-        **kwargs):
-    if (out_dir is None):
-        out_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_question_', rm = False)
-
-    os.makedirs(out_dir, exist_ok = True)
-
-    logging.info("Writing question PDF to '%s'.", out_dir)
-
-    variant = quizcomp.variant.Variant.get_dummy(question)
-
-    make_pdf(variant, out_dir = out_dir, is_key = answer_key, skip_tex = skip_tex, skip_pdf = skip_pdf)
-
-    return (variant, out_dir)
+def make_from_question(question, **kwargs):
+    quiz = quizcomp.variant.Variant.get_dummy(question)
+    return make(quiz, **kwargs)
 
 def make(quiz,
         quiz_path = None, base_out_dir = None,
@@ -175,7 +164,11 @@ def make_pdf(variant,
 
     return out_dir
 
-def _set_cli_common_args(parser):
+def set_cli_args(parser):
+    parser.add_argument('path', metavar = 'PATH',
+        type = str,
+        help = 'The path to a JSON file.')
+
     parser.add_argument('--outdir', dest = 'out_dir',
         action = 'store', type = str, default = '.',
         help = 'The directory to put the output (default: %(default)s).')
@@ -188,13 +181,6 @@ def _set_cli_common_args(parser):
         action = 'store_true', default = False,
         help = 'Skip compiling PDFs from TeX (default: %(default)s).')
 
-def set_cli_args(parser):
-    parser.add_argument('path', metavar = 'PATH',
-        type = str,
-        help = 'The path to a quiz json file.')
-
-    _set_cli_common_args(parser)
-
     parser.add_argument('--variants', dest = 'variants',
         action = 'store', type = int, default = 1,
         help = 'The number of quiz variants to create (default: %(default)s).')
@@ -206,18 +192,5 @@ def set_cli_args(parser):
     parser.add_argument('--seed', dest = 'seed',
         action = 'store', type = int, default = None,
         help = 'The random seed to use (defaults to a random seed).')
-
-    return parser
-
-def set_cli_question_args(parser):
-    parser.add_argument('path', metavar = 'PATH',
-        type = str,
-        help = 'The path to a question json file.')
-
-    _set_cli_common_args(parser)
-
-    parser.add_argument('--key', dest = 'answer_key',
-        action = 'store_true', default = False,
-        help = 'Create an answer key PDF (default: %(default)s).')
 
     return parser
