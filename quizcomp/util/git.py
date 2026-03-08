@@ -17,13 +17,12 @@ def get_version(path = '.', throw = False):
 
     try:
         repo = git.Repo(path, search_parent_directories = True)
+        version = repo.head.commit.tree.hexsha[:VERSION_LEN]
     except Exception as ex:
         if (throw):
             raise ValueError(f"Path '{path}' is not a valid Git repo.") from ex
 
         return UNKNOWN_VERSION
-
-    version = repo.head.commit.tree.hexsha[:VERSION_LEN]
 
     if (repo.is_dirty()):
         version += DIRTY_SIFFIX
