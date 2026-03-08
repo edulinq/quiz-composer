@@ -6,6 +6,8 @@ However if you wish to tinker with them,
 this document contains useful details.
 
 Table of Contents:
+ - [HTML](#html)
+   - [CSS Styling](#css-styling)
  - [TeX](#tex)
    - [Hints](#hints)
     - [Multiple Choice (MC)](#multiple-choice-mc)
@@ -17,6 +19,24 @@ Table of Contents:
     - [Numeric](#numeric)
     - [Short Answer (SA)](#short-answer-sa)
     - [Essay](#essay)
+
+## HTML
+
+### CSS Styling
+
+By default, the builtin HTML template embeds a `quiz.css` file as an inline `<style>` block.
+This provides a clean default look for quizzes rendered to HTML.
+
+If you want to generate HTML without any embedded CSS (e.g., to use your own external stylesheet),
+you can use the `--no-css` flag:
+```
+python3 -m quizcomp.cli.parse.quiz <path to quiz JSON file> --format html --no-css > quiz.html
+```
+
+When `--no-css` is used, the `<style>` block is omitted entirely from the output.
+
+If you are using a custom template directory that does not include a `quiz.css` file,
+a warning will be logged and the quiz will be generated without CSS (rather than failing with an error).
 
 ## TeX
 
