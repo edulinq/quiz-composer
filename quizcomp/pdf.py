@@ -7,9 +7,11 @@ import traceback
 
 import quizcomp.converter.tex
 import quizcomp.latex
+import quizcomp.question.base
 import quizcomp.util.dirent
 import quizcomp.util.json
 import quizcomp.quiz
+import quizcomp.variant
 
 OPTIONS_FILENAME = 'options.json'
 
@@ -17,12 +19,6 @@ def make_with_args(args, **kwargs):
     """
     Use a standard args object from set_cli_args() to make a PDF quiz.
     """
-
-    if (not os.path.exists(args.path)):
-        raise ValueError(f"Provided path '{args.path}' does not exist.")
-
-    if (not os.path.isfile(args.path)):
-        raise ValueError(f"Provided path '{args.path}' is not a file.")
 
     if ((args.variants < 1) or (args.variants >= len(string.ascii_uppercase))):
         raise ValueError("Number of variants must be in [1, %d), found %d." % (len(string.ascii_uppercase), args.variants))
@@ -32,8 +28,41 @@ def make_with_args(args, **kwargs):
             **kwargs)
 
 def make_with_path(quiz_path, **kwargs):
+    if (not os.path.exists(quiz_path)):
+        raise ValueError(f"Provided path '{quiz_path}' does not exist.")
+
+    if (not os.path.isfile(quiz_path)):
+        raise ValueError(f"Provided path '{quiz_path}' is not a file.")
+
     quiz = quizcomp.quiz.Quiz.from_path(quiz_path)
     return make(quiz, quiz_path = quiz_path, **kwargs)
+
+def make_from_question_with_args(args, **kwargs):
+    """
+    Use a standard args object to make a PDF from a single question.
+    """
+
+    if ((args.variants < 1) or (args.variants >= len(string.ascii_uppercase))):
+        raise ValueError("Number of variants must be in [1, %d), found %d." % (len(string.ascii_uppercase), args.variants))
+
+    return make_from_question_with_path(args.path,
+            base_out_dir = args.out_dir, seed = args.seed, num_variants = args.variants,
+            skip_key = args.skip_key, skip_tex = args.skip_tex, skip_pdf = args.skip_pdf,
+            **kwargs)
+
+def make_from_question_with_path(question_path, **kwargs):
+    if (not os.path.exists(question_path)):
+        raise ValueError(f"Provided path '{question_path}' does not exist.")
+
+    if (not os.path.isfile(question_path)):
+        raise ValueError(f"Provided path '{question_path}' is not a file.")
+
+    question = quizcomp.question.base.Question.from_path(question_path)
+    return make_from_question(question, **kwargs)
+
+def make_from_question(question, **kwargs):
+    quiz = quizcomp.variant.Variant.get_dummy(question)
+    return make(quiz, **kwargs)
 
 def make(quiz,
         quiz_path = None, base_out_dir = None,
@@ -138,27 +167,27 @@ def make_pdf(variant,
 def set_cli_args(parser):
     parser.add_argument('path', metavar = 'PATH',
         type = str,
-        help = 'The path to a quiz json file.')
+        help = 'The path to a JSON file.')
+
+    parser.add_argument('--outdir', dest = 'out_dir',
+        action = 'store', type = str, default = '.',
+        help = 'The directory to put the output (default: %(default)s).')
+
+    parser.add_argument('--skip-tex', dest = 'skip_tex',
+        action = 'store_true', default = False,
+        help = 'Skip creating TeX files (default: %(default)s).')
+
+    parser.add_argument('--skip-pdf', dest = 'skip_pdf',
+        action = 'store_true', default = False,
+        help = 'Skip compiling PDFs from TeX (default: %(default)s).')
 
     parser.add_argument('--variants', dest = 'variants',
         action = 'store', type = int, default = 1,
         help = 'The number of quiz variants to create (default: %(default)s).')
 
-    parser.add_argument('--outdir', dest = 'out_dir',
-        action = 'store', type = str, default = '.',
-        help = 'The directory to put the quiz creation output (which will be another directory) (default: %(default)s).')
-
     parser.add_argument('--skip-key', dest = 'skip_key',
         action = 'store_true', default = False,
         help = 'Skip creating the answer key (default: %(default)s).')
-
-    parser.add_argument('--skip-tex', dest = 'skip_tex',
-        action = 'store_true', default = False,
-        help = 'Skip creating TeX files (assumes the TeX files already exist) (default: %(default)s).')
-
-    parser.add_argument('--skip-pdf', dest = 'skip_pdf',
-        action = 'store_true', default = False,
-        help = 'Skip compiling PDFs from TeX (assumes the PDFs already exist) (default: %(default)s).')
 
     parser.add_argument('--seed', dest = 'seed',
         action = 'store', type = int, default = None,

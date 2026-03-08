@@ -20,6 +20,8 @@ Documentation Table of Contents:
    - [Math Equations in HTML](#math-equations-in-html)
    - [Canvas Uploading](#canvas-uploading)
    - [GradeScope Uploading](#gradescope-uploading)
+ - [Testing](#testing)
+   - [Optional TeX Compilation Tests](#optional-tex-compilation-tests)
  - [Usage](#usage)
    - [Parsing a Specific Quiz](#parsing-a-specific-quiz)
      - [Outputting a JSON Quiz](#outputting-a-json-quiz)
@@ -114,6 +116,30 @@ To upload quizzes to GradeScope, you will need three things:
    - If you normally log into GradeScope through an organization account (like via a university email), then you will just need to create a GradeScope password.
      This can be done via the [password reset page](https://www.gradescope.com/reset_password), which in this case will allow you to create a new password.
  - A GradeScope Course ID
+
+## Testing
+
+You can run tests with:
+```
+./run_tests.py [test_pattern]
+```
+When `test_pattern` is provided,
+it is passed directly to `re.search()`
+to determine whether each test runs.
+
+### Optional TeX Compilation Tests
+
+TeX compilation tests validate end-to-end TeX/PDF generation
+for question and quiz test cases.
+
+These tests are slower than normal tests
+and require extra dependencies (notably `pdflatex`),
+so they are kept outside the standard Python unittest flow.
+
+Run these tests with:
+```
+./scripts/test_tex_compilation_questions.sh
+```
 
 ## Usage
 
