@@ -1,3 +1,8 @@
+/*
+ * quiz-composer — HTML Quiz Stylesheet
+ * All rules are scoped to the .qg-* class hierarchy.
+ */
+
 :root {
     --qg-color-accent: #4f6ef7;
     --qg-color-accent-dark: #3b56e8;
@@ -158,7 +163,7 @@
     padding: 0;
 }
 
-.qg-quiz-question-body fieldset>div {
+.qg-quiz-question-body fieldset > div {
     display: flex;
     align-items: flex-start;
     gap: 0.6rem;
@@ -168,12 +173,12 @@
     transition: background 0.1s ease;
 }
 
-.qg-quiz-question-body fieldset>div:hover {
+.qg-quiz-question-body fieldset > div:hover {
     background: var(--qg-color-bg-page);
 }
 
-.qg-quiz-question-body fieldset>div input[type="radio"],
-.qg-quiz-question-body fieldset>div input[type="checkbox"] {
+.qg-quiz-question-body fieldset > div input[type="radio"],
+.qg-quiz-question-body fieldset > div input[type="checkbox"] {
     margin-top: 0.25rem;
     flex-shrink: 0;
     accent-color: var(--qg-color-accent);
@@ -181,17 +186,17 @@
     height: 1em;
 }
 
-.qg-quiz-question-body fieldset>div label {
+.qg-quiz-question-body fieldset > div label {
     cursor: pointer;
     line-height: 1.5;
 }
 
-.qg-quiz-question-body fieldset>div.qg-correct {
+.qg-quiz-question-body fieldset > div.qg-correct {
     background: var(--qg-color-correct-bg);
     border: 1px solid var(--qg-color-correct-border);
 }
 
-.qg-quiz-question-body fieldset>div.qg-correct label {
+.qg-quiz-question-body fieldset > div.qg-correct label {
     font-weight: var(--qg-font-weight-semibold);
     color: var(--qg-color-correct-text);
 }
@@ -228,7 +233,7 @@
     box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.15);
 }
 
-.qg-quiz-question-body>label {
+.qg-quiz-question-body > label {
     display: block;
     font-weight: var(--qg-font-weight-semibold);
     margin-top: 0.75rem;

@@ -6,9 +6,11 @@
 
         <title>{{ quiz.title }}</title>
 
+        {% if css_content %}
         <style>
             {{ css_content }}
         </style>
+        {% endif %}
     </head>
     <body>
         <div class='qg-quiz'>
