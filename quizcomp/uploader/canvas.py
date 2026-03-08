@@ -467,11 +467,21 @@ def _upload_file_contents(path, upload_url, upload_params):
         files = files)
     response.raise_for_status()
 
-    location = response.headers.get('Location', None)
-    if (location is None):
-        raise ValueError(f"Could not find location for uploaded file: '{path}'.")
+    file_id = None
 
-    file_id = os.path.basename(urllib.parse.urlparse(location).path)
+    location = response.headers.get('Location', None)
+    if (location is not None):
+        file_id = os.path.basename(urllib.parse.urlparse(location).path)
+    else:
+        # The location was not present in the header, check for a JSON body.
+        try:
+            body = response.json()
+            file_id = str(body['id'])
+        except Exception:
+            pass
+
+    if (file_id is None):
+        raise ValueError(f"Could not find id for uploaded file in response from Canvas: '{path}'.")
 
     return file_id
 
