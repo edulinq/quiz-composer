@@ -1,5 +1,6 @@
 import abc
 import copy
+import enum
 import importlib
 import logging
 import math
@@ -17,6 +18,24 @@ import quizcomp.util.serial
 
 BASE_MODULE_NAME = 'quizcomp.question'
 THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+
+class QuestionType(enum.Enum):
+    """ The types of questions supported by the Quiz Composer. """
+
+    ESSAY = quizcomp.constants.QUESTION_TYPE_ESSAY
+    FIMB = quizcomp.constants.QUESTION_TYPE_FIMB
+    FITB = quizcomp.constants.QUESTION_TYPE_FITB
+    MATCHING = quizcomp.constants.QUESTION_TYPE_MATCHING
+    MA = quizcomp.constants.QUESTION_TYPE_MA
+    MCQ = quizcomp.constants.QUESTION_TYPE_MCQ
+    MDD = quizcomp.constants.QUESTION_TYPE_MDD
+    NUMERICAL = quizcomp.constants.QUESTION_TYPE_NUMERICAL
+    SA = quizcomp.constants.QUESTION_TYPE_SA
+    TEXT_ONLY = quizcomp.constants.QUESTION_TYPE_TEXT_ONLY
+    TF = quizcomp.constants.QUESTION_TYPE_TF
+
+    def __str__(self) -> str:
+        return str(self.value)
 
 class Question(quizcomp.util.serial.JSONSerializer):
     # {question_type: class, ...}
