@@ -15,15 +15,15 @@ Table of Contents:
 
 ## Options
 
-| Key                      | Default Value | Type    | Description                                       |
-|--------------------------|---------------|---------|---------------------------------------------------|
-| `practice`               | true          | boolean | Whether the quiz is a practice (ungraded) quiz.   |
-| `published`              | false         | boolean | Whether the quiz is visible to students.          |
-| `hide_results`           | null          | string  | When students can view their results.             |
-| `show_correct_answers`   | true          | boolean | Whether correct answers are shown.                |
-| `allowed_attempts`       | 1             | integer | How many times students can take the quiz.        |
-| `scoring_policy`         | keep_highest  | string  | Which attempt score is recorded.                  |
-| `assignment_group_name`  | Quizzes       | string  | Canvas assignment group for the quiz.             |
+| Key                      | Type    | Default Value  | Allowed Values                                     | Notes                                           |
+|--------------------------|---------|----------------|----------------------------------------------------|-------------------------------------------------|
+| `practice`               | boolean | `true`         | {`true`, `false`}                                  | Whether the quiz is a practice (ungraded) quiz. |
+| `published`              | boolean | `false`        | {`true`, `false`}                                  | Whether the quiz is visible to students.        |
+| `hide_results`           | string  | `null`         | {`null`, `"always"`, `"until_after_last_attempt"`} | Controls result visibility after submission.    |
+| `show_correct_answers`   | boolean | `true`         | {`true`, `false`}                                  | Whether correct answers are shown.              |
+| `allowed_attempts`       | integer | `1`            | Positive integer or `-1`                           | How many times students can take the quiz.      |
+| `scoring_policy`         | string  | `keep_highest` | {`"keep_highest"`, `"keep_latest"`}                | Which attempt score is recorded.                |
+| `assignment_group_name`  | string  | `Quizzes`      | Any string                                         | Canvas assignment group for the quiz.           |
 
 ### Quiz Type
 
@@ -34,12 +34,13 @@ When false, the quiz is a graded assignment.
 ### Published State
 
 The `published` key controls whether the quiz is visible to students after upload.
-When false, the quiz is created as a draft that only instructors can see.
+When false, the quiz is created as a draft that only staff can see.
 When true, the quiz is immediately available to students.
 
 ### Result Visibility
 
 The `hide_results` key controls when students can view their quiz results.
+This key only accepts the following values:
 
  - `null` (default) -- Results are visible immediately after submission.
  - `"always"` -- Results are never shown to students.
@@ -73,6 +74,9 @@ If the named group does not exist in the course, no assignment group ID is sent 
 
 ## Example
 
+A graded exam with three attempts where the best score is recorded.
+Correct answers are shown only after the student has used all attempts.
+
 ```json
 {
     "title": "Final Exam",
@@ -88,6 +92,3 @@ If the named group does not exist in the course, no assignment group ID is sent 
     "groups": [...]
 }
 ```
-
-A graded exam with three attempts where the best score is recorded.
-Correct answers are shown only after the student has used all attempts.

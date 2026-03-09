@@ -32,6 +32,7 @@ Documentation Table of Contents:
    - [Parsing a Specific File](#parsing-a-specific-file)
    - [Creating a PDF Quiz](#creating-a-pdf-quiz)
    - [Uploading a Quiz to Canvas](#uploading-a-quiz-to-canvas)
+     - [Canvas Quiz Options](/docs/canvas-options.md)
    - [Uploading a Quiz to GradeScope](#uploading-a-quiz-to-gradescope)
  - [Quiz Format](#quiz-format)
    - [Answer Shuffling](#answer-shuffling)
@@ -42,7 +43,6 @@ Documentation Table of Contents:
  - [QuizComp Markdown Syntax](/docs/syntax.md)
  - [Builtin Templates and Hints](/docs/builtin-templates.md)
  - [Styling](/docs/styling.md)
- - [Canvas Quiz Options](/docs/canvas-options.md)
 
 ## Installation / Requirements
 
