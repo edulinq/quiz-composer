@@ -1,7 +1,7 @@
 import quizcomp.constants
 import quizcomp.question.base
 
-class Essay(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_ESSAY):
+class SA(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_SA):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
