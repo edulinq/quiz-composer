@@ -14,7 +14,6 @@ import quizcomp.constants
 import quizcomp.quiz
 import quizcomp.util.hash
 
-# TODO(eriq): This code assumes there will never be more than a page of items returned.
 PAGE_SIZE = 75
 
 CANVAS_QUIZCOMP_BASEDIR = '/quiz-composer'
@@ -172,14 +171,11 @@ def upload_canvas_files(quiz, instance):
     return file_ids
 
 def get_matching_quiz_ids(title, instance):
-    response = requests.request(
-        method = "GET",
-        url = "%s/api/v1/courses/%s/quizzes?per_page=%d" % (instance.base_url, instance.course_id, PAGE_SIZE),
-        headers = instance.base_headers())
-    response.raise_for_status()
+    url = "%s/api/v1/courses/%s/quizzes?per_page=%d" % (instance.base_url, instance.course_id, PAGE_SIZE)
+    all_quizzes = _fetch_paginated_list(url, instance)
 
     ids = []
-    for quiz in response.json():
+    for quiz in all_quizzes:
         if (quiz['title'] == title):
             ids.append(quiz['id'])
 
@@ -196,17 +192,30 @@ def fetch_assignment_group(name, instance):
     if (name is None):
         return None
 
-    response = requests.request(
-        method = "GET",
-        url = "%s/api/v1/courses/%s/assignment_groups?per_page=%d" % (instance.base_url, instance.course_id, PAGE_SIZE),
-        headers = instance.base_headers())
-    response.raise_for_status()
+    url = "%s/api/v1/courses/%s/assignment_groups?per_page=%d" % (instance.base_url, instance.course_id, PAGE_SIZE)
+    all_groups = _fetch_paginated_list(url, instance)
 
-    for assignment in response.json():
+    for assignment in all_groups:
         if (assignment['name'] == name):
             return assignment['id']
 
     return None
+
+def _fetch_paginated_list(url, instance):
+    results = []
+
+    next_url = url
+    while (next_url is not None):
+        response = requests.request(
+            method = "GET",
+            url = next_url,
+            headers = instance.base_headers())
+        response.raise_for_status()
+
+        results += response.json()
+        next_url = response.links.get('next', {}).get('url')
+
+    return results
 
 def create_quiz(quiz, instance):
     file_ids = upload_canvas_files(quiz, instance)
