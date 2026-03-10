@@ -32,6 +32,7 @@ Documentation Table of Contents:
    - [Parsing a Specific File](#parsing-a-specific-file)
    - [Creating a PDF Quiz](#creating-a-pdf-quiz)
    - [Uploading a Quiz to Canvas](#uploading-a-quiz-to-canvas)
+     - [Canvas Quiz Options](/docs/canvas-options.md)
    - [Uploading a Quiz to GradeScope](#uploading-a-quiz-to-gradescope)
  - [Quiz Format](#quiz-format)
    - [Answer Shuffling](#answer-shuffling)
@@ -254,7 +255,9 @@ The basic usage is as follows:
 python3 -m quizcomp.cli.canvas.upload <path to quiz JSON file> --course <canvas course id> --token <canvas access token>
 ```
 
-If an existing quiz with the same name is found, then nothing will be uploaded unless the `--force` flag is given..
+If an existing quiz with the same name is found, then nothing will be uploaded unless the `--force` flag is given.
+
+For details on Canvas-specific quiz options, see the [Canvas Quiz Options](/docs/canvas-options.md) documentation.
 
 ### Uploading a Quiz to GradeScope
 
