@@ -123,7 +123,11 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         return super().from_path(path, data_callback = _check_description_file, **kwargs)
 
     @staticmethod
-    def from_dict(quiz_info, base_dir = None, flatten_groups = False, ids = {}, **kwargs):
+    def from_dict(quiz_info, base_dir = None, flatten_groups = False, **kwargs):
+        ids = {}
+        ids.update(kwargs.pop('ids', {}))
+        ids.update(quiz_info.pop('ids', ids))
+
         groups = []
         group_infos = quiz_info.get('groups', [])
         for i in range(len(group_infos)):

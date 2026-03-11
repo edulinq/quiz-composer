@@ -82,7 +82,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
         return paths
 
     @staticmethod
-    def from_dict(group_info, base_dir, ids = {}, **kwargs):
+    def from_dict(group_info, base_dir, **kwargs):
         group_info = group_info.copy()
 
         paths = []
@@ -99,7 +99,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
 
         group_info['questions'] = questions
 
-        return Group(**group_info, ids = ids)
+        return Group(**group_info)
 
     def choose_questions(self, all_questions = False, rng = None, with_replacement = True):
         if ((self.pick_count == 0) or (len(self.questions) == 0)):
