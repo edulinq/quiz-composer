@@ -1,0 +1,20 @@
+{% extends "partials/question.template" %}
+
+{% block directions %}
+Match each item on the left with a letter from the right.
+{% endblock %}
+
+{% block body %}
+{% for left in question.answers.lefts %}
+{% if answer_key %}
+- {{ left.text }} -> {{ left.solution }}
+{% else %}
+- {{ left.text }} -> _____
+{% endif %}
+{% endfor %}
+
+Options:
+{% for right in question.answers.rights %}
+- {{ right.label }}. {{ right.text }}
+{% endfor %}
+{% endblock %}

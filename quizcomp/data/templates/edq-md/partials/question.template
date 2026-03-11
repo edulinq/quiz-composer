@@ -1,0 +1,14 @@
+{% if question.custom_header is none %}
+**Question {{ question.number }}** ({{ question.points }} Points)
+{% elif question.custom_header != '' %}
+{{ question.custom_header }}
+{% else %}
+{# No Header. #}
+{% endif %}
+
+{{ question.prompt_text }}
+
+{% block directions %}
+{% endblock %}
+{% block body required %}
+{% endblock %}
