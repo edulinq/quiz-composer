@@ -1,6 +1,7 @@
 import abc
 import copy as pycopy
 import datetime
+import enum
 import os
 
 import quizcomp.util.dirent
@@ -141,6 +142,8 @@ def _serialize(item,
 
     if (isinstance(item, PODSerializer) and convert_serializers):
         return item.to_pod(**kwargs)
+    elif (isinstance(item, enum.Enum)):
+        return item.value
     elif (isinstance(item, list) and recursive):
         return [_serialize(value, **kwargs) for value in item]
     elif (isinstance(item, dict) and recursive):
