@@ -31,8 +31,10 @@ Documentation Table of Contents:
    - [Parsing a Specific Question](#parsing-a-specific-question)
    - [Parsing a Specific File](#parsing-a-specific-file)
    - [Creating a PDF Quiz](#creating-a-pdf-quiz)
-   - [Uploading a Quiz to Canvas](#uploading-a-quiz-to-canvas)
-     - [Canvas Quiz Options](/docs/canvas-options.md)
+   - [Canvas](#canvas)
+     - [Uploading a Quiz to Canvas](#uploading-a-quiz-to-canvas)
+        - [Canvas Quiz Options](/docs/canvas-options.md)
+     - [Downloading a Quiz from Canvas](#downloading-a-quiz-from-canvas)
    - [Uploading a Quiz to GradeScope](#uploading-a-quiz-to-gradescope)
  - [Quiz Format](#quiz-format)
    - [Answer Shuffling](#answer-shuffling)
@@ -247,7 +249,9 @@ Some additional options that may be useful:
  - `--outdir <dir>` -- Choose where the output (TeX, PDF, etc) will be written to.
  - `--variants <X>` -- Create X variants (alternate versions) if the quiz. X may be in [1, 26].
 
-### Uploading a Quiz to Canvas
+### Canvas
+
+#### Uploading a Quiz to Canvas
 
 To upload a quiz to Canvas, the `quizcomp.cli.canvas.upload` module can be used.
 The basic usage is as follows:
@@ -258,6 +262,22 @@ python3 -m quizcomp.cli.canvas.upload <path to quiz JSON file> --course <canvas 
 If an existing quiz with the same name is found, then nothing will be uploaded unless the `--force` flag is given.
 
 For details on Canvas-specific quiz options, see the [Canvas Quiz Options](/docs/canvas-options.md) documentation.
+
+#### Downloading a Quiz from Canvas
+
+To download quizzes or questions from Canvas, please use the [LMS Toolkit](https://github.com/edulinq/lms-toolkit).
+
+For example, you can download the quiz 'Regular Expressions' from the course 'Course 101' with
+the [lms.cli.courses.quizzes.write](https://edulinq.github.io/lms-toolkit/docs/latest/lms/cli/courses/quizzes/write.html) command:
+```sh
+python3 -m lms.cli.courses.quizzes.write --course 'Course 101' --out-dir 'out' 'Regular Expressions'
+```
+
+Note that the above command assumes you have already [prepared your credentials](https://github.com/edulinq/lms-toolkit?tab=readme-ov-file#authentication).
+
+Quizzes will be downloaded in the Quiz Composer format.
+Because of how Canvas data you may have to manually tweak some things,
+so be sure to always inspect quizzes downloaded from Canvas.
 
 ### Uploading a Quiz to GradeScope
 
