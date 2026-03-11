@@ -7,6 +7,11 @@ class TextOnly(quizcomp.question.base.Question, question_type = quizcomp.constan
         super().__init__(**kwargs)
 
     def _validate_answers(self):
-        if (self.answers is not None):
-            raise quizcomp.common.QuestionValidationError(self, "'answers' key must be missing or None/null, found: '%s'." % (
-                    str(self.answers)))
+        if (self.answers is None):
+            return
+
+        if (isinstance(self.answers, (tuple, list, dict)) and (len(self.answers) == 0)):
+            self.answers = None
+            return
+
+        raise quizcomp.common.QuestionValidationError(self, f"'answers' key must be missing, None/null, or empty, found: '{self.answers}''.")
