@@ -6,8 +6,15 @@ Write your response below.
 
 {% block body %}
 {% if answer_key %}
-Answer: {{ question.answers[0].clean }}
+```
+{{ question.answers[0].clean }}
+```
 {% else %}
-Answer: _____
+```
+
+
+
+
+```
 {% endif %}
 {% endblock %}

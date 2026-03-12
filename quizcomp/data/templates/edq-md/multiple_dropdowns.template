@@ -1,7 +1,7 @@
 {% extends "partials/question.template" %}
 
 {% block directions %}
-For each part, choose one answer.
+For each part, choose one.
 {% endblock %}
 
 {% block body %}
@@ -9,10 +9,11 @@ For each part, choose one answer.
 {{ part.label }}:
 {% for choice in part.choices %}
 {% if answer_key and choice.correct %}
-- {{ choice.text }} (correct)
+{{ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[loop.index0] }}. {{ choice.text }} (correct)
 {% else %}
-- {{ choice.text }}
+{{ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[loop.index0] }}. {{ choice.text }}
 {% endif %}
 {% endfor %}
+
 {% endfor %}
 {% endblock %}

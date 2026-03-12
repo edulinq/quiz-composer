@@ -6,8 +6,8 @@ Provide a numerical answer below.
 
 {% block body %}
 {% if answer_key %}
-Answer: {{ question.answers.solution }}
+*{{ question.answers.solution }}*
 {% else %}
-Answer: _____
+\_\_\_\_\_
 {% endif %}
 {% endblock %}

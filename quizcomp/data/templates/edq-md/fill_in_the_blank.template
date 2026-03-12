@@ -6,8 +6,8 @@ Fill in the blank below.
 
 {% block body %}
 {% if answer_key %}
-Answer: {{ question.answers[0].clean }}
+*{{ question.answers[0].clean }}*
 {% else %}
-Answer: _____
+\_\_\_\_\_
 {% endif %}
 {% endblock %}
