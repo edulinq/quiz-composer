@@ -5,18 +5,21 @@ Match each item on the left with a letter from the right.
 {% endblock %}
 
 {% block body %}
-| Item | Answer |
-|------|--------|
-{% for left in question.answers.lefts %}
-{% if answer_key %}
-| {{ left.text }} | *{{ left.solution }}* |
+| Left | Right |
+|------|-------|
+{% for right in question.answers.rights %}
+{% if loop.index0 < question.answers.lefts|length %}
+| {{ question.answers.lefts[loop.index0].text }} | {{ right.label }}. {{ right.text }} |
 {% else %}
-| {{ left.text }} | \_\_\_\_\_ |
+| | {{ right.label }}. {{ right.text }} |
 {% endif %}
 {% endfor %}
 
-Options:
-{% for right in question.answers.rights %}
-{{ right.label }}. {{ right.text }}
+{% for left in question.answers.lefts %}
+{% if answer_key %}
+- {{ left.text }}: *{{ left.solution }}*
+{% else %}
+- {{ left.text }}: ＿＿＿＿＿
+{% endif %}
 {% endfor %}
 {% endblock %}

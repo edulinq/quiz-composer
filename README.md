@@ -7,7 +7,7 @@ Quizzes can be taken from the standard definition and converted into:
  - GradeScope Quizzes
    - Both GradeScope-Compatible PDFs and Uploaded to GradeScope
  - HTML Forms
- - Markdown (Read-Only)
+ - Markdown
  - [QTI Zip Files](https://en.wikipedia.org/wiki/QTI)
 
 Sample quizzes that demonstrate all question types are available
@@ -200,7 +200,7 @@ To output a Markdown quiz to a file called `quiz.md`, you can use the following 
 python3 -m quizcomp.cli.parse.quiz <path to quiz JSON file> --format md > quiz.md
 ```
 
-Markdown quizzes are read-only and can be used as study guides or printable reference material.
+Markdown quizzes can be used as study guides or printable quizzes.
 
 #### Outputting a QTI Quiz
 

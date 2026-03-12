@@ -8,6 +8,9 @@ Write your answer below.
 {% if answer_key %}
 *{{ question.answers[0].clean }}*
 {% else %}
-\_\_\_\_\_
+```
+|
+|
+```
 {% endif %}
 {% endblock %}

@@ -11,10 +11,10 @@ Write your response below.
 ```
 {% else %}
 ```
-
-
-
-
+|
+|
+|
+|
 ```
 {% endif %}
 {% endblock %}

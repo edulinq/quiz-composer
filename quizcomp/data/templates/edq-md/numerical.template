@@ -8,6 +8,6 @@ Provide a numerical answer below.
 {% if answer_key %}
 *{{ question.answers.solution }}*
 {% else %}
-\_\_\_\_\_
+＿＿＿＿＿
 {% endif %}
 {% endblock %}

@@ -9,7 +9,7 @@ For each part, fill in the associated blank.
 {% if answer_key %}
 - {{ part.label }}: *{{ part.solutions[0].clean }}*
 {% else %}
-- {{ part.label }}: \_\_\_\_\_
+- {{ part.label }}: ＿＿＿＿＿
 {% endif %}
 {% endfor %}
 {% endblock %}
