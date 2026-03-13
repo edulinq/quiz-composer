@@ -16,8 +16,5 @@ class MarkdownTemplateConverter(quizcomp.converter.template.TemplateConverter):
             **kwargs):
         super().__init__(quizcomp.constants.FORMAT_MD, template_dir, **kwargs)
 
-    def clean_solution_content(self, document):
-        return document.to_text()
-
     def create_answers_tf(self, question_id, question_number, question, variant):
         return self._create_answers_mcq_list(question.answers)

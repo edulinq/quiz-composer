@@ -1,7 +1,7 @@
 {% extends "partials/question.template" %}
 
 {% block directions %}
-Fill in the blank below.
+Fill in the blank below:  
 {% endblock %}
 
 {% block body %}

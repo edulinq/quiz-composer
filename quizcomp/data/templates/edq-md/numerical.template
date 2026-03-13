@@ -1,7 +1,7 @@
 {% extends "partials/question.template" %}
 
 {% block directions %}
-Provide a numerical answer below.
+Provide a numerical answer below:  
 {% endblock %}
 
 {% block body %}
