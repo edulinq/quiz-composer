@@ -6,7 +6,7 @@
 readonly THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly ROOT_DIR="${THIS_DIR}/.."
 
-readonly RUN_TESTS_RELPATH="run_tests.py"
+readonly RUN_TESTS_RELPATH="scripts/run_tests.py"
 
 readonly TEMP_STATS_PATH="/tmp/quizcomp_profile_stats.cprofile"
 
