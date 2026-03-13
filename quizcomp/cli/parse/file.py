@@ -1,10 +1,17 @@
+"""
+Parse a single file and output the results of the parse.
+"""
+
+import argparse
 import sys
 
-import quizcomp.args
+import quizcomp.cli.parser
 import quizcomp.constants
 import quizcomp.parser.public
 
-def run(args):
+def run_cli(args: argparse.Namespace) -> int:
+    """ Run the CLI. """
+
     document = quizcomp.parser.public.parse_file(args.path).document
 
     content = document.to_format(args.format, pretty = True)
@@ -12,9 +19,17 @@ def run(args):
 
     return 0
 
-def _get_parser():
-    parser = quizcomp.args.Parser(description =
-        "Parse a single file and output the results of the parse.")
+def main() -> int:
+    """ Get a parser, parse the args, and call run. """
+
+    return run_cli(_get_parser().parse_args())
+
+def _get_parser() -> argparse.ArgumentParser:
+    """ Get the parser. """
+
+    parser = quizcomp.cli.parser.get_parser(__doc__.strip(),
+        include_katex = True,
+    )
 
     parser.add_argument('path', metavar = 'PATH',
         type = str,
@@ -26,10 +41,6 @@ def _get_parser():
         help = 'Output the parsed document in this format (default: %(default)s).')
 
     return parser
-
-def main():
-    args = _get_parser().parse_args()
-    return run(args)
 
 if (__name__ == '__main__'):
     sys.exit(main())

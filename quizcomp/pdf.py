@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import logging
 import os
@@ -164,7 +165,9 @@ def make_pdf(variant,
 
     return out_dir
 
-def set_cli_args(parser):
+def modify_parser(parser: argparse.ArgumentParser) -> None:
+    """ Add PDF-based arguments to the CLI argument parser. """
+
     parser.add_argument('path', metavar = 'PATH',
         type = str,
         help = 'The path to a JSON file.')

@@ -2,12 +2,15 @@
 Read (an optionally save) a Quiz Composer project.
 """
 
+import argparse
 import sys
 
-import quizcomp.args
+import quizcomp.cli.parser
 import quizcomp.project
 
-def run(args):
+def run_cli(args: argparse.Namespace) -> int:
+    """ Run the CLI. """
+
     project = quizcomp.project.Project.from_path(args.path)
 
     quizzes, questions = project.load_resources()
@@ -29,9 +32,15 @@ def run(args):
 
     return 0
 
-def _get_parser():
-    parser = quizcomp.args.Parser(description =
-        __doc__.strip())
+def main() -> int:
+    """ Get a parser, parse the args, and call run. """
+
+    return run_cli(_get_parser().parse_args())
+
+def _get_parser() -> argparse.ArgumentParser:
+    """ Get the parser. """
+
+    parser = quizcomp.cli.parser.get_parser(__doc__.strip())
 
     parser.add_argument('path', metavar = 'PATH',
         type = str,
@@ -42,10 +51,6 @@ def _get_parser():
         help = 'Save the project to this directory.')
 
     return parser
-
-def main():
-    args = _get_parser().parse_args()
-    return run(args)
 
 if (__name__ == '__main__'):
     sys.exit(main())

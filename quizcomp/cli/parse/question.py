@@ -1,12 +1,19 @@
+"""
+Parse a single quiz question (JSON file) and output the result in the specified format.
+"""
+
+import argparse
 import os
 import sys
 
-import quizcomp.args
+import quizcomp.cli.parser
 import quizcomp.converter.convert
 import quizcomp.constants
 import quizcomp.question.base
 
-def run(args):
+def run_cli(args: argparse.Namespace) -> int:
+    """ Run the CLI. """
+
     if (not os.path.exists(args.path)):
         raise ValueError(f"Provided path '{args.path}' does not exist.")
 
@@ -21,9 +28,17 @@ def run(args):
 
     return 0
 
-def _get_parser():
-    parser = quizcomp.args.Parser(description =
-        "Parse a single quiz question (JSON file) and output the result in the specified format.")
+def main() -> int:
+    """ Get a parser, parse the args, and call run. """
+
+    return run_cli(_get_parser().parse_args())
+
+def _get_parser() -> argparse.ArgumentParser:
+    """ Get the parser. """
+
+    parser = quizcomp.cli.parser.get_parser(__doc__.strip(),
+        include_katex = True,
+    )
 
     parser.add_argument('path', metavar = 'PATH',
         type = str,
@@ -39,10 +54,6 @@ def _get_parser():
         help = 'Generate an answer key instead of a blank quiz (default: %(default)s).')
 
     return parser
-
-def main():
-    args = _get_parser().parse_args()
-    return run(args)
 
 if (__name__ == '__main__'):
     sys.exit(main())

@@ -85,7 +85,7 @@ def _compile_docker(path):
     if (result.returncode != 0):
         raise ValueError("Docker compilation failed with exit code '%s'. Stdout: '%s', Stderr: '%s'" % (result.returncode, result.stdout, result.stderr))
 
-def set_cli_args(parser):
+def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, typing.Any]) -> None:
     parser.add_argument('--pdflatex-bin-path', dest = 'pdflatex_bin_path',
         action = 'store', type = str, default = None,
         help = ('The path to the pdflatex binary to use.'
@@ -99,7 +99,7 @@ def set_cli_args(parser):
 
     return parser
 
-def init_from_args(args):
+def init_from_args(parser: argparse.ArgumentParser, args: argparse.Namespace, extra_state: typing.Dict[str, typing.Any]) -> None:
     if (args.pdflatex_use_docker):
         set_pdflatex_use_docker(args.pdflatex_use_docker)
 

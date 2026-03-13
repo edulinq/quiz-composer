@@ -2,17 +2,20 @@
 Create and upload a GradeScope PDF quiz.
 """
 
+import argparse
 import logging
 import os
 import sys
 
-import quizcomp.args
+import quizcomp.cli.parser
 import quizcomp.pdf
 import quizcomp.uploader.gradescope
 import quizcomp.util.dirent
 import quizcomp.util.json
 
-def run(args):
+def run_cli(args: argparse.Namespace) -> int:
+    """ Run the CLI. """
+
     quiz, variants, options = quizcomp.pdf.make_with_args(args, write_options = False)
     out_dir = options['out_dir']
 
@@ -49,12 +52,20 @@ def run(args):
 
     return 0
 
-def _get_parser():
-    parser = quizcomp.args.Parser(
-            prog = 'quizcomp.cli.gradescope.upload',
-            description = "Create and upload a GradeScope PDF quiz.")
+def main() -> int:
+    """ Get a parser, parse the args, and call run. """
 
-    quizcomp.pdf.set_cli_args(parser)
+    return run_cli(_get_parser().parse_args())
+
+def _get_parser() -> argparse.ArgumentParser:
+    """ Get the parser. """
+
+    parser = quizcomp.cli.parser.get_parser(__doc__.strip(),
+        include_net = True,
+        include_latex = True,
+    )
+
+    quizcomp.pdf.modify_parser(parser)
 
     parser.add_argument('--rubric', dest = 'rubric',
         action = 'store_true', default = False,
@@ -81,10 +92,6 @@ def _get_parser():
         help = 'Save any http requests to a debugging directory (default: %(default)s).')
 
     return parser
-
-def main():
-    args = _get_parser().parse_args()
-    return run(args)
 
 if (__name__ == '__main__'):
     sys.exit(main())

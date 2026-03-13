@@ -1,12 +1,21 @@
+"""
+Parse a quiz for the purposes of testing.
+The quiz will be parsed one and content will be generated for (but not output)
+for each of the specified format (or none if none are specified).
+"""
+
+import argparse
 import os
 import random
 import sys
 
-import quizcomp.args
+import quizcomp.cli.parser
 import quizcomp.converter.convert
 import quizcomp.quiz
 
-def run(args):
+def run_cli(args: argparse.Namespace) -> int:
+    """ Run the CLI. """
+
     if (not os.path.exists(args.path)):
         raise ValueError(f"Provided path '{args.path}' does not exist.")
 
@@ -33,10 +42,17 @@ def run(args):
 
     return 0
 
-def _get_parser():
-    parser = quizcomp.args.Parser(description = ("Parse a quiz for the purposes of testing."
-            + " The quiz will be parsed one and content will be generated for (but not output)"
-            + " for each of the specified format (or none if none are specified)."))
+def main() -> int:
+    """ Get a parser, parse the args, and call run. """
+
+    return run_cli(_get_parser().parse_args())
+
+def _get_parser() -> argparse.ArgumentParser:
+    """ Get the parser. """
+
+    parser = quizcomp.cli.parser.get_parser(__doc__.strip(),
+        include_katex = True,
+    )
 
     parser.add_argument('path', metavar = 'PATH',
         type = str,
@@ -59,10 +75,6 @@ def _get_parser():
         help = 'The random seed to use (defaults to a random seed).')
 
     return parser
-
-def main():
-    args = _get_parser().parse_args()
-    return run(args)
 
 if (__name__ == '__main__'):
     sys.exit(main())

@@ -1,13 +1,20 @@
+"""
+Parse a quiz and upload the quiz to Canvas.
+"""
+
+import argparse
 import os
 import sys
 
-import quizcomp.args
+import quizcomp.cli.parser
 import quizcomp.quiz
 import quizcomp.uploader.canvas
 
-DEFAULT_BASE_URL = 'https://canvas.ucsc.edu'
+DEFAULT_BASE_URL: str = 'https://canvas.ucsc.edu'
 
-def run(args):
+def run_cli(args: argparse.Namespace) -> int:
+    """ Run the CLI. """
+
     if (not os.path.exists(args.path)):
         raise ValueError(f"Provided path '{args.path}' does not exist.")
 
@@ -22,9 +29,19 @@ def run(args):
 
     return 0
 
-def _get_parser():
-    parser = quizcomp.args.Parser(description =
-        "Parse a quiz and upload the quiz to Canvas.")
+def main() -> int:
+    """ Get a parser, parse the args, and call run. """
+
+    return run_cli(_get_parser().parse_args())
+
+def _get_parser() -> argparse.ArgumentParser:
+    """ Get the parser. """
+
+    parser = quizcomp.cli.parser.get_parser(__doc__.strip(),
+        include_net = True,
+        include_katex = True,
+        include_latex = True,
+    )
 
     parser.add_argument('path', metavar = 'PATH',
         type = str,
@@ -47,10 +64,6 @@ def _get_parser():
         help = 'Override (delete) any exiting quiz with the same name.')
 
     return parser
-
-def main():
-    args = _get_parser().parse_args()
-    return run(args)
 
 if (__name__ == '__main__'):
     sys.exit(main())
