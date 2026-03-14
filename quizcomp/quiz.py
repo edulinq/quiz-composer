@@ -3,13 +3,14 @@ import logging
 import os
 import random
 
+import edq.util.git
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.group
 import quizcomp.parser.public
 import quizcomp.uploader.canvas
 import quizcomp.util.dirent
-import quizcomp.util.git
 import quizcomp.util.serial
 
 class Quiz(quizcomp.util.serial.JSONSerializer):
@@ -72,8 +73,8 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         self.description = quizcomp.parser.public.parse_text(self.description, base_dir = self.base_dir)
 
         if (self.version is None):
-            self.version = quizcomp.util.git.get_version(self.base_dir, throw = False)
-            if (self.version == quizcomp.util.git.UNKNOWN_VERSION):
+            self.version = edq.util.git.get_version(self.base_dir, throw = False)
+            if (self.version == edq.util.git.UNKNOWN_VERSION):
                 logging.warning("Could not get a version for the quiz (is it in a git repo?).")
 
         self.canvas = quizcomp.uploader.canvas.validate_options(self.canvas)

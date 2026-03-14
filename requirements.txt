@@ -1,6 +1,6 @@
-GitPython>=3.1
 Jinja2>=3.1.0
 beautifulsoup4>=4.10
+edq-utils>=0.4.4
 lxml>=5.3.0
 json5>=0.9.14
 markdown-it-py>=3.0.0
