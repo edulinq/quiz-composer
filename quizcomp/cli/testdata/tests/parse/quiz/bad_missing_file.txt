@@ -1,0 +1,9 @@
+{
+    "cli": "quizcomp.cli.parse.quiz",
+    "arguments": [
+        "ZZZ.json"
+    ],
+    "error": true
+}
+---
+builtins.ValueError: Provided path 'ZZZ.json' does not exist.

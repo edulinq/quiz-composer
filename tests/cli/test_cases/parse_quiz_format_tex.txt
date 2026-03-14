@@ -1,9 +1,0 @@
-{
-    "cli": "quizcomp.cli.parse.quiz",
-    "arguments": [
-        "__DATA_DIR__(simple-quiz/quiz.json)",
-        "--format", "tex"
-    ],
-    "output-check": "has_content_100"
-}
----

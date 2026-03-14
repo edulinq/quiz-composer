@@ -1,9 +1,0 @@
-{
-    "cli": "quizcomp.cli.parse.question",
-    "arguments": [
-        "ZZZ.json"
-    ],
-    "error": true
-}
----
-Provided path 'ZZZ.json' does not exist.

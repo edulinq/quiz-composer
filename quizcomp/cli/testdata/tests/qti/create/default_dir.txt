@@ -1,0 +1,9 @@
+{
+    "cli": "quizcomp.cli.qti.create",
+    "arguments": [
+        "__DATA_DIR__(simple-quiz/quiz.json)",
+        "--out", "__TEMP_DIR__(quiz/)"
+    ]
+}
+---
+<LOG_PREFIX> -- Created QTI quiz at '__TEMP_DIR__(quiz/)Simple Quiz.qti.zip'.

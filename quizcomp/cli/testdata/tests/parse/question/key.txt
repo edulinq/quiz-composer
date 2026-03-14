@@ -1,0 +1,9 @@
+{
+    "cli": "quizcomp.cli.parse.question",
+    "arguments": [
+        "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
+        "--key"
+    ],
+    "stdout_assertion_func": "edq.testing.asserts.has_content_100"
+}
+---

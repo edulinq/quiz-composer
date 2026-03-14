@@ -1,0 +1,9 @@
+{
+    "cli": "quizcomp.cli.parse.file",
+    "arguments": [
+        "ZZZ.md"
+    ],
+    "error": true
+}
+---
+builtins.ValueError: Path to parse ('ZZZ.md') is not a file.

@@ -1,0 +1,36 @@
+{
+    "cli": "quizcomp.cli.parse.file",
+    "arguments": ["__DATA_DIR__(simple.md)"]
+}
+---
+{
+    "ast": {
+        "children": [
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "text": "A simple file.",
+                                        "type": "text"
+                                    }
+                                ],
+                                "type": "inline"
+                            }
+                        ],
+                        "type": "paragraph"
+                    }
+                ],
+                "qg_root": true,
+                "type": "container_block"
+            }
+        ],
+        "type": "root"
+    },
+    "context": {
+        "base_dir": "__DATA_DIR__()"
+    },
+    "type": "document"
+}

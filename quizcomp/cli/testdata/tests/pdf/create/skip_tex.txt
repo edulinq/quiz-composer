@@ -1,0 +1,14 @@
+{
+    "cli": "quizcomp.cli.pdf.create",
+    "arguments": [
+        "__DATA_DIR__(simple-quiz/quiz.json)",
+        "--skip-pdf",
+        "--outdir", "__TEMP_DIR__()",
+        "--skip-tex",
+        "--seed", "4",
+    ]
+}
+---
+<LOG_PREFIX> -- Writing TeX/PDF quiz ('Simple Quiz') to '__TEMP_DIR__()/Simple Quiz'.
+<LOG_PREFIX> -- Using seed 4.
+<LOG_PREFIX> -- Completed variant: 'Simple Quiz'.

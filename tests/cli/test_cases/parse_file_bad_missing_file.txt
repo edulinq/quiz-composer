@@ -1,9 +1,0 @@
-{
-    "cli": "quizcomp.cli.parse.file",
-    "arguments": [
-        "ZZZ.md"
-    ],
-    "error": true
-}
----
-Path to parse ('ZZZ.md') is not a file.
