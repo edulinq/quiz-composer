@@ -339,6 +339,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             answer = answers[i]
             choice = self._create_answers_text_value(answer)
             choice['correct'] = answer.is_correct()
+            choice['marker'] = string.ascii_uppercase[i]
 
             choices.append(choice)
 

@@ -1,0 +1,16 @@
+{% extends "partials/question.template" %}
+
+{% block directions %}
+Provide a numerical answer below:  
+{% endblock %}
+
+{% block body %}
+
+{% if answer_key %}
+```
+{{ question.answers.solution }}
+```
+{% else %}
+＿＿＿＿＿
+{% endif %}
+{% endblock %}

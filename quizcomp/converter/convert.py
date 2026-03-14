@@ -1,6 +1,7 @@
 import quizcomp.constants
 import quizcomp.converter.html
 import quizcomp.converter.json
+import quizcomp.converter.markdown
 import quizcomp.converter.tex
 import quizcomp.converter.qti
 import quizcomp.variant
@@ -9,6 +10,7 @@ SUPPORTED_FORMATS = [
     quizcomp.constants.FORMAT_CANVAS,
     quizcomp.constants.FORMAT_HTML,
     quizcomp.constants.FORMAT_JSON,
+    quizcomp.constants.FORMAT_MD,
     quizcomp.constants.FORMAT_TEX,
     quizcomp.constants.FORMAT_QTI,
 ]
@@ -25,6 +27,8 @@ def get_converter_class(format = quizcomp.constants.FORMAT_JSON):
         return quizcomp.converter.html.HTMLTemplateConverter
     elif (format == quizcomp.constants.FORMAT_CANVAS):
         return quizcomp.converter.html.CanvasTemplateConverter
+    elif (format == quizcomp.constants.FORMAT_MD):
+        return quizcomp.converter.markdown.MarkdownTemplateConverter
     elif (format == quizcomp.constants.FORMAT_TEX):
         return quizcomp.converter.tex.TexTemplateConverter
     elif (format == quizcomp.constants.FORMAT_QTI):
