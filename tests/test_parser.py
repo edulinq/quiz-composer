@@ -1,10 +1,11 @@
 import os
 import re
 
+import edq.util.json
+
 import quizcomp.constants
 import quizcomp.parser.common
 import quizcomp.parser.public
-import quizcomp.util.json
 import tests.base
 
 SKIP_COMMONMARK_TESTS = {
@@ -22,7 +23,7 @@ class TestParser(tests.base.BaseTest):
 def _add_good_parse_questions():
     for path in tests.base.discover_good_document_files():
         with open(path, 'r') as file:
-            documents = quizcomp.util.json.load(file)
+            documents = edq.util.json.load(file)
 
         base_dir = os.path.dirname(path)
 
@@ -42,7 +43,7 @@ def _get_good_parse_test(text, doc_format, base_expected, base_dir, options, con
         result = document.to_format(doc_format, base_dir = base_dir, include_metadata = False, **context)
 
         if (doc_format == quizcomp.constants.FORMAT_JSON):
-            result = quizcomp.util.json.loads(result)
+            result = edq.util.json.loads(result)
             expected = {
                 'type': 'document',
                 'ast': {
@@ -97,7 +98,7 @@ def _get_good_parse_test(text, doc_format, base_expected, base_dir, options, con
 def _add_bad_parse_questions():
     for path in tests.base.discover_bad_document_files():
         with open(path, 'r') as file:
-            documents = quizcomp.util.json.load(file)
+            documents = edq.util.json.load(file)
 
         base_dir = os.path.dirname(path)
 
@@ -129,7 +130,7 @@ def _add_commonmark_tests():
     """
 
     with open(tests.base.COMMONMARK_TEST_DATA_PATH, 'r') as file:
-        test_data = quizcomp.util.json.load(file)
+        test_data = edq.util.json.load(file)
 
     for test_case in test_data:
         id = test_case['example']

@@ -1,9 +1,10 @@
 import os
 
+import edq.util.json
+
 import quizcomp.common
 import quizcomp.question.base
 import quizcomp.uploader.canvas
-import quizcomp.util.json
 import tests.base
 
 CANVAS_FILENAME = 'canvas.json'
@@ -85,7 +86,7 @@ def _get_question_canvas_test_method(path, canvas_path):
         canvas_info = quizcomp.uploader.canvas._create_question_json(CANVAS_TEST_GROUP_ID, question, CANVAS_TEST_INDEX)
 
         with open(canvas_path, 'r') as file:
-            expected_canvas_info = quizcomp.util.json.load(file)
+            expected_canvas_info = edq.util.json.load(file)
 
         self.assertJSONDictEqual(expected_canvas_info, canvas_info)
 

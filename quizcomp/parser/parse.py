@@ -1,11 +1,11 @@
 import re
 
+import edq.util.json
 import markdown_it
 import mdit_py_plugins.container
 import mdit_py_plugins.dollarmath
 
 import quizcomp.parser.document
-import quizcomp.util.json
 
 _parser = None
 _options = None
@@ -142,7 +142,7 @@ def _process_style_content(raw_content):
         content = "{%s}" % (content)
 
     try:
-        style = quizcomp.util.json.loads(content)
+        style = edq.util.json.loads(content)
         if (not isinstance(style, dict)):
             raise ValueError("Style is not a JSON object, found: '%s'." % (type(style)))
     except Exception as ex:

@@ -7,11 +7,11 @@ import string
 import traceback
 
 import edq.util.dirent
+import edq.util.json
 
 import quizcomp.converter.tex
 import quizcomp.latex
 import quizcomp.question.base
-import quizcomp.util.json
 import quizcomp.quiz
 import quizcomp.variant
 
@@ -139,7 +139,7 @@ def make(quiz,
     if (write_options):
         path = os.path.join(out_dir, OPTIONS_FILENAME)
         with open(path, 'w') as file:
-            quizcomp.util.json.dump(options, file, indent = 4)
+            edq.util.json.dump(options, file, indent = 4)
 
     return (quiz, variants, options)
 

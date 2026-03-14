@@ -21,10 +21,10 @@ import time
 import urllib.parse
 
 import edq.util.dirent
+import edq.util.json
 import requests
 
 import quizcomp.util.hash
-import quizcomp.util.json
 
 DEFAULT_WAIT_TIME_SECS = 0.25
 
@@ -167,7 +167,7 @@ class SessionRecorder(object):
             result['request']['files'] = list(sorted(files.keys()))
 
         out_path = self._make_out_path(self._count, method, url, result)
-        quizcomp.util.json.dump_path(result, out_path, indent = 4)
+        edq.util.json.dump_path(result, out_path, indent = 4)
 
         self._count += 1
 
@@ -211,7 +211,7 @@ class TestSession(object):
 
         for dirent in sorted(os.listdir(base_dir)):
             path = os.path.join(base_dir, dirent)
-            data = quizcomp.util.json.load_path(path)
+            data = edq.util.json.load_path(path)
 
             key = TestSession._make_key(data['request']['method'], data['request']['url'])
 
@@ -251,7 +251,7 @@ def _clean_filename(url):
     return parts.hostname + parts.path.replace('/', '_')
 
 def _hash_dict(data):
-    json = quizcomp.util.json.dumps(data)
+    json = edq.util.json.dumps(data)
     return quizcomp.util.hash.sha256(json)
 
 def _response_to_dict(response):

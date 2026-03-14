@@ -9,11 +9,11 @@ import time
 
 import bs4
 import edq.util.dirent
+import edq.util.json
 
 import quizcomp.constants
 import quizcomp.variant
 import quizcomp.util.httpsession
-import quizcomp.util.json
 
 URL_BASE = 'https://www.gradescope.com'
 URL_HOMEPAGE = URL_BASE
@@ -378,7 +378,7 @@ class GradeScopeUploader(object):
         if (len(nodes) != 1):
             raise ValueError("Did not find exactly one assignments table, found %d." % (len(nodes)))
 
-        assignment_data = quizcomp.util.json.loads(nodes[0].get('data-react-props'))
+        assignment_data = edq.util.json.loads(nodes[0].get('data-react-props'))
 
         for row in assignment_data['table_data']:
             if (row['type'] != 'assignment'):
@@ -451,7 +451,7 @@ class GradeScopeUploader(object):
 
         patch_outline_url = URL_PATCH_OUTLINE % (self.course_id, assignment_id)
         response = session.patch(patch_outline_url,
-            data = quizcomp.util.json.dumps(outline, separators = (',', ':')),
+            data = edq.util.json.dumps(outline, separators = (',', ':')),
             headers = headers,
         )
         response.raise_for_status()
@@ -509,7 +509,7 @@ class GradeScopeUploader(object):
             raise ValueError("Did not find exactly one rubric data tag, found %d." % (len(data_tag)))
         data_tag = data_tag[0]
 
-        data = quizcomp.util.json.loads(data_tag.get('data-react-props'))
+        data = edq.util.json.loads(data_tag.get('data-react-props'))
 
         ids = {}
         for question in data['questions']:

@@ -3,11 +3,12 @@ import os
 import re
 import types
 
+import edq.util.json
+
 import quizcomp.constants
 import quizcomp.parser.ast
 import quizcomp.parser.render
 import quizcomp.parser.common
-import quizcomp.util.json
 
 class ParsedDocument(object):
     def __init__(self, tokens, base_dir = '.'):
@@ -98,7 +99,7 @@ class ParsedDocument(object):
         return (len(self._tokens) == 0)
 
     def to_json(self, indent = 4, sort_keys = True, **kwargs):
-        return quizcomp.util.json.dumps(self.to_pod(**kwargs), indent = indent, sort_keys = sort_keys)
+        return edq.util.json.dumps(self.to_pod(**kwargs), indent = indent, sort_keys = sort_keys)
 
     def to_format(self, format, **kwargs):
         formatter = getattr(self, 'to_' + format)

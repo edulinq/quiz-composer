@@ -1,10 +1,11 @@
 import os
 import re
 
+import edq.util.json
+
 import quizcomp.constants
 import quizcomp.converter.convert
 import quizcomp.quiz
-import quizcomp.util.json
 import tests.base
 
 EXPECTED_FILENAME = 'expected.json'
@@ -49,7 +50,7 @@ def _get_good_convert_test(quiz_path):
         if (not os.path.exists(expected_path)):
             self.fail(f"Expected quiz output does not exist: '{expected_path}'.")
 
-        expected = quizcomp.util.json.load_path(expected_path)
+        expected = edq.util.json.load_path(expected_path)
 
         quizcomp.converter.convert
 
@@ -57,7 +58,7 @@ def _get_good_convert_test(quiz_path):
         variant = quiz.create_variant()
         raw_result = quizcomp.converter.convert.convert_variant(variant, format = quizcomp.constants.FORMAT_JSON_TEMPLATE)
 
-        result = quizcomp.util.json.loads(raw_result)
+        result = edq.util.json.loads(raw_result)
 
         # Clean up the result.
         self._assert_exists_replace(result['quiz'], 'seed', 0)

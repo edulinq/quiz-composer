@@ -8,11 +8,11 @@ import os
 import sys
 
 import edq.util.dirent
+import edq.util.json
 
 import quizcomp.cli.parser
 import quizcomp.pdf
 import quizcomp.uploader.gradescope
-import quizcomp.util.json
 
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
@@ -49,7 +49,7 @@ def run_cli(args: argparse.Namespace) -> int:
 
     path = os.path.join(out_dir, quizcomp.pdf.OPTIONS_FILENAME)
     with open(path, 'w') as file:
-        quizcomp.util.json.dump(options, file, indent = 4)
+        edq.util.json.dump(options, file, indent = 4)
 
     return 0
 

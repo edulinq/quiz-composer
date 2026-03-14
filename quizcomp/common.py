@@ -1,4 +1,4 @@
-import quizcomp.util.json
+import edq.util.json
 
 class QuizValidationError(ValueError):
     def __init__(self, message, ids = {}, **kwargs):
@@ -13,7 +13,7 @@ class QuizValidationError(ValueError):
             parsed_ids[str(key)] = value
 
         if (len(parsed_ids) > 0):
-            message = "%s %s" % (message, quizcomp.util.json.dumps(parsed_ids))
+            message = "%s %s" % (message, edq.util.json.dumps(parsed_ids))
 
         super().__init__(message)
 

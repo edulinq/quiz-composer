@@ -5,8 +5,7 @@ import enum
 import os
 
 import edq.util.dirent
-
-import quizcomp.util.json
+import edq.util.json
 
 class PODSerializer(abc.ABC):
     @abc.abstractmethod
@@ -84,7 +83,7 @@ class JSONSerializer(PODSerializer):
 
     def to_json(self, indent = 4, sort_keys = True, **kwargs):
         data = self.to_dict(**kwargs)
-        return quizcomp.util.json.dumps(data, indent = indent, sort_keys = sort_keys)
+        return edq.util.json.dumps(data, indent = indent, sort_keys = sort_keys)
 
     def to_path(self, path, **kwargs):
         edq.util.dirent.write_file(path, self.to_json(**kwargs))
@@ -104,7 +103,7 @@ class JSONSerializer(PODSerializer):
             raise quizcomp.common.QuizValidationError('Path does not exist or is not a file.', ids = ids)
 
         try:
-            data = quizcomp.util.json.load_path(path)
+            data = edq.util.json.load_path(path)
         except Exception as ex:
             raise quizcomp.common.QuizValidationError('Failed to read JSON file (invalid JSON?).', ids = ids) from ex
 
