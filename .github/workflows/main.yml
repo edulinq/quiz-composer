@@ -47,11 +47,23 @@ jobs:
 
       - name: Check Python Version Compatibility
         shell: bash
-        run: vermin --no-tips --no-parse-comments --exclude ast.unparse --target=3.9- --violations quizcomp
+        run: scripts/check_python_version.sh
+
+      - name: Check Types
+        shell: bash
+        run: ./scripts/check_types.sh
+
+      - name: Check Lint
+        shell: bash
+        run: ./scripts/check_lint.sh
 
       - name: Run Tests
         shell: bash
-        run: ./run_tests.py
+        run: ./scripts/run_tests.sh
+
+      - name: Generate Documentation
+        shell: bash
+        run: ./scripts/gen_docs.sh
 
   advanced-test:
     needs: test
@@ -97,10 +109,6 @@ jobs:
         run: |
             sudo apt-get update -y
             sudo apt-get install -y texlive-latex-extra
-
-      - name: Run Tests
-        shell: bash
-        run: ./run_tests.py
 
       - name: Run TeX Compilation Tests
         shell: bash
