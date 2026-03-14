@@ -3,6 +3,7 @@ import logging
 import os
 import random
 
+import edq.util.dirent
 import edq.util.git
 
 import quizcomp.common
@@ -10,7 +11,6 @@ import quizcomp.constants
 import quizcomp.group
 import quizcomp.parser.public
 import quizcomp.uploader.canvas
-import quizcomp.util.dirent
 import quizcomp.util.serial
 
 class Quiz(quizcomp.util.serial.JSONSerializer):
@@ -116,7 +116,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             description_filename = os.path.splitext(os.path.basename(path))[0]
             description_path = os.path.join(os.path.dirname(path), description_filename + '.md')
             if (os.path.exists(description_path)):
-                data['description'] = quizcomp.util.dirent.read_file(description_path)
+                data['description'] = edq.util.dirent.read_file(description_path)
                 logging.debug("Loading quiz description from '%s'.", description_path)
 
             return data

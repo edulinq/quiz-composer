@@ -9,11 +9,12 @@ import pkgutil
 import random
 import re
 
+import edq.util.dirent
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.parser.public
 import quizcomp.question.common
-import quizcomp.util.dirent
 import quizcomp.util.serial
 
 BASE_MODULE_NAME = 'quizcomp.question'
@@ -153,7 +154,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
             logging.debug("Loading question prompt from '%s'.", path)
             self._prompt_path = path
-            return quizcomp.util.dirent.read_file(path)
+            return edq.util.dirent.read_file(path)
 
         raise quizcomp.common.QuestionValidationError(self, "Could not find any non-empty prompt.")
 

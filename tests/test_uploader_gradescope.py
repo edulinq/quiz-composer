@@ -30,7 +30,7 @@ class TestUploaderGradescope(tests.base.BaseTest):
 
             quizcomp.util.httpsession.load_test_session(session_id, session_base_dir)
 
-        temp_dir = quizcomp.util.dirent.get_temp_path('quizcomp-test-')
+        temp_dir = edq.util.dirent.get_temp_dir('quizcomp-test-')
 
         raw_args = [
             '--log-level', 'ERROR',

@@ -20,9 +20,9 @@ import re
 import time
 import urllib.parse
 
+import edq.util.dirent
 import requests
 
-import quizcomp.util.dirent
 import quizcomp.util.hash
 import quizcomp.util.json
 
@@ -124,7 +124,7 @@ class SessionRecorder(object):
 
         self._count = 0
 
-        self._out_dir = quizcomp.util.dirent.get_temp_path('quizcomp-http-recorded-session-', rm = False)
+        self._out_dir = edq.util.dirent.get_temp_path('quizcomp-http-recorded-session-', rm = False)
         logging.info("Saving session HTTP data to '%s'.", self._out_dir)
 
     def get(self, url, *args, **kwargs):

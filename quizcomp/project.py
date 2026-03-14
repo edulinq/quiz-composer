@@ -1,11 +1,12 @@
 import glob
 import os
 
+import edq.util.dirent
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.question.base
 import quizcomp.quiz
-import quizcomp.util.dirent
 import quizcomp.util.serial
 
 class Project(quizcomp.util.serial.JSONSerializer):
@@ -80,7 +81,7 @@ class Project(quizcomp.util.serial.JSONSerializer):
             self.to_path(os.path.join(self._base_dir, quizcomp.constants.PROJECT_FILENAME))
             return
 
-        quizcomp.util.dirent.copy_dirent(self._base_dir, out_dir,
+        edq.util.dirent.copy(self._base_dir, out_dir,
                 symlinks = True, dirs_exist_ok = True)
         self.to_path(os.path.join(out_dir, quizcomp.constants.PROJECT_FILENAME))
 

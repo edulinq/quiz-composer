@@ -4,7 +4,8 @@ import datetime
 import enum
 import os
 
-import quizcomp.util.dirent
+import edq.util.dirent
+
 import quizcomp.util.json
 
 class PODSerializer(abc.ABC):
@@ -86,7 +87,7 @@ class JSONSerializer(PODSerializer):
         return quizcomp.util.json.dumps(data, indent = indent, sort_keys = sort_keys)
 
     def to_path(self, path, **kwargs):
-        quizcomp.util.dirent.write_file(path, self.to_json(**kwargs))
+        edq.util.dirent.write_file(path, self.to_json(**kwargs))
 
     @classmethod
     def from_dict(cls, data, copy = True, extra_fields = {}, **kwargs):

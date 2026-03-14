@@ -1,10 +1,10 @@
 import os
 import sys
 
+import edq.util.dirent
+
 import quizcomp.latex
 import quizcomp.pdf
-import quizcomp.util.dirent
-
 import tests.base
 
 MIN_PDF_SIZE_BYTES = 1000
@@ -65,7 +65,7 @@ def _run_pdf_test(self, path, use_docker = False):
     if (not quizcomp.latex.is_available()):
         self.skipTest("`pdflatex` is not available.")
 
-    temp_dir = quizcomp.util.dirent.get_temp_path(prefix = "quizcomp_pdf_test_")
+    temp_dir = edq.util.dirent.get_temp_dir(prefix = "quizcomp_pdf_test_")
     quiz, variants, _ = quizcomp.pdf.make_with_path(path, base_out_dir = temp_dir)
 
     for variant in variants:

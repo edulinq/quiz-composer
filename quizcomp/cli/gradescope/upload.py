@@ -7,10 +7,11 @@ import logging
 import os
 import sys
 
+import edq.util.dirent
+
 import quizcomp.cli.parser
 import quizcomp.pdf
 import quizcomp.uploader.gradescope
-import quizcomp.util.dirent
 import quizcomp.util.json
 
 def run_cli(args: argparse.Namespace) -> int:

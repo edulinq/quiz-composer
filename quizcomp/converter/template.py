@@ -4,11 +4,12 @@ import random
 import re
 import string
 
+import edq.util.dirent
+
 import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.parser.public
 import quizcomp.quiz
-import quizcomp.util.dirent
 import quizcomp.util.http
 import quizcomp.variant
 
@@ -453,12 +454,12 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
     def _store_images(self, link, base_dir):
         if (self.image_base_dir is None):
-            self.image_base_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp-images-', rm = self.cleanup_images)
+            self.image_base_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp-images-', rm = self.cleanup_images)
 
         os.makedirs(self.image_base_dir, exist_ok = True)
 
         if (re.match(r'^http(s)?://', link)):
-            temp_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp-image-dl-')
+            temp_dir = edq.util.dirent.get_temp_dir(prefix = 'quizcomp-image-dl-')
             in_path = quizcomp.util.http.get_file(link, temp_dir)
             image_id = link
         else:
@@ -469,7 +470,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         filename = "%03d%s" % (len(self.image_paths), ext)
         out_path = os.path.join(self.image_base_dir, filename)
 
-        quizcomp.util.dirent.copy_dirent(in_path, out_path)
+        edq.util.dirent.copy(in_path, out_path)
 
         if (self.image_relative_root is not None):
             out_path = os.path.join(self.image_relative_root, filename)

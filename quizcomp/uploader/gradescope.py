@@ -8,10 +8,10 @@ import re
 import time
 
 import bs4
+import edq.util.dirent
 
 import quizcomp.constants
 import quizcomp.variant
-import quizcomp.util.dirent
 import quizcomp.util.httpsession
 import quizcomp.util.json
 
@@ -89,7 +89,7 @@ class GradeScopeUploader(object):
             raise ValueError("GradeScope quiz uploader requires a quizcomp.variant.Variant type, found %s." % (type(variant)))
 
         if (base_dir is None):
-            base_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp-gradescope-')
+            base_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp-gradescope-')
 
         boxes, special_boxes = self.get_bounding_boxes(variant, base_dir)
         return self.upload(variant, base_dir, boxes, special_boxes)

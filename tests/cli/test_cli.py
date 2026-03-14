@@ -7,9 +7,10 @@ import os
 import re
 import sys
 
-import tests.base
-import quizcomp.util.dirent
+import edq.util.dirent
+
 import quizcomp.util.json
+import tests.base
 
 THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 TEST_CASES_DIR = os.path.join(THIS_DIR, "test_cases")
@@ -31,7 +32,7 @@ class CLITest(tests.base.BaseTest):
 
     @classmethod
     def setUpClass(cls):
-        CLITest._base_temp_dir = quizcomp.util.dirent.get_temp_path('quizcomp_CLITest_')
+        CLITest._base_temp_dir = edq.util.dirent.get_temp_dir('quizcomp_CLITest_')
 
     def _get_test_info(self, test_name, path):
         options, expected_output = _read_test_file(path)

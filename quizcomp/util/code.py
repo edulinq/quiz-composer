@@ -9,7 +9,8 @@ import sys
 import types
 import uuid
 
-import quizcomp.util.dirent
+import edq.util.dirent
+
 import quizcomp.util.json
 
 ALLOWED_EXTENSIONS = ['.py', '.ipynb']
@@ -68,7 +69,7 @@ def import_path(path, module_name = None):
     # If it's a notebook, extract the code first and put it in a temp file.
     if (path.endswith('.ipynb')):
         source_code = extract_code(path)
-        path = quizcomp.util.dirent.get_temp_path(suffix = '.py')
+        path = edq.util.dirent.get_temp_path(suffix = '.py')
         with open(path, 'w') as file:
             file.write(source_code)
 

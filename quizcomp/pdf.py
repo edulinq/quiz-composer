@@ -6,10 +6,11 @@ import random
 import string
 import traceback
 
+import edq.util.dirent
+
 import quizcomp.converter.tex
 import quizcomp.latex
 import quizcomp.question.base
-import quizcomp.util.dirent
 import quizcomp.util.json
 import quizcomp.quiz
 import quizcomp.variant
@@ -71,7 +72,7 @@ def make(quiz,
         skip_key = False, skip_tex = False, skip_pdf = False,
         **kwargs):
     if (base_out_dir is None):
-        base_out_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
+        base_out_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
 
     out_dir = os.path.join(base_out_dir, quiz.title)
     os.makedirs(out_dir, exist_ok = True)
@@ -107,7 +108,7 @@ def make(quiz,
         variants.append(variant)
 
         out_path = os.path.join(out_dir, "%s.json" % (variant.title))
-        quizcomp.util.dirent.write_file(out_path, variant.to_json())
+        edq.util.dirent.write_file(out_path, variant.to_json())
 
         make_pdf(variant, out_dir = out_dir, is_key = False, skip_tex = skip_tex, skip_pdf = skip_pdf)
 
@@ -146,7 +147,7 @@ def make_pdf(variant,
         out_dir = None, is_key = False,
         skip_tex = False, skip_pdf = False):
     if (out_dir is None):
-        out_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
+        out_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
 
     image_relative_root = os.path.join('images', variant.title)
     image_dir = os.path.join(out_dir, image_relative_root)
@@ -158,7 +159,7 @@ def make_pdf(variant,
                 image_base_dir = image_dir, image_relative_root = image_relative_root, cleanup_images = True)
         content = converter.convert_variant(variant)
 
-        quizcomp.util.dirent.write_file(out_path, content)
+        edq.util.dirent.write_file(out_path, content)
 
     if (not skip_pdf):
         quizcomp.latex.compile(out_path)

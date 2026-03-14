@@ -5,9 +5,10 @@ Code outside this package should generally only use these resources.
 
 import os
 
+import edq.util.dirent
+
 import quizcomp.parser.parse
 import quizcomp.util.serial
-import quizcomp.util.dirent
 
 class ParsedText(quizcomp.util.serial.PODSerializer):
     """
@@ -29,7 +30,7 @@ def parse_file(path):
     if (not os.path.isfile(path)):
         raise ValueError(f"Path to parse ('{path}') is not a file.")
 
-    text = quizcomp.util.dirent.read_file(path)
+    text = edq.util.dirent.read_file(path)
     base_dir = os.path.dirname(path)
 
     return parse_text(text, base_dir = base_dir)

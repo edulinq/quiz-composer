@@ -10,10 +10,10 @@ import shutil
 import warnings
 
 import bs4
+import edq.util.dirent
 
 import quizcomp.constants
 import quizcomp.converter.template
-import quizcomp.util.dirent
 
 THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
@@ -84,7 +84,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         if (out_path is None):
             out_path = f'{quiz.title}.qti.zip'
 
-        temp_base_dir = quizcomp.util.dirent.get_temp_path(prefix = 'quizcomp-qti-')
+        temp_base_dir = edq.util.dirent.get_temp_dir(prefix = 'quizcomp-qti-')
 
         temp_out_path = os.path.join(temp_base_dir, 'out.zip')
         temp_dir = os.path.join(temp_base_dir, quiz.title)
@@ -98,7 +98,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         path = os.path.join(quiz_dir, OUT_FILENAME_QUIZ)
         text = super(QTITemplateConverter, self).convert_quiz(quiz, **kwargs)
-        quizcomp.util.dirent.write_file(path, self._format_xml(text))
+        edq.util.dirent.write_file(path, self._format_xml(text))
 
         self._convert_assessment_meta(quiz, quiz_dir)
         self._convert_manifest(quiz, temp_dir)
@@ -110,7 +110,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
     def _create_zip(self, quiz, temp_out_path, out_path, temp_dir):
         shutil.make_archive(os.path.splitext(temp_out_path)[0], 'zip', os.path.dirname(temp_dir), os.path.basename(temp_dir))
-        quizcomp.util.dirent.copy_dirent(temp_out_path, out_path)
+        edq.util.dirent.copy(temp_out_path, out_path)
 
     def _format_xml(self, text):
         warnings.filterwarnings('ignore', category = bs4.builder.XMLParsedAsHTMLWarning)
@@ -138,7 +138,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
             text = self._format_xml(text)
 
         path = os.path.join(out_dir, OUT_FILENAME_ASSESSMENT_META)
-        quizcomp.util.dirent.write_file(path, text)
+        edq.util.dirent.write_file(path, text)
 
     def _convert_manifest(self, quiz, out_dir):
         template = self.env.get_template(TEMPLATE_FILENAME_MANIFEST)
@@ -161,7 +161,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         text = self._format_xml(text)
 
         path = os.path.join(out_dir, OUT_FILENAME_MANIFEST)
-        quizcomp.util.dirent.write_file(path, text)
+        edq.util.dirent.write_file(path, text)
 
     def _store_images(self, link, base_dir):
         """
