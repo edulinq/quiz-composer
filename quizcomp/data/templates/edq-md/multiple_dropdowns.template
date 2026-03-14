@@ -1,0 +1,19 @@
+{% extends "partials/question.template" %}
+
+{% block directions %}
+For each part, choose one:  
+{% endblock %}
+
+{% block body %}
+{% for part in question.answers %}
+{{ part.label }}:  
+{% for choice in part.choices %}
+{% if answer_key and choice.correct %}
+{{ choice.marker }}. {{ choice.text }} *(correct)*  
+{% else %}
+{{ choice.marker }}. {{ choice.text }}  
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "partials/question.template" %}
+
+{% block directions %}
+Write your answer below.
+{% endblock %}
+
+{% block body %}
+{% if answer_key %}
+```
+{{ question.answers[0].clean }}
+```
+{% else %}
+```
+|
+|
+|
+```
+{% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+# {{ quiz.title }}
+
+{{ quiz.course_title }} -- {{ quiz.term_title }}
+
+{{ quiz.date }}
+
+Total Points: {{ quiz.total_points }}
+
+{{ quiz.description_text }}
+
+---
+
+{{ inner_text }}
