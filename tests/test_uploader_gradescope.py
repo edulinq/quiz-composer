@@ -1,5 +1,7 @@
 import os
 
+import edq.util.dirent
+
 import quizcomp.cli.gradescope.upload
 import quizcomp.latex
 import quizcomp.uploader.gradescope

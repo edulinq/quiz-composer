@@ -5,7 +5,7 @@ import shutil
 import subprocess
 import typing
 
-import quizcomp.util.encoding
+import edq.util.dirent
 
 _nodejs_bin_dir = None
 
@@ -42,7 +42,7 @@ def to_html(text, cwd = '.'):
         bin_path = os.path.join(_nodejs_bin_dir, bin_path)
 
     result = subprocess.run([bin_path, "katex", "--format", "mathml"], cwd = cwd,
-        input = text, encoding = quizcomp.util.encoding.DEFAULT_ENCODING,
+        input = text, encoding = edq.util.dirent.DEFAULT_ENCODING,
         capture_output = True)
 
     if (result.returncode != 0):
