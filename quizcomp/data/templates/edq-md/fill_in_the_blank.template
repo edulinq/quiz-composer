@@ -5,6 +5,7 @@ Fill in the blank below:
 {% endblock %}
 
 {% block body %}
+
 {% if answer_key %}
 *{{ question.answers[0].clean }}*
 {% else %}

@@ -9,7 +9,7 @@ For each part, choose one:
 {{ part.label }}:  
 {% for choice in part.choices %}
 {% if answer_key and choice.correct %}
-{{ choice.marker }}. {{ choice.text }} (correct)  
+{{ choice.marker }}. {{ choice.text }} *(correct)*  
 {% else %}
 {{ choice.marker }}. {{ choice.text }}  
 {% endif %}

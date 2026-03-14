@@ -7,7 +7,7 @@ Choose one:
 {% block body %}
 {% for answer in question.answers %}
 {% if answer_key and answer.correct %}
-{{ answer.marker }}. {{ answer.text }} (correct)  
+{{ answer.marker }}. {{ answer.text }} *(correct)*  
 {% else %}
 {{ answer.marker }}. {{ answer.text }}  
 {% endif %}
