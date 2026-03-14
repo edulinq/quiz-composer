@@ -37,7 +37,7 @@ function main() {
     fi
 
     # Update the docs with CLI information.
-    python3 -m edq.cli.doc.update-pdoc-cli "${PACKAGE_DIR}" "${BASE_PACKAGE}" "${outputDir}"
+    NO_COLOR=1 python3 -m edq.cli.doc.update-pdoc-cli "${PACKAGE_DIR}" "${BASE_PACKAGE}" "${outputDir}"
     if [[ $? -ne 0 ]] ; then
         echo "Failed to update docs with CLI information."
         return 3
