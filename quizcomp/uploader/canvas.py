@@ -228,9 +228,9 @@ def create_quiz(quiz, instance):
         'quiz[assignment_group_id]': assignment_group_id,
         'quiz[time_limit]': quiz.time_limit_mins,
         'quiz[allowed_attempts]': quiz.canvas['allowed_attempts'],
-        'quiz[show_correct_answers]': quiz.canvas['show_correct_answers'],
+        'quiz[show_correct_answers]': str(quiz.canvas['show_correct_answers']).lower(),
         'quiz[hide_results]': quiz.canvas['hide_results'],
-        'quiz[shuffle_answers]': quiz.shuffle_answers,
+        'quiz[shuffle_answers]': str(quiz.shuffle_answers).lower(),
         'quiz[scoring_policy]': quiz.canvas['scoring_policy'],
     }
 
