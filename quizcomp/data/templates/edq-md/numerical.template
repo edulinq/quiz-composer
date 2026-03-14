@@ -7,7 +7,9 @@ Provide a numerical answer below:
 {% block body %}
 
 {% if answer_key %}
-`{{ question.answers.solution }}`
+```
+{{ question.answers.solution }}
+```
 {% else %}
 ＿＿＿＿＿
 {% endif %}
