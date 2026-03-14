@@ -11,7 +11,7 @@ class MDD(quizcomp.question.base.Question, question_type = quizcomp.constants.QU
         self._check_type(self.answers, dict, "'answers' key")
 
         if (len(self.answers) == 0):
-            raise quizcomp.common.QuestionValidationError(self, "No answers provided, at least one answer required.")
+            raise quizcomp.common.QuestionValidationError("No answers provided, at least one answer required.", ids = self.ids)
 
         for (key, answers) in list(self.answers.items()):
             # If this was already in the full MDD format, then we need to pull out the values.

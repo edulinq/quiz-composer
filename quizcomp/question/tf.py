@@ -16,18 +16,18 @@ class TF(quizcomp.question.base.Question, question_type = quizcomp.constants.QUE
         elif (isinstance(self.answers, list)):
             pass
         else:
-            raise quizcomp.common.QuestionValidationError(self, f"'answers' value must be a boolean, found '{self.answers}' ({type(self.answers)}).")
+            raise quizcomp.common.QuestionValidationError(f"'answers' value must be a boolean, found '{self.answers}' ({type(self.answers)}).", ids = self.ids)
 
         self._validate_self_answer_list()
 
         if (len(self.answers) != 2):
-            raise quizcomp.common.QuestionValidationError(self, "Expecting exactly two answers, found %d." % (len(self.answers)))
+            raise quizcomp.common.QuestionValidationError("Expecting exactly two answers, found %d." % (len(self.answers)), ids = self.ids)
 
         labels = list(sorted([answer.text for answer in self.answers]))
 
         expected = ['False', 'True']
         if (labels != expected):
-            raise quizcomp.common.QuestionValidationError(self, "T/F labels (text) not as expected. Expected: '%s', Actual: '%s'." % (expected, labels))
+            raise quizcomp.common.QuestionValidationError("T/F labels (text) not as expected. Expected: '%s', Actual: '%s'." % (expected, labels), ids = self.ids)
 
     def _shuffle(self, rng):
         self._shuffle_answers_list(rng)

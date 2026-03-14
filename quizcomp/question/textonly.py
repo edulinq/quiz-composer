@@ -14,4 +14,4 @@ class TextOnly(quizcomp.question.base.Question, question_type = quizcomp.constan
             self.answers = None
             return
 
-        raise quizcomp.common.QuestionValidationError(self, f"'answers' key must be missing, None/null, or empty, found: '{self.answers}''.")
+        raise quizcomp.common.QuestionValidationError(f"'answers' key must be missing, None/null, or empty, found: '{self.answers}''.", ids = self.ids)

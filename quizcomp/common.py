@@ -1,8 +1,16 @@
+import typing
+
 import edq.util.json
 
 class QuizValidationError(ValueError):
-    def __init__(self, message, ids = {}, **kwargs):
-        ids = ids.copy()
+    """ An error that comes up when validating a quiz element. """
+
+    def __init__(self, message: str, ids: typing.Union[typing.Dict[str, str], None] = None, **kwargs: typing.Any) -> None:
+        if (ids is None):
+            ids = {}
+        else:
+            ids = ids.copy()
+
         ids.update(kwargs)
 
         parsed_ids = {}
@@ -18,5 +26,7 @@ class QuizValidationError(ValueError):
         super().__init__(message)
 
 class QuestionValidationError(QuizValidationError):
-    def __init__(self, question, message, **kwargs):
-        super().__init__(message, ids = question.ids, **kwargs)
+    """ An error that comes up when validating a question. """
+
+    def __init__(self, message: str, **kwargs: typing.Any) -> None:
+        super().__init__(message, **kwargs)

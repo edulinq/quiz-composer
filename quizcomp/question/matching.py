@@ -14,7 +14,7 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.constan
 
     def _validate_matches(self):
         if ('matches' not in self.answers):
-            raise quizcomp.common.QuestionValidationError(self, "Matching 'answers' value is missing the 'matches' field.")
+            raise quizcomp.common.QuestionValidationError("Matching 'answers' value is missing the 'matches' field.", ids = self.ids)
 
         matches = self.answers['matches']
         new_matches = []
@@ -24,7 +24,7 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.constan
 
             if (isinstance(match, list)):
                 if (len(match) != 2):
-                    raise quizcomp.common.QuestionValidationError(self, f"Expected exactly two items for a match list, found {len(match)} items at element {i}.")
+                    raise quizcomp.common.QuestionValidationError(f"Expected exactly two items for a match list, found {len(match)} items at element {i}.", ids = self.ids)
 
                 match = {
                     'left': match[0],
@@ -34,7 +34,7 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.constan
             keys = ['left', 'right']
             for key in keys:
                 if (key not in match):
-                    raise quizcomp.common.QuestionValidationError(self, "Missing key '{key}' for for match item {i}.")
+                    raise quizcomp.common.QuestionValidationError("Missing key '{key}' for for match item {i}.", ids = self.ids)
 
             new_matches.append({
                 'left': self._validate_text_item(match['left'], "Left value for match item %d" % (i)),

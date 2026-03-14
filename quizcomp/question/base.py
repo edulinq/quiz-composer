@@ -156,7 +156,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
             self._prompt_path = path
             return edq.util.dirent.read_file(path)
 
-        raise quizcomp.common.QuestionValidationError(self, "Could not find any non-empty prompt.")
+        raise quizcomp.common.QuestionValidationError("Could not find any non-empty prompt.", ids = self.ids)
 
     def inherit_from_group(self, group):
         """
@@ -283,12 +283,12 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         bad_keys = list(sorted(set(actual_keys) - set(allowed_keys)))
         if (len(bad_keys) > 0):
-            raise quizcomp.common.QuestionValidationError(self, "Unknown keys in feedback (%s). Allowed keys: '%s'." % (
-                    str(bad_keys), str(allowed_keys)))
+            raise quizcomp.common.QuestionValidationError(
+                    f"Unknown keys in feedback ({bad_keys}). Allowed keys: {allowed_keys}.", ids = self.ids)
 
         new_feedback = {}
         for (key, value) in self.feedback.items():
-            item = self._validate_feedback_item(value, "'%s' feedback value" % (key))
+            item = self._validate_feedback_item(value, f"'{key}' feedback value")
             if (item is not None):
                 new_feedback[key] = item
 
@@ -315,28 +315,28 @@ class Question(quizcomp.util.serial.JSONSerializer):
         self._check_type(answers, list, "'answers'")
 
         if (len(answers) == 0):
-            raise quizcomp.common.QuestionValidationError(self, f"No answers provided, at least one answer required.")
+            raise quizcomp.common.QuestionValidationError("No answers provided, at least one answer required.", ids = self.ids)
 
         num_correct = 0
         for answer in answers:
             if ('correct' not in answer):
-                raise quizcomp.common.QuestionValidationError(self, f"Answer has no 'correct' field.")
+                raise quizcomp.common.QuestionValidationError("Answer has no 'correct' field.", ids = self.ids)
 
             if ('text' not in answer):
-                raise quizcomp.common.QuestionValidationError(self, f"Answer has no 'text' field.")
+                raise quizcomp.common.QuestionValidationError("Answer has no 'text' field.", ids = self.ids)
 
             if (answer['correct']):
                 num_correct += 1
 
         if (num_correct < min_correct):
-            raise quizcomp.common.QuestionValidationError(self, f"Did not find enough correct answers. Expected at least {min_correct}, found {num_correct}.")
+            raise quizcomp.common.QuestionValidationError(f"Did not find enough correct answers. Expected at least {min_correct}, found {num_correct}.", ids = self.ids)
 
         if (num_correct > max_correct):
-            raise quizcomp.common.QuestionValidationError(self, f"Found too many correct answers. Expected at most {max_correct}, found {num_correct}.")
+            raise quizcomp.common.QuestionValidationError(f"Found too many correct answers. Expected at most {max_correct}, found {num_correct}.", ids = self.ids)
 
         new_answers = []
         for i in range(len(answers)):
-            parsed_text = self._validate_text_item(answers[i], "'answers' values (element %d)" % (i))
+            parsed_text = self._validate_text_item(answers[i], f"'answers' values (element {i})")
             new_answer = quizcomp.question.common.ParsedTextChoice(parsed_text, answers[i]['correct'])
             new_answers.append(new_answer)
 
@@ -351,15 +351,15 @@ class Question(quizcomp.util.serial.JSONSerializer):
             self.answers = [self.answers]
 
         if (not isinstance(self.answers, list)):
-            raise quizcomp.common.QuestionValidationError(self, "'answers' value must be %s, found: '%s'." % (
-                    possible_answers, str(self.answers)))
+            raise quizcomp.common.QuestionValidationError(
+                    f"'answers' value must be {possible_answers}, found: {self.answers}.", ids = self.ids)
 
         if (len(self.answers) == 0):
             self.answers = ['']
 
         new_answers = []
         for i in range(len(self.answers)):
-            new_answers.append(self._validate_text_item(self.answers[i], "'answers' values (element %d)" % (i)))
+            new_answers.append(self._validate_text_item(self.answers[i], "'answers' values (element {i})"))
 
         self.answers = new_answers
 
@@ -393,10 +393,10 @@ class Question(quizcomp.util.serial.JSONSerializer):
         self._check_type(item, dict, label)
 
         if ('text' not in item):
-            raise quizcomp.common.QuestionValidationError(self, "%s is missing a 'text' key." % (label))
+            raise quizcomp.common.QuestionValidationError(f"{label} is missing a 'text' key.", ids = self.ids)
 
         text = item['text']
-        self._check_type(item['text'], str, "%s 'text' key" % (label))
+        self._check_type(item['text'], str, f"{label} 'text' key")
 
         if (clean_whitespace):
             text = re.sub(r'\s+', ' ', text)
@@ -405,7 +405,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
             text = text.strip()
 
         if ((not allow_empty) and (text == '')):
-            raise quizcomp.common.QuestionValidationError(self, "%s text is empty." % (label))
+            raise quizcomp.common.QuestionValidationError(f"{label} text is empty.", ids = self.ids)
 
         feedback = None
         if (check_feedback):
@@ -417,7 +417,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
         self._check_type(self.answers, dict, "'answers' key")
 
         if (len(self.answers) == 0):
-            raise quizcomp.common.QuestionValidationError(self, "Expected 'answers' dict to be non-empty.")
+            raise quizcomp.common.QuestionValidationError("Expected 'answers' dict to be non-empty.", ids = self.ids)
 
         for (key, values) in self.answers.items():
             # If this was already in the full FIMB format, then we need to pull out the values.
@@ -432,11 +432,11 @@ class Question(quizcomp.util.serial.JSONSerializer):
             self._check_type(key, str, "key in 'answers' dict")
 
             if (len(values) == 0):
-                raise quizcomp.common.QuestionValidationError(self, "Expected possible values to be non-empty.")
+                raise quizcomp.common.QuestionValidationError("Expected possible values to be non-empty.", ids = self.ids)
 
             new_values = []
             for i in range(len(values)):
-                label = "answers key '%s' index %d" % (key, i)
+                label = f"answers key '{key}' index {i}"
                 new_values.append(self._validate_text_item(values[i], label))
 
             new_answers[key] = {
@@ -450,7 +450,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
     def _check_type(self, value, expected_type, label):
         if (not isinstance(value, expected_type)):
-            raise quizcomp.common.QuestionValidationError(self, f"{label} must be a {expected_type}, found '{value}' ({type(value)}).")
+            raise quizcomp.common.QuestionValidationError(f"{label} must be a {expected_type}, found '{value}' ({type(value)}).", ids = self.ids)
 
     def _check_placeholders(self, answer_placeholders):
         """
@@ -464,7 +464,9 @@ class Question(quizcomp.util.serial.JSONSerializer):
         if ((len(answer_placeholders) == 1) and (list(answer_placeholders)[0] == '')):
             if (len(document_placeholders) != 0):
                 output_answer_placeholders = list(sorted(answer_placeholders))
-                raise quizcomp.common.QuestionValidationError(self, "Found placeholders (%s) in the question prompt when none were expected." % (output_answer_placeholders))
+                raise quizcomp.common.QuestionValidationError(
+                        f"Found placeholders ({output_answer_placeholders}) in the question prompt when none were expected.",
+                        ids = self.ids)
 
             return
 
@@ -472,4 +474,6 @@ class Question(quizcomp.util.serial.JSONSerializer):
             output_answer_placeholders = list(sorted(answer_placeholders))
             output_document_placeholders = list(sorted(document_placeholders))
 
-            raise quizcomp.common.QuestionValidationError(self, "Mismatch between the placeholders found in the question prompt (%s) and answers config (%s)." % (output_document_placeholders, output_answer_placeholders))
+            raise quizcomp.common.QuestionValidationError(
+                    f"Mismatch between the placeholders found in the question prompt ({output_document_placeholders}) and answers config ({output_answer_placeholders}).",
+                    ids = self.ids)
