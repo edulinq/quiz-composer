@@ -1,13 +1,11 @@
-"""
-The `quizcomp.cli.qti` package contains tools for interacting with QTI files.
-"""
-
 import sys
 
-import quizcomp.util.cli
+import edq.clilib.list
 
-def main():
-    return quizcomp.util.cli.main()
+def main() -> int:
+    """ List this CLI dir. """
+
+    return edq.clilib.list.main()
 
 if (__name__ == '__main__'):
     sys.exit(main())
