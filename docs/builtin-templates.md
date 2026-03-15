@@ -20,12 +20,10 @@ Table of Contents:
     - [Short Answer (SA)](#short-answer-sa)
     - [Essay](#essay)
 
-## HTML
-
 ### CSS Styling
 
-By default, the builtin HTML template embeds a `quiz.css` file as an inline `<style>` block.
-This provides a clean default look for quizzes rendered to HTML.
+By default, the builtin HTML template embeds the contents of the `quiz.css` file into the HTML's style block.
+This provides the default styling for quizzes rendered to HTML.
 
 If you want to generate HTML without any embedded CSS (e.g., to use your own external stylesheet),
 you can use the `--no-css` flag:
@@ -33,7 +31,7 @@ you can use the `--no-css` flag:
 python3 -m quizcomp.cli.parse.quiz <path to quiz JSON file> --format html --no-css > quiz.html
 ```
 
-When `--no-css` is used, the `<style>` block is omitted entirely from the output.
+When `--no-css` is used, the style block is omitted entirely from the output.
 
 If you are using a custom template directory that does not include a `quiz.css` file,
 a warning will be logged and the quiz will be generated without CSS (rather than failing with an error).
