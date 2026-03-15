@@ -16,7 +16,7 @@
         "text": "Some <!-- Some comment. --> Text",
         "formats": {
             "md": "Some  Text",
-            "html": "<p style=\"margin-top: 0\">Some  Text</p>",
+            "html": "<p>Some  Text</p>",
             "tex": "Some  Text",
             "text": "Some Text",
             "json": {

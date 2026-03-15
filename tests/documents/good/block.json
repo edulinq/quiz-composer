@@ -16,7 +16,7 @@
         "text": ":::block\nText\n:::",
         "formats": {
             "md": "Text",
-            "html": "<div class='qg-block'><p style=\"margin-top: 0\">Text</p></div>",
+            "html": "<div class='qg-block'><p>Text</p></div>",
             "tex": "Text",
             "text": "Text",
             "json": {
@@ -46,7 +46,7 @@
         "text": "Root Block\n:::block\nExplicit Block\n:::",
         "formats": {
             "md": "Root Block\n\nExplicit Block",
-            "html": "<p style=\"margin-top: 0\">Root Block</p><div class='qg-block'><p style=\"margin-top: 0\">Explicit Block</p></div>",
+            "html": "<p>Root Block</p><div class='qg-block'><p>Explicit Block</p></div>",
             "tex": "Root Block\n\nExplicit Block",
             "text": "Root Block Explicit Block",
             "json": [
@@ -104,7 +104,7 @@
         "text": "root\n::::block\ninner 1\n:::block\ninner 2\n:::\n::::",
         "formats": {
             "md": "root\n\ninner 1\n\ninner 2",
-            "html": "<p style=\"margin-top: 0\">root</p><div class='qg-block'><p style=\"margin-top: 0\">inner 1</p><div class='qg-block'><p style=\"margin-top: 0\">inner 2</p></div></div>",
+            "html": "<p>root</p><div class='qg-block'><p>inner 1</p><div class='qg-block'><p>inner 2</p></div></div>",
             "tex": "root\n\ninner 1\n\ninner 2",
             "text": "root inner 1 inner 2",
             "json": [
