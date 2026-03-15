@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 import random
+import typing
 
 import edq.util.dirent
 import edq.util.git
@@ -15,46 +16,84 @@ import quizcomp.util.serial
 
 class Quiz(quizcomp.util.serial.JSONSerializer):
     """
-    A quiz object represents multiple possible assesments (called "variants").
+    A quiz object represents multiple possible assessments (called "variants").
     """
 
-    def __init__(self, type = quizcomp.constants.TYPE_QUIZ,
-            title = '',
-            course_title = '', term_title = '',
-            description = '', date = '',
-            time_limit_mins = None,
-            shuffle_answers = True, pick_with_replacement = True,
-            groups = [],
-            base_dir = '.',
-            version = None, seed = None,
-            canvas = {},
-            ids = {},
-            **kwargs):
+    def __init__(self,
+            type = quizcomp.constants.TYPE_QUIZ,
+            title: str = '',
+            course_title: str = '',
+            term_title: str = '',
+            description: str = '',
+            date: typing.Union[str, datetime.date] = '',
+            time_limit_mins: typing.Union[int, None] = None,
+            shuffle_answers: bool = True,
+            pick_with_replacement: bool = True,
+            groups: typing.Union[typing.List[quizcomp.group.Group], None] = None,
+            base_dir: str = '.',
+            version: typing.Union[str, None] = None,
+            seed: typing.Union[int, None] = None,
+            canvas: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ids: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-        self.title = title
-        self.course_title = course_title
-        self.term_title = term_title
-        self.date = date
+        self.title: str = title
+        """ The title for this quiz. """
 
-        self.description = description
+        self.course_title: str = course_title
+        """ The title for the course associated with this quiz. """
 
-        self.time_limit_mins = time_limit_mins
+        self.term_title: str = term_title
+        """ The title of the term this quiz takes place during (e.g., "Fall 20XX"). """
 
-        self.shuffle_answers = shuffle_answers
-        self.pick_with_replacement = pick_with_replacement
+        self.date: typing.Union[str, datetime.date] = date
+        """ The date of this quiz. """
 
-        self.groups = groups
+        self.description: str = description
+        """ The description/prompt for this quiz. """
 
-        self.base_dir = base_dir
-        self.version = version
+        self.time_limit_mins: typing.Union[int, None] = time_limit_mins
+        """ The time limit (in minutes) for this quiz. """
 
-        self.seed = seed
-        if (self.seed is None):
-            self.seed = random.randint(0, 2**64)
-        self._rng = random.Random(self.seed)
+        self.shuffle_answers: bool = shuffle_answers
+        """ Whether the answers for this quizze's questions should be shuffled. """
 
-        self.canvas = canvas.copy()
+        self.pick_with_replacement: bool = pick_with_replacement
+        """
+        Whether or not questions are chosen from their respective groups with replacement between variants.
+        Choosing with replacement means that the same question may appear in multiple variants.
+        """
+
+        if (groups is None):
+            groups = []
+
+        self.groups: typing.List[quizcomp.group.Group] = groups
+        """ The question groups for this quiz. """
+
+        self.base_dir: str = base_dir
+        """ The base directory for where this quiz lives. """
+
+        self.version: typing.Union[str, None] = version
+        """ The version of this quiz. """
+
+        if (seed is None):
+            seed = random.randint(0, 2**64)
+
+        self.seed: int = seed
+        """ The seed used for this quiz. """
+
+        self._rng: random.Random = random.Random(self.seed)
+        """ The RNG used for this quiz. """
+
+        if (canvas is None):
+            canvas = {}
+
+        self.canvas: typing.Dict[str, typing.Any] = canvas.copy()
+        """ Canvas-specific options for this quiz. """
+
+        if (ids is None):
+            ids = {}
 
         try:
             self.validate(cls = Quiz, **kwargs)
@@ -64,7 +103,9 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
 
             raise quizcomp.common.QuizValidationError('Error while validating quiz.', ids = ids) from ex
 
-    def _validate(self, **kwargs):
+    def _validate(self, **kwargs: typing.Any) -> None:
+        """ Check if this quiz is valid, will raise if the group is not valid. """
+
         if ((self.title is None) or (self.title == "")):
             raise quizcomp.common.QuizValidationError("Title cannot be empty.")
 
@@ -91,7 +132,9 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         for key in kwargs:
             logging.warning("Unknown quiz option: '%s'." % (key))
 
-    def _validate_time_limit(self):
+    def _validate_time_limit(self) -> None:
+        """ Validate the time limit component of this quiz. """
+
         if (self.time_limit_mins is None):
             return
 
@@ -110,7 +153,9 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             self.time_limit_mins = None
 
     @classmethod
-    def from_path(cls, path, **kwargs):
+    def from_path(cls, path: str, **kwargs: typing.Any) -> 'Quiz':  # type: ignore[override]
+        """ Construct a quiz from a JSON file. """
+
         # Check for a description file.
         def _check_description_file(path, data):
             description_filename = os.path.splitext(os.path.basename(path))[0]
@@ -124,7 +169,13 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         return super().from_path(path, data_callback = _check_description_file, **kwargs)
 
     @staticmethod
-    def from_dict(quiz_info, base_dir = None, flatten_groups = False, **kwargs):
+    def from_dict(  # type: ignore[override]
+            quiz_info: typing.Dict[str, typing.Any],
+            base_dir: str,
+            flatten_groups: bool = False,
+            **kwargs: typing.Any) -> 'Quiz':
+        """ Construct a quiz from a dict. """
+
         ids = {}
         ids.update(kwargs.pop('ids', {}))
         ids.update(quiz_info.pop('ids', ids))
@@ -141,7 +192,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
 
             for old_group in groups:
                 for i in range(len(old_group.questions)):
-                    info = {
+                    info: typing.Dict[str, typing.Any] = {
                         'name': old_group.name,
                         'pick_count': 1,
                         'points': old_group.points,
@@ -161,7 +212,9 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
 
         return Quiz(**quiz_info, ids = ids)
 
-    def num_questions(self):
+    def num_questions(self) -> int:
+        """ Get the number of questions in this quiz. """
+
         count = 0
 
         for group in self.groups:
@@ -169,7 +222,12 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
 
         return count
 
-    def create_variant(self, identifier = None, seed = None, all_questions = False):
+    def create_variant(self,
+            identifier: typing.Union[str, None] = None,
+            seed: typing.Union[int, None] = None,
+            all_questions: bool = False) -> quizcomp.variant.Variant:
+        """ Create a variant based on this quiz. """
+
         if (seed is None):
             seed = self._rng.randint(0, 2**64)
 
@@ -211,13 +269,13 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         data['_skip_class_validations'] = [Quiz]
 
         return quizcomp.variant.Variant(**data)
-    
-    def total_points(self):
+
+    def total_points(self) -> float:
         """
         Calculate the total points for the quiz based on question groups.
         """
 
-        total = 0
+        total: float = 0
 
         for group in self.groups:
             total += group.pick_count * group.points
