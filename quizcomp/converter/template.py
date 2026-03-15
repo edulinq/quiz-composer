@@ -86,6 +86,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             quizcomp.constants.QUESTION_TYPE_MDD: 'create_answers_mdd',
             quizcomp.constants.QUESTION_TYPE_NUMERICAL: 'create_answers_numerical',
             quizcomp.constants.QUESTION_TYPE_SA: 'create_answers_sa',
+            quizcomp.constants.QUESTION_TYPE_MEDIUM_ANSWER: 'create_answers_sa',
             quizcomp.constants.QUESTION_TYPE_TEXT_ONLY: 'create_answers_text_only',
             quizcomp.constants.QUESTION_TYPE_TF: 'create_answers_tf',
         }
