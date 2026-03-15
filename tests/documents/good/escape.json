@@ -4,7 +4,7 @@
         "text": "Escape \\/ slash.",
         "formats": {
             "md": "Escape / slash.",
-            "html": "<p style=\"margin-top: 0\">Escape / slash.</p>",
+            "html": "<p>Escape / slash.</p>",
             "tex": "Escape / slash.",
             "text": "Escape slash",
             "json": {
@@ -29,7 +29,7 @@
         "text": "Escape \\\\ backslash.",
         "formats": {
             "md": "Escape \\\\ backslash.",
-            "html": "<p style=\"margin-top: 0\">Escape \\ backslash.</p>",
+            "html": "<p>Escape \\ backslash.</p>",
             "tex": "Escape \\textbackslash{} backslash.",
             "text": "Escape backslash",
             "json": {
@@ -54,7 +54,7 @@
         "text": "Escape \\* asterisk.",
         "formats": {
             "md": "Escape * asterisk.",
-            "html": "<p style=\"margin-top: 0\">Escape * asterisk.</p>",
+            "html": "<p>Escape * asterisk.</p>",
             "tex": "Escape * asterisk.",
             "text": "Escape asterisk",
             "json": {
@@ -79,7 +79,7 @@
         "text": "Escape \\$ dollar sign.",
         "formats": {
             "md": "Escape $ dollar sign.",
-            "html": "<p style=\"margin-top: 0\">Escape $ dollar sign.</p>",
+            "html": "<p>Escape $ dollar sign.</p>",
             "tex": "Escape \\$ dollar sign.",
             "text": "Escape dollar sign",
             "json": {
@@ -104,7 +104,7 @@
         "text": "Escape \\[ open bracket.",
         "formats": {
             "md": "Escape \\[ open bracket.",
-            "html": "<p style=\"margin-top: 0\">Escape [ open bracket.</p>",
+            "html": "<p>Escape [ open bracket.</p>",
             "tex": "Escape [ open bracket.",
             "text": "Escape open bracket",
             "json": {
@@ -129,7 +129,7 @@
         "text": "Escape \\` backtick.",
         "formats": {
             "md": "Escape \\` backtick.",
-            "html": "<p style=\"margin-top: 0\">Escape ` backtick.</p>",
+            "html": "<p>Escape ` backtick.</p>",
             "tex": "Escape \\`{} backtick.",
             "text": "Escape backtick",
             "json": {

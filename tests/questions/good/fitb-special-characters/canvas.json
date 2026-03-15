@@ -4,7 +4,7 @@
     "question[quiz_group_id]": 0,
     "question[points_possible]": 1,
     "question[position]": 0,
-    "question[question_text]": "<div class=\"qg-root-block qg-block\"><p style=\"margin-top: 0\">Short Answer / Fill in The Blank: Special Characters</p></div>",
+    "question[question_text]": "<div class=\"qg-root-block qg-block\"><p>Short Answer / Fill in The Blank: Special Characters</p></div>",
     "question[answers][0][blank_id]": "",
     "question[answers][0][answer_weight]": 100,
     "question[answers][0][answer_text]": "1.0",
