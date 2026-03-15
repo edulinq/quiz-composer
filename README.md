@@ -163,14 +163,6 @@ python3 -m quizcomp.cli.parse.quiz <path to quiz JSON file> --format html > quiz
 
 All question in an HTML quiz are grouped together into a single HTML form.
 
-By default, the builtin HTML template embeds CSS for styling.
-If you prefer to use your own styling or no styling at all, you can use the `--no-css` flag:
-```
-python3 -m quizcomp.cli.parse.quiz <path to quiz JSON file> --format html --no-css > quiz.html
-```
-
-When `--no-css` is used, the `<style>` block is omitted entirely from the generated HTML output.
-
 #### Outputting a QTI Quiz
 
 You can use the same `quizcomp.cli.parse.quiz` command to view the core QTI file for a quiz:
