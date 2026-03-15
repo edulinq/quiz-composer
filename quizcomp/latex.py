@@ -1,22 +1,30 @@
+import argparse
 import logging
 import os
 import shutil
 import subprocess
+import typing
 
-_pdflatex_bin_path = None
-_pdflatex_use_docker = False
+_pdflatex_bin_path: typing.Union[str, None] = None
+_pdflatex_use_docker: bool = False
 
-DOCKER_IMAGE = "ghcr.io/edulinq/pdflatex-docker:1.0.0"
+DOCKER_IMAGE: str = "ghcr.io/edulinq/pdflatex-docker:1.0.0"
 
-def set_pdflatex_bin_path(path):
+def set_pdflatex_bin_path(path: str) -> None:
+    """ Set the binary path to use for NodeJS (node). """
+
     global _pdflatex_bin_path
     _pdflatex_bin_path = path
 
-def set_pdflatex_use_docker(pdflatex_use_docker):
+def set_pdflatex_use_docker(pdflatex_use_docker: bool) -> None:
+    """ Set whether or not to use the pdflatex Docker container. """
+
     global _pdflatex_use_docker
     _pdflatex_use_docker = pdflatex_use_docker
 
-def is_available():
+def is_available() -> bool:
+    """ Check if LaTeX is available on this system. """
+
     if (_pdflatex_use_docker):
         if (not _is_docker_available()):
             logging.warning("Docker is not available, cannot compile PDFs.")
@@ -33,14 +41,16 @@ def is_available():
 
     return True
 
-def _is_docker_available():
+def _is_docker_available() -> bool:
+    """ Check if Docker is available on this system. """
+
     if (shutil.which('docker') is None):
         return False
 
     result = subprocess.run(["docker", "info"], stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
     return (result.returncode == 0)
 
-def compile(path):
+def compile(path: str) -> None:
     """
     Compile a LaTeX file to PDF in its containing directory.
 
@@ -55,7 +65,9 @@ def compile(path):
     else:
         _compile_local(path)
 
-def _compile_local(path):
+def _compile_local(path: str) -> None:
+    """ Compile without using Docker. """
+
     bin_path = "pdflatex"
     if (_pdflatex_bin_path is not None):
         bin_path = _pdflatex_bin_path
@@ -66,11 +78,13 @@ def _compile_local(path):
     # Need to compile twice to get positioning information.
     for _ in range(2):
         result = subprocess.run([bin_path, '-interaction=nonstopmode', tex_filename],
-                                cwd = out_dir, capture_output = True)
+                                cwd = out_dir, text = True, capture_output = True)
         if (result.returncode != 0):
-            raise ValueError("pdflatex did not exit cleanly. Stdout: '%s', Stderr: '%s'" % (result.stdout, result.stderr))
+            raise ValueError(f"pdflatex did not exit cleanly. Stdout: '{result.stdout}', Stderr: '{result.stderr}'")
 
-def _compile_docker(path):
+def _compile_docker(path: str) -> None:
+    """ Compile using Docker. """
+
     tex_filename = os.path.basename(path)
     out_dir_path = os.path.abspath(os.path.dirname(path))
 
@@ -83,9 +97,11 @@ def _compile_docker(path):
 
     result = subprocess.run(docker_cmd, capture_output = True, text = True)
     if (result.returncode != 0):
-        raise ValueError("Docker compilation failed with exit code '%s'. Stdout: '%s', Stderr: '%s'" % (result.returncode, result.stdout, result.stderr))
+        raise ValueError(f"Docker compilation failed with exit code '{result.returncode}'. Stdout: '{result.stdout}', Stderr: '{result.stderr}'")
 
-def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, typing.Any]) -> None:
+def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, typing.Any]) -> argparse.ArgumentParser:
+    """ Set LaTeX-related CLI options. """
+
     parser.add_argument('--pdflatex-bin-path', dest = 'pdflatex_bin_path',
         action = 'store', type = str, default = None,
         help = ('The path to the pdflatex binary to use.'
@@ -95,11 +111,13 @@ def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, 
     parser.add_argument('--pdflatex-use-docker', dest = 'pdflatex_use_docker',
         action = 'store_true', default = False,
         help = ('Use Docker to compile PDFs with pdflatex.'
-                + " The Docker image '%s' will be used." % (DOCKER_IMAGE)))
+                + f" The Docker image '{DOCKER_IMAGE}' will be used."))
 
     return parser
 
-def init_from_args(parser: argparse.ArgumentParser, args: argparse.Namespace, extra_state: typing.Dict[str, typing.Any]) -> None:
+def init_from_args(parser: argparse.ArgumentParser, args: argparse.Namespace, extra_state: typing.Dict[str, typing.Any]) -> argparse.Namespace:
+    """ Initialize this module from the CLI options set in set_cli_args(). """
+
     if (args.pdflatex_use_docker):
         set_pdflatex_use_docker(args.pdflatex_use_docker)
 

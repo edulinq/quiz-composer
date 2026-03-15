@@ -1,6 +1,8 @@
 import glob
 import logging
 import os
+import random
+import typing
 
 import quizcomp.common
 import quizcomp.constants
@@ -8,32 +10,66 @@ import quizcomp.question.base
 import quizcomp.util.serial
 
 class Group(quizcomp.util.serial.JSONSerializer):
-    def __init__(self, name = '',
-            pick_count = 1, points = 10,
-            shuffle_answers = True, pick_with_replacement = True,
-            custom_header = None, skip_numbering = None,
-            hints = None, hints_first = None, hints_last = None,
-            questions = [],
-            ids = {},
-            **kwargs):
+    def __init__(self,
+            name: str = '',
+            pick_count: int = 1,
+            points: float = 10,
+            shuffle_answers: bool = True,
+            pick_with_replacement: bool = True,
+            custom_header: typing.Union[str, None] = None,
+            skip_numbering: typing.Union[bool, None] = None,
+            hints: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            hints_first: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            hints_last: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            questions: typing.Union[typing.List[quizcomp.question.base.Question], None] = None,
+            ids: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-        self.name = name
-        self.pick_count = pick_count
-        self.points = points
+        self.name: str = name
+        """ The name of this question group. """
 
-        self.shuffle_answers = shuffle_answers
-        self.pick_with_replacement = pick_with_replacement
-        self._used_question_indexes = set()
+        self.pick_count: int = pick_count
+        """ The number of questions to choose from this group. """
 
-        self.custom_header = custom_header
-        self.skip_numbering = skip_numbering
+        self.points: float = points
+        """ The number of points for each question in this group. """
 
-        self.hints = hints
-        self.hints_first = hints_first
-        self.hints_last = hints_last
+        self.shuffle_answers: bool = shuffle_answers
+        """ Whether the answers for this group's questions should be shuffled. """
+
+        self.pick_with_replacement: bool = pick_with_replacement
+        """
+        Whether or not questions are chosen with replacement between variants.
+        Choosing with replacement means that the same question may appear in multiple variants.
+        """
+
+        self._used_question_indexes: typing.Set[int] = set()
+        """ The questions that have already been used in different variants. """
+
+        self.custom_header: typing.Union[str, None] = custom_header
+        """ A custom header for the question, instead of something generic like "Question 4". """
+
+        self.skip_numbering: typing.Union[bool, None] = skip_numbering
+        """ Whether to skip numbering for this group. """
+
+        self.hints: typing.Union[typing.Dict[str, typing.Any], None] = hints
+        """ Hints applied to this entire group. """
+
+        self.hints_first: typing.Union[typing.Dict[str, typing.Any], None] = hints_first
+        """ Hints applied to the first question of this group. """
+
+        self.hints_last: typing.Union[typing.Dict[str, typing.Any], None] = hints_last
+        """ Hints applied to the last question of this group. """
+
+        if (questions is None):
+            questions = []
 
         self.questions = questions
+        """ The questions for this group. """
+
+        if (ids is None):
+            ids = {}
 
         try:
             self.validate()
@@ -43,7 +79,9 @@ class Group(quizcomp.util.serial.JSONSerializer):
 
             raise quizcomp.common.QuizValidationError('Error while validating group.', ids = ids) from ex
 
-    def _validate(self, **kwargs):
+    def _validate(self, **kwargs: typing.Any) -> None:
+        """ Check if this group is valid, will raise if the group is not valid. """
+
         if ((self.name is None) or (self.name == "")):
             raise quizcomp.common.QuizValidationError("Name cannot be empty.")
 
@@ -73,7 +111,9 @@ class Group(quizcomp.util.serial.JSONSerializer):
                     self.name, self.pick_count, len(self.questions)))
             self.pick_count = len(self.questions)
 
-    def collect_file_paths(self):
+    def collect_file_paths(self) -> typing.List[str]:
+        """ Collect the file paths represented in this group. """
+
         paths = []
 
         for question in self.questions:
@@ -82,7 +122,9 @@ class Group(quizcomp.util.serial.JSONSerializer):
         return paths
 
     @staticmethod
-    def from_dict(group_info, base_dir, **kwargs):
+    def from_dict(group_info: typing.Dict[str, typing.Any], base_dir: str, **kwargs: typing.Any) -> 'Group':  # type: ignore[override]
+        """ Construct a group from a dict. """
+
         group_info = group_info.copy()
 
         paths = []
@@ -101,7 +143,13 @@ class Group(quizcomp.util.serial.JSONSerializer):
 
         return Group(**group_info)
 
-    def choose_questions(self, all_questions = False, rng = None, with_replacement = True):
+    def choose_questions(self,
+            all_questions: bool = False,
+            rng: typing.Union[random.Random, None] = None,
+            with_replacement: bool = True,
+            ) -> typing.List[quizcomp.question.base.Question]:
+        """ Choose a list of questions to use for an instantiated variant of this group. """
+
         if ((self.pick_count == 0) or (len(self.questions) == 0)):
             logging.warning("Group '%s' will select no questions (pick_count: %d, group size: %d)." % (
                     self.name, self.pick_count, len(self.questions)))
@@ -130,7 +178,13 @@ class Group(quizcomp.util.serial.JSONSerializer):
 
         return questions
 
-    def _choose_questions(self, count, rng, with_replacement):
+    def _choose_questions(self,
+            count: int,
+            rng: random.Random,
+            with_replacement: bool
+            ) -> typing.List[quizcomp.question.base.Question]:
+        """ Internally, choose a list of questions to use for an instantiated variant of this group. """
+
         indexes = list(range(len(self.questions)))
 
         if (not with_replacement):
@@ -150,7 +204,9 @@ class Group(quizcomp.util.serial.JSONSerializer):
 
         return [self.questions[index].copy() for index in indexes]
 
-def _parse_questions(path):
+def _parse_questions(path: str) -> typing.List[quizcomp.question.base.Question]:
+    """ Recursively parse questions from a path. """
+
     if (not os.path.exists(path)):
         raise quizcomp.common.QuizValidationError(f"Question path does not exist: '{path}'.")
 
