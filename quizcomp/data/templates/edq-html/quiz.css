@@ -1,4 +1,5 @@
 :root {
+    /* Colors */
     --qg-color-accent: #4f6ef7;
     --qg-color-accent-dark: #3b56e8;
     --qg-color-accent-light: #eef2ff;
@@ -11,12 +12,16 @@
     --qg-color-correct-bg: #dcfce7;
     --qg-color-correct-border: #86efac;
     --qg-color-correct-text: #166534;
+
+    /* Typography */
     --qg-font-size-small: 0.875rem;
     --qg-font-size-medium: 1rem;
     --qg-font-size-large: 1.75rem;
     --qg-font-weight-normal: 400;
     --qg-font-weight-semibold: 600;
     --qg-font-weight-bold: 700;
+
+    /* Layout and Design */
     --qg-max-width: 860px;
     --qg-radius: 10px;
     --qg-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
