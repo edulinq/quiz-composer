@@ -2,7 +2,7 @@
 Convert a quiz into HTML using templates.
 """
 
-import warnings
+import logging
 import os
 
 import quizcomp.constants
@@ -13,6 +13,7 @@ DEFAULT_TEMPLATE_DIR = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-ht
 
 CSS_FILENAME = 'quiz.css'
 
+logger = logging.getLogger(__name__)
 
 class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
     def __init__(self,
@@ -22,7 +23,7 @@ class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         css_path = os.path.join(template_dir, CSS_FILENAME)
         if (not os.path.isfile(css_path)):
-            warnings.warn(f"Could not find CSS file: '{css_path}'. Continuing without external CSS.")
+            logger.warning("Could not find CSS file: '%s'. Continuing without external CSS.", css_path)
             self.env.globals['css_content'] = ''
         else:
             with open(css_path, 'r', encoding = 'utf-8') as css_file:
