@@ -7,6 +7,7 @@ import os
 
 import quizcomp.constants
 import quizcomp.converter.template
+import quizcomp.util.dirent
 
 THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-html')
@@ -26,8 +27,7 @@ class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
             logger.warning("Could not find CSS file: '%s'. Continuing without external CSS.", css_path)
             self.env.globals['css_content'] = ''
         else:
-            with open(css_path, 'r', encoding = 'utf-8') as css_file:
-                self.env.globals['css_content'] = css_file.read()
+            self.env.globals['css_content'] = quizcomp.util.dirent.read_file(css_path)
 
     def clean_solution_content(self, document):
         return document.to_text()
