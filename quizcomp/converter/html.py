@@ -18,14 +18,8 @@ logger = logging.getLogger(__name__)
 class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
     def __init__(self,
             format = quizcomp.constants.FORMAT_HTML, template_dir = DEFAULT_TEMPLATE_DIR,
-            include_css = True,
             **kwargs):
         super().__init__(format, template_dir, **kwargs)
-
-        if (not include_css):
-            logger.debug("CSS inclusion disabled by user.")
-            self.env.globals['css_content'] = ''
-            return
 
         css_path = os.path.join(template_dir, CSS_FILENAME)
         if (not os.path.isfile(css_path)):

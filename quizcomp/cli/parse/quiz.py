@@ -20,13 +20,10 @@ def run(args):
 
     quiz = quizcomp.quiz.Quiz.from_path(args.path, flatten_groups = args.flatten_groups)
     variant = quiz.create_variant(all_questions = args.flatten_groups, seed = seed)
-    constructor_args = {'answer_key': args.answer_key}
 
-    if (hasattr(args, 'no_css') and args.no_css):
-        constructor_args['include_css'] = False
 
     content = quizcomp.converter.convert.convert_variant(variant, format = args.format,
-            constructor_args = constructor_args)
+            constructor_args = {'answer_key': args.answer_key})
 
     print(content)
 
@@ -57,9 +54,6 @@ def _get_parser():
         action = 'store', type = int, default = None,
         help = 'The random seed to use (defaults to a random seed).')
 
-    parser.add_argument('--no-css', dest = 'no_css',
-        action = 'store_true', default = False,
-        help = 'Do not include CSS in the HTML output (default: %(default)s).')
 
     return parser
 
