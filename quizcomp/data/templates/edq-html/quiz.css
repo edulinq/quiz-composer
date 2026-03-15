@@ -1,4 +1,5 @@
 :root {
+    /* Colors */
     --qg-color-accent: #4f6ef7;
     --qg-color-accent-dark: #3b56e8;
     --qg-color-accent-light: #eef2ff;
@@ -15,6 +16,7 @@
     --qg-color-code-bg: #1e1e2e;
     --qg-color-code-text: #cdd6f4;
 
+    /* Typography */
     --qg-font-size-small: 0.875rem;
     --qg-font-size-medium: 1rem;
     --qg-font-size-large: 1.75rem;
@@ -23,8 +25,10 @@
     --qg-font-weight-semibold: 600;
     --qg-font-weight-bold: 700;
 
+    /* Layout */
     --qg-max-width: 860px;
 
+    /* Spacing scale */
     --qg-space-xsmall: 0.25rem;
     --qg-space-small: 0.5rem;
     --qg-space-medium: 0.75rem;
@@ -32,14 +36,18 @@
     --qg-space-xlarge: 1.5rem;
     --qg-space-xxlarge: 2rem;
 
+    /* Radius */
     --qg-radius-small: 4px;
     --qg-radius-medium: 6px;
     --qg-radius-large: 10px;
+
+    /* Shadows */
     --qg-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     --qg-shadow-hover: 0 4px 16px rgba(79, 110, 247, 0.1);
     --qg-shadow-focus: 0 0 0 3px rgba(79, 110, 247, 0.15);
     --qg-shadow-button-hover: 0 4px 12px rgba(79, 110, 247, 0.35);
 
+    /* Transition */
     --qg-transition-fast: 0.15s ease;
 }
 
@@ -167,7 +175,7 @@
 }
 
 .qg-quiz-question-body fieldset > div input {
-    margin-top: 2px;
+    margin-top: var(--qg-space-xsmall);
     accent-color: var(--qg-color-accent);
 }
 
@@ -191,6 +199,7 @@
     border: 1px solid var(--qg-color-border);
     border-radius: var(--qg-radius-medium);
     background: var(--qg-color-bg-input);
+    transition: border-color var(--qg-transition-fast), box-shadow var(--qg-transition-fast);
 }
 
 .qg-quiz-question-answer-choices select:focus,
@@ -207,7 +216,7 @@
     font-size: var(--qg-font-size-small);
     background: var(--qg-color-accent-light);
     border: 1px solid var(--qg-color-border);
-    padding: 2px 6px;
+    padding: var(--qg-space-xsmall) var(--qg-space-small);
     border-radius: var(--qg-radius-small);
 }
 
@@ -228,7 +237,9 @@
     border-radius: var(--qg-radius-medium);
     cursor: pointer;
     margin-top: var(--qg-space-large);
-    transition: all var(--qg-transition-fast);
+    transition: background var(--qg-transition-fast),
+        box-shadow var(--qg-transition-fast),
+        transform var(--qg-transition-fast);
 }
 
 .qg-quiz input[type="submit"]:hover {
@@ -238,6 +249,7 @@
 
 .qg-quiz input[type="submit"]:active {
     box-shadow: none;
+    transform: translateY(1px);
 }
 
 @media (max-width: 600px) {
