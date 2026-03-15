@@ -20,7 +20,6 @@ def run(args):
 
     quiz = quizcomp.quiz.Quiz.from_path(args.path, flatten_groups = args.flatten_groups)
     variant = quiz.create_variant(all_questions = args.flatten_groups, seed = seed)
-
     content = quizcomp.converter.convert.convert_variant(variant, format = args.format,
             constructor_args = {'answer_key': args.answer_key})
 
