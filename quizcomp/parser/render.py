@@ -1,6 +1,8 @@
 import re
+import typing
 
 import lxml.etree
+import markdown_it.token
 
 import quizcomp.parser.parse
 import quizcomp.parser.renderer.canvas
@@ -9,7 +11,16 @@ import quizcomp.parser.renderer.markdown
 import quizcomp.parser.renderer.tex
 import quizcomp.parser.renderer.text
 
-def canvas(tokens, env = {}, pretty = False, **kwargs):
+def canvas(
+        tokens: typing.List[markdown_it.token.Token],
+        env: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        pretty: bool = False,
+        **kwargs: typing.Any) -> str:
+    """ Render tokens to Canvas-specific HTML. """
+
+    if (env is None):
+        env = {}
+
     _, options = quizcomp.parser.parse._get_parser()
 
     renderer, options = quizcomp.parser.renderer.canvas.get_renderer(options)
@@ -17,7 +28,16 @@ def canvas(tokens, env = {}, pretty = False, **kwargs):
 
     return clean_html(raw_html, pretty = pretty)
 
-def html(tokens, env = {}, pretty = False, **kwargs):
+def html(
+        tokens: typing.List[markdown_it.token.Token],
+        env: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        pretty: bool = False,
+        **kwargs: typing.Any) -> str:
+    """ Render tokens to HTML. """
+
+    if (env is None):
+        env = {}
+
     _, options = quizcomp.parser.parse._get_parser()
 
     renderer, options = quizcomp.parser.renderer.html.get_renderer(options)
@@ -25,7 +45,15 @@ def html(tokens, env = {}, pretty = False, **kwargs):
 
     return clean_html(raw_html, pretty = pretty)
 
-def md(tokens, env = {}, **kwargs):
+def md(
+        tokens: typing.List[markdown_it.token.Token],
+        env: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        **kwargs: typing.Any) -> str:
+    """ Render tokens to Markdown. """
+
+    if (env is None):
+        env = {}
+
     _, options = quizcomp.parser.parse._get_parser()
 
     renderer, options = quizcomp.parser.renderer.markdown.get_renderer(options)
@@ -33,7 +61,15 @@ def md(tokens, env = {}, **kwargs):
 
     return content.strip()
 
-def tex(tokens, env = {}, **kwargs):
+def tex(
+        tokens: typing.List[markdown_it.token.Token],
+        env: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        **kwargs: typing.Any) -> str:
+    """ Render tokens to TeX. """
+
+    if (env is None):
+        env = {}
+
     _, options = quizcomp.parser.parse._get_parser()
 
     renderer, options = quizcomp.parser.renderer.tex.get_renderer(options)
@@ -41,7 +77,15 @@ def tex(tokens, env = {}, **kwargs):
 
     return content.strip()
 
-def text(tokens, env = {}, **kwargs):
+def text(
+        tokens: typing.List[markdown_it.token.Token],
+        env: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        **kwargs: typing.Any) -> str:
+    """ Render tokens to text. """
+
+    if (env is None):
+        env = {}
+
     _, options = quizcomp.parser.parse._get_parser()
 
     renderer, options = quizcomp.parser.renderer.text.get_renderer(options)
@@ -49,10 +93,15 @@ def text(tokens, env = {}, **kwargs):
 
     return content.strip()
 
-def render(format, tokens, env = {}, **kwargs):
-    """
-    General routing render function.
-    """
+def render(
+        format: str,
+        tokens: typing.List[markdown_it.token.Token],
+        env: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        **kwargs: typing.Any) -> str:
+    """ Render tokens to the specified format. """
+
+    if (env is None):
+        env = {}
 
     render_function = globals().get(format, None)
     if (render_function is None):
@@ -60,7 +109,7 @@ def render(format, tokens, env = {}, **kwargs):
 
     return render_function(tokens, env = env, **kwargs)
 
-def clean_html(raw_html, pretty = False):
+def clean_html(raw_html: str, pretty: bool = False) -> str:
     """
     Clean up and standardize the HTML.
     If |pretty|, then the output will be indented properly, and extra space will be stripped (which may mess with some inline spacing).

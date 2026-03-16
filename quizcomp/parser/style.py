@@ -2,47 +2,51 @@
 Style constants and base functionality.
 """
 
-KEY_CONTENT_ALIGN = 'content-align'
-KEY_FONT_SIZE = 'font-size'
-KEY_IMAGE_WIDTH = 'image-width'
-KEY_TABLE_BORDER_CELLS = 'table-border-cells'
-KEY_TABLE_BORDER_TABLE = 'table-border-table'
-KEY_TABLE_CELL_HEIGHT = 'table-cell-height'
-KEY_TABLE_CELL_WIDTH = 'table-cell-width'
-KEY_TABLE_HEAD_BOLD = 'table-head-bold'
-KEY_TABLE_HEAD_RULE = 'table-head-rule'
-KEY_TEXT_ALIGN = 'text-align'
+import typing
 
-DEFAULT_IMAGE_WIDTH = 1.0
-DEFAULT_TABLE_BORDER_CELLS = False
-DEFAULT_TABLE_BORDER_TABLE = False
-DEFAULT_TABLE_CELL_HEIGHT = 1.5
-DEFAULT_TABLE_CELL_WIDTH = 1.5
-DEFAULT_TABLE_HEAD_BOLD = True
-DEFAULT_TABLE_HEAD_RULE = True
+KEY_CONTENT_ALIGN: str = 'content-align'
+KEY_FONT_SIZE: str = 'font-size'
+KEY_IMAGE_WIDTH: str = 'image-width'
+KEY_TABLE_BORDER_CELLS: str = 'table-border-cells'
+KEY_TABLE_BORDER_TABLE: str = 'table-border-table'
+KEY_TABLE_CELL_HEIGHT: str = 'table-cell-height'
+KEY_TABLE_CELL_WIDTH: str = 'table-cell-width'
+KEY_TABLE_HEAD_BOLD: str = 'table-head-bold'
+KEY_TABLE_HEAD_RULE: str = 'table-head-rule'
+KEY_TEXT_ALIGN: str = 'text-align'
 
-ALLOWED_VALUES_ALIGNMENT_LEFT = 'left'
-ALLOWED_VALUES_ALIGNMENT_CENTER = 'center'
-ALLOWED_VALUES_ALIGNMENT_RIGHT = 'right'
-ALLOWED_VALUES_ALIGNMENT = [
+DEFAULT_IMAGE_WIDTH: float = 1.0
+DEFAULT_TABLE_BORDER_CELLS: bool = False
+DEFAULT_TABLE_BORDER_TABLE: bool = False
+DEFAULT_TABLE_CELL_HEIGHT: float = 1.5
+DEFAULT_TABLE_CELL_WIDTH: float = 1.5
+DEFAULT_TABLE_HEAD_BOLD: bool = True
+DEFAULT_TABLE_HEAD_RULE: bool = True
+
+ALLOWED_VALUES_ALIGNMENT_LEFT: str = 'left'
+ALLOWED_VALUES_ALIGNMENT_CENTER: str = 'center'
+ALLOWED_VALUES_ALIGNMENT_RIGHT: str = 'right'
+ALLOWED_VALUES_ALIGNMENT: typing.List[str] = [
     ALLOWED_VALUES_ALIGNMENT_LEFT,
     ALLOWED_VALUES_ALIGNMENT_CENTER,
     ALLOWED_VALUES_ALIGNMENT_RIGHT
 ]
 
-FLEXBOX_ALIGNMENT = {
+FLEXBOX_ALIGNMENT: typing.Dict[str, str] = {
     ALLOWED_VALUES_ALIGNMENT_LEFT: 'flex-start',
     ALLOWED_VALUES_ALIGNMENT_CENTER: 'center',
     ALLOWED_VALUES_ALIGNMENT_RIGHT: 'flex-end',
 }
 
-TEX_BLOCK_ALIGNMENT = {
+TEX_BLOCK_ALIGNMENT: typing.Dict[str, str] = {
     ALLOWED_VALUES_ALIGNMENT_LEFT: 'flushleft',
     ALLOWED_VALUES_ALIGNMENT_CENTER: 'center',
     ALLOWED_VALUES_ALIGNMENT_RIGHT: 'flushright',
 }
 
-def get_alignment(style, key, default_value = None):
+def get_alignment(style: typing.Dict[str, typing.Any], key: str, default_value: typing.Union[str, None] = None) -> typing.Union[str, None]:
+    """ Get the specified alignment, or None if there is no specified alignment (or default). """
+
     alignment = style.get(key, None)
     if (alignment is None):
         return default_value
@@ -53,21 +57,25 @@ def get_alignment(style, key, default_value = None):
 
     return alignment
 
-def get_boolean_style_key(style, key, default_value = None):
+def get_boolean_style_key(style: typing.Dict[str, typing.Any], key: str, default_value: bool = False) -> bool:
+    """ Get a boolean style key. """
+
     value = style.get(key, default_value)
     if (value is None):
         return default_value
 
     return (value is True)
 
-def get_image_width(style):
+def get_image_width(style: typing.Dict[str, typing.Any]) -> float:
+    """ Get the image width. """
+
     width = style.get(KEY_IMAGE_WIDTH, None)
     if (width is None):
         width = DEFAULT_IMAGE_WIDTH
 
     return float(width)
 
-def compute_html_style_string(style):
+def compute_html_style_string(style: typing.Dict[str, typing.Any]) -> str:
     """
     Compute the attribute style string for an HTML tag.
     """
@@ -94,7 +102,7 @@ def compute_html_style_string(style):
 
     return '; '.join(attributes)
 
-def compute_tex_fixes(style):
+def compute_tex_fixes(style: typing.Dict[str, typing.Any]) -> typing.Tuple[typing.List[str], typing.List[str]]:
     """
     Compute the fixes (prefixes, suffixes) for a portion of TeX.
     These are things like `\\begin{center}`/`\\end{center}`.

@@ -9,15 +9,15 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
     Canvas generally uses HTML, but has some special cases.
     """
 
-    def placeholder(self, tokens, idx, options, env):
+    def placeholder(self, tokens, token_index, options, env):
         # Canvas placeholders cannot have spaces.
-        text = tokens[idx].content.strip()
+        text = tokens[token_index].content.strip()
         text = re.sub(r'\s+', ' ', text)
         text = text.replace(' ', '_')
 
         return "[%s]" % (text)
 
-    def image(self, tokens, idx, options, env):
+    def image(self, tokens, token_index, options, env):
         # Canvas requires files to be uploaded instead of embedded.
         # Those files should have already been uploaded and available.
 
@@ -32,7 +32,7 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
             force_raw_image_src = False
             process_token = None
 
-        return super().image(tokens, idx, options, env,
+        return super().image(tokens, token_index, options, env,
                 force_raw_image_src = force_raw_image_src,
                 process_token = process_token)
 

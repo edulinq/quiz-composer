@@ -1,43 +1,44 @@
 import re
+import typing
 
 import edq.util.json
 import markdown_it
+import markdown_it.token
 import mdit_py_plugins.container
 import mdit_py_plugins.dollarmath
 
 import quizcomp.parser.document
 
-_parser = None
-_options = None
-
-EXTRA_OPTIONS = [
+EXTRA_OPTIONS: typing.List[str] = [
     'table',
 ]
 
-PLUGINS = [
+PLUGINS: typing.List[typing.Tuple[typing.Callable, typing.Dict[str, typing.Any]]] = [
     (mdit_py_plugins.dollarmath.dollarmath_plugin, {}),
     (mdit_py_plugins.container.container_plugin, {'name': 'block'}),
 ]
 
-HTML_TOKENS = {
+HTML_TOKENS: typing.Set[str] = {
     'html_block',
     'html_inline',
 }
 
-def _get_parser():
-    _parser = markdown_it.MarkdownIt('commonmark')
+def _get_parser() -> typing.Tuple[markdown_it.MarkdownIt, typing.Dict[str, typing.Any]]:
+    """ Get the standard parser and options. """
+
+    parser = markdown_it.MarkdownIt('commonmark')
 
     for option in EXTRA_OPTIONS:
-        _parser.enable(option)
+        parser.enable(option)
 
     for (plugin, options) in PLUGINS:
-        _parser.use(plugin, **options)
+        parser.use(plugin, **options)
 
-    _options = _parser.options
+    return parser, dict(parser.options)
 
-    return _parser, _options
+def _clean_text(text: str) -> str:
+    """ Do some basic cleaning on text before parsing. """
 
-def _clean_text(text):
     # Remove carriage returns.
     text = text.replace("\r", '')
 
@@ -47,7 +48,9 @@ def _clean_text(text):
     return text
 
 # Returns (transformed text, tokens).
-def _parse_text(text, base_dir):
+def _parse_text(text: str, base_dir: str) -> typing.Tuple[str, quizcomp.parser.document.ParsedDocument]:
+    """ Parse the text and returned the cleaned text and resulting parsed document. """
+
     text = _clean_text(text)
 
     parser, _ = _get_parser()
@@ -59,7 +62,7 @@ def _parse_text(text, base_dir):
 
     return (text.strip(), document)
 
-def _post_process(tokens):
+def _post_process(tokens: typing.List[markdown_it.token.Token]) -> typing.List[markdown_it.token.Token]:
     """
     Post-process the token stream.
     This allows us to edit the AST without needing the change the parser.
@@ -73,7 +76,7 @@ def _post_process(tokens):
 
     return tokens
 
-def _add_root_block(tokens):
+def _add_root_block(tokens: typing.List[markdown_it.token.Token]) -> typing.List[markdown_it.token.Token]:
     """
     Add a root block element to the document.
     """
@@ -83,18 +86,28 @@ def _add_root_block(tokens):
 
     open_token = markdown_it.token.Token('container_block_open', 'div', 1)
     open_token.block = True
-    open_token.map = list(tokens[0].map)
     open_token.attrJoin('class', 'qg-root-block')
     open_token.meta[quizcomp.parser.common.TOKEN_META_KEY_ROOT] = True
+
+    if (tokens[0].map is None):
+        open_token.map = []
+    else:
+        open_token.map = list(tokens[0].map)
 
     close_token = markdown_it.token.Token('container_block_close', 'div', -1)
 
     return [open_token] + tokens + [close_token]
 
-def _process_style(tokens, containing_block = None):
+def _process_style(
+        tokens: typing.Union[typing.List[markdown_it.token.Token], None],
+        containing_block: typing.Union[markdown_it.token.Token, None] = None,
+        ) -> typing.List[markdown_it.token.Token]:
     """
     Locate any style nodes, parse them, remove them, and hoist their content to the containing block.
     """
+
+    if (tokens is None):
+        return []
 
     remove_indexes = []
     for i in range(len(tokens)):
@@ -125,7 +138,9 @@ def _process_style(tokens, containing_block = None):
 
     return tokens
 
-def _process_style_content(raw_content):
+def _process_style_content(raw_content: str) -> typing.Dict[str, typing.Any]:
+    """ Get the style content from some text. """
+
     raw_content = raw_content.strip()
 
     # Get content without tags ('<style>', '</style>').
@@ -153,10 +168,13 @@ def _process_style_content(raw_content):
 
     return style
 
-def _remove_empty_tokens(tokens):
+def _remove_empty_tokens(tokens: typing.Union[typing.List[markdown_it.token.Token], None]) -> typing.List[markdown_it.token.Token]:
     """
     Remove any inline's without text or blocks without children.
     """
+
+    if (tokens is None):
+        return []
 
     # Keep looping until nothing is removed.
     while True:
@@ -195,11 +213,14 @@ def _remove_empty_tokens(tokens):
 
     return tokens
 
-def _process_placeholders(tokens):
+def _process_placeholders(tokens: typing.Union[typing.List[markdown_it.token.Token], None]) -> typing.List[markdown_it.token.Token]:
     """
     Find any placeholder HTML tags and replace them with a placeholder token.
     plceholder tags must either be an HTML block or inline with the same parent.
     """
+
+    if (tokens is None):
+        return []
 
     remove_indexes = []
 
@@ -264,7 +285,9 @@ def _process_placeholders(tokens):
 
     return tokens
 
-def _create_placeholder_token(token):
+def _create_placeholder_token(token: markdown_it.token.Token) -> markdown_it.token.Token:
+    """ Create a tag for answer placeholders. """
+
     # Fetch the label in the tag.
     label = re.sub(r'\s+', ' ', token.content.strip())
     label = re.sub(r'^<placeholder.*>(.*)</placeholder>$', r'\1', label).strip()
@@ -275,12 +298,15 @@ def _create_placeholder_token(token):
             type = 'placeholder', tag = '', nesting = 0,
             map = token.map, content = label)
 
-def _process_html(tokens):
+def _process_html(tokens: typing.Union[typing.List[markdown_it.token.Token], None]) -> typing.List[markdown_it.token.Token]:
     """
     Remove or replacec all HTML tags.
     This will recursively descend to find all tags.
     Line breaks will be replaced with hard breaks.
     """
+
+    if (tokens is None):
+        return []
 
     remove_indexes = []
     for i in range(len(tokens)):
@@ -302,5 +328,7 @@ def _process_html(tokens):
 
     return tokens
 
-def _has_children(token):
+def _has_children(token: markdown_it.token.Token) -> bool:
+    """ Check if the given token has children. """
+
     return ((token.children is not None) and (len(token.children) > 0))

@@ -3,18 +3,20 @@ import copy as pycopy
 import datetime
 import enum
 import os
+import typing
 
 import edq.util.dirent
 import edq.util.json
 
+POD: typing.TypeAlias = typing.Union[bool, float, int, str, typing.List['POD'], typing.Dict[str, 'POD']]
+""" A "Plain Old Data" type that can be easily represented (e.g. in JSON). """
+
 class PODSerializer(abc.ABC):
     @abc.abstractmethod
-    def to_pod(self, **kwargs):
+    def to_pod(self, **kwargs: typing.Any) -> POD:
         """
         Create a "Plain Old Data" representation of this object.
         """
-
-        pass
 
 class JSONSerializer(PODSerializer):
     """
@@ -65,7 +67,7 @@ class JSONSerializer(PODSerializer):
 
         pass
 
-    def to_pod(self, **kwargs):
+    def to_pod(self, **kwargs: typing.Any) -> POD:
         return self.to_dict(**kwargs)
 
     def to_dict(self, copy = True, **kwargs):

@@ -1,9 +1,12 @@
-import markdown_it
+import typing
+
+import markdown_it.token
+import markdown_it.tree
 
 import quizcomp.parser.common
 
 # Pull specific attributes from nodes of these specified types.
-AST_NODE_ATTRIBUTES = {
+AST_NODE_ATTRIBUTES: typing.Dict[str, typing.List[str]] = {
     'code_block': [
         'info',
     ],
@@ -16,7 +19,7 @@ AST_NODE_ATTRIBUTES = {
 }
 
 # Pull these attributes out of these specific token types when building the AST.
-AST_TOKEN_ATTRS = {
+AST_TOKEN_ATTRS: typing.Dict[str, typing.List[str]] = {
     'image': [
         'src',
     ],
@@ -32,7 +35,7 @@ AST_TOKEN_ATTRS = {
 }
 
 # Like AST_TOKEN_ATTRS, but for the `meta` property.
-AST_TOKEN_METAS = {
+AST_TOKEN_METAS: typing.Dict[str, typing.List[str]] = {
     'container_block': [
         quizcomp.parser.common.TOKEN_META_KEY_ROOT,
         quizcomp.parser.common.TOKEN_META_KEY_STYLE,
@@ -40,21 +43,31 @@ AST_TOKEN_METAS = {
 }
 
 class ASTNode(dict):
-    def type(self):
+    """ A simple representation for an AST node. """
+
+    def type(self) -> str:
+        """ Get the type of this node. """
+
         return self['type']
 
-    def children(self):
+    def children(self) -> typing.List['ASTNode']:
+        """ Get the ordered children of this node. """
+
         return self.get('children', [])
 
-    def text(self):
+    def text(self) -> str:
+        """ Get any text represented by this node (but not its children). """
+
         return self.get('text', '')
 
-def build(tokens):
+def build(tokens: typing.Sequence[markdown_it.token.Token]) -> ASTNode:
+    """ Build an AST from a stream of tokens. """
+
     tree = markdown_it.tree.SyntaxTreeNode(tokens)
     return _walk_ast(tree)
 
-def _walk_ast(node):
-    result = {
+def _walk_ast(node: markdown_it.tree.SyntaxTreeNode) -> ASTNode:
+    result: typing.Dict[str, typing.Any] = {
         'type': node.type,
     }
 

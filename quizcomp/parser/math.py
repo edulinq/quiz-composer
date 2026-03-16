@@ -1,14 +1,26 @@
 import html
+import typing
+
+import markdown_it.token
 
 import quizcomp.constants
 import quizcomp.katex
 import quizcomp.parser.common
 
-_katex_available = None
+_katex_available: typing.Union[bool, None] = None
 
-def render(format, inline, tokens, idx, options, env):
+def render(
+        format: str,
+        inline: bool,
+        tokens: typing.List[markdown_it.token.Token],
+        token_index: int,
+        options: typing.Dict[str, typing.Any],
+        env: typing.Dict[str, typing.Any],
+        ) -> str:
+    """ Render the given token in the specified format. """
+
     context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
-    text = tokens[idx].content
+    text = tokens[token_index].content
 
     if (format == quizcomp.constants.FORMAT_HTML):
         return _render_html(text, inline, context)
@@ -21,7 +33,9 @@ def render(format, inline, tokens, idx, options, env):
     else:
         raise ValueError(f"Unknown format '{format}'.")
 
-def _render_tex(text, inline, context):
+def _render_tex(text: str, inline: bool, context: typing.Dict[str, typing.Any]) -> str:
+    """ Render the given token content as TeX. """
+
     text = text.replace('$', r'\$')
 
     if (inline):
@@ -30,7 +44,9 @@ def _render_tex(text, inline, context):
 
     return f"$$\n{text}\n$$"
 
-def _render_html(text, inline, context):
+def _render_html(text: str, inline: bool, context: typing.Dict[str, typing.Any]) -> str:
+    """ Render the given token content as HTML. """
+
     global _katex_available
 
     if (_katex_available is None):
@@ -52,7 +68,9 @@ def _render_html(text, inline, context):
 
     return f"<{element} {attributes}>{content}</{element}>"
 
-def _render_md(text, inline, context):
+def _render_md(text: str, inline: bool, context: typing.Dict[str, typing.Any]) -> str:
+    """ Render the given token content as Markdown. """
+
     if (inline):
         text = text.strip()
         return f"$ {text} $"

@@ -16,7 +16,7 @@ HTML_BORDER_SPEC = '1px solid black'
 
 class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML):
 
-    def image(self, tokens, idx, options, env,
+    def image(self, tokens, token_index, options, env,
             force_raw_image_src = False, process_token = None):
         # Do custom rendering and then pass onto super.
 
@@ -28,12 +28,12 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML):
 
         # Set width.
         width_float = quizcomp.parser.style.get_image_width(style)
-        tokens[idx].attrSet('width', "%0.2f%%" % (width_float * 100.0))
+        tokens[token_index].attrSet('width', "%0.2f%%" % (width_float * 100.0))
 
-        original_src = tokens[idx].attrGet('src')
+        original_src = tokens[token_index].attrGet('src')
         src = quizcomp.parser.image.handle_callback(callback, original_src, base_dir)
         path = os.path.realpath(os.path.join(base_dir, src))
-        tokens[idx].attrSet('src', src)
+        tokens[token_index].attrSet('src', src)
 
         # Check the env to see if we need to force raw images.
         force_raw_image_src = force_raw_image_src or context.get(quizcomp.parser.common.CONTEXT_KEY_FORCE_RAW_IMAGE_SRC, False)
@@ -45,53 +45,53 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML):
         else:
             # Otherwise, do a base64 encoding of the image and embed it.
             mime, content = quizcomp.parser.image.encode_image(path)
-            tokens[idx].attrSet('src', f"data:{mime};base64,{content}")
+            tokens[token_index].attrSet('src', f"data:{mime};base64,{content}")
 
         # Last chance to change the token before HTML rendering.
         if (process_token is not None):
-            tokens[idx] = process_token(tokens[idx], context, path)
+            tokens[token_index] = process_token(tokens[token_index], context, path)
 
-        result = super().image(tokens, idx, options, env)
+        result = super().image(tokens, token_index, options, env)
 
         # Reset the src so that future callback hits have the proper cache key.
-        tokens[idx].attrSet('src', original_src)
+        tokens[token_index].attrSet('src', original_src)
 
         return result
 
-    def container_block_open(self, tokens, idx, options, env):
+    def container_block_open(self, tokens, token_index, options, env):
         context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
 
         # Add on a specific class.
-        tokens[idx].attrJoin('class', 'qg-block')
+        tokens[token_index].attrJoin('class', 'qg-block')
 
         # Pull any style attatched to this block and put it in a copy of the context.
-        context, full_style, block_style = quizcomp.parser.common.handle_block_style(tokens[idx].meta, context)
+        context, full_style, block_style = quizcomp.parser.common.handle_block_style(tokens[token_index].meta, context)
         env[quizcomp.parser.common.CONTEXT_ENV_KEY] = context
 
         # Attatch style based on if we are the root block.
         # If root use all style, otherwise just use the style for this block.
         active_style = block_style
-        if (tokens[idx].meta.get(quizcomp.parser.common.TOKEN_META_KEY_ROOT, False)):
+        if (tokens[token_index].meta.get(quizcomp.parser.common.TOKEN_META_KEY_ROOT, False)):
             active_style = full_style
 
         style_string = quizcomp.parser.style.compute_html_style_string(active_style)
         if (style_string != ''):
-            tokens[idx].attrSet('style', style_string)
+            tokens[token_index].attrSet('style', style_string)
 
         # Send to super for further rendering.
-        return super().renderToken(tokens, idx, options, env)
+        return super().renderToken(tokens, token_index, options, env)
 
-    def math_inline(self, tokens, idx, options, env):
-        return quizcomp.parser.math.render(quizcomp.constants.FORMAT_HTML, True, tokens, idx, options, env)
+    def math_inline(self, tokens, token_index, options, env):
+        return quizcomp.parser.math.render(quizcomp.constants.FORMAT_HTML, True, tokens, token_index, options, env)
 
-    def math_block(self, tokens, idx, options, env):
-        return quizcomp.parser.math.render(quizcomp.constants.FORMAT_HTML, False, tokens, idx, options, env)
+    def math_block(self, tokens, token_index, options, env):
+        return quizcomp.parser.math.render(quizcomp.constants.FORMAT_HTML, False, tokens, token_index, options, env)
 
-    def placeholder(self, tokens, idx, options, env):
-        return "<placeholder>%s</placeholder>" % (tokens[idx].content)
+    def placeholder(self, tokens, token_index, options, env):
+        return "<placeholder>%s</placeholder>" % (tokens[token_index].content)
 
-    def table_open(self, tokens, idx, options, env):
-        token = tokens[idx]
+    def table_open(self, tokens, token_index, options, env):
+        token = tokens[token_index]
         context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
@@ -111,20 +111,20 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML):
 
         _join_html_style(token, table_style)
 
-        return super().renderToken(tokens, idx, options, env)
+        return super().renderToken(tokens, token_index, options, env)
 
-    def thead_open(self, tokens, idx, options, env):
-        token = tokens[idx]
+    def thead_open(self, tokens, token_index, options, env):
+        token = tokens[token_index]
         context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
         if (quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_HEAD_RULE, quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE)):
             _join_html_style(token, ["border-bottom: %s" % (HTML_BORDER_SPEC)])
 
-        return super().renderToken(tokens, idx, options, env)
+        return super().renderToken(tokens, token_index, options, env)
 
-    def th_open(self, tokens, idx, options, env):
-        token = tokens[idx]
+    def th_open(self, tokens, token_index, options, env):
+        token = tokens[token_index]
         context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
@@ -136,16 +136,16 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML):
 
         _join_html_style(token, ["font-weight: %s" % (weight)])
 
-        return super().renderToken(tokens, idx, options, env)
+        return super().renderToken(tokens, token_index, options, env)
 
-    def td_open(self, tokens, idx, options, env):
-        token = tokens[idx]
+    def td_open(self, tokens, token_index, options, env):
+        token = tokens[token_index]
         context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
         self._cell_html(token, style)
 
-        return super().renderToken(tokens, idx, options, env)
+        return super().renderToken(tokens, token_index, options, env)
 
     def _cell_html(self, token, style):
         """

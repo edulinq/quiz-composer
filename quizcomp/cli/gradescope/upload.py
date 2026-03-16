@@ -26,8 +26,6 @@ def run_cli(args: argparse.Namespace) -> int:
         'user': args.user,
     }
 
-    gradescope_ids = []
-
     for i in range(len(variants)):
         variant = variants[i]
 
