@@ -454,6 +454,18 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         return doc.to_format(doc_format, **format_options)
 
     def _format_label(self, label):
+        """
+        Format a label for the current output format.
+        Labels appear in different contexts per format:
+            - HTML: question labels in element attributes (html.escape).
+            - QTI: group and question labels in XML title attributes (html.escape).
+            - TeX: labels in text contexts and TeX comments (tex_escape).
+            - JSON: labels use the tojson filter (no override needed).
+            - Markdown: labels are not directly referenced in templates.
+            - Uploaders (Canvas, GradeScope): raw text passed to APIs.
+        Subclasses override this method to provide format-specific escaping.
+        """
+
         return label.text
 
     def _store_images(self, link, base_dir):

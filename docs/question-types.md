@@ -37,14 +37,7 @@ Therefore, the content in plain strings are very limited.
 Labels are text that will be parsed for validation but rendered as plain text.
 They may contain any characters (including punctuation, Unicode, and special characters),
 but must not contain markdown formatting elements.
-Labels are currently used for group and question names.
-Each output format handles labels according to its context:
-in HTML templates, question labels appear inside element attributes and are HTML-escaped;
-in QTI templates, both group and question labels appear in XML `title` attributes;
-in TeX templates, labels appear in text contexts and TeX comments and are TeX-escaped;
-in JSON templates, labels use the `tojson` filter;
-in Markdown templates, labels are not directly referenced;
-and uploaders (Canvas, GradeScope) pass the raw text directly to their APIs.
+Labels will be escaped appropriately for each output format.
 
 Parsed strings are text that will be parsed by the QuizComp parser
 (see [the syntax documentation](/docs/syntax.md)),
