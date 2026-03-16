@@ -1,0 +1,9 @@
+{% extends "partials/question.template" %}
+
+{% block body %}
+    <response_str ident="response1" rcardinality="Single">
+        <render_fib>
+            <response_label ident="answer1" rshuffle="No"/>
+        </render_fib>
+    </response_str>
+{% endblock %}

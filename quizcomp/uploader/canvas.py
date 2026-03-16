@@ -45,6 +45,9 @@ QUESTION_FEEDBACK_MAPPING = {
     'incorrect': 'incorrect_comments_html',
 }
 
+
+QUESTION_TYPE_MAP[quizcomp.constants.QUESTION_TYPE_MEDIUM_ANSWER] = 'essay_question'
+
 DEFAULT_CANVAS_OPTIONS = {
     'practice': True,
     'published': False,
@@ -308,7 +311,7 @@ def _create_question_json(group_id, question, index, instance = None):
 
 def _serialize_answers(data, question, instance):
     # In Canvas, short answer questions also get mapped to the essay Canvas type.
-    if (question.question_type in [quizcomp.constants.QUESTION_TYPE_ESSAY, quizcomp.constants.QUESTION_TYPE_SA]):
+    if (question.question_type in [quizcomp.constants.QUESTION_TYPE_ESSAY, quizcomp.constants.QUESTION_TYPE_SA, quizcomp.constants.QUESTION_TYPE_MEDIUM_ANSWER]):
         # Essay questions have no answers.
         pass
     elif (question.question_type == quizcomp.constants.QUESTION_TYPE_FIMB):
