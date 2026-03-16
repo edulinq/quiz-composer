@@ -24,7 +24,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             title: str = '',
             course_title: str = '',
             term_title: str = '',
-            description: str = '',
+            description: typing.Union[str, None] = '',
             date: typing.Union[str, datetime.date] = '',
             time_limit_mins: typing.Union[int, None] = None,
             shuffle_answers: bool = True,
@@ -50,8 +50,11 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         self.date: typing.Union[str, datetime.date] = date
         """ The date of this quiz. """
 
-        self.description: str = description
+        self.description: quizcomp.parser.public.ParsedText = quizcomp.parser.public.parse_text('')
         """ The description/prompt for this quiz. """
+
+        self._raw_description: typing.Union[str, None] = description
+        """ The raw text for the description. """
 
         self.time_limit_mins: typing.Union[int, None] = time_limit_mins
         """ The time limit (in minutes) for this quiz. """
@@ -109,9 +112,10 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         if ((self.title is None) or (self.title == "")):
             raise quizcomp.common.QuizValidationError("Title cannot be empty.")
 
-        if ((self.description is None) or (self.description == "")):
+        if ((self._raw_description is None) or (self._raw_description == "")):
             raise quizcomp.common.QuizValidationError("Description cannot be empty.")
-        self.description = quizcomp.parser.public.parse_text(self.description, base_dir = self.base_dir)
+
+        self.description = quizcomp.parser.public.parse_text(self._raw_description, base_dir = self.base_dir)
 
         if (self.version is None):
             self.version = edq.util.git.get_version(self.base_dir, throw = False)

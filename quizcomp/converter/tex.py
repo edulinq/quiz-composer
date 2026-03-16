@@ -1,16 +1,14 @@
-"""
-Convert a quiz into TeX using templates.
-"""
-
 import os
+import typing
 
 import quizcomp.constants
 import quizcomp.converter.template
+import quizcomp.parser.document
 
-THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-DEFAULT_TEMPLATE_DIR = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-tex')
+THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-tex')
 
-JINJA_OPTIONS = {
+JINJA_OPTIONS: typing.Dict[str, str] = {
     'block_start_string': '<%',
     'block_end_string': '%>',
     'variable_start_string': '<<',
@@ -20,17 +18,26 @@ JINJA_OPTIONS = {
 }
 
 class TexTemplateConverter(quizcomp.converter.template.TemplateConverter):
-    def __init__(self, template_dir = DEFAULT_TEMPLATE_DIR,
-            cleanup_images = False,
-            **kwargs):
-        super().__init__(quizcomp.constants.FORMAT_TEX, template_dir,
-                cleanup_images = cleanup_images,
-                parser_format_options = {
-                    'image_path_callback': self._store_images,
-                },
-                jinja_options = JINJA_OPTIONS, **kwargs)
+    """
+    A converter to convert a quiz to TeX using templates.
+    """
 
-    def clean_solution_content(self, document):
+    def __init__(self,
+            template_dir: str = DEFAULT_TEMPLATE_DIR,
+            cleanup_images: bool = False,
+            **kwargs: typing.Any) -> None:
+        super().__init__(
+            quizcomp.constants.FORMAT_TEX,
+            template_dir,
+            cleanup_images = cleanup_images,
+            parser_format_options = {
+                'image_path_callback': self._store_images,
+            },
+            jinja_options = JINJA_OPTIONS,
+            **kwargs,
+        )
+
+    def clean_solution_content(self, document: quizcomp.parser.document.ParsedDocument) -> str:
         tex = document.to_format(quizcomp.constants.FORMAT_TEX)
         if ('\\' not in tex):
             return tex

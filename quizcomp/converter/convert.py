@@ -1,12 +1,16 @@
+import typing
+
 import quizcomp.constants
+import quizcomp.converter.converter
 import quizcomp.converter.html
 import quizcomp.converter.json
 import quizcomp.converter.markdown
 import quizcomp.converter.tex
 import quizcomp.converter.qti
+import quizcomp.question.base
 import quizcomp.variant
 
-SUPPORTED_FORMATS = [
+SUPPORTED_FORMATS: typing.List[str] = [
     quizcomp.constants.FORMAT_CANVAS,
     quizcomp.constants.FORMAT_HTML,
     quizcomp.constants.FORMAT_JSON,
@@ -16,11 +20,13 @@ SUPPORTED_FORMATS = [
 ]
 
 # Formats for testing only.
-TEST_SUPPORTED_FORMAT = [
+TEST_SUPPORTED_FORMAT: typing.List[str] = [
     quizcomp.constants.FORMAT_JSON_TEMPLATE,
 ]
 
-def get_converter_class(format = quizcomp.constants.FORMAT_JSON):
+def get_converter_class(format: str = quizcomp.constants.FORMAT_JSON) -> typing.Type[quizcomp.converter.converter.Converter]:
+    """ Get the converter class for the specified format. """
+
     if (format == quizcomp.constants.FORMAT_JSON):
         return quizcomp.converter.json.JSONConverter
     elif (format == quizcomp.constants.FORMAT_HTML):
@@ -38,19 +44,45 @@ def get_converter_class(format = quizcomp.constants.FORMAT_JSON):
     else:
         raise ValueError("No known converter for format '%s'." % (format))
 
-def get_converter(format = quizcomp.constants.FORMAT_JSON, **kwargs):
+def get_converter(format: str = quizcomp.constants.FORMAT_JSON, **kwargs: typing.Any) -> quizcomp.converter.converter.Converter:
+    """ Get the converter for the specified format. """
+
     converter_class = get_converter_class(format = format)
     return converter_class(**kwargs)
 
-def convert_variant(variant, format = quizcomp.constants.FORMAT_JSON,
-        constructor_args = {}, converter_args = {}):
+def convert_variant(
+        variant: quizcomp.variant.Variant,
+        format: str = quizcomp.constants.FORMAT_JSON,
+        constructor_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        converter_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        ) -> str:
+    """ Convert a variant to the given format. """
+
+    if (constructor_args is None):
+        constructor_args = {}
+
+    if (converter_args is None):
+        converter_args = {}
+
     if (not isinstance(variant, quizcomp.variant.Variant)):
         raise ValueError("convert_variant() requires a quizcomp.variant.Variant type, found %s." % (type(variant)))
 
     converter = get_converter(format = format, **constructor_args)
     return converter.convert_variant(variant, **converter_args)
 
-def convert_question(question, format = quizcomp.constants.FORMAT_JSON,
-        constructor_args = {}, converter_args = {}):
+def convert_question(
+        question: quizcomp.question.base.Question,
+        format: str = quizcomp.constants.FORMAT_JSON,
+        constructor_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        converter_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        ) -> str:
+    """ Convert a question to the given format. """
+
+    if (constructor_args is None):
+        constructor_args = {}
+
+    if (converter_args is None):
+        converter_args = {}
+
     converter = get_converter(format = format, **constructor_args)
     return converter.convert_question(question, **converter_args)

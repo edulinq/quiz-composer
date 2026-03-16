@@ -3,80 +3,115 @@ import os
 import random
 import re
 import string
+import typing
 
 import edq.util.dirent
+import jinja2
 
 import quizcomp.constants
 import quizcomp.converter.converter
+import quizcomp.group
+import quizcomp.parser.document
 import quizcomp.parser.public
+import quizcomp.question.base
+import quizcomp.question.common
 import quizcomp.quiz
 import quizcomp.util.http
 import quizcomp.variant
 
-import jinja2
+TEMPLATE_FILENAME_QUIZ: str = 'quiz.template'
+TEMPLATE_FILENAME_QUESTION_SEP: str = 'question-separator.template'
+TEMPLATE_FILENAME_GROUP: str = 'group.template'
 
-TEMPLATE_FILENAME_QUIZ = 'quiz.template'
-TEMPLATE_FILENAME_QUESTION_SEP = 'question-separator.template'
-TEMPLATE_FILENAME_GROUP = 'group.template'
+RIGHT_IDS: typing.List[str] = list(string.ascii_uppercase)
+LEFT_IDS: typing.List[str] = [str(i + 1) for i in range(len(RIGHT_IDS))]
 
-RIGHT_IDS = string.ascii_uppercase
-LEFT_IDS = [str(i + 1) for i in range(len(RIGHT_IDS))]
-
-DEFAULT_JINJA_OPTIONS = {
+DEFAULT_JINJA_OPTIONS: typing.Dict[str, typing.Any] = {
     'trim_blocks': True,
     'lstrip_blocks': True,
     'autoescape': jinja2.select_autoescape(),
 }
 
-DEFAULT_ID_DELIM = '.'
+DEFAULT_ID_DELIM: str = '.'
 
 class TemplateConverter(quizcomp.converter.converter.Converter):
-    def __init__(self, format, template_dir,
-            jinja_options = {}, jinja_filters = {}, jinja_globals = {},
-            parser_format_options = {},
-            image_base_dir = None, image_relative_root = None, cleanup_images = True,
-            id_delim = DEFAULT_ID_DELIM,
-            **kwargs):
+    """
+    The base class for a converter that uses templates.
+    """
+
+    def __init__(self,
+            format: str,
+            template_dir: str,
+            jinja_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            jinja_filters: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            jinja_globals: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            parser_format_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            image_base_dir: typing.Union[str, None] = None,
+            image_relative_root: typing.Union[str, None] = None,
+            cleanup_images: bool = True,
+            id_delim: str = DEFAULT_ID_DELIM,
+            **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
         if (not os.path.isdir(template_dir)):
-            raise ValueError("Provided template dir ('%s') does not exist or is not a dir." % (
-                template_dir))
+            raise ValueError(f"Provided template dir ('{template_dir}') does not exist or is not a dir.")
 
-        self.format = format
-        self.template_dir = template_dir
+        self.format: str = format
+        """ The format being converted to. """
 
-        self.parser_format_options = parser_format_options
-        self.id_delim = id_delim
+        self.template_dir: str = template_dir
+        """ The directory containing the templates to use. """
 
-        # Some converters will need to store image paths.
-        # Using the _store_images() callback will put the images inside image_base_dir.
-        self.image_base_dir = image_base_dir
+        if (parser_format_options is None):
+            parser_format_options = {}
 
-        # This will hold: {<abs_path or link>: <new path (based on image_base_dir)>, ...}
-        self.image_paths = {}
+        self.parser_format_options: typing.Dict[str, typing.Any] = parser_format_options
+        """ Formatting options. """
 
-        # If not None, override the default image output path with os.join(image_relative_root, filename).
-        self.image_relative_root = image_relative_root
+        self.id_delim: str = id_delim
+        """ The delimiter when creating internal identifiers for groups, questions, answers, etc. """
 
-        # Remove any temp image directories.
-        self.cleanup_images = cleanup_images
+        self.image_base_dir: typing.Union[str, None] = image_base_dir
+        """
+        The location images are to be stored.
+        Some converters will need to store image paths.
+        Using the _store_images() callback will put the images here.
+        """
 
-        self.jinja_options = DEFAULT_JINJA_OPTIONS.copy()
+        self.image_paths: typing.Dict[str, str] = {}
+        """ This will hold: {<abs_path or link>: <new path (based on image_base_dir)>, ...} """
+
+        self.image_relative_root: typing.Union[str, None] = image_relative_root
+        """ If not None, override the default image output path with os.join(image_relative_root, filename). """
+
+        self.cleanup_images: bool = cleanup_images
+        """ Remove any temp image directories. """
+
+        if (jinja_options is None):
+            jinja_options = {}
+
+        self.jinja_options: typing.Dict[str, typing.Any] = DEFAULT_JINJA_OPTIONS.copy()
+        """ Top-level options to pass Jinja. """
+
         self.jinja_options.update(jinja_options)
 
-        self.env = jinja2.Environment(
+        self.env: jinja2.Environment = jinja2.Environment(
             loader = jinja2.FileSystemLoader(self.template_dir, followlinks = True),
             **self.jinja_options,
         )
+        """ The Jinja environment for this converter. """
+
+        if (jinja_globals is None):
+            jinja_globals = {}
 
         self.env.globals.update(jinja_globals)
+
+        if (jinja_filters is None):
+            jinja_filters = {}
 
         for (name, function) in jinja_filters.items():
             self.env.filters[name] = function
 
-        # Methods to generate answers.
-        # Signature: func(self, question_id, question_number, question, variant)
         self.answer_functions = {
             quizcomp.constants.QUESTION_TYPE_ESSAY: 'create_answers_essay',
             quizcomp.constants.QUESTION_TYPE_FIMB: 'create_answers_fimb',
@@ -90,14 +125,22 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             quizcomp.constants.QUESTION_TYPE_TEXT_ONLY: 'create_answers_text_only',
             quizcomp.constants.QUESTION_TYPE_TF: 'create_answers_tf',
         }
+        """
+        Methods to generate answers.
+        Signature: func(self, question_id, question_number, question, variant)
+        """
 
-    def convert_quiz(self, quiz, **kwargs):
+    def convert_quiz(self, quiz: quizcomp.quiz.Quiz, **kwargs: typing.Any) -> str:
+        """ Convert an entire quiz (including variants). """
+
         return self._convert_container(quiz, quizcomp.quiz.Quiz, 'quiz')
 
-    def convert_variant(self, variant, **kwargs):
+    def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
         return self._convert_container(variant, quizcomp.variant.Variant, 'variant')
 
-    def _convert_container(self, container, container_type, container_label):
+    def _convert_container(self, container: quizcomp.quiz.Quiz, container_type: typing.Type, container_label: str) -> str:
+        """ Convert a quiz or variant. """
+
         if (not isinstance(container, container_type)):
             raise ValueError("Template %s converter requires a %s, found %s." % (
                     container_label, str(container_type), type(container)))
@@ -119,10 +162,19 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return text
 
-    def create_groups(self, quiz):
+    def create_groups(self, quiz: quizcomp.quiz.Quiz) -> typing.Tuple[int, str]:
+        """ Convert question groups. """
+
         return self._create_item_collection(quiz, 'groups', 'group', 1, self.create_group)
 
-    def _create_item_collection(self, container, container_attr, label, question_number, item_creation_function, id_prefix = None):
+    def _create_item_collection(self,
+            container: typing.Union[quizcomp.quiz.Quiz, quizcomp.group.Group],
+            container_attr: str,
+            label: str,
+            question_number: int,
+            item_creation_function: typing.Callable,
+            id_prefix: typing.Union[str, None] = None,
+            ) -> typing.Tuple[int, str]:
         """
         Create a collection of groups (for quizzes) or questions (for variants or inside groups)
         from a container (variant or quiz).
@@ -149,7 +201,14 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return question_number, "\n\n".join(result)
 
-    def create_group(self, group_index, question_number, group, quiz):
+    def create_group(self,
+            group_index: str,
+            question_number: int,
+            group: quizcomp.group.Group,
+            quiz: quizcomp.quiz.Quiz,
+            ) -> typing.Tuple[int, str]:
+        """ Convert a single group. """
+
         data = group.to_dict()
         data['id'] = group_index
 
@@ -166,7 +225,16 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return question_number, text
 
-    def create_question(self, question_id, question_number, question, variant):
+    def create_question(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant) -> typing.Tuple[int, str]:
+        """
+        Convert a question to the target format.
+        Return the new (current) question number and converted text.
+        """
+
         question_type = question.question_type
         if (question_type not in self.answer_functions):
             raise ValueError("Unsupported question type: '%s'." % (question_type))
@@ -202,7 +270,10 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return question_number, text
 
-    def modify_question_context(self, context, question, variant):
+    def modify_question_context(self,
+            context: typing.Dict[str, typing.Any],
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant) -> typing.Dict[str, typing.Any]:
         """
         Provide an opportunity for children to modify the question context.
         The new context reference (which may be new, unchanged, or modified version of the passed-in context).
@@ -210,7 +281,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return context
 
-    def clean_solution_content(self, document):
+    def clean_solution_content(self, document: quizcomp.parser.document.ParsedDocument) -> str:
         """
         An opportunity for children to clean the text of a solution before it is entered into a key.
         For example, tex solutions are hacky and cannot use certain functions.
@@ -218,9 +289,11 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return self._format_doc(document)
 
-    def create_question_separator(self, variant):
+    def create_question_separator(self, quiz: typing.Union[quizcomp.quiz.Quiz, quizcomp.group.Group]) -> str:
+        """ Create a question separator. """
+
         context = {
-            'quiz': variant,
+            'quiz': quiz,
             'answer_key': self.answer_key,
         }
 
@@ -229,12 +302,26 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return text
 
-    def create_answers_tf(self, question_id, question_number, question, variant):
+    def create_answers_tf(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.List[typing.Dict[str, typing.Any]]:
+        """ Create the template data for a TF question answers. """
+
         return question.answers
 
-    def create_answers_matching(self, question_id, question_number, question, variant):
-        lefts = []
-        rights = []
+    def create_answers_matching(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.Dict[str, typing.Any]:
+        """ Create the template data for a matching question answers. """
+
+        lefts: typing.List[typing.Dict[str, typing.Any]] = []
+        rights: typing.List[typing.Dict[str, typing.Any]] = []
 
         # {left_index: right_index, ...}
         matches = {}
@@ -265,10 +352,10 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         right_ids = self.get_matching_right_ids()
 
         if (len(lefts) > len(left_ids)):
-            raise ValueError("Too many left-hand values for a matching question. Found: %d, Max %d." % (len(lefts) > len(left_ids)))
+            raise ValueError(f"Too many left-hand values for a matching question. Found: {len(lefts)}, Max {len(left_ids)}.")
 
         if (len(rights) > len(right_ids)):
-            raise ValueError("Too many right-hand values for a matching question. Found: %d, Max %d." % (len(rights) > len(right_ids)))
+            raise ValueError(f"Too many right-hand values for a matching question. Found: {len(rights)}, Max {len(right_ids)}.")
 
         if (question.answers.get('shuffle', False)):
             seed = question.answers.get('shuffle_seed', None)
@@ -324,16 +411,29 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             'matches': matches,
         }
 
-    def get_matching_left_ids(self):
+    def get_matching_left_ids(self) -> typing.List[str]:
+        """ Get the IDs to use on the left side of a matching question. """
+
         return LEFT_IDS
 
-    def get_matching_right_ids(self):
+    def get_matching_right_ids(self) -> typing.List[str]:
+        """ Get the IDs to use on the right side of a matching question. """
+
         return RIGHT_IDS
 
-    def create_answers_mcq(self, question_id, question_number, question, variant):
+    def create_answers_mcq(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.List[typing.Dict[str, typing.Any]]:
+        """ Create the template data for an MCQ question answers. """
+
         return self._create_answers_mcq_list(question.answers)
 
-    def _create_answers_mcq_list(self, answers):
+    def _create_answers_mcq_list(self,
+            answers: typing.List[quizcomp.question.common.ParsedTextChoice],
+            ) -> typing.List[typing.Dict[str, typing.Any]]:
         choices = []
 
         for i in range(len(answers)):
@@ -346,10 +446,24 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return choices
 
-    def create_answers_text_only(self, question_id, question_number, question, variant):
+    def create_answers_text_only(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> None:
+        """ Create the template data for a text only question answers. """
+
         return None
 
-    def create_answers_numerical(self, question_id, question_number, question, variant):
+    def create_answers_numerical(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.Dict[str, typing.Any]:
+        """ Create the template data for a numerical question answers. """
+
         answer = question.answers[0]
 
         if (answer.type == quizcomp.constants.NUMERICAL_ANSWER_TYPE_EXACT):
@@ -373,7 +487,14 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             'raw_answers': question.answers,
         }
 
-    def create_answers_mdd(self, question_id, question_number, question, variant):
+    def create_answers_mdd(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.List[typing.Dict[str, typing.Any]]:
+        """ Create the template data for a TF question answers. """
+
         answers = []
 
         for key, items in question.answers.items():
@@ -386,10 +507,24 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return answers
 
-    def create_answers_ma(self, question_id, question_number, question, variant):
+    def create_answers_ma(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.List[typing.Dict[str, typing.Any]]:
+        """ Create the template data for a TF question answers. """
+
         return self._create_answers_mcq_list(question.answers)
 
-    def create_answers_fimb(self, question_id, question_number, question, variant):
+    def create_answers_fimb(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.Dict[str, typing.Any]:
+        """ Create the template data for a TF question answers. """
+
         answers = {}
 
         for (key, item) in question.answers.items():
@@ -406,23 +541,51 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return answers
 
-    def create_answers_fitb(self, question_id, question_number, question, variant):
+    def create_answers_fitb(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.Dict[str, typing.Any]:
+        """ Create the template data for a TF question answers. """
+
         return self.create_answers_fimb(question_id, question_number, question, variant)['']['solutions']
 
-    def create_answers_sa(self, question_id, question_number, question, variant):
+    def create_answers_sa(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.List[typing.Dict[str, typing.Any]]:
+        """ Create the template data for a TF question answers. """
+
         return self._create_answers_text(question_id, question_number, question, variant)
 
-    def create_answers_essay(self, question_id, question_number, question, variant):
+    def create_answers_essay(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.List[typing.Dict[str, typing.Any]]:
+        """ Create the template data for a TF question answers. """
+
         return self._create_answers_text(question_id, question_number, question, variant)
 
-    def _create_answers_text(self, question_id, question_number, question, variant):
+    def _create_answers_text(self,
+            question_id: str,
+            question_number: int,
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant,
+            ) -> typing.List[typing.Dict[str, typing.Any]]:
+        """ Create the template data for a TF question answers. """
+
         solutions = []
         for value in question.answers:
             solutions.append(self._create_answers_text_value(value))
 
         return solutions
 
-    def _create_answers_text_value(self, value):
+    def _create_answers_text_value(self, value: quizcomp.question.common.ParsedTextChoice) -> typing.Dict[str, typing.Any]:
         """
         Create an output dict for a value that was parsed from text (the result of a parsed string).
         """
@@ -443,7 +606,13 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return result
 
-    def _format_doc(self, doc, doc_format = None, format_options = None):
+    def _format_doc(self,
+            doc: quizcomp.parser.document.ParsedDocument,
+            doc_format: typing.Union[str, None] = None,
+            format_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> str:
+        """ Format a parsed document. """
+
         if (doc_format is None):
             doc_format = self.format
 
@@ -452,7 +621,9 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return doc.to_format(doc_format, **format_options)
 
-    def _store_images(self, link, base_dir):
+    def _store_images(self, link: str, base_dir: str) -> str:
+        """ Store images for this quiz. """
+
         if (self.image_base_dir is None):
             self.image_base_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp-images-', rm = self.cleanup_images)
 

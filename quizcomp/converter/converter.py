@@ -1,18 +1,27 @@
 import abc
+import typing
 
+import quizcomp.question.base
 import quizcomp.variant
 
 class Converter(abc.ABC):
-    def __init__(self, answer_key = False, **kwargs):
+    """
+    The base class for converting quizzes (variants) to different formats (e.g., HTML).
+    """
+
+    def __init__(self, answer_key: bool = False, **kwargs: typing.Any) -> None:
         super().__init__()
 
-        self.answer_key = answer_key
+        self.answer_key: bool = answer_key
+        """ If the generated output should be an answer key. """
 
     @abc.abstractmethod
-    def convert_variant(self, variant, **kwargs):
+    def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
+        """ Convert the given variant to the converter's target format and return the converted artifact. """
+
         pass
 
-    def convert_question(self, question, **kwargs):
+    def convert_question(self, question: quizcomp.question.base.Question, **kwargs: typing.Any) -> str:
         """
         Convert a single question using a dummy quiz layout.
         """

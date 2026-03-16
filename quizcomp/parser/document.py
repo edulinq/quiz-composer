@@ -2,6 +2,7 @@ import copy
 import os
 import re
 import types
+import typing
 
 import edq.util.json
 
@@ -11,8 +12,15 @@ import quizcomp.parser.render
 import quizcomp.parser.common
 
 class ParsedDocument(object):
-    def __init__(self, tokens, base_dir = '.'):
-        self._tokens = tokens
+    def __init__(self,
+            tokens: typing.Union[typing.List, None] = None,
+            base_dir: str = '.',
+            ) -> None:
+        if (tokens is None):
+            tokens = []
+
+        self._tokens: typing.List = tokens
+
         self._context = {
             quizcomp.parser.common.BASE_DIR_KEY: base_dir,
         }

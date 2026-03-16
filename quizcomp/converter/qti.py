@@ -1,12 +1,9 @@
-"""
-Convert a quiz into QTI using templates.
-"""
-
 import html
 import logging
 import os
 import pathlib
 import shutil
+import typing
 import warnings
 
 import bs4
@@ -14,11 +11,13 @@ import edq.util.dirent
 
 import quizcomp.constants
 import quizcomp.converter.template
+import quizcomp.quiz
+import quizcomp.variant
 
-THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-DEFAULT_TEMPLATE_DIR = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
+THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
 
-QUESTION_TYPE_MAP = {
+QUESTION_TYPE_MAP: typing.Dict[str, str] = {
     # Direct Mappings
     quizcomp.constants.QUESTION_TYPE_ESSAY: 'essay_question',
     quizcomp.constants.QUESTION_TYPE_FIMB: 'fill_in_multiple_blanks_question',
@@ -34,20 +33,27 @@ QUESTION_TYPE_MAP = {
     quizcomp.constants.QUESTION_TYPE_SA: 'essay_question',
 }
 
-TEMPLATE_FILENAME_ASSESSMENT_META = 'qti_assessment_meta.template'
-TEMPLATE_FILENAME_MANIFEST = 'qti_imsmanifest.template'
+TEMPLATE_FILENAME_ASSESSMENT_META: str = 'qti_assessment_meta.template'
+TEMPLATE_FILENAME_MANIFEST: str = 'qti_imsmanifest.template'
 
-OUT_DIR_IMAGES = 'images'
-OUT_DIR_QUIZ = 'quiz'
-OUT_FILENAME_QUIZ = 'quiz.xml'
-OUT_FILENAME_ASSESSMENT_META = 'assessment_meta.xml'
-OUT_FILENAME_MANIFEST = 'imsmanifest.xml'
+OUT_DIR_IMAGES: str = 'images'
+OUT_DIR_QUIZ: str = 'quiz'
+OUT_FILENAME_QUIZ: str = 'quiz.xml'
+OUT_FILENAME_ASSESSMENT_META: str = 'assessment_meta.xml'
+OUT_FILENAME_MANIFEST: str = 'imsmanifest.xml'
 
-DEFAULT_ID_DELIM = '.'
-CANVAS_ID_DELIM = 'f'
+DEFAULT_ID_DELIM: str = '.'
+CANVAS_ID_DELIM: str = 'f'
 
 class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
-    def __init__(self, template_dir = DEFAULT_TEMPLATE_DIR, canvas = False, **kwargs):
+    """
+    A converter to convert a quiz to QTI using templates.
+    """
+
+    def __init__(self,
+            template_dir: str = DEFAULT_TEMPLATE_DIR,
+            canvas: bool = False,
+            **kwargs: typing.Any) -> None:
         parser_format_options = {}
         id_delim = DEFAULT_ID_DELIM
 
@@ -71,16 +77,21 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         self.canvas = canvas
 
-    def convert_variant(self, variant, **kwargs):
+    def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
         # Parse and format the XML.
         text = super(QTITemplateConverter, self).convert_variant(variant, **kwargs)
         return self._format_xml(text)
 
-    def modify_question_context(self, context, question, variant):
+    def modify_question_context(self,
+            context: typing.Dict[str, typing.Any],
+            question: quizcomp.question.base.Question,
+            variant: quizcomp.variant.Variant) -> typing.Dict[str, typing.Any]:
         context['question']['mapped_question_type'] = QUESTION_TYPE_MAP[question.question_type]
         return context
 
-    def convert_quiz(self, quiz, out_path = None, **kwargs):
+    def convert_quiz(self, quiz: quizcomp.quiz.Quiz, out_path: typing.Union[str, None] = None, **kwargs: typing.Any) -> str:
+        """ Convert an entire quiz (including variants) to QTI. """
+
         if (out_path is None):
             out_path = f'{quiz.title}.qti.zip'
 
@@ -108,16 +119,22 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         logging.info("Created QTI quiz at '%s'." % (out_path))
         return path
 
-    def _create_zip(self, quiz, temp_out_path, out_path, temp_dir):
+    def _create_zip(self, quiz: quizcomp.quiz.Quiz, temp_out_path: str, out_path: str, temp_dir: str) -> None:
+        """ Zip up the pending QTI. """
+
         shutil.make_archive(os.path.splitext(temp_out_path)[0], 'zip', os.path.dirname(temp_dir), os.path.basename(temp_dir))
         edq.util.dirent.copy(temp_out_path, out_path)
 
-    def _format_xml(self, text):
+    def _format_xml(self, text: str) -> str:
+        """ Format/Prettify the XML. """
+
         warnings.filterwarnings('ignore', category = bs4.builder.XMLParsedAsHTMLWarning)
         document = bs4.BeautifulSoup(text, 'html.parser')
         return document.prettify(formatter = bs4.formatter.HTMLFormatter(indent = 4))
 
-    def _convert_assessment_meta(self, quiz, out_dir):
+    def _convert_assessment_meta(self, quiz: quizcomp.quiz.Quiz, out_dir: str) -> None:
+        """ Write a quiz's metadata. """
+
         template = self.env.get_template(TEMPLATE_FILENAME_ASSESSMENT_META)
 
         quiz_context = quiz.to_dict()
@@ -140,7 +157,9 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         path = os.path.join(out_dir, OUT_FILENAME_ASSESSMENT_META)
         edq.util.dirent.write_file(path, text)
 
-    def _convert_manifest(self, quiz, out_dir):
+    def _convert_manifest(self, quiz: quizcomp.quiz.Quiz, out_dir: str) -> None:
+        """ Write the manifest for the quiz. """
+
         template = self.env.get_template(TEMPLATE_FILENAME_MANIFEST)
 
         data = {
@@ -163,7 +182,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         path = os.path.join(out_dir, OUT_FILENAME_MANIFEST)
         edq.util.dirent.write_file(path, text)
 
-    def _store_images(self, link, base_dir):
+    def _store_images(self, link: str, base_dir: str) -> str:
         """
         Override the final path that is returned to instead point to the Canvas path.
         Note that this method should only be called when (self.canvas == True).
@@ -171,12 +190,15 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         path = super(QTITemplateConverter, self)._store_images(link, base_dir)
 
+        if (self.image_base_dir is None):
+            raise ValueError("Missing image base dir.")
+
         quiz_name = os.path.basename(os.path.dirname(self.image_base_dir))
         filename = os.path.basename(path)
 
         return '/'.join(['$IMS-CC-FILEBASE$', quiz_name, OUT_DIR_IMAGES, filename])
 
-def _to_xml(item):
+def _to_xml(item: typing.Union[None, bool, typing.Any]) -> str:
     """
     Convert the item to an XML string.
     """
