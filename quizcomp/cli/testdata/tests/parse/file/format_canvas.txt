@@ -7,5 +7,5 @@
 }
 ---
 <div class="qg-root-block qg-block">
-  <p style="margin-top: 0">A simple file.</p>
+  <p>A simple file.</p>
 </div>

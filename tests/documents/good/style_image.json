@@ -4,7 +4,7 @@
         "text": "<style>\n \"image-width\": 0.5 \n</style>\n![alt text](http://test.edulinq.org/image.png)",
         "formats": {
             "md": "![alt text](http://test.edulinq.org/image.png)",
-            "html": "<p style=\"margin-top: 0\"><img src='http://test.edulinq.org/image.png' alt='alt text' width='50.00%' /></p>",
+            "html": "<p><img src='http://test.edulinq.org/image.png' alt='alt text' width='50.00%' /></p>",
             "tex": "\\includegraphics[width=0.50\\textwidth]{http://test.edulinq.org/image.png}",
             "text": "",
             "json": {
@@ -44,7 +44,7 @@
         "text": "<style>\n \"image-width\": 0.5 \n</style>\n![root](http://test.edulinq.org/image.png)\n:::block\n![child](http://test.edulinq.org/image.png)\n:::",
         "formats": {
             "md": "![root](http://test.edulinq.org/image.png)\n\n![child](http://test.edulinq.org/image.png)",
-            "html": "<p style=\"margin-top: 0\"><img src='http://test.edulinq.org/image.png' alt='root' width='50.00%' /></p><div class='qg-block'><p style=\"margin-top: 0\"><img src='http://test.edulinq.org/image.png' alt='child' width='50.00%' /></p></div>",
+            "html": "<p><img src='http://test.edulinq.org/image.png' alt='root' width='50.00%' /></p><div class='qg-block'><p><img src='http://test.edulinq.org/image.png' alt='child' width='50.00%' /></p></div>",
             "tex": "\\includegraphics[width=0.50\\textwidth]{http://test.edulinq.org/image.png}\n\n\\includegraphics[width=0.50\\textwidth]{http://test.edulinq.org/image.png}",
             "text": "",
             "json": {
@@ -109,7 +109,7 @@
         "text": "<style>\n \"image-width\": 0.5 \n</style>\n![root](http://test.edulinq.org/image.png)\n:::block\n<style>\n \"image-width\": 0.75 \n</style>\n![child](http://test.edulinq.org/image.png)\n:::",
         "formats": {
             "md": "![root](http://test.edulinq.org/image.png)\n\n![child](http://test.edulinq.org/image.png)",
-            "html": "<p style=\"margin-top: 0\"><img src='http://test.edulinq.org/image.png' alt='root' width='50.00%' /></p><div class='qg-block'><p style=\"margin-top: 0\"><img src='http://test.edulinq.org/image.png' alt='child' width='75.00%' /></p></div>",
+            "html": "<p><img src='http://test.edulinq.org/image.png' alt='root' width='50.00%' /></p><div class='qg-block'><p><img src='http://test.edulinq.org/image.png' alt='child' width='75.00%' /></p></div>",
             "tex": "\\includegraphics[width=0.50\\textwidth]{http://test.edulinq.org/image.png}\n\n\\includegraphics[width=0.75\\textwidth]{http://test.edulinq.org/image.png}",
             "text": "",
             "json": {
@@ -177,7 +177,7 @@
         "text": "<style>\n \"image-width\": 0.5 \n</style>\n![root](http://test.edulinq.org/image.png)\n:::block\n<style>\n \"image-width\": null \n</style>\n![child](http://test.edulinq.org/image.png)\n:::",
         "formats": {
             "md": "![root](http://test.edulinq.org/image.png)\n\n![child](http://test.edulinq.org/image.png)",
-            "html": "<p style=\"margin-top: 0\"><img src='http://test.edulinq.org/image.png' alt='root' width='50.00%' /></p><div class='qg-block'><p style=\"margin-top: 0\"><img src='http://test.edulinq.org/image.png' alt='child' width='100.00%' /></p></div>",
+            "html": "<p><img src='http://test.edulinq.org/image.png' alt='root' width='50.00%' /></p><div class='qg-block'><p><img src='http://test.edulinq.org/image.png' alt='child' width='100.00%' /></p></div>",
             "tex": "\\includegraphics[width=0.50\\textwidth]{http://test.edulinq.org/image.png}\n\n\\includegraphics[width=1.00\\textwidth]{http://test.edulinq.org/image.png}",
             "text": "",
             "json": {

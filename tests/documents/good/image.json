@@ -4,7 +4,7 @@
         "text": "![alt text](http://test.edulinq.org/image.png)",
         "formats": {
             "md": "![alt text](http://test.edulinq.org/image.png)",
-            "html": "<p style=\"margin-top: 0\"><img src='http://test.edulinq.org/image.png' alt='alt text' width='100.00%' /></p>",
+            "html": "<p><img src='http://test.edulinq.org/image.png' alt='alt text' width='100.00%' /></p>",
             "tex": "\\includegraphics[width=1.00\\textwidth]{http://test.edulinq.org/image.png}",
             "text": "",
             "json": {
@@ -35,7 +35,7 @@
         "text": "![alt text](../../data/tiny.png)",
         "formats": {
             "md": "![alt text](../../data/tiny.png)",
-            "html": "<p style=\"margin-top: 0\"><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=' alt='alt text' width='100.00%' /></p>",
+            "html": "<p><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=' alt='alt text' width='100.00%' /></p>",
             "tex": "\\includegraphics[width=1.00\\textwidth]{../../data/tiny.png}",
             "text": "",
             "json": {
@@ -66,7 +66,7 @@
         "text": "![alt text](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=)",
         "formats": {
             "md": "![alt text](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=)",
-            "html": "<p style=\"margin-top: 0\"><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=' alt='alt text' width='100.00%' /></p>",
+            "html": "<p><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=' alt='alt text' width='100.00%' /></p>",
             "tex": "\\includegraphics[width=1.00\\textwidth]{data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=}",
             "text": "",
             "json": {
