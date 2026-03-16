@@ -28,7 +28,7 @@ def is_available():
         return True
 
     if (shutil.which('pdflatex') is None):
-        logging.warning("Could not find `pdxlatex`, cannot compile PDFs.")
+        logging.warning("Could not find `pdflatex`, cannot compile PDFs.")
         return False
 
     return True
