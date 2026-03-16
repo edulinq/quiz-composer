@@ -234,7 +234,7 @@ class GradeScopeUploader(object):
             if (len(parts) == 1):
                 # Single-part question.
                 question_data.append({
-                    'title': variant.questions[question_index].name,
+                    'title': variant.questions[question_index].name.text,
                     'weight': variant.questions[question_index].points,
                     'crop_rect_list': list(parts.values()),
                 })
@@ -243,13 +243,13 @@ class GradeScopeUploader(object):
                 children = []
                 for (part_id, box) in parts.items():
                     children.append({
-                        'title': "%s - %s" % (variant.questions[question_index].name, part_id),
+                        'title': "%s - %s" % (variant.questions[question_index].name.text, part_id),
                         'weight': round(variant.questions[question_index].points / len(parts), 2),
                         'crop_rect_list': [box],
                     })
 
                 question_data.append({
-                    'title': variant.questions[question_index].name,
+                    'title': variant.questions[question_index].name.text,
                     'weight': variant.questions[question_index].points,
                     # The top-level question just needs one of the bounding boxes.
                     'crop_rect_list': [list(parts.values())[0]],
@@ -460,10 +460,10 @@ class GradeScopeUploader(object):
         questions_ids, csrf_token = self.fetch_question_ids(session, assignment_id)
 
         for question in variant.questions:
-            if (question.name not in questions_ids):
+            if (question.name.text not in questions_ids):
                 continue
 
-            question_ids = questions_ids[question.name]
+            question_ids = questions_ids[question.name.text]
             score = round(question.points / len(question_ids), 2)
 
             for question_id in question_ids:

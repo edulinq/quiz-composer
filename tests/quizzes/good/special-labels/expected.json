@@ -1,0 +1,106 @@
+{
+    "quiz": {
+        "title": "Special Labels",
+        "course_title": "",
+        "term_title": "",
+        "description": "Quiz with special characters in group and question labels.",
+        "date": "2026-01-01",
+        "total_points": 20,
+        "time_limit_mins": null,
+        "shuffle_answers": false,
+        "pick_with_replacement": true,
+        "version": "test",
+        "seed": 0
+    },
+    "answer_key": false,
+    "groups": [
+        {
+            "group": {
+                "id": "0",
+                "name": "Group #1: Review",
+                "pick_count": 1,
+                "points": 10,
+                "shuffle_answers": true,
+                "pick_with_replacement": true,
+                "custom_header": null,
+                "skip_numbering": null,
+                "hints": {},
+                "hints_first": {},
+                "hints_last": {}
+            },
+            "questions": [
+                {
+                    "id": "0.0",
+                    "number": 1,
+                    "base_dir": "questions/good/mcq-basic",
+                    "prompt": "Multiple Choice: Basic",
+                    "question_type": "multiple_choice",
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "A"
+                        },
+                        {
+                            "correct": false,
+                            "text": "B"
+                        },
+                        {
+                            "correct": false,
+                            "text": "C"
+                        },
+                        {
+                            "correct": false,
+                            "text": "D"
+                        }
+                    ],
+                    "points": 10,
+                    "name": "Group #1: Review",
+                    "hints": {},
+                    "shuffle_answers": true,
+                    "custom_header": null,
+                    "skip_numbering": null
+                }
+            ]
+        },
+        {
+            "group": {
+                "id": "1",
+                "name": "Group $2 (Final)",
+                "pick_count": 1,
+                "points": 10,
+                "shuffle_answers": true,
+                "pick_with_replacement": true,
+                "custom_header": null,
+                "skip_numbering": null,
+                "hints": {},
+                "hints_first": {},
+                "hints_last": {}
+            },
+            "questions": [
+                {
+                    "id": "1.0",
+                    "number": 2,
+                    "base_dir": "questions/good/tf-true",
+                    "prompt": "True\\/False: True",
+                    "question_type": "true_false",
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "True"
+                        },
+                        {
+                            "correct": false,
+                            "text": "False"
+                        }
+                    ],
+                    "points": 10,
+                    "name": "Group $2 (Final)",
+                    "hints": {},
+                    "shuffle_answers": true,
+                    "custom_header": null,
+                    "skip_numbering": null
+                }
+            ]
+        }
+    ]
+}
