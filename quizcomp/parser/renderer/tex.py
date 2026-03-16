@@ -1,12 +1,15 @@
 import logging
 import os
+import typing
 
+import quizcomp.constants
+import quizcomp.parser.ast
 import quizcomp.parser.common
 import quizcomp.parser.image
 import quizcomp.parser.renderer.base
 import quizcomp.parser.style
 
-TEX_REPLACEMENTS = {
+TEX_REPLACEMENTS: typing.Dict[str, str] = {
     # Specially handle braces and slashes to avoid clobbering other replacements.
     '{': 'ZZZzzz  OPEN BRACE REPLACEMENT  zzzZZZ',
     '}': 'ZZZzzz  CLOSE BRACE REPLACEMENT  zzzZZZ',
@@ -26,9 +29,9 @@ TEX_REPLACEMENTS = {
     'ZZZzzz  BACKSLASH REPLACEMENT  zzzZZZ': '\\textbackslash{}',
 }
 
-VERB_CHARACTERS = ['|', '!', '@', '#', '$', '^', '&', '-', '_', '=', '+']
+VERB_CHARACTERS: typing.List[str] = ['|', '!', '@', '#', '$', '^', '&', '-', '_', '=', '+']
 
-TEX_TEXT_TABLE_ALIGNMENT = {
+TEX_TEXT_TABLE_ALIGNMENT: typing.Dict[str, str] = {
     quizcomp.parser.style.ALLOWED_VALUES_ALIGNMENT_LEFT: 'l',
     quizcomp.parser.style.ALLOWED_VALUES_ALIGNMENT_CENTER: 'c',
     quizcomp.parser.style.ALLOWED_VALUES_ALIGNMENT_RIGHT: 'r',
@@ -38,7 +41,7 @@ TEX_TEXT_TABLE_ALIGNMENT = {
 # we will use these analogues for TeX.
 # The only standard TeX heading we are not using is \part{},
 # which is before \chapter{}.
-HEADINGS = [
+HEADINGS: typing.List[str] = [
     'chapter',
     'section',
     'subsection',
@@ -48,7 +51,11 @@ HEADINGS = [
 ]
 
 class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRendererBase):
-    def _container_block(self, node, context):
+    """ A renderer for TeX. """
+
+    __output__ = quizcomp.constants.FORMAT_TEX
+
+    def _container_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         # Pull any style attatched to this block and put it in a copy of the context.
         context, full_style, block_style = quizcomp.parser.common.handle_block_style(node, context)
 
@@ -67,24 +74,24 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return "\n\n".join(content)
 
-    def _text(self, node, context):
+    def _text(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         return tex_escape(node.text())
 
-    def _softbreak(self, node, context):
+    def _softbreak(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         return "\n"
 
-    def _hardbreak(self, node, context):
+    def _hardbreak(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         return '~\\newline\n'
 
-    def _em(self, node, context):
+    def _em(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         content = ''.join([self._render_node(child, context) for child in node.children()])
         return r"\textit{%s}" % (content)
 
-    def _strong(self, node, context):
+    def _strong(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         content = ''.join([self._render_node(child, context) for child in node.children()])
         return r"\textbf{%s}" % (content)
 
-    def _fence(self, node, context):
+    def _fence(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         language_string = ''
 
         info = node.get('info', None)
@@ -93,7 +100,7 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return "\\begin{lstlisting}%s\n%s\n\\end{lstlisting}" % (language_string, node.text().rstrip())
 
-    def _code_block(self, node, context):
+    def _code_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         """
         This token is poorly named, it is actually an indented code block.
         Treat it like a fence with no info string.
@@ -101,7 +108,7 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return self._fence(node, context)
 
-    def _code_inline(self, node, context):
+    def _code_inline(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         text = node.text()
 
         delim = None
@@ -115,15 +122,15 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return r"\verb%s%s%s" % (delim, text, delim)
 
-    def _math_block(self, node, context):
+    def _math_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         text = node.text().strip()
         return f"$$\n{text}\n$$"
 
-    def _math_inline(self, node, context):
+    def _math_inline(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         text = node.text().strip()
         return f"$ {text} $"
 
-    def _image(self, node, context):
+    def _image(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
         base_dir = context.get(quizcomp.parser.common.BASE_DIR_KEY, '.')
         callback = context.get(quizcomp.parser.common.CONTEXT_KEY_IMAGE_CALLBACK, None)
@@ -136,7 +143,7 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return r"\includegraphics[width=%0.2f\textwidth]{%s}" % (width_float, src)
 
-    def _link(self, node, context):
+    def _link(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         text = ''.join([self._render_node(child, context) for child in node.children()]).strip()
         url = node.get('href', '')
 
@@ -145,11 +152,11 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return r"\href{%s}{%s}" % (url, text)
 
-    def _placeholder(self, node, context):
+    def _placeholder(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         text = tex_escape(node.text())
         return r"\textsc{<%s>}" % (text)
 
-    def _table(self, node, context):
+    def _table(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
         border_table = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_BORDER_TABLE, quizcomp.parser.style.DEFAULT_TABLE_BORDER_TABLE)
@@ -165,8 +172,8 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
         # Build column specifiers.
         column_specifiers = []
         for column_info in column_infos:
-            raw_alignment = column_info.get('text-align', default_alignment)
-            column_specifiers.append(TEX_TEXT_TABLE_ALIGNMENT[raw_alignment])
+            raw_alignment = str(column_info.get('text-align', default_alignment))
+            column_specifiers.append(TEX_TEXT_TABLE_ALIGNMENT.get(raw_alignment, quizcomp.parser.style.ALLOWED_VALUES_ALIGNMENT_LEFT))
         column_spec = column_join.join(column_specifiers)
 
         if (border_table):
@@ -192,7 +199,7 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return "\n".join(lines)
 
-    def _thead(self, node, context):
+    def _thead(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
         head_rule = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_HEAD_RULE, quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE)
 
@@ -203,7 +210,7 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return content
 
-    def _tbody(self, node, context):
+    def _tbody(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
         border_cells = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_BORDER_CELLS, quizcomp.parser.style.DEFAULT_TABLE_BORDER_CELLS)
 
@@ -214,11 +221,11 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
         content = delim.join([self._render_node(child, context) for child in node.children()])
         return content
 
-    def _tr(self, node, context):
+    def _tr(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         content = ' & '.join([self._render_node(child, context) for child in node.children()])
         return content + ' \\\\'
 
-    def _th(self, node, context):
+    def _th(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
         bold = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_HEAD_BOLD, quizcomp.parser.style.DEFAULT_TABLE_HEAD_BOLD)
 
@@ -229,26 +236,26 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return content
 
-    def _td(self, node, context):
+    def _td(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         content = ''.join([self._render_node(child, context) for child in node.children()])
         return content
 
-    def _bullet_list(self, node, context):
+    def _bullet_list(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         items = '\n'.join([self._render_node(child, context) for child in node.children()])
         return "\\begin{itemize}\n" + items + "\n\\end{itemize}"
 
-    def _ordered_list(self, node, context):
+    def _ordered_list(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         items = '\n'.join([self._render_node(child, context) for child in node.children()])
         return "\\begin{enumerate}\n" + items + "\n\\end{enumerate}"
 
-    def _list_item(self, node, context):
+    def _list_item(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         content = ''.join([self._render_node(child, context) for child in node.children()])
         return "    \\item " + content
 
-    def _hr(self, node, context):
+    def _hr(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         return "\\hrulefill"
 
-    def _heading(self, node, context):
+    def _heading(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         level = self.parse_heading_level(node)
 
         index = level - 1
@@ -260,14 +267,16 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         return "\\%s{%s}" % (heading, content)
 
-    def _blockquote(self, node, context):
+    def _blockquote(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         content = ''.join([self._render_node(child, context) for child in node.children()])
         return "\\begin{quote}\n%s\n\\end{quote}" % (content)
 
-def get_renderer(options):
+def get_renderer(options: typing.Dict[str, typing.Any]) -> typing.Tuple[QuizComposerRendererTex, typing.Dict[str, typing.Any]]:
+    """ Get this renderer and options. """
+
     return QuizComposerRendererTex(), options
 
-def tex_escape(text):
+def tex_escape(text: str) -> str:
     """
     Prepare normal text for tex.
     """
@@ -277,7 +286,9 @@ def tex_escape(text):
 
     return text
 
-def _apply_tex_table_style(style, lines):
+def _apply_tex_table_style(style: typing.Dict[str, typing.Any], lines: typing.List[str]) -> typing.List[str]:
+    """ Build the style for a table. """
+
     # Height
     height = max(1.0, float(style.get(quizcomp.parser.style.KEY_TABLE_CELL_HEIGHT, quizcomp.parser.style.DEFAULT_TABLE_CELL_HEIGHT)))
     prefix = [
@@ -298,7 +309,10 @@ def _apply_tex_table_style(style, lines):
 
     return lines
 
-def _discover_column_info(node, info = None):
+def _discover_column_info(
+        node: quizcomp.parser.ast.ASTNode,
+        info: typing.Union[typing.List[typing.Dict[str, typing.Any]], None] = None,
+        ) -> typing.List[typing.Dict[str, typing.Any]]:
     """
     Descend into a table to figure out how many columns there are and if a column has alignment information.
     We will not make assumptions about symmetric rows or existence of headers.
@@ -331,7 +345,15 @@ def _discover_column_info(node, info = None):
     logging.warning("Unexpected table node type '%s'." % (type))
     return info
 
-def _discover_column_info_cells(node, style = {}):
+def _discover_column_info_cells(
+        node: quizcomp.parser.ast.ASTNode,
+        style: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        ) -> typing.Dict[str, typing.Any]:
+    """ Get the style for the table cells in this node. """
+
+    if (style is None):
+        style = {}
+
     type = node.type()
     if (type not in {'td', 'th'}):
         return style

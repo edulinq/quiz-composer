@@ -149,7 +149,7 @@ class ParsedDocument:
 
     def get_ast(self) -> quizcomp.parser.ast.ASTNode:
         """
-        Get a represetation of this document's AST.
+        Get a representation of this document's AST.
         """
 
         return quizcomp.parser.ast.build(self._tokens)
