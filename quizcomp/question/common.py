@@ -26,6 +26,12 @@ class ParsedTextWithFeedback(quizcomp.parser.public.ParsedText):
             'feedback': self.feedback.to_pod(),
         }
 
+    @staticmethod
+    def empty() -> 'ParsedTextWithFeedback':
+        """ Get an empty ParsedTextWithFeedback. """
+
+        return ParsedTextWithFeedback(quizcomp.parser.public.parse_text(''))
+
 class ParsedTextChoice(ParsedTextWithFeedback):
     """
     A multiple answer/choice option.

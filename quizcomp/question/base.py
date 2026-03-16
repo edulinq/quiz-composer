@@ -3,22 +3,26 @@ import copy
 import enum
 import importlib
 import logging
-import math
 import os
 import pkgutil
 import random
 import re
+import typing
 
 import edq.util.dirent
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.group
+import quizcomp.parser.document
 import quizcomp.parser.public
 import quizcomp.question.common
 import quizcomp.util.serial
 
-BASE_MODULE_NAME = 'quizcomp.question'
-THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+BASE_MODULE_NAME: str = 'quizcomp.question'
+THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+
+MAX_CHOICES: int = 2**64
 
 class QuestionType(enum.Enum):
     """ The types of questions supported by the Quiz Composer. """
@@ -39,11 +43,16 @@ class QuestionType(enum.Enum):
         return str(self.value)
 
 class Question(quizcomp.util.serial.JSONSerializer):
-    # {question_type: class, ...}
-    _types = {}
-    _imported_this_package = False
+    """ The base question class. """
 
-    def __init_subclass__(cls, question_type = None, **kwargs):
+    # {question_type: class, ...}
+    _types: typing.Dict[str, typing.Type] = {}
+    """ The known/seen question types. """
+
+    _imported_this_package: bool = False
+    """ Thether this module has already been imported. """
+
+    def __init_subclass__(cls, question_type: typing.Union[str, None] = None, **kwargs: typing.Any) -> None:
         """
         Register question subclasses (types).
         """
@@ -55,39 +64,75 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         cls._types[question_type] = cls
 
-    def __init__(self, type = quizcomp.constants.TYPE_QUESTION,
-            prompt = '', prompt_path = None,
-            question_type = '', answers = None,
-            base_dir = '.',
-            points = 0, name = '',
-            shuffle_answers = True,
-            custom_header = None, skip_numbering = None,
-            hints = None, feedback = None,
-            ids = {},
-            **kwargs):
+    def __init__(self,
+            type: str = quizcomp.constants.TYPE_QUESTION,
+            prompt: typing.Union[str, None] = None,
+            prompt_path: typing.Union[str, None] = None,
+            question_type: str = '',
+            answers: typing.Any = None,
+            base_dir: str = '.',
+            points: float = 0,
+            name: str = '',
+            shuffle_answers: bool = True,
+            custom_header: typing.Union[str, None] = None,
+            skip_numbering: typing.Union[bool, None] = None,
+            hints: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            feedback: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ids: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            **kwargs: typing.Any) -> None:
         super().__init__(type = type, **kwargs)
 
-        self.base_dir = base_dir
+        self._raw_prompt: typing.Union[str, None] = prompt
+        """ The raw (unparsed) prompt. """
 
-        self.prompt = prompt
-        self._prompt_path = prompt_path
+        self.prompt: quizcomp.question.common.ParsedTextWithFeedback = quizcomp.question.common.ParsedTextWithFeedback.empty()
+        """ The parsed prompt. """
 
-        self.question_type = question_type
+        self._prompt_path: typing.Union[str, None] = prompt_path
+        """ The path to the prompt file file. """
 
-        self.answers = answers
+        self.question_type: str = question_type
+        """ The type of this question. """
 
-        self.points = points
-        self.name = name
+        self.answers: typing.Any = answers
+        """ The answers for this question. """
 
-        self.hints = hints
-        self.feedback = feedback
+        self.base_dir: str = base_dir
+        """ The base directory (typically where question.json lives). """
 
-        self.shuffle_answers = shuffle_answers
+        self.points: float = points
+        """ The number of points possible. """
 
-        self.custom_header = custom_header
-        self.skip_numbering = skip_numbering
+        self.name: str = name
+        """ The name. """
 
-        self.ids = ids.copy()
+        self.shuffle_answers: bool = shuffle_answers
+        """ Whether the answers should be shuffled. """
+
+        self.custom_header: typing.Union[str, None] = custom_header
+        """ A custom header, instead of something generic like "Question 4". """
+
+        self.skip_numbering: typing.Union[bool, None] = skip_numbering
+        """ Whether to skip numbering. """
+
+        if (hints is None):
+            hints = {}
+
+        self.hints: typing.Dict[str, typing.Any] = hints
+        """ Rendering hints. """
+
+        if (feedback is None):
+            feedback = {}
+
+        self.feedback: typing.Dict[str, typing.Any] = feedback
+        """ Question-level feedback. """
+
+        if (ids is None):
+            ids = {}
+
+        self.ids: typing.Dict[str, typing.Any] = ids.copy()
+        """ Identifiers for this question. """
+
         self.ids['base_dir'] = base_dir
 
         try:
@@ -99,7 +144,9 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
             raise quizcomp.common.QuizValidationError('Error while validating question.', ids = ids) from ex
 
-    def _validate(self):
+    def _validate(self, **kwargs: typing.Any) -> None:
+        """ Check that this question is valid. """
+
         self._validate_prompt()
         self._validate_question_feedback()
         self._validate_answers()
@@ -110,10 +157,12 @@ class Question(quizcomp.util.serial.JSONSerializer):
             self._check_type(self.hints, dict, "'hints'")
 
     @abc.abstractmethod
-    def _validate_answers(self):
+    def _validate_answers(self) -> None:
+        """ Validate the answers for this question. """
+
         pass
 
-    def _validate_prompt(self):
+    def _validate_prompt(self) -> None:
         """
         The prompt is allowed to appear (in order of priority):
         in the prompt field, be pointed to by the _prompt_path member, or be in ./quizcomp.constants.PROMPT_FILENAME.
@@ -125,11 +174,14 @@ class Question(quizcomp.util.serial.JSONSerializer):
         """
 
         text = self._get_prompt_text()
+
         self.prompt = self._validate_text_item(text, 'question prompt', check_feedback = False, allow_empty = False)
 
-    def _get_prompt_text(self):
-        # First check self.prompt.
-        text = self.prompt
+    def _get_prompt_text(self) -> str:
+        """ Collect the prompt text from this question. """
+
+        # First check self._raw_prompt.
+        text = self._raw_prompt
         if (text is None):
             text = ''
 
@@ -158,7 +210,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         raise quizcomp.common.QuestionValidationError("Could not find any non-empty prompt.", ids = self.ids)
 
-    def inherit_from_group(self, group):
+    def inherit_from_group(self, group: quizcomp.group.Group) -> None:
         """
         Inherit attributes from a group.
         """
@@ -176,20 +228,29 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         self.add_hints(group.hints)
 
-    def add_hints(self, new_hints, override = False):
+    def add_hints(self, new_hints: typing.Union[typing.Dict[str, typing.Any], None], override: bool = False) -> None:
+        """ Add hints to this question. """
+
+        if (new_hints is None):
+            return
+
         for (key, value) in new_hints.items():
             if (override or (key not in self.hints)):
                 self.hints[key] = value
 
-    def collect_file_paths(self):
-        paths = []
+    def collect_file_paths(self) -> typing.List[str]:
+        """ Collect the file paths represented in this question. """
+
+        paths: typing.List[str] = []
 
         for document in self._collect_documents([self.prompt, self.answers]):
             paths += document.collect_file_paths(self.base_dir)
 
         return paths
 
-    def _collect_documents(self, target):
+    def _collect_documents(self, target: typing.Any) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        """ Collect the documents in this object. """
+
         if (isinstance(target, dict)):
             return self._collect_documents(list(target.values()))
         elif (isinstance(target, list)):
@@ -202,13 +263,19 @@ class Question(quizcomp.util.serial.JSONSerializer):
         else:
             return []
 
-    def should_skip_numbering(self):
+    def should_skip_numbering(self) -> bool:
+        """ Check if this question should skip numbering. """
+
         return ((self.skip_numbering is not None) and (self.skip_numbering))
 
-    def copy(self):
+    def copy(self) -> 'Question':
+        """ Make a deep copy of this question. """
+
         return copy.deepcopy(self)
 
-    def shuffle(self, rng = None):
+    def shuffle(self, rng: typing.Union[random.Random, None] = None) -> None:
+        """ Shuffle answers. """
+
         if (not self.shuffle_answers):
             return
 
@@ -217,7 +284,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         self._shuffle(rng)
 
-    def _shuffle(self, rng):
+    def _shuffle(self, rng: random.Random) -> None:
         """
         Shuffle the answers for this question.
         By default (this method), no shuffling is performed.
@@ -226,7 +293,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         pass
 
-    def _shuffle_answers_list(self, rng):
+    def _shuffle_answers_list(self, rng: random.Random) -> None:
         """
         A shuffle method for question types that are a simple list.
         """
@@ -236,20 +303,36 @@ class Question(quizcomp.util.serial.JSONSerializer):
     # Override the class method JSONSerializer.from_dict() with a static method
     # so that we can select the correct child class.
     @staticmethod
-    def from_dict(data, base_dir = None, ids = {}, **kwargs):
+    def from_dict(  # type: ignore[override]
+            data: typing.Dict[str, typing.Any],
+            base_dir: typing.Union[str, None] = None,
+            ids: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            **kwargs: typing.Any) -> 'Question':
+        if (ids is None):
+            ids = {}
+
         if (base_dir is not None):
             data['base_dir'] = base_dir
         elif ('base_dir' not in data):
             data['base_dir'] = '.'
 
-        if ('question_type' not in data):
+        question_type = data.get('question_type', None)
+        if (question_type is None):
             raise quizcomp.common.QuizValidationError("Question does not contain a 'question_type' field.", ids = ids)
 
-        question_class = Question._fetch_question_class(data.get('question_type'), ids = ids, **kwargs)
+        question_class = Question._fetch_question_class(question_type, ids = ids, **kwargs)
         return quizcomp.util.serial._from_dict(question_class, data, ids = ids, **kwargs)
 
     @staticmethod
-    def _fetch_question_class(question_type, ids = {}, **kwargs):
+    def _fetch_question_class(
+            question_type: str,
+            ids: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            **kwargs: typing.Any) -> typing.Type:
+        """ Get the class for the specified question type. """
+
+        if (ids is None):
+            ids = {}
+
         if (not Question._imported_this_package):
             for _, name, is_package in pkgutil.iter_modules([THIS_DIR]):
                 if (is_package):
@@ -268,7 +351,9 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         return Question._types[question_type]
 
-    def _validate_question_feedback(self):
+    def _validate_question_feedback(self) -> None:
+        """ Check that the feedback on this question is valid. """
+
         if (self.feedback is None):
             self.feedback = {}
             return
@@ -294,7 +379,12 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         self.feedback = new_feedback
 
-    def _validate_feedback_item(self, item, label):
+    def _validate_feedback_item(self,
+            item: typing.Union[str, quizcomp.parser.public.ParsedText, None],
+            label: str,
+            ) -> typing.Union[quizcomp.parser.public.ParsedText, None]:
+        """ Parse and return the given feedback text. """
+
         if ((item is None) or isinstance(item, quizcomp.parser.public.ParsedText)):
             # Nothing to do.
             return item
@@ -307,11 +397,20 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         return quizcomp.parser.public.parse_text(item, base_dir = self.base_dir)
 
-    def _validate_self_answer_list(self, min_correct = 0, max_correct = math.inf):
+    def _validate_self_answer_list(self, min_correct: int = 0, max_correct: int = MAX_CHOICES) -> None:
+        """ Check that the answers are a list with the specified range of correct choices. """
+
         self.answers = self._validate_answer_list(self.answers, self.base_dir,
                 min_correct = min_correct, max_correct = max_correct)
 
-    def _validate_answer_list(self, answers, base_dir, min_correct = 0, max_correct = math.inf):
+    def _validate_answer_list(self,
+            answers: typing.List[typing.Dict[str, typing.Any]],
+            base_dir: str,
+            min_correct: int = 0,
+            max_correct: int = MAX_CHOICES,
+            ) -> typing.List[quizcomp.question.common.ParsedTextChoice]:
+        """ Check that the given answers are a list with the specified range of correct choices. """
+
         self._check_type(answers, list, "'answers'")
 
         if (len(answers) == 0):
@@ -342,7 +441,9 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         return new_answers
 
-    def _validate_text_answers(self):
+    def _validate_text_answers(self) -> None:
+        """ Check that the answers are valid text answer. """
+
         possible_answers = 'null/None, string, empty list, list of strings, or list of objects'
 
         if (self.answers is None):
@@ -363,9 +464,14 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         self.answers = new_answers
 
-    def _validate_text_item(self, item, label,
-            check_feedback = True, allow_empty = True,
-            strip = True, clean_whitespace = False):
+    def _validate_text_item(self,
+            item: typing.Union[str, typing.Dict[str, typing.Any], quizcomp.question.common.ParsedTextWithFeedback],
+            label: str,
+            check_feedback: bool = True,
+            allow_empty: bool = True,
+            strip: bool = True,
+            clean_whitespace: bool = False,
+            ) -> quizcomp.question.common.ParsedTextWithFeedback:
         """
         Validate a portion of an answer/choice/field that is a parsed string.
 
@@ -413,7 +519,9 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         return quizcomp.question.common.ParsedTextWithFeedback(quizcomp.parser.public.parse_text(text, base_dir = self.base_dir), feedback = feedback)
 
-    def _validate_fimb_answers(self):
+    def _validate_fimb_answers(self) -> None:
+        """ Check that the answers are valid fill in multiple blanks answers. """
+
         self._check_type(self.answers, dict, "'answers' key")
 
         if (len(self.answers) == 0):
@@ -448,16 +556,17 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         self._check_placeholders(self.answers.keys())
 
-    def _check_type(self, value, expected_type, label):
+    def _check_type(self, value: typing.Any, expected_type: typing.Type, label: str) -> None:
+        """ Check that the given value has the expected type. """
+
         if (not isinstance(value, expected_type)):
             raise quizcomp.common.QuestionValidationError(f"{label} must be a {expected_type}, found '{value}' ({type(value)}).", ids = self.ids)
 
-    def _check_placeholders(self, answer_placeholders):
+    def _check_placeholders(self, answer_placeholders: typing.Set[str]) -> None:
         """
         Check placeholders from the answers against placeholders in the prompt.
         """
 
-        answer_placeholders = set(list(answer_placeholders))
         document_placeholders = self.prompt.document.collect_placeholders()
 
         # Special case for FITB documents.
