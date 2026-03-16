@@ -7,7 +7,7 @@
 {% block body %}
     <fieldset>
         {% for answer in question.answers %}
-            <div>
+            <div{% if answer_key and answer.correct %} class='qg-correct'{% endif %}>
                 {% set id = 'answer-' ~ question.id ~ '.' ~ loop.index0 %}
                 {% set checked = 'checked' if (answer_key and answer.correct) else '' %}
                 <input type='checkbox' id='{{ id }}' name='question-{{ question.id }}' {{ checked }} />

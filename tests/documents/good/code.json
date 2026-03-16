@@ -4,7 +4,7 @@
         "text": "`inline_code();`",
         "formats": {
             "md": "`inline_code();`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code();</code></p>",
+            "html": "<p><code>inline_code();</code></p>",
             "tex": "\\verb|inline_code();|",
             "text": "",
             "json": {
@@ -23,13 +23,12 @@
             }
         }
     },
-
     {
         "name": "Mid-Text Inline Code",
         "text": "Inline `code()`.",
         "formats": {
             "md": "Inline `code()`.",
-            "html": "<p style=\"margin-top: 0\">Inline <code style=\"margin-left: 0.25em; margin-right: 0.25em\">code()</code>.</p>",
+            "html": "<p>Inline <code>code()</code>.</p>",
             "tex": "Inline \\verb|code()|.",
             "text": "Inline",
             "json": {
@@ -56,13 +55,12 @@
             }
         }
     },
-
     {
         "name": "Inline Code with Escapes",
         "text": "`inline_code(\"\\*\");`",
         "formats": {
             "md": "`inline_code(\"\\*\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"\\*\");</code></p>",
+            "html": "<p><code>inline_code(\"\\*\");</code></p>",
             "tex": "\\verb|inline_code(\"\\*\");|",
             "text": "",
             "json": {
@@ -81,13 +79,12 @@
             }
         }
     },
-
     {
         "name": "Inline Code with Un-Escapes",
         "text": "`inline_code(\"*\");`",
         "formats": {
             "md": "`inline_code(\"*\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"*\");</code></p>",
+            "html": "<p><code>inline_code(\"*\");</code></p>",
             "tex": "\\verb|inline_code(\"*\");|",
             "text": "",
             "json": {
@@ -106,13 +103,12 @@
             }
         }
     },
-
     {
         "name": "Inline Code with Alt Verb Delim",
         "text": "`inline_code(\"|\");`",
         "formats": {
             "md": "`inline_code(\"|\");`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">inline_code(\"|\");</code></p>",
+            "html": "<p><code>inline_code(\"|\");</code></p>",
             "tex": "\\verb!inline_code(\"|\");!",
             "text": "",
             "json": {
@@ -131,7 +127,6 @@
             }
         }
     },
-
     {
         "name": "Basic Code Block",
         "text": "```\ncode_block();\n```",
@@ -146,7 +141,6 @@
             }
         }
     },
-
     {
         "name": "Code Block with Inner Whitespace",
         "text": "```\n code_block(); \n```",
@@ -161,7 +155,6 @@
             }
         }
     },
-
     {
         "name": "Code Block with Info String",
         "text": "```golang\ncode_block();\n```",
@@ -177,14 +170,13 @@
             }
         }
     },
-
     {
         "name": "Indented Code Block",
         "comment": "Because of stripping, we need a paragraph before the indented block.",
         "text": "a\n\n    code_block();",
         "formats": {
             "md": "a\n\n```\ncode_block();\n```",
-            "html": "<p style=\"margin-top: 0\">a</p><pre><code>code_block();\n</code></pre>",
+            "html": "<p>a</p><pre><code>code_block();\n</code></pre>",
             "tex": "a\n\n\\begin{lstlisting}\ncode_block();\n\\end{lstlisting}",
             "text": "a",
             "json": [
@@ -209,13 +201,12 @@
             ]
         }
     },
-
     {
         "name": "Code with Less Than",
         "text": "`<test`",
         "formats": {
             "md": "`<test`",
-            "html": "<p style=\"margin-top: 0\"><code style=\"margin-left: 0.25em; margin-right: 0.25em\">&lt;test</code></p>",
+            "html": "<p><code>&lt;test</code></p>",
             "tex": "\\verb|<test|",
             "text": "",
             "json": {
@@ -234,5 +225,4 @@
             }
         }
     }
-
 ]

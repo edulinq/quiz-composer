@@ -40,7 +40,7 @@
         "text": ":::block\n<style>\n\"font-size\": 12\n</style>\ntext\n:::",
         "formats": {
             "md": "text",
-            "html": "<div class='qg-block' style='font-size: 12.00pt'><p style=\"margin-top: 0\">text</p></div>",
+            "html": "<div class='qg-block' style='font-size: 12.00pt'><p>text</p></div>",
             "tex": "\\begingroup\\fontsize{12.00pt}{14.40pt}\\selectfont\n\ntext\n\n\\endgroup",
             "text": "text",
             "json": {
@@ -73,7 +73,7 @@
         "text": "before\n<style>\n\"font-size\": 12\n</style>\nafter",
         "formats": {
             "md": "before\n\nafter",
-            "html": "<div class='qg-root-block qg-block' style='font-size: 12.00pt'><p style=\"margin-top: 0\">before</p><p style=\"margin-top: 0\">after</p></div>",
+            "html": "<div class='qg-root-block qg-block' style='font-size: 12.00pt'><p>before</p><p>after</p></div>",
             "tex": "\\begingroup\\fontsize{12.00pt}{14.40pt}\\selectfont\n\nbefore\n\nafter\n\n\\endgroup",
             "text": "before after",
             "json": {
@@ -121,7 +121,7 @@
         "text": "Root\n<style> \"font-size\": 12 </style>\n:::block\nChild\n<style> \"font-size\": 10 </style>\n:::",
         "formats": {
             "md": "Root\n\nChild",
-            "html": "<div class='qg-root-block qg-block' style='font-size: 12.00pt'><p style=\"margin-top: 0\">Root</p><div class='qg-block' style='font-size: 10.00pt'><p style=\"margin-top: 0\">Child</p></div></div>",
+            "html": "<div class='qg-root-block qg-block' style='font-size: 12.00pt'><p>Root</p><div class='qg-block' style='font-size: 10.00pt'><p>Child</p></div></div>",
             "tex": "\\begingroup\\fontsize{12.00pt}{14.40pt}\\selectfont\n\nRoot\n\n\\begingroup\\fontsize{10.00pt}{12.00pt}\\selectfont\n\nChild\n\n\\endgroup\n\n\\endgroup",
             "text": "Root Child",
             "json": {
@@ -178,7 +178,7 @@
         "text": "Root\n<style> \"font-size\": 12 </style>\n:::block\nChild\n<style> \"font-size\": null </style>\n:::",
         "formats": {
             "md": "Root\n\nChild",
-            "html": "<div class='qg-root-block qg-block' style='font-size: 12.00pt'><p style=\"margin-top: 0\">Root</p><div class='qg-block'><p style=\"margin-top: 0\">Child</p></div></div>",
+            "html": "<div class='qg-root-block qg-block' style='font-size: 12.00pt'><p>Root</p><div class='qg-block'><p>Child</p></div></div>",
             "tex": "\\begingroup\\fontsize{12.00pt}{14.40pt}\\selectfont\n\nRoot\n\nChild\n\n\\endgroup",
             "text": "Root Child",
             "json": {
@@ -239,7 +239,7 @@
         },
         "formats": {
             "md": "text",
-            "html": "<div class='qg-root-block qg-block' style='font-size: 12.00pt'><p style=\"margin-top: 0\">text</p></div>",
+            "html": "<div class='qg-root-block qg-block' style='font-size: 12.00pt'><p>text</p></div>",
             "tex": "\\begingroup\\fontsize{12.00pt}{14.40pt}\\selectfont\n\ntext\n\n\\endgroup",
             "text": "text",
             "json": {
@@ -269,7 +269,7 @@
         },
         "formats": {
             "md": "text",
-            "html": "<div class='qg-root-block qg-block' style='font-size: 10.00pt'><p style=\"margin-top: 0\">text</p></div>",
+            "html": "<div class='qg-root-block qg-block' style='font-size: 10.00pt'><p>text</p></div>",
             "tex": "\\begingroup\\fontsize{10.00pt}{12.00pt}\\selectfont\n\ntext\n\n\\endgroup",
             "text": "text",
             "json": {

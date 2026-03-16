@@ -18,7 +18,7 @@
         "text": "a\n***\nb",
         "formats": {
             "md": "a\n\n______________________________________________________________________\n\nb",
-            "html": "<p style=\"margin-top: 0\">a</p><hr /><p style=\"margin-top: 0\">b</p>",
+            "html": "<p>a</p><hr /><p>b</p>",
             "tex": "a\n\n\\hrulefill\n\nb",
             "text": "a b",
             "json": [
@@ -62,7 +62,7 @@
         "text": "> Some\n> Quote",
         "formats": {
             "md": "> Some\n> Quote",
-            "html": "<blockquote><p style=\"margin-top: 0\">Some\nQuote</p></blockquote>",
+            "html": "<blockquote><p>Some\nQuote</p></blockquote>",
             "tex": "\\begin{quote}\nSome\nQuote\n\\end{quote}",
             "text": "Some Quote",
             "json": {

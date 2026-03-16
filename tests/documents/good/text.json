@@ -4,7 +4,7 @@
         "text": "Text",
         "formats": {
             "md": "Text",
-            "html": "<p style=\"margin-top: 0\">Text</p>",
+            "html": "<p>Text</p>",
             "tex": "Text",
             "text": "Text",
             "json": {
@@ -29,7 +29,7 @@
         "text": "Foo Bar",
         "formats": {
             "md": "Foo Bar",
-            "html": "<p style=\"margin-top: 0\">Foo Bar</p>",
+            "html": "<p>Foo Bar</p>",
             "tex": "Foo Bar",
             "text": "Foo Bar",
             "json": {
@@ -54,7 +54,7 @@
         "text": "\nFoo\nBar\n",
         "formats": {
             "md": "Foo\nBar",
-            "html": "<p style=\"margin-top: 0\">Foo\nBar</p>",
+            "html": "<p>Foo\nBar</p>",
             "tex": "Foo\nBar",
             "text": "Foo Bar",
             "json": {
@@ -86,7 +86,7 @@
         "text": "\nFoo\n\nBar\n",
         "formats": {
             "md": "Foo\n\nBar",
-            "html": "<p style=\"margin-top: 0\">Foo</p><p style=\"margin-top: 0\">Bar</p>",
+            "html": "<p>Foo</p><p>Bar</p>",
             "tex": "Foo\n\nBar",
             "text": "Foo Bar",
             "json": [
@@ -127,7 +127,7 @@
         "text": "\nFoo<br>Bar\n",
         "formats": {
             "md": "Foo\\\nBar",
-            "html": "<p style=\"margin-top: 0\">Foo<br />\nBar</p>",
+            "html": "<p>Foo<br />\nBar</p>",
             "tex": "Foo~\\newline\nBar",
             "text": "Foo Bar",
             "json": {
@@ -159,7 +159,7 @@
         "text": "Some *italics* text.",
         "formats": {
             "md": "Some *italics* text.",
-            "html": "<p style=\"margin-top: 0\">Some <em>italics</em> text.</p>",
+            "html": "<p>Some <em>italics</em> text.</p>",
             "tex": "Some \\textit{italics} text.",
             "text": "Some italics text",
             "json": {
@@ -197,7 +197,7 @@
         "text": "Some * spaced  non-italics   * text.",
         "formats": {
             "md": "Some * spaced non-italics * text.",
-            "html": "<p style=\"margin-top: 0\">Some * spaced  non-italics   * text.</p>",
+            "html": "<p>Some * spaced  non-italics   * text.</p>",
             "tex": "Some * spaced  non-italics   * text.",
             "text": "Some spaced non-italics text",
             "json": {
@@ -222,7 +222,7 @@
         "text": "Some **bold** text.",
         "formats": {
             "md": "Some **bold** text.",
-            "html": "<p style=\"margin-top: 0\">Some <strong>bold</strong> text.</p>",
+            "html": "<p>Some <strong>bold</strong> text.</p>",
             "tex": "Some \\textbf{bold} text.",
             "text": "Some bold text",
             "json": {
@@ -260,7 +260,7 @@
         "text": "Some ***bold and italics*** text.",
         "formats": {
             "md": "Some ***bold and italics*** text.",
-            "html": "<p style=\"margin-top: 0\">Some <em><strong>bold and italics</strong></em> text.</p>",
+            "html": "<p>Some <em><strong>bold and italics</strong></em> text.</p>",
             "tex": "Some \\textit{\\textbf{bold and italics}} text.",
             "text": "Some bold and italics text",
             "json": {
@@ -303,7 +303,7 @@
         "text": "Some **spaced  bold** text.",
         "formats": {
             "md": "Some **spaced bold** text.",
-            "html": "<p style=\"margin-top: 0\">Some <strong>spaced  bold</strong> text.</p>",
+            "html": "<p>Some <strong>spaced  bold</strong> text.</p>",
             "tex": "Some \\textbf{spaced  bold} text.",
             "text": "Some spaced bold text",
             "json": {
@@ -341,7 +341,7 @@
         "text": "**|**",
         "formats": {
             "md": "**|**",
-            "html": "<p style=\"margin-top: 0\"><strong>|</strong></p>",
+            "html": "<p><strong>|</strong></p>",
             "tex": "\\textbf{\\textbar{}}",
             "text": "",
             "json": {
@@ -371,7 +371,7 @@
         "text": "^",
         "formats": {
             "md": "^",
-            "html": "<p style=\"margin-top: 0\">^</p>",
+            "html": "<p>^</p>",
             "tex": "\\^",
             "text": "",
             "json": {
@@ -396,7 +396,7 @@
         "text": "**^**",
         "formats": {
             "md": "**^**",
-            "html": "<p style=\"margin-top: 0\"><strong>^</strong></p>",
+            "html": "<p><strong>^</strong></p>",
             "tex": "\\textbf{\\^}",
             "text": "",
             "json": {
@@ -452,7 +452,7 @@
         "text": "# 1\n## 2\n### 3\n#### 4\n##### 5\n###### 6\n####### 7",
         "formats": {
             "md": "# 1\n\n## 2\n\n### 3\n\n#### 4\n\n##### 5\n\n###### 6\n\n####### 7",
-            "html": "<h1>1</h1><h2>2</h2><h3>3</h3><h4>4</h4><h5>5</h5><h6>6</h6><p style=\"margin-top: 0\">####### 7</p>",
+            "html": "<h1>1</h1><h2>2</h2><h3>3</h3><h4>4</h4><h5>5</h5><h6>6</h6><p>####### 7</p>",
             "tex": "\\chapter{1}\n\n\\section{2}\n\n\\subsection{3}\n\n\\subsubsection{4}\n\n\\paragraph{5}\n\n\\subparagraph{6}\n\n\\#\\#\\#\\#\\#\\#\\# 7",
             "text": "1 2 3 4 5 6 7",
             "json": [
@@ -598,7 +598,7 @@
         },
         "formats": {
             "md": "some * text",
-            "html": "<p style=\"margin-top: 0\">some * text</p>",
+            "html": "<p>some * text</p>",
             "tex": "some * text",
             "text": "some * text",
             "json": {
@@ -629,7 +629,7 @@
         },
         "formats": {
             "md": "Some **bold** text.",
-            "html": "<p style=\"margin-top: 0\">Some <strong>bold</strong> text.</p>",
+            "html": "<p>Some <strong>bold</strong> text.</p>",
             "tex": "Some \\textbf{bold} text.",
             "text": "Some bold text",
             "json": {
