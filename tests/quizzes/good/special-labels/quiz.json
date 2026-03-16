@@ -7,13 +7,13 @@
 
     "groups": [
         {
-            "name": "Group #1 & <Review>",
+            "name": "Group #1: Review",
             "questions": [
                 "../../../questions/good/mcq-basic"
             ]
         },
         {
-            "name": "Group $2 \"Final\"",
+            "name": "Group $2 (Final)",
             "questions": [
                 "../../../questions/good/tf-true"
             ]

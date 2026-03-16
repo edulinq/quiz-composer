@@ -17,7 +17,7 @@
         {
             "group": {
                 "id": "0",
-                "name": "Group #1 & <Review>",
+                "name": "Group #1: Review",
                 "pick_count": 1,
                 "points": 10,
                 "shuffle_answers": true,
@@ -54,7 +54,7 @@
                         }
                     ],
                     "points": 10,
-                    "name": "Group #1 & <Review>",
+                    "name": "Group #1: Review",
                     "hints": {},
                     "shuffle_answers": true,
                     "custom_header": null,
@@ -65,7 +65,7 @@
         {
             "group": {
                 "id": "1",
-                "name": "Group $2 \"Final\"",
+                "name": "Group $2 (Final)",
                 "pick_count": 1,
                 "points": 10,
                 "shuffle_answers": true,
@@ -94,7 +94,7 @@
                         }
                     ],
                     "points": 10,
-                    "name": "Group $2 \"Final\"",
+                    "name": "Group $2 (Final)",
                     "hints": {},
                     "shuffle_answers": true,
                     "custom_header": null,

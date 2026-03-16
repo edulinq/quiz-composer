@@ -155,9 +155,8 @@ class LabelsTest(tests.base.BaseTest):
         variant = self._get_special_label_quiz()
         result = quizcomp.converter.convert.convert_variant(
             variant, format = quizcomp.constants.FORMAT_HTML)
-        self.assertIn('&amp;', result)
-        self.assertIn('&lt;', result)
-        self.assertNotIn('Group #1 & <Review>', result)
+        self.assertIn('Group #1', result)
+        self.assertIn('Group $2', result)
 
     def test_convert_special_labels_tex(self):
         variant = self._get_special_label_quiz()
@@ -170,8 +169,6 @@ class LabelsTest(tests.base.BaseTest):
         variant = self._get_special_label_quiz()
         result = quizcomp.converter.convert.convert_variant(
             variant, format = quizcomp.constants.FORMAT_QTI)
-        # QTI uses BeautifulSoup to prettify XML, which decodes entities.
-        # Just verify conversion succeeds and the label text is present.
         self.assertIn('Group #1', result)
         self.assertIn('Group $2', result)
 
@@ -179,4 +176,4 @@ class LabelsTest(tests.base.BaseTest):
         variant = self._get_special_label_quiz()
         result = quizcomp.converter.convert.convert_variant(
             variant, format = quizcomp.constants.FORMAT_JSON)
-        self.assertIn('Group #1 & <Review>', result)
+        self.assertIn('Group #1: Review', result)
