@@ -1,0 +1,13 @@
+{
+    "title": "Bad Group Name",
+    "description": "Quiz with a group name containing markdown formatting.",
+
+    "groups": [
+        {
+            "name": "**bold name**",
+            "questions": [
+                "../../../questions/good/mcq-basic"
+            ]
+        }
+    ]
+}

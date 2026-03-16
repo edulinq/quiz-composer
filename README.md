@@ -324,7 +324,7 @@ The `Inherited?` column indicates values that will be inherited by questions wit
 
 | Key                     | Type           | Required? | Default      | Inherited? | Description |
 |-------------------------|----------------|-----------|--------------|------------|-------------|
-| `name`                  | Plain String   | true      |              | true       | The name of the question group. |
+| `name`                  | Name           | true      |              | true       | The name of the question group. |
 | `pick_count`            | Integer        | false     | 1            | false      | The number of questions to randomly pick from this group, see [Question Selection from Groups](#question-selection-from-groups). |
 | `points`                | Number         | false     | 10           | true       | The number of points each question from this group is worth. |
 | `shuffle_answers`       | Boolean        | false     | true         | true       | Whether to shuffle question answers/choices, see [Answer Shuffling](#answer-shuffling). |

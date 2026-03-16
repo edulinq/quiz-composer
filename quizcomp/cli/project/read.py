@@ -19,8 +19,8 @@ def run(args):
     print("Found %d question." % (len(questions)))
     for (path, question) in questions:
         text = "    %s" % (path)
-        if (question.name != ''):
-            text += " (%s)" % (question.name)
+        if (question.name.text != ''):
+            text += " (%s)" % (question.name.text)
 
         print(text)
 

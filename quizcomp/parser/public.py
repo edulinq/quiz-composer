@@ -5,6 +5,8 @@ Code outside this package should generally only use these resources.
 
 import os
 
+import quizcomp.common
+import quizcomp.parser.common
 import quizcomp.parser.parse
 import quizcomp.util.serial
 import quizcomp.util.dirent
@@ -24,6 +26,55 @@ class ParsedText(quizcomp.util.serial.PODSerializer):
 def parse_text(text, base_dir = '.'):
     text, document = quizcomp.parser.parse._parse_text(text, base_dir)
     return ParsedText(text, document)
+
+ALLOWED_NAME_NODE_TYPES = {'inline', 'paragraph', 'root', 'softbreak', 'text'}
+
+DISALLOWED_NAME_DESCRIPTIONS = {
+    'blockquote': 'blockquote (> ...)',
+    'bullet_list': 'list (- ...)',
+    'code_block': 'indented code block',
+    'code_inline': 'inline code (`...`)',
+    'container_block': 'block directive (:::...:::)',
+    'em': 'italic (*...*)',
+    'fence': 'code block (```...```)',
+    'hardbreak': 'hard line break',
+    'heading': 'heading (# ...)',
+    'hr': 'horizontal rule (---)',
+    'image': 'image (![...](...))',
+    'link': 'link ([...](...))',
+    'math_block': 'math block ($$...$$)',
+    'math_inline': 'inline math ($...$)',
+    'ordered_list': 'numbered list (1. ...)',
+    'strong': 'bold (**...**)',
+    'table': 'table',
+}
+
+def parse_name(name, base_dir = '.'):
+    if (isinstance(name, ParsedText)):
+        return name
+
+    if (name is None):
+        name = ''
+
+    text, document = quizcomp.parser.parse._parse_text(name, base_dir)
+    _walk_name_ast(document.get_ast())
+    return ParsedText(text, document)
+
+def _walk_name_ast(node):
+    node_type = node.get('type', '')
+
+    if (node_type == 'container_block'):
+        if (not node.get(quizcomp.parser.common.TOKEN_META_KEY_ROOT, False)):
+            description = DISALLOWED_NAME_DESCRIPTIONS.get(node_type, node_type)
+            raise quizcomp.common.QuizValidationError(
+                "Name contains disallowed formatting: %s. Names must be plain text." % (description))
+    elif (node_type not in ALLOWED_NAME_NODE_TYPES):
+        description = DISALLOWED_NAME_DESCRIPTIONS.get(node_type, node_type)
+        raise quizcomp.common.QuizValidationError(
+            "Name contains disallowed formatting: %s. Names must be plain text." % (description))
+
+    for child in node.get('children', []):
+        _walk_name_ast(child)
 
 def parse_file(path):
     if (not os.path.isfile(path)):

@@ -6,6 +6,7 @@ import os
 
 import quizcomp.constants
 import quizcomp.converter.template
+import quizcomp.parser.renderer.tex
 
 THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-tex')
@@ -29,6 +30,9 @@ class TexTemplateConverter(quizcomp.converter.template.TemplateConverter):
                     'image_path_callback': self._store_images,
                 },
                 jinja_options = JINJA_OPTIONS, **kwargs)
+
+    def _format_name(self, name):
+        return quizcomp.parser.renderer.tex.tex_escape(name.text)
 
     def clean_solution_content(self, document):
         tex = document.to_format(quizcomp.constants.FORMAT_TEX)

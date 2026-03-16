@@ -2,6 +2,7 @@
 Convert a quiz into HTML using templates.
 """
 
+import html
 import logging
 import os
 
@@ -28,6 +29,9 @@ class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
             self.env.globals['css_content'] = ''
         else:
             self.env.globals['css_content'] = quizcomp.util.dirent.read_file(css_path)
+
+    def _format_name(self, name):
+        return html.escape(name.text)
 
     def clean_solution_content(self, document):
         return document.to_text()

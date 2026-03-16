@@ -93,12 +93,14 @@ class Question(quizcomp.util.serial.JSONSerializer):
             self.validate()
         except Exception as ex:
             ids = self.ids.copy()
-            ids['name'] = self.name
+            ids['name'] = self.name.text if isinstance(self.name, quizcomp.parser.public.ParsedText) else self.name
             ids['question_type'] = self.question_type
 
             raise quizcomp.common.QuizValidationError('Error while validating question.', ids = ids) from ex
 
     def _validate(self):
+        self.name = quizcomp.parser.public.parse_name(self.name, base_dir = self.base_dir)
+
         self._validate_prompt()
         self._validate_question_feedback()
         self._validate_answers()

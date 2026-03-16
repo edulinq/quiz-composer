@@ -144,13 +144,14 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
                 question_number, text = item_creation_function(item_id, question_number, item, container)
                 result.append(text)
             except Exception as ex:
-                raise ValueError("Failed to convert %s %d (%s: %s)." % (label, index, item_id, item.name)) from ex
+                raise ValueError("Failed to convert %s %d (%s: %s)." % (label, index, item_id, item.name.text)) from ex
 
         return question_number, "\n\n".join(result)
 
     def create_group(self, group_index, question_number, group, quiz):
         data = group.to_dict()
         data['id'] = group_index
+        data['name'] = self._format_name(group.name)
 
         question_number, questions_text = self._create_item_collection(group, 'questions', 'question', question_number, self.create_question, id_prefix = group_index)
 
@@ -171,6 +172,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             raise ValueError("Unsupported question type: '%s'." % (question_type))
 
         data = question.to_dict()
+        data['name'] = self._format_name(question.name)
         data['prompt_text'] = self._format_doc(question.prompt.document)
         data['id'] = question_id
         data['number'] = question_number
@@ -450,6 +452,9 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             format_options = self.parser_format_options
 
         return doc.to_format(doc_format, **format_options)
+
+    def _format_name(self, name):
+        return name.text
 
     def _store_images(self, link, base_dir):
         if (self.image_base_dir is None):

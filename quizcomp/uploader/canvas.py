@@ -248,7 +248,7 @@ def create_quiz(quiz, instance):
 
 def create_question_group(quiz_id, group, instance):
     data = {
-        'quiz_groups[][name]': group.name,
+        'quiz_groups[][name]': group.name.text,
         'quiz_groups[][pick_count]': group.pick_count,
         'quiz_groups[][question_points]': group.points,
     }
@@ -278,7 +278,7 @@ def create_question(quiz_id, group_id, question, index, instance):
 def _create_question_json(group_id, question, index, instance = None):
     question_type = QUESTION_TYPE_MAP[question.question_type]
 
-    name = question.name
+    name = question.name.text
     if (question.custom_header is not None):
         name = question.custom_header
 

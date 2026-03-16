@@ -4,6 +4,7 @@ import os
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.parser.public
 import quizcomp.question.base
 import quizcomp.util.serial
 
@@ -39,12 +40,14 @@ class Group(quizcomp.util.serial.JSONSerializer):
             self.validate()
         except Exception as ex:
             ids = ids.copy()
-            ids[name] = self.name
+            ids[name] = self.name.text if isinstance(self.name, quizcomp.parser.public.ParsedText) else self.name
 
             raise quizcomp.common.QuizValidationError('Error while validating group.', ids = ids) from ex
 
     def _validate(self, **kwargs):
-        if ((self.name is None) or (self.name == "")):
+        self.name = quizcomp.parser.public.parse_name(self.name)
+
+        if (self.name.text == ""):
             raise quizcomp.common.QuizValidationError("Name cannot be empty.")
 
         if (self.pick_count < 0):
@@ -70,7 +73,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
 
         if (self.pick_count > len(self.questions)):
             logging.warning("Group '%s' was asked to pick more questions than available (pick_count: %d, group size: %d)." % (
-                    self.name, self.pick_count, len(self.questions)))
+                    self.name.text, self.pick_count, len(self.questions)))
             self.pick_count = len(self.questions)
 
     def collect_file_paths(self):
@@ -104,7 +107,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
     def choose_questions(self, all_questions = False, rng = None, with_replacement = True):
         if ((self.pick_count == 0) or (len(self.questions) == 0)):
             logging.warning("Group '%s' will select no questions (pick_count: %d, group size: %d)." % (
-                    self.name, self.pick_count, len(self.questions)))
+                    self.name.text, self.pick_count, len(self.questions)))
             return []
 
         with_replacement = (self.pick_with_replacement and with_replacement)
@@ -122,7 +125,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
         # Rename questions if there are more than one.
         if (len(questions) > 1):
             for i in range(len(questions)):
-                questions[i].name = "%s - %d" % (self.name, i + 1)
+                questions[i].name = quizcomp.parser.public.parse_name("%s - %d" % (self.name.text, i + 1))
 
         # Inherit position-specific hints.
         questions[0].add_hints(self.hints_first)
@@ -137,7 +140,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
             indexes = list(set(indexes) - self._used_question_indexes)
 
             if (count > len(indexes)):
-                logging.warning("Group '%s' does not have enough questions to pick without replacement." % (self.name))
+                logging.warning("Group '%s' does not have enough questions to pick without replacement." % (self.name.text))
                 # Reset the selection pool.
                 indexes = list(range(len(self.questions)))
                 self._used_question_indexes = set()

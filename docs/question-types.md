@@ -27,12 +27,19 @@ most data types used by the QuizComp are [simple JSON types](https://en.wikipedi
 (ints, floats, strings, booleans, arrays/lists, objects (dicts/maps), and nulls).
 
 The only difference between vanilla JSON types and QuizComp types is around the handling of strings.
-The QuizComp divides strings into two types: plain strings and parsed strings.
+The QuizComp divides strings into three types: plain strings, names, and parsed strings.
 
 Plain strings are limited to alphanumeric characters, spaces, underscores, and dashes.
 These strings will often be used as keys (e.g., in Canvas options)
 or as identifiers in some output language (e.g., as an HTML class).
 Therefore, the content in plain strings are very limited.
+
+Names are text that will be parsed for validation but rendered as plain text.
+They may contain any characters (including punctuation, Unicode, and special characters),
+but must not contain markdown formatting elements
+(bold, italic, code, headings, images, links, tables, lists, blockquotes, or math).
+Names are used for group and question identifiers,
+and will be escaped appropriately for each output format.
 
 Parsed strings are text that will be parsed by the QuizComp parser
 (see [the syntax documentation](/docs/syntax.md)),

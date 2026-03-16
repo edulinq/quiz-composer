@@ -71,6 +71,9 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         self.canvas = canvas
 
+    def _format_name(self, name):
+        return html.escape(name.text)
+
     def convert_variant(self, variant, **kwargs):
         # Parse and format the XML.
         text = super(QTITemplateConverter, self).convert_variant(variant, **kwargs)
