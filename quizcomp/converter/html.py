@@ -30,8 +30,8 @@ class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
         else:
             self.env.globals['css_content'] = quizcomp.util.dirent.read_file(css_path)
 
-    def _format_name(self, name):
-        return html.escape(name.text)
+    def _format_label(self, label):
+        return html.escape(label.text)
 
     def clean_solution_content(self, document):
         return document.to_text()

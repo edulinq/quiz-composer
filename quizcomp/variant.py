@@ -54,7 +54,7 @@ class Variant(quizcomp.quiz.Quiz):
         quiz_data = DUMMY_QUIZ_DATA.copy()
         group_data = DUMMY_GROUP_DATA.copy()
 
-        group_data['name'] = quizcomp.parser.public.parse_name(group_data['name'])
+        group_data['name'] = quizcomp.parser.public.parse_label(group_data['name'])
         group_data['questions'] = [question]
         group_data['_skip_class_validations'] = [quizcomp.group.Group]
         quiz_data['groups'] = [quizcomp.group.Group(**group_data)]

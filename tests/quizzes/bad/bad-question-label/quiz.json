@@ -1,0 +1,13 @@
+{
+    "title": "Bad Question Label",
+    "description": "Quiz with a question that has a label containing markdown formatting.",
+
+    "groups": [
+        {
+            "name": "Group A",
+            "questions": [
+                "questions"
+            ]
+        }
+    ]
+}

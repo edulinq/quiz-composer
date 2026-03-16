@@ -31,8 +31,8 @@ class TexTemplateConverter(quizcomp.converter.template.TemplateConverter):
                 },
                 jinja_options = JINJA_OPTIONS, **kwargs)
 
-    def _format_name(self, name):
-        return quizcomp.parser.renderer.tex.tex_escape(name.text)
+    def _format_label(self, label):
+        return quizcomp.parser.renderer.tex.tex_escape(label.text)
 
     def clean_solution_content(self, document):
         tex = document.to_format(quizcomp.constants.FORMAT_TEX)

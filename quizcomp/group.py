@@ -40,12 +40,15 @@ class Group(quizcomp.util.serial.JSONSerializer):
             self.validate()
         except Exception as ex:
             ids = ids.copy()
-            ids[name] = self.name.text if isinstance(self.name, quizcomp.parser.public.ParsedText) else self.name
+            if (isinstance(self.name, quizcomp.parser.public.ParsedText)):
+                ids[name] = self.name.text
+            else:
+                ids[name] = self.name
 
             raise quizcomp.common.QuizValidationError('Error while validating group.', ids = ids) from ex
 
     def _validate(self, **kwargs):
-        self.name = quizcomp.parser.public.parse_name(self.name)
+        self.name = quizcomp.parser.public.parse_label(self.name)
 
         if (self.name.text == ""):
             raise quizcomp.common.QuizValidationError("Name cannot be empty.")
@@ -125,7 +128,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
         # Rename questions if there are more than one.
         if (len(questions) > 1):
             for i in range(len(questions)):
-                questions[i].name = quizcomp.parser.public.parse_name("%s - %d" % (self.name.text, i + 1))
+                questions[i].name = quizcomp.parser.public.parse_label("%s - %d" % (self.name.text, i + 1))
 
         # Inherit position-specific hints.
         questions[0].add_hints(self.hints_first)

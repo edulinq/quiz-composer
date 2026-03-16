@@ -1,0 +1,13 @@
+{
+    "title": "Bad Group Label",
+    "description": "Quiz with a group label containing markdown formatting.",
+
+    "groups": [
+        {
+            "name": "**bold label**",
+            "questions": [
+                "../../../questions/good/mcq-basic"
+            ]
+        }
+    ]
+}

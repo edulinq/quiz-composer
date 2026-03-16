@@ -1,0 +1,22 @@
+{
+    "title": "Special Labels",
+    "date": "2026-01-01",
+    "description": "Quiz with special characters in group and question labels.",
+
+    "shuffle_answers": false,
+
+    "groups": [
+        {
+            "name": "Group #1 & <Review>",
+            "questions": [
+                "../../../questions/good/mcq-basic"
+            ]
+        },
+        {
+            "name": "Group $2 \"Final\"",
+            "questions": [
+                "../../../questions/good/tf-true"
+            ]
+        }
+    ]
+}
