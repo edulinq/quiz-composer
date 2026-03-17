@@ -162,7 +162,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         template = self.env.get_template(TEMPLATE_FILENAME_MANIFEST)
 
-        data = {
+        data: typing.Dict[str, typing.Any] = {
             'quiz': quiz.to_dict(),
             'files': [],
         }

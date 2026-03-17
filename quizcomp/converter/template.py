@@ -5,6 +5,7 @@ import re
 import string
 import typing
 
+import edq.net.request
 import edq.util.dirent
 import jinja2
 
@@ -16,7 +17,6 @@ import quizcomp.parser.public
 import quizcomp.question.base
 import quizcomp.question.common
 import quizcomp.quiz
-import quizcomp.util.http
 import quizcomp.variant
 
 TEMPLATE_FILENAME_QUIZ: str = 'quiz.template'
@@ -630,18 +630,20 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         os.makedirs(self.image_base_dir, exist_ok = True)
 
         if (re.match(r'^http(s)?://', link)):
-            temp_dir = edq.util.dirent.get_temp_dir(prefix = 'quizcomp-image-dl-')
-            in_path = quizcomp.util.http.get_file(link, temp_dir)
+            image_path = edq.util.dirent.get_temp_path(prefix = 'quizcomp-image-dl-')
             image_id = link
-        else:
-            in_path = os.path.join(base_dir, link)
-            image_id = in_path
 
-        ext = os.path.splitext(in_path)[-1]
+            response, _ = edq.net.request.make_get(link)
+            edq.util.dirent.write_file_bytes(image_path, response.content)
+        else:
+            image_path = os.path.join(base_dir, link)
+            image_id = image_path
+
+        ext = os.path.splitext(image_path)[-1]
         filename = "%03d%s" % (len(self.image_paths), ext)
         out_path = os.path.join(self.image_base_dir, filename)
 
-        edq.util.dirent.copy(in_path, out_path)
+        edq.util.dirent.copy(image_path, out_path)
 
         if (self.image_relative_root is not None):
             out_path = os.path.join(self.image_relative_root, filename)

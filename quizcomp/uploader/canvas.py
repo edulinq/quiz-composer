@@ -4,6 +4,7 @@ import urllib.parse
 import re
 import typing
 
+import edq.util.hash
 import requests
 
 import quizcomp.common
@@ -12,7 +13,6 @@ import quizcomp.group
 import quizcomp.question.base
 import quizcomp.question.common
 import quizcomp.quiz
-import quizcomp.util.hash
 
 # TODO(eriq): This code assumes there will never be more than a page of items returned.
 PAGE_SIZE: int = 75
@@ -186,7 +186,7 @@ def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo):
             CANVAS_QUIZCOMP_BASEDIR,
             CANVAS_QUIZCOMP_QUIZ_DIRNAME,
             quiz.title,
-            quizcomp.util.hash.sha256(path) + os.path.splitext(path)[-1]
+            edq.util.hash.sha256_hex(path) + os.path.splitext(path)[-1]
         ])
 
         file_id = upload_file(path, canvas_path, instance)
