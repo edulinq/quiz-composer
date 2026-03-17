@@ -1,12 +1,16 @@
+import typing
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.question.base
 
 class TextOnly(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_TEXT_ONLY):
-    def __init__(self, **kwargs):
+    """ A question that accepts no answer. """
+
+    def __init__(self, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-    def _validate_answers(self):
+    def _validate_answers(self) -> None:
         if (self.answers is None):
             return
 

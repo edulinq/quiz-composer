@@ -597,7 +597,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             'clean': self.clean_solution_content(value.document),
         }
 
-        if (value.has_feedback()):
+        if (value.feedback is not None):
             result.update({
                 'feedback': self._format_doc(value.feedback.document),
                 'raw_feedback': self._format_doc(value.feedback.document, doc_format = quizcomp.constants.FORMAT_TEXT),

@@ -1,12 +1,16 @@
+import typing
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.question.base
 
 class FITB(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_FITB):
-    def __init__(self, **kwargs):
+    """ A question answered by filling in a single blank with text. """
+
+    def __init__(self, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-    def _validate_answers(self):
+    def _validate_answers(self) -> None:
         """
         Set up the answers to look like fill in multiple blanks with an empty key.
         """

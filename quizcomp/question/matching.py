@@ -1,18 +1,23 @@
+import random
+import typing
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.question.base
 
 class Matching(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_MATCHING):
-    def __init__(self, **kwargs):
+    """ A question answered by matching components from a left-hand list to component on a right-hand list. """
+
+    def __init__(self, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-    def _validate_answers(self):
+    def _validate_answers(self) -> None:
         self._check_type(self.answers, dict, "'answers' key")
 
         self._validate_matches()
         self._validate_distractors()
 
-    def _validate_matches(self):
+    def _validate_matches(self) -> None:
         if ('matches' not in self.answers):
             raise quizcomp.common.QuestionValidationError("Matching 'answers' value is missing the 'matches' field.", ids = self.ids)
 
@@ -43,7 +48,7 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.constan
 
         self.answers['matches'] = new_matches
 
-    def _validate_distractors(self):
+    def _validate_distractors(self) -> None:
         if ('distractors' not in self.answers):
             self.answers['distractors'] = []
 
@@ -56,7 +61,7 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.constan
 
         self.answers['distractors'] = new_distractors
 
-    def _shuffle(self, rng):
+    def _shuffle(self, rng: random.Random) -> None:
         # Shuffling matching is special because it requires additional shuffling support at the converter level.
         self.answers['shuffle'] = True
         self.answers['shuffle_seed'] = rng.randint(0, 2 ** 64)

@@ -1,20 +1,22 @@
+import typing
+
 import quizcomp.common
 import quizcomp.parser.public
 import quizcomp.util.serial
 
 class ParsedTextWithFeedback(quizcomp.parser.public.ParsedText):
-    def __init__(self, parsed_text, feedback = None):
+    """ Text that has been parsed along with any feedback attached to it. """
+
+    def __init__(self,
+            parsed_text: quizcomp.parser.public.ParsedText,
+            feedback: typing.Union[quizcomp.parser.public.ParsedText, None] = None,
+            ) -> None:
         super().__init__(parsed_text.text, parsed_text.document)
 
-        if ((feedback is not None) and (not isinstance(feedback, quizcomp.parser.public.ParsedText))):
-            raise quizcomp.common.QuizValidationError("Text feedback must be quizcomp.parser.public.ParsedText, found '%s'." % (str(type(feedback))))
+        self.feedback: typing.Union[quizcomp.parser.public.ParsedText, None] = feedback
+        """ Feedback associated with this text. """
 
-        self.feedback = feedback
-
-    def has_feedback(self):
-        return (self.feedback is not None)
-
-    def to_pod(self, skip_feedback = False, force_dict = False, **kwargs):
+    def to_pod(self, skip_feedback: bool = False, force_dict: bool = False, **kwargs: typing.Any) -> quizcomp.util.serial.POD:  # type: ignore[override]
         if (skip_feedback or (self.feedback is None)):
             if (force_dict):
                 return {'text': self.text}
@@ -37,20 +39,25 @@ class ParsedTextChoice(ParsedTextWithFeedback):
     A multiple answer/choice option.
     """
 
-    def __init__(self, parsed_text_with_feedback, correct):
+    def __init__(self,
+            parsed_text_with_feedback: ParsedTextWithFeedback,
+            correct: bool) -> None:
         super().__init__(parsed_text_with_feedback, feedback = parsed_text_with_feedback.feedback)
 
-        if (not isinstance(correct, bool)):
-            raise quizcomp.common.QuizValidationError("Choice 'correct' field must be boolean, found '%s'." % (str(type(correct))))
+        self.correct: bool = correct
+        """ Whether this choice is correct. """
 
-        self.correct = correct
+    def is_correct(self) -> bool:
+        """ Check if this choice is correct. """
 
-    def is_correct(self):
         return self.correct
 
-    def to_pod(self, **kwargs):
-        value = super().to_pod(force_dict = True, **kwargs)
+    def to_pod(self, **kwargs: typing.Any) -> quizcomp.util.serial.POD:  # type: ignore[override]
+        data = super().to_pod(force_dict = True, **kwargs)
+
+        value = typing.cast(typing.Dict[str, typing.Any], data)
         value['correct'] = self.correct
+
         return value
 
 class NumericChoice(quizcomp.util.serial.PODSerializer):
@@ -58,23 +65,37 @@ class NumericChoice(quizcomp.util.serial.PODSerializer):
     Numeric choices have no parsed text (aside from optional feedback).
     """
 
-    def __init__(self, type, margin = None, min = None, max = None, value = None, precision = None, feedback = None):
-        self.type = type
-        self.margin = margin
-        self.min = min
-        self.max = max
-        self.value = value
-        self.precision = precision
+    def __init__(self,
+            type: str,
+            margin: typing.Union[float, None] = None,
+            min: typing.Union[float, None] = None,
+            max: typing.Union[float, None] = None,
+            value: typing.Union[float, None] = None,
+            precision: typing.Union[int, None] = None,
+            feedback: typing.Union[quizcomp.parser.public.ParsedText, None] = None,
+            ) -> None:
+        self.type: str = type
+        """ The type of numeric answer for this choice. """
 
-        if ((feedback is not None) and (not isinstance(feedback, quizcomp.parser.public.ParsedText))):
-            raise quizcomp.common.QuizValidationError("Text feedback must be quizcomp.parser.public.ParsedText, found '%s'." % (str(type(feedback))))
+        self.margin: typing.Union[float, None] = margin
+        """ The allowed/error margin. """
 
-        self.feedback = feedback
+        self.min: typing.Union[float, None] = min
+        """ The min value. """
 
-    def has_feedback(self):
-        return (self.feedback is not None)
+        self.max: typing.Union[float, None] = max
+        """ The max value. """
 
-    def to_pod(self, skip_feedback = False, **kwargs):
+        self.value: typing.Union[float, None] = value
+        """ The expected/correct value. """
+
+        self.precision: typing.Union[int, None] = precision
+        """ The number of expected significant places. """
+
+        self.feedback: typing.Union[quizcomp.parser.public.ParsedText, None] = feedback
+        """ Feedback associated with this text. """
+
+    def to_pod(self, skip_feedback: bool = False, **kwargs: typing.Any) -> quizcomp.util.serial.POD:  # type: ignore[override]
         data = self.__dict__.copy()
 
         for (key, value) in list(data.items()):

@@ -1,13 +1,18 @@
+import random
+import typing
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.parser.public
 import quizcomp.question.base
 
 class MDD(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_MDD):
-    def __init__(self, **kwargs):
+    """ A question answered by selecting exactly one of the provided choices for multiple instances. """
+
+    def __init__(self, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-    def _validate_answers(self):
+    def _validate_answers(self) -> None:
         self._check_type(self.answers, dict, "'answers' key")
 
         if (len(self.answers) == 0):
@@ -27,6 +32,6 @@ class MDD(quizcomp.question.base.Question, question_type = quizcomp.constants.QU
 
         self._check_placeholders(self.answers.keys())
 
-    def _shuffle(self, rng):
+    def _shuffle(self, rng: random.Random) -> None:
         for key in self.answers:
             rng.shuffle(self.answers[key]['values'])

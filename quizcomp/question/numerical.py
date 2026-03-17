@@ -1,13 +1,17 @@
+import typing
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.question.base
 import quizcomp.question.common
 
 class Numerical(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_NUMERICAL):
-    def __init__(self, **kwargs):
+    """ A question answered by filling in a single blank with a numerical answer. """
+
+    def __init__(self, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-    def _validate_answers(self):
+    def _validate_answers(self) -> None:
         self._check_type(self.answers, list, "'answers' key")
 
         for i in range(len(self.answers)):

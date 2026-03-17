@@ -1,12 +1,17 @@
+import random
+import typing
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.question.base
 
 class TF(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_TF):
-    def __init__(self, **kwargs):
+    """ A question answered by choosing true or false. """
+
+    def __init__(self, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-    def _validate_answers(self):
+    def _validate_answers(self) -> None:
         if (isinstance(self.answers, bool)):
             # Change answers to look like multiple choice.
             self.answers = [
@@ -29,5 +34,5 @@ class TF(quizcomp.question.base.Question, question_type = quizcomp.constants.QUE
         if (labels != expected):
             raise quizcomp.common.QuestionValidationError("T/F labels (text) not as expected. Expected: '%s', Actual: '%s'." % (expected, labels), ids = self.ids)
 
-    def _shuffle(self, rng):
+    def _shuffle(self, rng: random.Random) -> None:
         self._shuffle_answers_list(rng)
