@@ -2,48 +2,49 @@ import logging
 import os
 import re
 import time
+import typing
 
 import bs4
 import edq.util.dirent
 import edq.util.json
+import requests
 
 import quizcomp.constants
 import quizcomp.variant
-import quizcomp.util.httpsession
 
-URL_BASE = 'https://www.gradescope.com'
+URL_BASE: str = 'https://www.gradescope.com'
 URL_HOMEPAGE = URL_BASE
-URL_LOGIN = f"{URL_BASE}/login"
-URL_ASSIGNMENTS = f"{URL_BASE}/courses/%s/assignments"
-URL_ASSIGNMENT = f"{URL_BASE}/courses/%s/assignments/%s"
-URL_ASSIGNMENT_GROUP = f"{URL_BASE}/courses/%s/assignment_containers"
-URL_ASSIGNMENT_EDIT = f"{URL_BASE}/courses/%s/assignments/%s/edit"
-URL_ASSIGNMENT_RUBRIC = f"{URL_BASE}/courses/%s/assignments/%s/rubric/edit"
-URL_ASSIGNMENT_ADD_RUBRIC_ITEM = f"{URL_BASE}/courses/%s/questions/%s/rubric_items"
-URL_NEW_ASSIGNMENT_FORM = f"{URL_BASE}/courses/%s/assignments/new"
-URL_EDIT_OUTLINE = f"{URL_BASE}/courses/%s/assignments/%s/outline/edit"
-URL_PATCH_OUTLINE = f"{URL_BASE}/courses/%s/assignments/%s/outline"
+URL_LOGIN: str = f"{URL_BASE}/login"
+URL_ASSIGNMENTS: str = f"{URL_BASE}/courses/%s/assignments"
+URL_ASSIGNMENT: str = f"{URL_BASE}/courses/%s/assignments/%s"
+URL_ASSIGNMENT_GROUP: str = f"{URL_BASE}/courses/%s/assignment_containers"
+URL_ASSIGNMENT_EDIT: str = f"{URL_BASE}/courses/%s/assignments/%s/edit"
+URL_ASSIGNMENT_RUBRIC: str = f"{URL_BASE}/courses/%s/assignments/%s/rubric/edit"
+URL_ASSIGNMENT_ADD_RUBRIC_ITEM: str = f"{URL_BASE}/courses/%s/questions/%s/rubric_items"
+URL_NEW_ASSIGNMENT_FORM: str = f"{URL_BASE}/courses/%s/assignments/new"
+URL_EDIT_OUTLINE: str = f"{URL_BASE}/courses/%s/assignments/%s/outline/edit"
+URL_PATCH_OUTLINE: str = f"{URL_BASE}/courses/%s/assignments/%s/outline"
 
-NAME_BOX_ID = 'name'
-ID_BOX_ID = 'id'
-SIGNATURE_BOX_ID = 'signature'
-MANUAL_GRADING_BOX_ID = 'manual_grading'
+NAME_BOX_ID: str = 'name'
+ID_BOX_ID: str = 'id'
+SIGNATURE_BOX_ID: str = 'signature'
+MANUAL_GRADING_BOX_ID: str = 'manual_grading'
 
-SPECIAL_QUESTION_TYPES = [
+SPECIAL_QUESTION_TYPES: typing.List[str] = [
     NAME_BOX_ID,
     ID_BOX_ID,
     SIGNATURE_BOX_ID,
     MANUAL_GRADING_BOX_ID,
 ]
 
-EXTEND_BOX_QUESTION_TYPES = [
+EXTEND_BOX_QUESTION_TYPES: typing.List[str] = [
     quizcomp.constants.QUESTION_TYPE_MA,
     quizcomp.constants.QUESTION_TYPE_MCQ,
     quizcomp.constants.QUESTION_TYPE_MDD,
     quizcomp.constants.QUESTION_TYPE_TF,
 ]
 
-STANDARD_BOX_QUESTION_TYPES = [
+STANDARD_BOX_QUESTION_TYPES: typing.List[str] = [
     quizcomp.constants.QUESTION_TYPE_ESSAY,
     quizcomp.constants.QUESTION_TYPE_FIMB,
     quizcomp.constants.QUESTION_TYPE_FITB,
@@ -52,32 +53,51 @@ STANDARD_BOX_QUESTION_TYPES = [
     quizcomp.constants.QUESTION_TYPE_SA,
 ]
 
-BOX_TYPES = EXTEND_BOX_QUESTION_TYPES + STANDARD_BOX_QUESTION_TYPES + SPECIAL_QUESTION_TYPES
+BOX_TYPES: typing.List[str] = EXTEND_BOX_QUESTION_TYPES + STANDARD_BOX_QUESTION_TYPES + SPECIAL_QUESTION_TYPES
 
-SP_PER_PT = 65536
+SP_PER_PT: int = 65536
 
-SESSION_ID_CREATE_ASSIGNMENT_GROUP = 'gradescope_create_assignment_group'
-SESSION_ID_UPLOAD = 'gradescope_upload'
+SESSION_ID_CREATE_ASSIGNMENT_GROUP: str = 'gradescope_create_assignment_group'
+SESSION_ID_UPLOAD: str = 'gradescope_upload'
 
 class GradeScopeUploader:
     """
-    Upload quizes to GradeScope.
+    Upload quizzes to GradeScope.
     """
 
-    def __init__(self, course_id, user, password,
-            force = False, rubric = False,
-            save_http = False,
-            **kwargs):
+    def __init__(self,
+            course_id: str,
+            user: str,
+            password: str,
+            force: bool = False,
+            rubric: bool = False,
+            save_http: bool = False,
+            **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-        self.course_id = course_id
-        self.user = user
-        self.password = password
-        self.force = force
-        self.rubric = rubric
-        self.save_http = save_http
+        self.course_id: str = course_id
+        """ The GradeScope course ID. """
 
-    def upload_quiz(self, variant, base_dir = None, **kwargs):
+        self.user: str = user
+        """ The GradeScope user/email to authenticate with. """
+
+        self.password: str = password
+        """ The GradeScope password to authenticate with. """
+
+        self.force: bool = force
+        """ Whether to remove existing quizzes before upload. """
+
+        self.rubric: bool = rubric
+        """ Whether to upload the rubric items for the quiz. """
+
+        self.save_http = save_http
+        """ Whether to save the HTTP exchanges to disk. """
+
+    def upload_quiz(self,
+            variant: quizcomp.variant.Variant,
+            base_dir: typing.Union[str, None] = None,
+            **kwargs: typing.Any,
+            ) -> typing.Tuple[str, bool]:
         """
         Compile a quiz and upload it to GradeScope.
 
@@ -94,8 +114,10 @@ class GradeScopeUploader:
         boxes, special_boxes = self.get_bounding_boxes(variant, base_dir)
         return self.upload(variant, base_dir, boxes, special_boxes)
 
-    def create_assignment_group(self, title, gradescope_ids):
-        session = quizcomp.util.httpsession.get_session(SESSION_ID_CREATE_ASSIGNMENT_GROUP, save_http = self.save_http)
+    def create_assignment_group(self, title: str, gradescope_ids: typing.List[str]) -> None:
+        """ Create an assignment group with the given IDs. """
+
+        session = requests.Session()
 
         self.login(session)
 
@@ -115,11 +137,16 @@ class GradeScopeUploader:
         response = session.post(post_url, params = data, headers = headers)
         response.raise_for_status()
 
-    def get_bounding_boxes(self, variant, base_dir):
+    def get_bounding_boxes(self,
+            variant: quizcomp.variant.Variant,
+            base_dir: str,
+            ) -> typing.Tuple[typing.Dict[str, typing.Dict[str, typing.Any]], typing.Dict[str, typing.Dict[str, typing.Any]]]:
+        """ Get bounding boxes for answers. """
+
         # {<quetion id>: {<part id>: box, ...}, ...}
-        boxes = {}
+        boxes: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
         # {NAME_BOX_ID: box, ID_BOX_ID: box, SIGNATURE_BOX_ID: box}
-        special_boxes = {}
+        special_boxes: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
 
         path = os.path.join(base_dir, "%s.pos" % (variant.title))
         if (not os.path.exists(path)):
@@ -137,13 +164,13 @@ class GradeScopeUploader:
 
                 # "ll" == "lower-left"
                 # "ur" == "upper-right"
-                (question_id, part_id, answer_id, question_type, page_number, ll_x, ll_y, ur_x, ur_y, page_width, page_height, origin) = parts
+                (question_id, part_id, answer_id, question_type, raw_page_number, ll_x, ll_y, ur_x, ur_y, page_width, page_height, origin) = parts
 
                 if (origin != 'bottom-left'):
                     raise ValueError("Unknown bounding box origin: '%s'." % (origin))
 
                 # Note that the position file and GradeScope use 1-indexed pages.
-                page_number = int(page_number)
+                page_number = int(raw_page_number)
 
                 if (question_type not in BOX_TYPES):
                     raise ValueError("Unknown content type: '%s'." % (question_type))
@@ -204,14 +231,24 @@ class GradeScopeUploader:
 
         return boxes, special_boxes
 
-    def _compute_box(self, ll_x, ll_y, ur_x, ur_y, page_width, page_height, extend_box_right = False):
-        ll_x = float(ll_x.removesuffix('sp'))
-        ll_y = float(ll_y.removesuffix('sp'))
-        ur_x = float(ur_x.removesuffix('sp'))
-        ur_y = float(ur_y.removesuffix('sp'))
+    def _compute_box(self,
+            raw_ll_x: str,
+            raw_ll_y: str,
+            raw_ur_x: str,
+            raw_ur_y: str,
+            raw_page_width: str,
+            raw_page_height: str,
+            extend_box_right: bool = False,
+            ) -> typing.Tuple[typing.Tuple[float, float], typing.Tuple[float, float]]:
+        """ Compute a bounding box. """
 
-        page_width = float(page_width.removesuffix('pt')) * SP_PER_PT
-        page_height = float(page_height.removesuffix('pt')) * SP_PER_PT
+        ll_x = float(raw_ll_x.removesuffix('sp'))
+        ll_y = float(raw_ll_y.removesuffix('sp'))
+        ur_x = float(raw_ur_x.removesuffix('sp'))
+        ur_y = float(raw_ur_y.removesuffix('sp'))
+
+        page_width = float(raw_page_width.removesuffix('pt')) * SP_PER_PT
+        page_height = float(raw_page_height.removesuffix('pt')) * SP_PER_PT
 
         # Origin is upper-left, point 1 is upper-left, point 2 is lower-right.
         x1 = round(100.0 * (ll_x / page_width), 1)
@@ -226,7 +263,13 @@ class GradeScopeUploader:
 
         return (x1, y1), (x2, y2)
 
-    def create_outline(self, variant, bounding_boxes, special_boxes):
+    def create_outline(self,
+            variant: quizcomp.variant.Variant,
+            bounding_boxes: typing.Dict[str, typing.Dict[str, typing.Any]],
+            special_boxes: typing.Dict[str, typing.Dict[str, typing.Any]],
+            ) -> typing.Dict[str, typing.Any]:
+        """ Create GradeScope outline data. """
+
         question_data = []
         for (question_id, parts) in bounding_boxes.items():
             question_index = int(float(question_id))
@@ -283,14 +326,21 @@ class GradeScopeUploader:
 
         return outline
 
-    def upload(self, variant, base_dir,  bounding_boxes, special_boxes):
+    def upload(self,
+            variant: quizcomp.variant.Variant,
+            base_dir: str,
+            bounding_boxes: typing.Dict[str, typing.Dict[str, typing.Any]],
+            special_boxes: typing.Dict[str, typing.Dict[str, typing.Any]],
+            ) -> typing.Tuple[str, bool]:
+        """ Upload a variant. """
+
         path = os.path.join(base_dir, "%s.pdf" % (variant.title))
         if (not os.path.exists(path)):
             raise ValueError("Could not find path for quiz pdf: '%s'." % (path))
 
         outline = self.create_outline(variant, bounding_boxes, special_boxes)
 
-        session = quizcomp.util.httpsession.get_session(SESSION_ID_UPLOAD, save_http = self.save_http)
+        session = requests.Session()
 
         self.login(session)
         logging.debug("Logged in as '%s'.", self.user)
@@ -316,7 +366,9 @@ class GradeScopeUploader:
 
         return assignment_id, True
 
-    def login(self, session):
+    def login(self, session: requests.Session):
+        """ Login to GradeScope. """
+
         token = self.get_authenticity_token(session, URL_HOMEPAGE, action = '/login')
 
         data = {
@@ -333,7 +385,9 @@ class GradeScopeUploader:
         response = session.post(URL_LOGIN, params = data)
         response.raise_for_status()
 
-    def get_authenticity_token(self, session, url, action = None):
+    def get_authenticity_token(self, session: requests.Session, url: str, action: typing.Union[str, None] = None) -> str:
+        """ Get a token from GradeScope. """
+
         response = session.get(url)
         response.raise_for_status()
 
@@ -346,11 +400,12 @@ class GradeScopeUploader:
         auth_input = document.select('%s input[name="authenticity_token"]' % (form_selector))
         if (len(auth_input) != 1):
             raise ValueError("Did not find exactly one authentication token input, found %d." % (len(auth_input)))
-        auth_input = auth_input[0]
 
-        return auth_input.get('value')
+        return str(auth_input[0].get('value'))
 
-    def get_csrf_token(self, session, url):
+    def get_csrf_token(self, session: requests.Session, url: str) -> str:
+        """ Get a CSRF token. """
+
         # Get outline submission csrf token.
         response = session.get(url)
         response.raise_for_status()
@@ -358,15 +413,18 @@ class GradeScopeUploader:
         document = bs4.BeautifulSoup(response.text, 'html.parser')
         return self.parse_csrf_token(document)
 
-    def parse_csrf_token(self, document):
+    def parse_csrf_token(self, document: bs4.BeautifulSoup) -> str:
+        """ Parse a CSRF token from a page. """
+
         meta_tag = document.select('meta[name="csrf-token"]')
         if (len(meta_tag) != 1):
             raise ValueError("Did not find exactly one CSRF meta tag, found %d." % (len(meta_tag)))
-        meta_tag = meta_tag[0]
 
-        return meta_tag.get('content')
+        return str(meta_tag[0].get('content'))
 
-    def get_assignment_id(self, session, variant):
+    def get_assignment_id(self, session: requests.Session, variant: quizcomp.variant.Variant) -> typing.Union[str, None]:
+        """ Get an assignment ID for the given variant, or None if there is no matching variant. """
+
         url = URL_ASSIGNMENTS % (self.course_id)
 
         response = session.get(url)
@@ -392,7 +450,9 @@ class GradeScopeUploader:
 
         return None
 
-    def delete_assignment(self, session, assignment_id):
+    def delete_assignment(self, session: requests.Session, assignment_id: str):
+        """ Delete an assignment from GradeScope. """
+
         form_url = URL_ASSIGNMENT_EDIT % (self.course_id, assignment_id)
         token = self.get_csrf_token(session, form_url)
 
@@ -405,7 +465,9 @@ class GradeScopeUploader:
         response = session.post(delete_url, data = data)
         response.raise_for_status()
 
-    def create_assignment(self, session, variant, base_dir):
+    def create_assignment(self, session: requests.Session, variant: quizcomp.variant.Variant, base_dir: str) -> str:
+        """ Create an assignment in GradeScope and get its ID. """
+
         form_url = URL_NEW_ASSIGNMENT_FORM % (self.course_id)
         token = self.get_csrf_token(session, form_url)
 
@@ -440,7 +502,9 @@ class GradeScopeUploader:
 
         return match.group(1)
 
-    def submit_outline(self, session, assignment_id, outline):
+    def submit_outline(self, session: requests.Session, assignment_id: str, outline: typing.Dict[str, typing.Any]) -> None:
+        """ Submit an output to a quiz. """
+
         edit_url = URL_EDIT_OUTLINE % (self.course_id, assignment_id)
         csrf_token = self.get_csrf_token(session, edit_url)
 
@@ -456,7 +520,9 @@ class GradeScopeUploader:
         )
         response.raise_for_status()
 
-    def create_rubric(self, session, assignment_id, variant):
+    def create_rubric(self, session: requests.Session, assignment_id: str, variant: quizcomp.variant.Variant) -> None:
+        """ Create rubric items for a quiz. """
+
         questions_ids, csrf_token = self.fetch_question_ids(session, assignment_id)
 
         for question in variant.questions:
@@ -469,7 +535,9 @@ class GradeScopeUploader:
             for question_id in question_ids:
                 self.add_rubric_item(session, csrf_token, question_id, "Incorrect", score)
 
-    def add_rubric_item(self, session, csrf_token, question_id, description, score):
+    def add_rubric_item(self, session: requests.Session, csrf_token: str, question_id: str, description: str, score: float) -> None:
+        """ Add a single rubric item to a quiz. """
+
         url = URL_ASSIGNMENT_ADD_RUBRIC_ITEM % (self.course_id, question_id)
 
         headers = {
@@ -488,7 +556,7 @@ class GradeScopeUploader:
         response = session.post(url, json = data, headers = headers)
         response.raise_for_status()
 
-    def fetch_question_ids(self, session, assignment_id):
+    def fetch_question_ids(self, session: requests.Session, assignment_id: str) -> typing.Tuple[typing.Dict[str, typing.List[str]], str]:
         """
         Get the GradeScope id of all questions/subquestions.
 
@@ -507,9 +575,8 @@ class GradeScopeUploader:
         data_tag = document.select('div[data-react-class="AssignmentRubric"]')
         if (len(data_tag) != 1):
             raise ValueError("Did not find exactly one rubric data tag, found %d." % (len(data_tag)))
-        data_tag = data_tag[0]
 
-        data = edq.util.json.loads(data_tag.get('data-react-props'))
+        data = edq.util.json.loads(str(data_tag[0].get('data-react-props')))
 
         ids = {}
         for question in data['questions']:
