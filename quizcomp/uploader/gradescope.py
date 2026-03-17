@@ -1,7 +1,3 @@
-"""
-Upload quizes to GradeScope.
-"""
-
 import logging
 import os
 import re
@@ -63,7 +59,11 @@ SP_PER_PT = 65536
 SESSION_ID_CREATE_ASSIGNMENT_GROUP = 'gradescope_create_assignment_group'
 SESSION_ID_UPLOAD = 'gradescope_upload'
 
-class GradeScopeUploader(object):
+class GradeScopeUploader:
+    """
+    Upload quizes to GradeScope.
+    """
+
     def __init__(self, course_id, user, password,
             force = False, rubric = False,
             save_http = False,
