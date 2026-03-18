@@ -8,8 +8,8 @@ set -uo pipefail
 
 readonly THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly ROOT_DIR="${THIS_DIR}/.."
-readonly GOOD_QUESTIONS_DIR="${ROOT_DIR}/tests/questions/good"
-readonly GOOD_QUIZZES_DIR="${ROOT_DIR}/tests/quizzes/good"
+readonly GOOD_QUESTIONS_DIR="${ROOT_DIR}/quizcomp/testdata/questions/good"
+readonly GOOD_QUIZZES_DIR="${ROOT_DIR}/quizcomp/testdata/quizzes/good"
 readonly OUTPUT_DIR="${TMPDIR:-/tmp}/quizcomp-tex-compilation"
 readonly LOG_TAIL_LINES=20
 
