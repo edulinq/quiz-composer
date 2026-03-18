@@ -1,6 +1,7 @@
 import html
 import typing
 
+import markdown_it
 import markdown_it.token
 
 import quizcomp.constants
@@ -14,7 +15,7 @@ def render(
         inline: bool,
         tokens: typing.List[markdown_it.token.Token],
         token_index: int,
-        options: typing.Dict[str, typing.Any],
+        options: markdown_it.utils.OptionsDict,
         env: typing.Dict[str, typing.Any],
         ) -> str:
     """ Render the given token in the specified format. """

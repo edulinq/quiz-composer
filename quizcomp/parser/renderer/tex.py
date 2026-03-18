@@ -2,6 +2,8 @@ import logging
 import os
 import typing
 
+import markdown_it
+
 import quizcomp.constants
 import quizcomp.parser.ast
 import quizcomp.parser.common
@@ -271,11 +273,6 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
         content = ''.join([self._render_node(child, context) for child in node.children()])
         return "\\begin{quote}\n%s\n\\end{quote}" % (content)
 
-def get_renderer(options: typing.Dict[str, typing.Any]) -> typing.Tuple[QuizComposerRendererTex, typing.Dict[str, typing.Any]]:
-    """ Get this renderer and options. """
-
-    return QuizComposerRendererTex(), options
-
 def tex_escape(text: str) -> str:
     """
     Prepare normal text for tex.
@@ -368,3 +365,8 @@ def _discover_column_info_cells(
         style[key] = value
 
     return style
+
+def get_renderer(options: markdown_it.utils.OptionsDict) -> QuizComposerRendererTex:
+    """ Get this renderer and options. """
+
+    return QuizComposerRendererTex()

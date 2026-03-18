@@ -19,7 +19,7 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
     def placeholder(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             **kwargs: typing.Any) -> str:
         # Canvas placeholders cannot have spaces.
@@ -32,7 +32,7 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
     def image(self,  # type: ignore[override]
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             **kwargs: typing.Any) -> str:
         # Canvas requires files to be uploaded instead of embedded.
@@ -70,7 +70,7 @@ def _process_image_token(token: markdown_it.token.Token, context: typing.Dict[st
     token.attrSet('src', f"{canvas_instance.base_url}/courses/{canvas_instance.course_id}/files/{file_id}/preview")
     return token
 
-def get_renderer(options: typing.Dict[str, typing.Any]) -> typing.Tuple[QuizComposerRendererCanvas, typing.Dict[str, typing.Any]]:
+def get_renderer(options: markdown_it.utils.OptionsDict) -> QuizComposerRendererCanvas:
     """ Get this renderer and options. """
 
-    return QuizComposerRendererCanvas(), options
+    return QuizComposerRendererCanvas()

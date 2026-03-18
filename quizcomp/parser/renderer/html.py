@@ -39,7 +39,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
     def image(self,  # type: ignore[override]
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             force_raw_image_src: bool = False,
             process_token: typing.Union[ProcessImageTokenFunction, None] = None,
@@ -79,7 +79,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         if (process_token is not None):
             tokens[token_index] = process_token(tokens[token_index], context, path)
 
-        result = super().image(tokens, token_index, _options_to_optionsdict(options), env)
+        result = super().image(tokens, token_index, options, env)
 
         # Reset the src so that future callback hits have the proper cache key.
         tokens[token_index].attrSet('src', original_src)
@@ -89,7 +89,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
     def container_block_open(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             ) -> str:
         """ Render the opening of a block. """
@@ -114,12 +114,12 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
             tokens[token_index].attrSet('style', style_string)
 
         # Send to super for further rendering.
-        return super().renderToken(tokens, token_index, _options_to_optionsdict(options), env)
+        return super().renderToken(tokens, token_index, options, env)
 
     def math_inline(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             ) -> str:
         """ Render inline math. """
@@ -129,7 +129,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
     def math_block(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             ) -> str:
         """ Render a math block. """
@@ -139,7 +139,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
     def placeholder(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             ) -> str:
         """ Render an answer placeholder. """
@@ -149,7 +149,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
     def table_open(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             ) -> str:
         """ Render the opening of a table. """
@@ -174,12 +174,12 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
 
         _join_html_style(token, table_style)
 
-        return super().renderToken(tokens, token_index, _options_to_optionsdict(options), env)
+        return super().renderToken(tokens, token_index, options, env)
 
     def thead_open(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             ) -> str:
         """ Render the opening of a table header. """
@@ -191,12 +191,12 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         if (quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_HEAD_RULE, quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE)):
             _join_html_style(token, ["border-bottom: %s" % (HTML_BORDER_SPEC)])
 
-        return super().renderToken(tokens, token_index, _options_to_optionsdict(options), env)
+        return super().renderToken(tokens, token_index, options, env)
 
     def th_open(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             ) -> str:
         """ Render the opening of a th. """
@@ -213,12 +213,12 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
 
         _join_html_style(token, ["font-weight: %s" % (weight)])
 
-        return super().renderToken(tokens, token_index, _options_to_optionsdict(options), env)
+        return super().renderToken(tokens, token_index, options, env)
 
     def td_open(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
-            options: typing.Dict[str, typing.Any],
+            options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             ) -> str:
         """ Render the opening of a td. """
@@ -229,7 +229,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
 
         self._cell_html(token, style)
 
-        return super().renderToken(tokens, token_index, _options_to_optionsdict(options), env)
+        return super().renderToken(tokens, token_index, options, env)
 
     def _cell_html(self, token: markdown_it.token.Token, style: typing.Dict[str, typing.Any]) -> None:
         """
@@ -254,16 +254,6 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
 
         _join_html_style(token, [': '.join(item) for item in cell_style.items()])
 
-def _options_to_optionsdict(options: typing.Dict[str, typing.Any]) -> markdown_it.utils.OptionsDict:
-    """ Force convert an options dictionary to a markdown_it.utils.OptionsDict. """
-
-    return markdown_it.utils.OptionsDict(options)  # type: ignore[arg-type]
-
-def get_renderer(options: typing.Dict[str, typing.Any]) -> typing.Tuple[QuizComposerRendererHTML, typing.Dict[str, typing.Any]]:
-    """ Get this renderer and options. """
-
-    return QuizComposerRendererHTML(), options
-
 def _join_html_style(token: markdown_it.token.Token, rules: typing.List[str]) -> None:
     """
     Take all style rules to apply, add in any existing style, and set the style attribute.
@@ -278,3 +268,8 @@ def _join_html_style(token: markdown_it.token.Token, rules: typing.List[str]) ->
 
     style_string = '; '.join(rules)
     token.attrSet('style', style_string)
+
+def get_renderer(options: markdown_it.utils.OptionsDict) -> QuizComposerRendererHTML:
+    """ Get this renderer and options. """
+
+    return QuizComposerRendererHTML()

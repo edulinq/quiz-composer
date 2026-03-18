@@ -23,7 +23,7 @@ HTML_TOKENS: typing.Set[str] = {
     'html_inline',
 }
 
-def _get_parser() -> typing.Tuple[markdown_it.MarkdownIt, typing.Dict[str, typing.Any]]:
+def _get_parser() -> typing.Tuple[markdown_it.MarkdownIt, markdown_it.utils.OptionsDict]:
     """ Get the standard parser and options. """
 
     parser = markdown_it.MarkdownIt('commonmark')
@@ -34,7 +34,7 @@ def _get_parser() -> typing.Tuple[markdown_it.MarkdownIt, typing.Dict[str, typin
     for (plugin, options) in PLUGINS:
         parser.use(plugin, **options)
 
-    return parser, dict(parser.options)
+    return parser, parser.options
 
 def _clean_text(text: str) -> str:
     """ Do some basic cleaning on text before parsing. """

@@ -63,7 +63,7 @@ class QuizComposerMDformatExtension(mdformat.plugins.ParserExtensionInterface):
     def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
         return
 
-def get_renderer(options: typing.Dict[str, typing.Any]) -> typing.Tuple[mdformat.renderer.MDRenderer, typing.Dict[str, typing.Any]]:
+def get_renderer(options: markdown_it.utils.OptionsDict) -> mdformat.renderer.MDRenderer:
     """ Get this renderer and options. """
 
     extensions = options.get('parser_extension', [])
@@ -73,4 +73,4 @@ def get_renderer(options: typing.Dict[str, typing.Any]) -> typing.Tuple[mdformat
     ]
     options['parser_extension'] = extensions
 
-    return mdformat.renderer.MDRenderer(), options
+    return mdformat.renderer.MDRenderer()

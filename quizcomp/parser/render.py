@@ -24,7 +24,7 @@ def canvas(
 
     _, options = quizcomp.parser.parse._get_parser()
 
-    renderer, options = quizcomp.parser.renderer.canvas.get_renderer(options)
+    renderer = quizcomp.parser.renderer.canvas.get_renderer(options)
     raw_html = renderer.render(tokens, options, env)  # type: ignore[arg-type]
 
     return clean_html(raw_html, pretty = pretty)
@@ -41,7 +41,7 @@ def html(
 
     _, options = quizcomp.parser.parse._get_parser()
 
-    renderer, options = quizcomp.parser.renderer.html.get_renderer(options)
+    renderer = quizcomp.parser.renderer.html.get_renderer(options)
     raw_html = renderer.render(tokens, options, env)  # type: ignore[arg-type]
 
     return clean_html(raw_html, pretty = pretty)
@@ -57,7 +57,7 @@ def md(
 
     _, options = quizcomp.parser.parse._get_parser()
 
-    renderer, options = quizcomp.parser.renderer.markdown.get_renderer(options)
+    renderer = quizcomp.parser.renderer.markdown.get_renderer(options)
     content = renderer.render(tokens, options, env)  # type: ignore[arg-type]
 
     return content.strip()
@@ -73,7 +73,7 @@ def tex(
 
     _, options = quizcomp.parser.parse._get_parser()
 
-    renderer, options = quizcomp.parser.renderer.tex.get_renderer(options)
+    renderer = quizcomp.parser.renderer.tex.get_renderer(options)
     content = renderer.render(tokens, options, env)  # type: ignore[arg-type]
 
     return content.strip()
@@ -89,7 +89,7 @@ def text(
 
     _, options = quizcomp.parser.parse._get_parser()
 
-    renderer, options = quizcomp.parser.renderer.text.get_renderer(options)
+    renderer = quizcomp.parser.renderer.text.get_renderer(options)
     content = renderer.render(tokens, options, env)  # type: ignore[arg-type]
 
     return content.strip()

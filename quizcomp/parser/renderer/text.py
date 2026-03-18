@@ -1,6 +1,8 @@
 import re
 import typing
 
+import markdown_it
+
 import quizcomp.constants
 import quizcomp.parser.ast
 import quizcomp.parser.common
@@ -117,12 +119,12 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
 
         return ''
 
-def get_renderer(options: typing.Dict[str, typing.Any]) -> typing.Tuple[QuizComposerRendererText, typing.Dict[str, typing.Any]]:
-    """ Get this renderer and options. """
-
-    return QuizComposerRendererText(), options
-
 def _clean_text(text: str) -> str:
     """ Internal text clean. """
 
     return text
+
+def get_renderer(options: markdown_it.utils.OptionsDict) -> QuizComposerRendererText:
+    """ Get this renderer and options. """
+
+    return QuizComposerRendererText()
