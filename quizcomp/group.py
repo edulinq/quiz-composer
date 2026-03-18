@@ -8,7 +8,6 @@ import quizcomp.common
 import quizcomp.constants
 import quizcomp.question.base
 import quizcomp.util.serial
-import quizcomp.variant
 
 class Group(quizcomp.util.serial.JSONSerializer):
     def __init__(self,

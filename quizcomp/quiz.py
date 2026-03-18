@@ -13,6 +13,7 @@ import quizcomp.group
 import quizcomp.parser.public
 import quizcomp.uploader.canvas
 import quizcomp.util.serial
+import quizcomp.variant
 
 class Quiz(quizcomp.util.serial.JSONSerializer):
     """
