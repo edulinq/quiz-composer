@@ -55,3 +55,8 @@ You can run these tests with the [scripts/run_compilation_tests.sh](../scripts/r
 ```sh
 ./scripts/run_compilation_tests.sh
 ```
+
+These tests can also take an optional pattern (but uses Bash matching with the `=~` operator):
+```sh
+./scripts/run_compilation_tests.sh image
+```

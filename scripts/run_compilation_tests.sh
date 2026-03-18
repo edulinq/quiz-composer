@@ -13,8 +13,11 @@ readonly GOOD_QUIZZES_DIR="${ROOT_DIR}/tests/quizzes/good"
 readonly OUTPUT_DIR="${TMPDIR:-/tmp}/quizcomp-tex-compilation"
 readonly LOG_TAIL_LINES=20
 
+readonly DEFAULT_PATTERN='.*'
+
 num_pass=0
 num_fail=0
+num_skip=0
 
 function check_requirements() {
     if ! command -v python3 >/dev/null 2>&1 ; then
@@ -29,10 +32,11 @@ function check_requirements() {
 }
 
 function run_tests() {
-    local case_type="$1"
-    local base_dir="$2"
-    local case_filename="$3"
-    local cli_module="$4"
+    local pattern="$1"
+    local case_type="$2"
+    local base_dir="$3"
+    local case_filename="$4"
+    local cli_module="$5"
 
     local -a case_paths=()
     mapfile -t case_paths < <(find "${base_dir}" -type f -name "${case_filename}" | sort)
@@ -51,10 +55,16 @@ function run_tests() {
         local case_dir="${OUTPUT_DIR}/${case_type}-$(printf "%03d" "${case_count}")"
         local log_path="${case_dir}/compile.log"
 
+        echo "[${case_type}] ${rel_path}"
+
+        if [[ ! "${case_path}" =~ "${pattern}" ]] ; then
+            echo "    Skipped because of test pattern."
+            num_skip=$((num_skip + 1))
+            continue
+        fi
+
         rm -rf "${case_dir}"
         mkdir -p "${case_dir}"
-
-        echo "[${case_type}] ${rel_path}"
 
         python3 -m "${cli_module}" "${case_path}" --outdir "${case_dir}" > "${log_path}" 2>&1
         local status=$?
@@ -77,6 +87,16 @@ function run_tests() {
 }
 
 function main() {
+    if [[ $# -gt 1 ]]; then
+        echo "USAGE: $0 [pattern]"
+        exit 1
+    fi
+
+    local pattern=$DEFAULT_PATTERN
+    if [[ $# -gt 0 ]]; then
+        pattern=$1
+    fi
+
     cd "${ROOT_DIR}"
 
     check_requirements
@@ -86,13 +106,13 @@ function main() {
     echo "Output directory: ${OUTPUT_DIR}"
     echo ''
 
-    run_tests "question" "${GOOD_QUESTIONS_DIR}" "question.json" "quizcomp.cli.pdf.create_question"
-    run_tests "quiz" "${GOOD_QUIZZES_DIR}" "quiz.json" "quizcomp.cli.pdf.create"
+    run_tests "${pattern}" "question" "${GOOD_QUESTIONS_DIR}" "question.json" "quizcomp.cli.pdf.create_question"
+    run_tests "${pattern}" "quiz" "${GOOD_QUIZZES_DIR}" "quiz.json" "quizcomp.cli.pdf.create"
 
     local total_count=$((num_pass + num_fail))
 
     echo ''
-    echo "TeX compilation test summary: pass=${num_pass}, fail=${num_fail}, total=${total_count}"
+    echo "TeX compilation test summary: pass=${num_pass}, fail=${num_fail}, skipped=${num_skip} ran=${total_count}"
 
     if (( num_fail > 0 )) ; then
         return 1
