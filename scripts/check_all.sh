@@ -21,12 +21,16 @@ function main() {
     "${THIS_DIR}/check_python_version.sh"
     ((error_count += $?))
 
-    echo -e "\nRunning Tests"
+    echo -e "\nRunning Normal Tests"
     "${THIS_DIR}/run_tests.sh"
     ((error_count += $?))
 
+    echo -e "\nRunning Parser Tests"
+    "${THIS_DIR}/run_parser_tests.sh"
+    ((error_count += $?))
+
     echo -e "\nRunning TeX Compilation Tests"
-    "${THIS_DIR}/test_tex_compilation_questions.sh"
+    "${THIS_DIR}/run_compilation_tests.sh"
     ((error_count += $?))
 
     echo -e "\nGenerating Docs"

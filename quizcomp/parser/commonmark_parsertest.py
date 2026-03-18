@@ -9,7 +9,8 @@ import quizcomp.constants
 import quizcomp.parser.public
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-COMMONMARK_TEST_DATA_PATH: str = os.path.join(THIS_DIR, 'testdata', 'commonmark_test_cases.json.gz')
+TESTDATA_DIR: str = os.path.join(THIS_DIR, 'testdata')
+COMMONMARK_TEST_DATA_PATH: str = os.path.join(TESTDATA_DIR, 'commonmark_test_cases.json.gz')
 
 SKIP_COMMONMARK_TESTS: typing.List[int] = {
     176,  # Has non-JSON HTML style.

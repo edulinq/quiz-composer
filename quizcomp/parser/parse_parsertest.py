@@ -1,43 +1,55 @@
+import glob
 import os
 import re
+import typing
 
+import edq.testing.unittest
 import edq.util.json
 
 import quizcomp.constants
 import quizcomp.parser.common
 import quizcomp.parser.public
-import tests.base
 
-SKIP_COMMONMARK_TESTS = {
-    176,  # Has non-JSON HTML style.
-}
+THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+TESTDATA_DIR: str = os.path.join(THIS_DIR, 'testdata')
+DOCUMENTS_DIR = os.path.join(TESTDATA_DIR, 'documents')
+GOOD_DOCUMENTS_DIR = os.path.join(DOCUMENTS_DIR, "good")
+BAD_DOCUMENTS_DIR = os.path.join(DOCUMENTS_DIR, "bad")
 
-class TestParser(tests.base.BaseTest):
+class TestParser(edq.testing.unittest.BaseTest):
     """
-    Test parsing.
-    Good and bad situations will be loaded below into individual test cases.
+    Test parsing text.
+    Good and bad situations will be loaded from files into individual test methods.
     """
-
-    pass
 
 def _add_good_parse_questions():
-    for path in tests.base.discover_good_document_files():
-        with open(path, 'r') as file:
-            documents = edq.util.json.load(file)
+    """ Add test cases for parsing valid documents. """
 
+    paths = sorted(glob.glob(os.path.join(GOOD_DOCUMENTS_DIR, "**", "*.json"), recursive = True))
+    for path in paths:
+        test_cases = edq.util.json.load_path(path)
         base_dir = os.path.dirname(path)
 
-        for document in documents:
-            name = document['name']
-            text = document['text']
+        for test_case in test_cases:
+            name = test_case['name']
+            text = test_case['text']
 
-            for (doc_format, expected) in document['formats'].items():
+            for (doc_format, expected) in test_case['formats'].items():
                 test_name = _make_name('good_parse', path, name, doc_format)
-                options = document.get('options', {}).get(doc_format, {})
-                context = document.get('context', {})
+                options = test_case.get('options', {}).get(doc_format, {})
+                context = test_case.get('context', {})
                 setattr(TestParser, test_name, _get_good_parse_test(text, doc_format, expected, base_dir, options, context))
 
-def _get_good_parse_test(text, doc_format, base_expected, base_dir, options, context):
+def _get_good_parse_test(
+        text: str,
+        doc_format: str,
+        base_expected: typing.Union[str, typing.List[typing.Dict[str, typing.Any]], typing.Dict[str, typing.Any]],
+        base_dir: str,
+        options: typing.Union[str, typing.Any],
+        context: typing.Union[str, typing.Any],
+        ) -> typing.Callable:
+    """ Get a test method for a valid document. """
+
     def __method(self):
         document = quizcomp.parser.public.parse_text(text).document
         result = document.to_format(doc_format, base_dir = base_dir, include_metadata = False, **context)
@@ -85,7 +97,7 @@ def _get_good_parse_test(text, doc_format, base_expected, base_dir, options, con
             result = quizcomp.parser.render.clean_html(result, pretty = options.get('pretty', True))
 
             expected, result = _apply_text_options(options, expected, result)
-            self.assertLongStringEqual(expected, result)
+            self.assertEqual(expected, result)
         else:
             expected = base_expected.strip()
             result = result.strip()
@@ -96,21 +108,24 @@ def _get_good_parse_test(text, doc_format, base_expected, base_dir, options, con
     return __method
 
 def _add_bad_parse_questions():
-    for path in tests.base.discover_bad_document_files():
-        with open(path, 'r') as file:
-            documents = edq.util.json.load(file)
+    """ Add test cases for parsing invalid documents. """
 
+    paths = sorted(glob.glob(os.path.join(BAD_DOCUMENTS_DIR, "**", "*.json"), recursive = True))
+    for path in paths:
+        test_cases = edq.util.json.load_path(path)
         base_dir = os.path.dirname(path)
 
-        for document in documents:
-            name = document['name']
-            text = document['text']
-            options = document.get('options', {})
+        for test_case in test_cases:
+            name = test_case['name']
+            text = test_case['text']
+            options = test_case.get('options', {})
 
             test_name = _make_name('bad_parse', path, name)
             setattr(TestParser, test_name, _get_bad_parse_test(text, base_dir, options))
 
-def _get_bad_parse_test(text, base_dir, options):
+def _get_bad_parse_test(text: str, base_dir: str, options: typing.Union[str, typing.Any]) -> typing.Callable:
+    """ Get a test method for an invalid document. """
+
     def __method(self):
         try:
             quizcomp.parser.public.parse_text(text)
@@ -122,42 +137,9 @@ def _get_bad_parse_test(text, base_dir, options):
 
     return __method
 
-def _add_commonmark_tests():
-    """
-    Add test cases that come directly from the CommonMark spec.
-    We won't try to validate the output, we just want to make sure they parse and render cleanly.
-    The main thing with these tests is ensuring that our custom rendering does not fail.
-    """
+def _make_name(prefix: str, path: str, name: str, doc_format: typing.Union[str, None] = None) -> str:
+    """ Create a name for a test case. """
 
-    with open(tests.base.COMMONMARK_TEST_DATA_PATH, 'r') as file:
-        test_data = edq.util.json.load(file)
-
-    for test_case in test_data:
-        id = test_case['example']
-
-        if (id in SKIP_COMMONMARK_TESTS):
-            continue
-
-        text = test_case['markdown']
-        section = _clean_name_part(test_case['section'])
-
-        for format in quizcomp.constants.PARSER_FORMATS:
-            name = "test_commonmark__%04d__%s__%s" % (id, section, format)
-            setattr(TestParser, name, _get_commonmark_test(text, format))
-
-def _get_commonmark_test(text, format):
-    def __method(self):
-        parsed_text = quizcomp.parser.public.parse_text(text)
-
-        options = {
-            # The examples use paths that we would try and encode.
-            'force_raw_image_src': True,
-        }
-        parsed_text.document.to_format(format, **options)
-
-    return __method
-
-def _make_name(prefix, path, name, doc_format = None):
     clean_name = _clean_name_part(name)
 
     filename = os.path.splitext(os.path.basename(path))[0]
@@ -169,12 +151,16 @@ def _make_name(prefix, path, name, doc_format = None):
 
     return test_name
 
-def _clean_name_part(text):
+def _clean_name_part(text: str) -> str:
+    """ Clean a test name component. """
+
     clean_text = text.lower().strip().replace(' ', '_')
     clean_text = re.sub(r'\W+', '', clean_text)
     return clean_text
 
-def _apply_text_options(options, a, b):
+def _apply_text_options(options: typing.Dict[str, typing.Any], a: str, b: str) -> typing.Tuple[str, str]:
+    """ Apply some custom text options. """
+
     if (options.get("ignore-whitespace", False)):
         a = re.sub(r'\s+', '', a)
         b = re.sub(r'\s+', '', b)
@@ -183,4 +169,3 @@ def _apply_text_options(options, a, b):
 
 _add_bad_parse_questions()
 _add_good_parse_questions()
-_add_commonmark_tests()

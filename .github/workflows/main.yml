@@ -35,16 +35,6 @@ jobs:
         shell: bash
         run: pip3 install -r requirements.txt -r requirements-dev.txt
 
-      - name: Set Up NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: 'npm'
-
-      - name: Install NodeJS Dependencies
-        shell: bash
-        run: npm ci
-
       - name: Check Python Version Compatibility
         shell: bash
         run: scripts/check_python_version.sh
@@ -57,9 +47,13 @@ jobs:
         shell: bash
         run: ./scripts/check_lint.sh
 
-      - name: Run Tests
+      - name: Run Normal Tests
         shell: bash
         run: ./scripts/run_tests.sh
+
+      - name: Run Parser Tests
+        shell: bash
+        run: ./scripts/run_parser_tests.sh
 
       - name: Generate Documentation
         shell: bash
@@ -112,7 +106,7 @@ jobs:
 
       - name: Run TeX Compilation Tests
         shell: bash
-        run: ./scripts/test_tex_compilation_questions.sh
+        run: ./scripts/run_compilation_tests.sh
 
   deploy:
     needs: advanced-test
