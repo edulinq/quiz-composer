@@ -1,3 +1,3 @@
 Prompt: Image
 
-![tiny image](../../../data/tiny.png)
+![tiny image](../../../images/tiny.png)

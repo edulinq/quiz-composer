@@ -33,7 +33,7 @@
           "id": "0.0",
           "number": 1,
           "base_dir": "questions/good/prompt-image",
-          "prompt": "Prompt: Image\n\n![tiny image](../../../data/tiny.png)",
+          "prompt": "Prompt: Image\n\n![tiny image](../../../images/tiny.png)",
           "question_type": "multiple_choice",
           "answers": [
             {"correct": true, "text": "A"},

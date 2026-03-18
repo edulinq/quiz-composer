@@ -13,7 +13,7 @@ readonly GOOD_QUIZZES_DIR="${ROOT_DIR}/quizcomp/testdata/quizzes/good"
 readonly OUTPUT_DIR="${TMPDIR:-/tmp}/quizcomp-tex-compilation"
 readonly LOG_TAIL_LINES=20
 
-readonly DEFAULT_PATTERN='.*'
+readonly DEFAULT_PATTERN=''
 
 num_pass=0
 num_fail=0
@@ -69,7 +69,7 @@ function run_tests() {
         python3 -m "${cli_module}" "${case_path}" --outdir "${case_dir}" > "${log_path}" 2>&1
         local status=$?
         if (( status != 0 )) ; then
-            echo "    FAIL: PDF creation failed." >&2
+            echo "    FAIL: PDF creation failed."
             tail -n "${LOG_TAIL_LINES}" "${log_path}" || true
             num_fail=$((num_fail + 1))
             continue
@@ -77,12 +77,13 @@ function run_tests() {
 
         local pdf_count="$(find "${case_dir}" -type f -name "*.pdf" | wc -l)"
         if (( pdf_count == 0 )) ; then
-            echo "    FAIL: PDF creation failed." >&2
+            echo "    FAIL: PDF creation failed."
             num_fail=$((num_fail + 1))
             continue
         fi
 
         num_pass=$((num_pass + 1))
+        echo "    PASS"
     done
 }
 

@@ -66,7 +66,7 @@ Both options support the following values: {`left`, `center`, `right`}.
 
 For example, by default the following will get you a non-aligned image:
 ```
-![Great Dane](../tests/data/great-dane.jpg)
+![Great Dane](../quizcomp/testdata/images/great-dane.jpg)
 ```
 
 ![Non-Aligned Image](/docs/resources/default-image.png)
@@ -77,7 +77,7 @@ To center align this image, you can do:
     "content-align": "center"
 </style>
 
-![Great Dane](../tests/data/great-dane.jpg)
+![Great Dane](../quizcomp/testdata/images/great-dane.jpg)
 ```
 
 ![Center Aligned Image](/docs/resources/center-image.png)
@@ -109,7 +109,7 @@ Image width is provided as a proportion of the image container's width.
 
 For example, you can start with the following image:
 ```
-![Great Dane](../tests/data/great-dane.jpg)
+![Great Dane](../quizcomp/testdata/images/great-dane.jpg)
 ```
 
 ![Default Image](/docs/resources/default-image.png)
@@ -120,7 +120,7 @@ To make this image 50% smaller, you can use:
     "image-width": 0.5
 </style>
 
-![Great Dane](../tests/data/great-dane.jpg)
+![Great Dane](../quizcomp/testdata/images/great-dane.jpg)
 ```
 
 ![Smaller Image](/docs/resources/smaller-image.png)

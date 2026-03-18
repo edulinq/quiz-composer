@@ -32,11 +32,11 @@
 
     {
         "name": "Basic Local Image",
-        "text": "![alt text](../../data/tiny.png)",
+        "text": "![alt text](../../images/tiny.png)",
         "formats": {
-            "md": "![alt text](../../data/tiny.png)",
+            "md": "![alt text](../../images/tiny.png)",
             "html": "<p><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=' alt='alt text' width='100.00%' /></p>",
-            "tex": "\\includegraphics[width=1.00\\textwidth]{../../data/tiny.png}",
+            "tex": "\\includegraphics[width=1.00\\textwidth]{../../images/tiny.png}",
             "text": "",
             "json": {
                 "type": "paragraph",
@@ -46,7 +46,7 @@
                         "children": [
                             {
                                 "type": "image",
-                                "src": "../../data/tiny.png",
+                                "src": "../../images/tiny.png",
                                 "children": [
                                     {
                                         "type": "text",
