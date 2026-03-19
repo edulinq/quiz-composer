@@ -70,7 +70,7 @@ def _get_good_parse_test(
                 elif (isinstance(base_expected, dict)):
                     expected_children.append(base_expected)
                 else:
-                    raise ValueError("Unkown type for expected children: '%s'.", type(base_expected))
+                    raise ValueError(f"Unkown type for expected children: '{type(base_expected)}'.")
 
             if (len(expected_children) > 0):
                 # If the first node is not the root block, then automatically insert it.
@@ -144,7 +144,7 @@ def _make_name(prefix: str, path: str, name: str, doc_format: typing.Union[str, 
 
     filename = os.path.splitext(os.path.basename(path))[0]
 
-    test_name = "test_%s__%s__%s" % (prefix, filename, clean_name)
+    test_name = f"test_{prefix}__{filename}__{clean_name}"
 
     if (doc_format is not None):
         test_name += ('__' + doc_format)

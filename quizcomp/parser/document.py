@@ -1,4 +1,3 @@
-import copy
 import os
 import re
 import typing
@@ -131,6 +130,8 @@ class ParsedDocument:
         return file_paths
 
     def is_empty(self) -> bool:
+        """ Check if this document contains any content (tokens). """
+
         return (len(self._tokens) == 0)
 
     def to_json(self, indent: int = 4, sort_keys: bool = True, **kwargs: typing.Any) -> str:

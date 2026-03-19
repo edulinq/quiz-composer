@@ -187,17 +187,13 @@ def _serialize(
 
     if (isinstance(item, PODSerializer) and convert_serializers):
         return item.to_pod(**kwargs)
-
-    if (isinstance(item, enum.Enum)):
+    elif (isinstance(item, enum.Enum)):
         return item.value
-
-    if (isinstance(item, list) and recursive):
+    elif (isinstance(item, list) and recursive):
         return [_serialize(value, **kwargs) for value in item]
-
-    if (isinstance(item, dict) and recursive):
+    elif (isinstance(item, dict) and recursive):
         return {key: _serialize(value, **kwargs) for (key, value) in item.items() if (not (skip_private and key.startswith('_')))}
-
-    if (isinstance(item, (datetime.date, datetime.time, datetime.datetime)) and convert_dates):
+    elif (isinstance(item, (datetime.date, datetime.time, datetime.datetime)) and convert_dates):
         return item.isoformat()
-
-    return item
+    else:
+        return item

@@ -40,7 +40,7 @@ def _add_commonmark_tests() -> None:
         section = _clean_name_part(test_case['section'])
 
         for format in quizcomp.constants.PARSER_FORMATS:
-            name = "test_commonmark__%04d__%s__%s" % (id, section, format)
+            name = f"test_commonmark__{id:04d}__{section}__{format}"
             setattr(TestCommonMark, name, _get_commonmark_test(text, format))
 
 def _get_commonmark_test(text: str, format: str) -> typing.Callable:

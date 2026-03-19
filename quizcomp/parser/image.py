@@ -1,11 +1,8 @@
-import base64
 import os
 import typing
 
 import edq.util.dirent
 import edq.util.encoding
-
-import quizcomp.parser.common
 
 @typing.runtime_checkable
 class ImageCallback(typing.Protocol):
@@ -17,8 +14,6 @@ class ImageCallback(typing.Protocol):
 
     def __call__(self, original: str, base_dir: str) -> str:
         """ Override the original src/link value for an image. """
-
-        ...
 
 def handle_callback(callback: typing.Union[ImageCallback, None], original: str, base_dir: str) -> str:
     """

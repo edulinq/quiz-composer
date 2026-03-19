@@ -53,7 +53,7 @@ def get_alignment(style: typing.Dict[str, typing.Any], key: str, default_value: 
 
     alignment = str(alignment).lower()
     if (alignment not in ALLOWED_VALUES_ALIGNMENT):
-        raise ValueError("Unknown value for '%s' style key '%s'. Allowed values: '%s'." % (key, alignment, ALLOWED_VALUES_ALIGNMENT))
+        raise ValueError(f"Unknown value for '{key}' style key '{alignment}'. Allowed values: {ALLOWED_VALUES_ALIGNMENT}.")
 
     return alignment
 
@@ -87,15 +87,15 @@ def compute_html_style_string(style: typing.Dict[str, typing.Any]) -> str:
         attributes.append("display: flex")
         attributes.append("flex-direction: column")
         attributes.append("justify-content: flex-start")
-        attributes.append("align-items: %s" % (FLEXBOX_ALIGNMENT[content_align]))
+        attributes.append(f"align-items: {FLEXBOX_ALIGNMENT[content_align]}")
 
     text_align = get_alignment(style, KEY_TEXT_ALIGN)
     if (text_align is not None):
-        attributes.append("text-align: %s" % (text_align))
+        attributes.append(f"text-align: {text_align}")
 
     font_size = style.get(KEY_FONT_SIZE, None)
     if (font_size is not None):
-        attributes.append("font-size: %.2fpt" % (float(font_size)))
+        attributes.append(f"font-size: {float(font_size):0.2f}pt")
 
     if (len(attributes) == 0):
         return ''

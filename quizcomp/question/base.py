@@ -251,17 +251,15 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         if (isinstance(target, dict)):
             return self._collect_documents(list(target.values()))
-
-        if (isinstance(target, list)):
+        elif (isinstance(target, list)):
             documents = []
             for value in target:
                 documents += self._collect_documents(value)
             return documents
-
-        if (isinstance(target, quizcomp.parser.public.ParsedText)):
+        elif (isinstance(target, quizcomp.parser.public.ParsedText)):
             return [target.document]
-
-        return []
+        else:
+            return []
 
     def should_skip_numbering(self) -> bool:
         """ Check if this question should skip numbering. """

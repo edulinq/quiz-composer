@@ -1,8 +1,6 @@
-import re
 import typing
 
 import lxml.etree
-import markdown_it.token
 import markdown_it.token
 
 import quizcomp.parser.parse
@@ -106,10 +104,11 @@ def render(
 
     render_function = globals().get(format, None)
     if (render_function is None):
-        raise ValueError("Could not find render function: 'quizcomp.parser.render.%s'." % (format))
+        raise ValueError(f"Could not find render function: 'quizcomp.parser.render.{format}'.")
 
     return render_function(tokens, env = env, **kwargs)
 
+# pylint: disable=c-extension-no-member
 def clean_html(raw_html: str, pretty: bool = False) -> str:
     """
     Clean up and standardize the HTML.

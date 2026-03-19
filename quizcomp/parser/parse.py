@@ -43,7 +43,7 @@ def _clean_text(text: str) -> str:
     text = text.replace("\r", '')
 
     # Trim whitespace.
-    text = text.strip();
+    text = text.strip()
 
     return text
 
@@ -110,9 +110,7 @@ def _process_style(
         return []
 
     remove_indexes = []
-    for i in range(len(tokens)):
-        token = tokens[i]
-
+    for (i, token) in enumerate(tokens):
         # If this is a block, then mark it as the current block.
         # Any discovered style get's hoisted to the containing block.
         if (token.type == 'container_block_open'):
@@ -159,12 +157,12 @@ def _process_style_content(raw_content: str) -> typing.Dict[str, typing.Any]:
     try:
         style = edq.util.json.loads(content)
         if (not isinstance(style, dict)):
-            raise ValueError("Style is not a JSON object, found: '%s'." % (type(style)))
+            raise ValueError(f"Style is not a JSON object, found: '{type(style)}'.")
     except Exception as ex:
-        raise ValueError(('Failed to load style tag.'
+        raise ValueError(('Failed to load style tag.'  # pylint: disable=raise-missing-from
                 + ' Style content must be a JSON object (start/end braces may be omitted).'
-                + " Original exception message: '%s'." % (ex)
-                + " Found:\n---\n%s\n---" % (raw_content)))
+                + f" Original exception message: '{ex}'."
+                + f" Found:\n---\n{raw_content}\n---"))
 
     return style
 
@@ -179,9 +177,7 @@ def _remove_empty_tokens(tokens: typing.Union[typing.List[markdown_it.token.Toke
     # Keep looping until nothing is removed.
     while True:
         remove_indexes = []
-        for i in range(len(tokens)):
-            token = tokens[i]
-
+        for (i, token) in enumerate(tokens):
             # Remove empty leaf content nodes.
             if ((token.type in quizcomp.parser.common.CONTENT_NODES) and (token.content == '')):
                 remove_indexes.append(i)
@@ -309,9 +305,7 @@ def _process_html(tokens: typing.Union[typing.List[markdown_it.token.Token], Non
         return []
 
     remove_indexes = []
-    for i in range(len(tokens)):
-        token = tokens[i]
-
+    for (i, token) in enumerate(tokens):
         if (token.type in HTML_TOKENS):
             if (token.content.strip().startswith('<br')):
                 tokens[i] = markdown_it.token.Token(
