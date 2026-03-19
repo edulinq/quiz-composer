@@ -1,7 +1,8 @@
+# pylint: disable=missing-timeout
+
 import logging
 import os
 import urllib.parse
-import re
 import typing
 
 import edq.util.hash
@@ -107,7 +108,7 @@ class CanvasUploader:
     def upload_quiz(self, quiz: quizcomp.quiz.Quiz, **kwargs: typing.Any) -> None:
         """ Upload a quiz to Canvas. """
 
-        upload_quiz(quiz, self.instance, force = self.force);
+        upload_quiz(quiz, self.instance, force = self.force)
 
 def validate_options(old_options: typing.Dict[str, typing.Any]) -> typing.Dict[str, typing.Any]:
     """ Validate Canvas options and return a clean version of the options. """
@@ -117,12 +118,13 @@ def validate_options(old_options: typing.Dict[str, typing.Any]) -> typing.Dict[s
 
     for (key, value) in options.items():
         if (key not in DEFAULT_CANVAS_OPTIONS):
-            logging.warning("Unknown canvas options: '%s'." % (key))
+            logging.warning("Unknown canvas options: '%s'.", key)
             continue
 
         if (key in ALLOWED_VALUES):
             if (value not in ALLOWED_VALUES[key]):
-                raise quizcomp.common.QuizValidationError("Canvas option '%s' has value '%s' not in allowed values: %s." % (key, value, ALLOWED_VALUES[key]))
+                raise quizcomp.common.QuizValidationError(
+                        f"Canvas option '{key}' has value '{value}' not in allowed values: {ALLOWED_VALUES[key]}.")
 
         if (key == 'allowed_attempts'):
             options['allowed_attempts'] = _validate_allowed_attempts(value)
@@ -133,15 +135,15 @@ def _validate_allowed_attempts(allowed_attempts: typing.Any) -> int:
     """ Validate and fetch the number of allowed attempts. """
 
     if (not isinstance(allowed_attempts, (str, int))):
-        raise quizcomp.common.QuizValidationError("Allowed attempts must be a positive int (or -1), found '%s'." % (str(allowed_attempts)))
+        raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")
 
     try:
         allowed_attempts = int(allowed_attempts)
     except:
-        raise quizcomp.common.QuizValidationError("Allowed attempts must be a positive int (or -1), found '%s'." % (str(allowed_attempts)))
+        raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")  # pylint: disable=raise-missing-from
 
     if ((allowed_attempts < -1) or (allowed_attempts == 0)):
-        raise quizcomp.common.QuizValidationError("Allowed attempts must be a positive int (or -1), found '%s'." % (str(allowed_attempts)))
+        raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")
 
     return allowed_attempts
 
@@ -152,7 +154,7 @@ def upload_quiz(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo, force: bool = 
     """
 
     if (not isinstance(quiz, quizcomp.quiz.Quiz)):
-        raise ValueError("Canvas quiz uploader requires a quizcomp.quiz.Quiz type, found %s." % (type(quiz)))
+        raise ValueError(f"Canvas quiz uploader requires a quizcomp.quiz.Quiz type, found {type(quiz)}.")
 
     existing_ids = get_matching_quiz_ids(quiz.title, instance)
     if ((len(existing_ids) > 0) and (not force)):
@@ -215,7 +217,7 @@ def delete_quiz(quiz_id: str, instance: InstanceInfo) -> None:
 
     response = requests.request(
         method = "DELETE",
-        url = "%s/api/v1/courses/%s/quizzes/%s" % (instance.base_url, instance.course_id, quiz_id),
+        url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes/{quiz_id}",
         headers = instance.base_headers())
     response.raise_for_status()
 
@@ -267,7 +269,7 @@ def create_quiz(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo) -> None:
 
     response = requests.request(
         method = "POST",
-        url = "%s/api/v1/courses/%s/quizzes" % (instance.base_url, instance.course_id),
+        url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes",
         headers = instance.base_headers(),
         data = data)
     response.raise_for_status()
@@ -288,15 +290,15 @@ def create_question_group(quiz_id: str, group: quizcomp.group.Group, instance: I
 
     response = requests.request(
         method = "POST",
-        url = "%s/api/v1/courses/%s/quizzes/%s/groups" % (instance.base_url, instance.course_id, quiz_id),
+        url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes/{quiz_id}/groups",
         headers = instance.base_headers(),
         data = data)
     response.raise_for_status()
 
     group_id = response.json()['quiz_groups'][0]['id']
 
-    for i in range(len(group.questions)):
-        create_question(quiz_id, group_id, group.questions[i], i, instance)
+    for (i, question) in enumerate(group.questions):
+        create_question(quiz_id, group_id, question, i, instance)
 
 def create_question(quiz_id: str, group_id: str, question: quizcomp.question.base.Question, index: int, instance: InstanceInfo) -> None:
     """ Create a question within the given quiz/group. """
@@ -305,7 +307,7 @@ def create_question(quiz_id: str, group_id: str, question: quizcomp.question.bas
 
     response = requests.request(
         method = "POST",
-        url = "%s/api/v1/courses/%s/quizzes/%s/questions" % (instance.base_url, instance.course_id, quiz_id),
+        url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes/{quiz_id}/questions",
         headers = instance.base_headers(),
         data = data)
     response.raise_for_status()
@@ -340,7 +342,7 @@ def _create_question_json(
         if (key not in question.feedback):
             continue
 
-        data_key = "question[%s]" % (canvas_key)
+        data_key = f"question[{canvas_key}]"
         text = question.feedback[key].document.to_canvas(canvas_instance = instance, pretty = False)
         data[data_key] = text
 
@@ -388,8 +390,8 @@ def _serialize_answer_list(
         ) -> None:
     """ Clean a list of answers for Canvas. """
 
-    for i in range(len(answers)):
-        _serialize_answer(data, answers[i], start_index + i, instance,
+    for (i, answer) in enumerate(answers):
+        _serialize_answer(data, answer, start_index + i, instance,
             blank_id = blank_id, use_text = use_text)
 
 def _serialize_answer(
@@ -437,7 +439,11 @@ def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: qu
             data[f"question[answers][{i}][answer_comment_html]"] = text
 
     if (len(question.answers['distractors']) > 0):
-        distractors = [distractor.document.to_text(text_allow_special_text = True, text_allow_all_characters = True) for distractor in question.answers['distractors']]
+        distractors = [
+            distractor.document.to_text(text_allow_special_text = True, text_allow_all_characters = True)
+            for distractor
+            in question.answers['distractors']
+        ]
         data["question[matching_answer_incorrect_matches]"] = "\n".join(distractors)
 
 def _serialize_fimb_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: InstanceInfo) -> None:
@@ -445,7 +451,7 @@ def _serialize_fimb_answers(data: typing.Dict[str, typing.Any], question: quizco
 
     index = 0
 
-    for (key, item) in question.answers.items():
+    for item in question.answers.values():
         key_text = item['key'].document.to_text()
 
         for i in range(len(item['values'])):
@@ -471,9 +477,7 @@ def _serialize_numeric_answers(
     # Note that the keys/constants for numerical answers are different than what the documentation says:
     # https://canvas.instructure.com/doc/api/quiz_questions.html#QuizQuestion
 
-    for i in range(len(answers)):
-        answer = answers[i]
-
+    for (i, answer) in enumerate(answers):
         data[f"question[answers][{i}][answer_weight]"] = 100
         data[f"question[answers][{i}][numerical_answer_type]"] = answer.type + '_answer'
 
@@ -523,7 +527,7 @@ def _init_file_upload(
 
     response = requests.request(
         method = "POST",
-        url = "%s/api/v1/courses/%s/files" % (instance.base_url, instance.course_id),
+        url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/files",
         headers = instance.base_headers(),
         data = data)
     response.raise_for_status()
@@ -539,7 +543,7 @@ def _upload_file_contents(path: str, upload_url: str, upload_params: typing.Dict
     """ Upload the actual file contents to Canvas. """
 
     files = {
-        'file': open(path, 'rb'),
+        'file': open(path, 'rb'),  # pylint: disable=consider-using-with
     }
 
     response = requests.request(
@@ -587,7 +591,7 @@ def get_folder(canvas_path: str, instance: InstanceInfo) -> typing.Union[str, No
     # The canvas path should be absolute.
     response = requests.request(
         method = "GET",
-        url = "%s/api/v1/courses/%s/folders/by_path%s" % (instance.base_url, instance.course_id, canvas_path),
+        url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/folders/by_path{canvas_path}",
         headers = instance.base_headers())
 
     if (response.status_code == 404):
@@ -612,7 +616,7 @@ def create_folder(canvas_path: str, instance: InstanceInfo) -> str:
 
     response = requests.request(
         method = "POST",
-        url = "%s/api/v1/courses/%s/folders" % (instance.base_url, instance.course_id),
+        url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/folders",
         headers = instance.base_headers(),
         data = data)
     response.raise_for_status()
@@ -641,7 +645,7 @@ def hide_folder_id(folder_id: str, instance: InstanceInfo) -> None:
 
     response = requests.request(
         method = "PUT",
-        url = "%s/api/v1/folders/%s" % (instance.base_url, folder_id),
+        url = f"{instance.base_url}/api/v1/folders/{folder_id}",
         headers = instance.base_headers(),
         data = data)
     response.raise_for_status()

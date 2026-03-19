@@ -1,7 +1,6 @@
 import logging
 import os
 import re
-import time
 import typing
 
 import bs4
@@ -106,7 +105,7 @@ class GradeScopeUploader:
         """
 
         if (not isinstance(variant, quizcomp.variant.Variant)):
-            raise ValueError("GradeScope quiz uploader requires a quizcomp.variant.Variant type, found %s." % (type(variant)))
+            raise ValueError(f"GradeScope quiz uploader requires a quizcomp.variant.Variant type, found {type(variant)}.")
 
         if (base_dir is None):
             base_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp-gradescope-')
@@ -148,11 +147,11 @@ class GradeScopeUploader:
         # {NAME_BOX_ID: box, ID_BOX_ID: box, SIGNATURE_BOX_ID: box}
         special_boxes: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
 
-        path = os.path.join(base_dir, "%s.pos" % (variant.title))
+        path = os.path.join(base_dir, f"{variant.title}.pos")
         if (not os.path.exists(path)):
-            raise ValueError("Could not find path for quiz bounding boxes: '%s'." % (path))
+            raise ValueError(f"Could not find path for quiz bounding boxes: '{path}'.")
 
-        with open(path, 'r') as file:
+        with open(path, 'r', encoding = edq.util.dirent.DEFAULT_ENCODING) as file:
             for line in file:
                 line = line.strip()
                 if (line == ""):
@@ -160,20 +159,20 @@ class GradeScopeUploader:
 
                 parts = [part.strip() for part in line.split(',')]
                 if (len(parts) != 12):
-                    raise ValueError("Position file has row with bad number of parts. Expecting 11, found %d." % (len(parts)))
+                    raise ValueError(f"Position file has row with bad number of parts. Expecting 11, found {len(parts)}.")
 
                 # "ll" == "lower-left"
                 # "ur" == "upper-right"
-                (question_id, part_id, answer_id, question_type, raw_page_number, ll_x, ll_y, ur_x, ur_y, page_width, page_height, origin) = parts
+                (question_id, part_id, _, question_type, raw_page_number, ll_x, ll_y, ur_x, ur_y, page_width, page_height, origin) = parts
 
                 if (origin != 'bottom-left'):
-                    raise ValueError("Unknown bounding box origin: '%s'." % (origin))
+                    raise ValueError(f"Unknown bounding box origin: '{origin}'.")
 
                 # Note that the position file and GradeScope use 1-indexed pages.
                 page_number = int(raw_page_number)
 
                 if (question_type not in BOX_TYPES):
-                    raise ValueError("Unknown content type: '%s'." % (question_type))
+                    raise ValueError(f"Unknown content type: '{question_type}'.")
 
                 extend_box_right = False
                 if (question_type in EXTEND_BOX_QUESTION_TYPES):
@@ -188,7 +187,7 @@ class GradeScopeUploader:
                 if (question_type in SPECIAL_QUESTION_TYPES):
                     # These boxes are special.
                     if (question_type in special_boxes):
-                        raise ValueError("Multiple %s bounding boxes found." % (question_type))
+                        raise ValueError(f"Multiple {question_type} bounding boxes found.")
 
                     special_boxes[question_type] = {
                         'page_number': page_number,
@@ -214,7 +213,7 @@ class GradeScopeUploader:
 
                     old_page = old_box['page_number']
                     if (old_page != page_number):
-                        raise ValueError("Question %s has bounding boxes that span pages." % (question_id))
+                        raise ValueError(f"Question {question_id} has bounding boxes that span pages.")
 
                     x1 = min(x1, old_x1)
                     y1 = min(y1, old_y1)
@@ -286,7 +285,7 @@ class GradeScopeUploader:
                 children = []
                 for (part_id, box) in parts.items():
                     children.append({
-                        'title': "%s - %s" % (variant.questions[question_index].name, part_id),
+                        'title': f"{variant.questions[question_index].name} - {part_id}",
                         'weight': round(variant.questions[question_index].points / len(parts), 2),
                         'crop_rect_list': [box],
                     })
@@ -334,9 +333,9 @@ class GradeScopeUploader:
             ) -> typing.Tuple[str, bool]:
         """ Upload a variant. """
 
-        path = os.path.join(base_dir, "%s.pdf" % (variant.title))
+        path = os.path.join(base_dir, f"{variant.title}.pdf")
         if (not os.path.exists(path)):
-            raise ValueError("Could not find path for quiz pdf: '%s'." % (path))
+            raise ValueError(f"Could not find path for quiz pdf: '{path}'.")
 
         outline = self.create_outline(variant, bounding_boxes, special_boxes)
 
@@ -395,11 +394,11 @@ class GradeScopeUploader:
 
         form_selector = 'form'
         if (action is not None):
-            form_selector = 'form[action="%s"]' % (action)
+            form_selector = f"form[action='{action}']"
 
-        auth_input = document.select('%s input[name="authenticity_token"]' % (form_selector))
+        auth_input = document.select(f"{form_selector} input[name='authenticity_token']")
         if (len(auth_input) != 1):
-            raise ValueError("Did not find exactly one authentication token input, found %d." % (len(auth_input)))
+            raise ValueError(f"Did not find exactly one authentication token input, found {len(auth_input)}.")
 
         return str(auth_input[0].get('value'))
 
@@ -418,7 +417,7 @@ class GradeScopeUploader:
 
         meta_tag = document.select('meta[name="csrf-token"]')
         if (len(meta_tag) != 1):
-            raise ValueError("Did not find exactly one CSRF meta tag, found %d." % (len(meta_tag)))
+            raise ValueError(f"Did not find exactly one CSRF meta tag, found {len(meta_tag)}.")
 
         return str(meta_tag[0].get('content'))
 
@@ -434,7 +433,7 @@ class GradeScopeUploader:
 
         nodes = document.select('div[data-react-class="AssignmentsTable"]')
         if (len(nodes) != 1):
-            raise ValueError("Did not find exactly one assignments table, found %d." % (len(nodes)))
+            raise ValueError(f"Did not find exactly one assignments table, found {len(nodes)}.")
 
         assignment_data = edq.util.json.loads(nodes[0].get('data-react-props'))
 
@@ -480,11 +479,11 @@ class GradeScopeUploader:
             'assignment[scoring_type]': 'negative',
         }
 
-        path = os.path.join(base_dir, "%s.pdf" % (variant.title))
+        path = os.path.join(base_dir, f"{variant.title}.pdf")
         files = {
             'template_pdf': (
                 os.path.basename(path),
-                open(path, 'rb')
+                open(path, 'rb'),  # pylint: disable=consider-using-with
             ),
         }
 
@@ -493,11 +492,11 @@ class GradeScopeUploader:
         response.raise_for_status()
 
         if (len(response.history) == 0):
-            raise ValueError("Failed to create assignment. Is the name ('%s') unique?" % (variant.title))
+            raise ValueError(f"Failed to create assignment. Is the name ('{variant.title}') unique?")
 
         match = re.search(r'/assignments/(\d+)/outline/edit', response.history[0].text)
         if (match is None):
-            logging.error("--- Create Body ---\n%s\n------" % response.history[0].text)
+            logging.error("--- Create Body ---\n%s\n------", response.history[0].text)
             raise ValueError("Could not parse assignment ID from response body.")
 
         return match.group(1)
@@ -574,7 +573,7 @@ class GradeScopeUploader:
 
         data_tag = document.select('div[data-react-class="AssignmentRubric"]')
         if (len(data_tag) != 1):
-            raise ValueError("Did not find exactly one rubric data tag, found %d." % (len(data_tag)))
+            raise ValueError(f"Did not find exactly one rubric data tag, found {len(data_tag)}.")
 
         data = edq.util.json.loads(str(data_tag[0].get('data-react-props')))
 
