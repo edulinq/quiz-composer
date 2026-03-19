@@ -9,7 +9,7 @@ import typing
 import edq.util.dirent
 
 import quizcomp.parser.document
-import quizcomp.parser.parse
+import quizcomp.parser.render
 import quizcomp.util.serial
 
 class ParsedText(quizcomp.util.serial.PODSerializer):
@@ -30,7 +30,9 @@ class ParsedText(quizcomp.util.serial.PODSerializer):
 def parse_text(text: str, base_dir: str = '.') -> ParsedText:
     """ Parse text with default options. """
 
-    text, document = quizcomp.parser.parse._parse_text(text, base_dir)
+    text, tokens = quizcomp.parser.render._parse_text(text, base_dir)
+    document = quizcomp.parser.document.ParsedDocument(tokens, base_dir = base_dir)
+
     return ParsedText(text, document)
 
 def parse_file(path: str) -> ParsedText:
