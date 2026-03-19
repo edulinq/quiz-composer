@@ -13,7 +13,6 @@ import edq.util.dirent
 
 import quizcomp.common
 import quizcomp.constants
-import quizcomp.group
 import quizcomp.parser.document
 import quizcomp.parser.public
 import quizcomp.question.common
@@ -208,23 +207,23 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         raise quizcomp.common.QuestionValidationError("Could not find any non-empty prompt.", ids = self.ids)
 
-    def inherit_from_group(self, group: quizcomp.group.Group) -> None:
+    def inherit_from_group(self, group_info: typing.Dict[str, typing.Any]) -> None:
         """
-        Inherit attributes from a group.
+        Inherit attributes from a group's info (`group.to_dict()`).
         """
 
-        self.points = group.points
-        self.name = group.name
+        self.points = group_info['points']
+        self.name = group_info['name']
 
-        if (group.custom_header is not None):
-            self.custom_header = group.custom_header
+        if (group_info['custom_header'] is not None):
+            self.custom_header = group_info['custom_header']
 
-        if (group.skip_numbering is not None):
-            self.skip_numbering = group.skip_numbering
+        if (group_info['skip_numbering'] is not None):
+            self.skip_numbering = group_info['skip_numbering']
 
-        self.shuffle_answers = (self.shuffle_answers and group.shuffle_answers)
+        self.shuffle_answers = (self.shuffle_answers and group_info['shuffle_answers'])
 
-        self.add_hints(group.hints)
+        self.add_hints(group_info['hints'])
 
     def add_hints(self, new_hints: typing.Union[typing.Dict[str, typing.Any], None], override: bool = False) -> None:
         """ Add hints to this question. """

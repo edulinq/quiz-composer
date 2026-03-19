@@ -109,7 +109,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
             raise quizcomp.common.QuizValidationError("Questions must be non-empty.")
 
         for question in self.questions:
-            question.inherit_from_group(self)
+            question.inherit_from_group(self.to_dict())
 
         if (self.pick_count > len(self.questions)):
             logging.warning("Group '%s' was asked to pick more questions than available (pick_count: %d, group size: %d).",

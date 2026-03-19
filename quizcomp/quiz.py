@@ -7,11 +7,11 @@ import typing
 import edq.util.dirent
 import edq.util.git
 
+import quizcomp.canvas
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.group
 import quizcomp.parser.public
-import quizcomp.uploader.canvas
 import quizcomp.util.serial
 import quizcomp.variant
 
@@ -123,7 +123,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             if (self.version == edq.util.git.UNKNOWN_VERSION):
                 logging.warning("Could not get a version for the quiz (is it in a git repo?).")
 
-        self.canvas = quizcomp.uploader.canvas.validate_options(self.canvas)
+        self.canvas = quizcomp.canvas.validate_options(self.canvas)
 
         self._validate_time_limit()
 
