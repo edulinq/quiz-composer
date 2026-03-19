@@ -160,8 +160,6 @@ class Question(quizcomp.util.serial.JSONSerializer):
     def _validate_answers(self) -> None:
         """ Validate the answers for this question. """
 
-        pass
-
     def _validate_prompt(self) -> None:
         """
         The prompt is allowed to appear (in order of priority):
@@ -253,15 +251,17 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         if (isinstance(target, dict)):
             return self._collect_documents(list(target.values()))
-        elif (isinstance(target, list)):
+
+        if (isinstance(target, list)):
             documents = []
             for value in target:
                 documents += self._collect_documents(value)
             return documents
-        elif (isinstance(target, quizcomp.parser.public.ParsedText)):
+
+        if (isinstance(target, quizcomp.parser.public.ParsedText)):
             return [target.document]
-        else:
-            return []
+
+        return []
 
     def should_skip_numbering(self) -> bool:
         """ Check if this question should skip numbering. """
@@ -291,8 +291,6 @@ class Question(quizcomp.util.serial.JSONSerializer):
         Children can override this method to support shuffling.
         """
 
-        pass
-
     def _shuffle_answers_list(self, rng: random.Random) -> None:
         """
         A shuffle method for question types that are a simple list.
@@ -303,7 +301,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
     # Override the class method JSONSerializer.from_dict() with a static method
     # so that we can select the correct child class.
     @staticmethod
-    def from_dict(  # type: ignore[override]
+    def from_dict(  # type: ignore[override] # pylint: disable=arguments-renamed
             data: typing.Dict[str, typing.Any],
             base_dir: typing.Union[str, None] = None,
             ids: typing.Union[typing.Dict[str, typing.Any], None] = None,
@@ -428,15 +426,19 @@ class Question(quizcomp.util.serial.JSONSerializer):
                 num_correct += 1
 
         if (num_correct < min_correct):
-            raise quizcomp.common.QuestionValidationError(f"Did not find enough correct answers. Expected at least {min_correct}, found {num_correct}.", ids = self.ids)
+            raise quizcomp.common.QuestionValidationError(("Did not find enough correct answers."
+                + f" Expected at least {min_correct}, found {num_correct}."),
+                ids = self.ids)
 
         if (num_correct > max_correct):
-            raise quizcomp.common.QuestionValidationError(f"Found too many correct answers. Expected at most {max_correct}, found {num_correct}.", ids = self.ids)
+            raise quizcomp.common.QuestionValidationError(("Found too many correct answers."
+                + f" Expected at most {max_correct}, found {num_correct}."),
+                ids = self.ids)
 
         new_answers = []
-        for i in range(len(answers)):
-            parsed_text = self._validate_text_item(answers[i], f"'answers' values (element {i})")
-            new_answer = quizcomp.question.common.ParsedTextChoice(parsed_text, answers[i]['correct'])
+        for (i, answer) in enumerate(answers):
+            parsed_text = self._validate_text_item(answer, f"'answers' values (element {i})")
+            new_answer = quizcomp.question.common.ParsedTextChoice(parsed_text, answer['correct'])
             new_answers.append(new_answer)
 
         return new_answers
@@ -459,8 +461,8 @@ class Question(quizcomp.util.serial.JSONSerializer):
             self.answers = ['']
 
         new_answers = []
-        for i in range(len(self.answers)):
-            new_answers.append(self._validate_text_item(self.answers[i], "'answers' values (element {i})"))
+        for (i, answer) in enumerate(self.answers):
+            new_answers.append(self._validate_text_item(answer, f"'answers' values (element {i})"))
 
         self.answers = new_answers
 
@@ -517,7 +519,8 @@ class Question(quizcomp.util.serial.JSONSerializer):
         if (check_feedback):
             feedback = self._validate_feedback_item(item.get('feedback', None), label)
 
-        return quizcomp.question.common.ParsedTextWithFeedback(quizcomp.parser.public.parse_text(text, base_dir = self.base_dir), feedback = feedback)
+        return quizcomp.question.common.ParsedTextWithFeedback(quizcomp.parser.public.parse_text(text,
+                base_dir = self.base_dir), feedback = feedback)
 
     def _validate_fimb_answers(self) -> None:
         """ Check that the answers are valid fill in multiple blanks answers. """
@@ -543,9 +546,9 @@ class Question(quizcomp.util.serial.JSONSerializer):
                 raise quizcomp.common.QuestionValidationError("Expected possible values to be non-empty.", ids = self.ids)
 
             new_values = []
-            for i in range(len(values)):
+            for (i, value) in enumerate(values):
                 label = f"answers key '{key}' index {i}"
-                new_values.append(self._validate_text_item(values[i], label))
+                new_values.append(self._validate_text_item(value, label))
 
             new_answers[key] = {
                 'key': quizcomp.parser.public.parse_text(key, base_dir = self.base_dir),
@@ -560,7 +563,8 @@ class Question(quizcomp.util.serial.JSONSerializer):
         """ Check that the given value has the expected type. """
 
         if (not isinstance(value, expected_type)):
-            raise quizcomp.common.QuestionValidationError(f"{label} must be a {expected_type}, found '{value}' ({type(value)}).", ids = self.ids)
+            raise quizcomp.common.QuestionValidationError(f"{label} must be a {expected_type}, found '{value}' ({type(value)}).",
+                    ids = self.ids)
 
     def _check_placeholders(self, answer_placeholders: typing.Set[str]) -> None:
         """
@@ -584,5 +588,6 @@ class Question(quizcomp.util.serial.JSONSerializer):
             output_document_placeholders = list(sorted(document_placeholders))
 
             raise quizcomp.common.QuestionValidationError(
-                    f"Mismatch between the placeholders found in the question prompt ({output_document_placeholders}) and answers config ({output_answer_placeholders}).",
+                    (f"Mismatch between the placeholders found in the question prompt ({output_document_placeholders})"
+                        + f" and answers config ({output_answer_placeholders})."),
                     ids = self.ids)

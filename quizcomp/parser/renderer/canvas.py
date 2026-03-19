@@ -8,7 +8,7 @@ import quizcomp.parser.common
 import quizcomp.parser.image
 import quizcomp.parser.renderer.html
 
-class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRendererHTML):
+class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRendererHTML):  # pylint: disable=abstract-method
     """
     Render to Canvas-specific HTML.
     Canvas generally uses HTML, but has some special cases.
@@ -27,9 +27,9 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
         text = re.sub(r'\s+', ' ', text)
         text = text.replace(' ', '_')
 
-        return "[%s]" % (text)
+        return f"[{text}]"
 
-    def image(self,  # type: ignore[override]
+    def image(self,  # type: ignore[override] # pylint: disable=arguments-differ
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
             options: markdown_it.utils.OptionsDict,

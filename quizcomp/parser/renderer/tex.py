@@ -1,5 +1,4 @@
 import logging
-import os
 import typing
 
 import markdown_it
@@ -98,7 +97,7 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         info = node.get('info', None)
         if ((info is not None) and (len(info) > 0)):
-            language_string = "[language=%s]" % (info)
+            language_string = f"[language={info}]"
 
         return "\\begin{lstlisting}%s\n%s\n\\end{lstlisting}" % (language_string, node.text().rstrip())
 
@@ -122,7 +121,7 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
         if (delim is None):
             raise ValueError("Could not find a delimiter to use with TeX's `\verb'.")
 
-        return r"\verb%s%s%s" % (delim, text, delim)
+        return f"\\verb{delim}{text}{delim}"
 
     def _math_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         text = node.text().strip()
@@ -141,7 +140,6 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
         src = quizcomp.parser.image.handle_callback(callback, src, base_dir)
 
         width_float = quizcomp.parser.style.get_image_width(style)
-        path = os.path.realpath(os.path.join(base_dir, src))
 
         return r"\includegraphics[width=%0.2f\textwidth]{%s}" % (width_float, src)
 
@@ -161,9 +159,12 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
     def _table(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
-        border_table = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_BORDER_TABLE, quizcomp.parser.style.DEFAULT_TABLE_BORDER_TABLE)
-        border_cells = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_BORDER_CELLS, quizcomp.parser.style.DEFAULT_TABLE_BORDER_CELLS)
-        default_alignment = quizcomp.parser.style.get_alignment(style, quizcomp.parser.style.KEY_TEXT_ALIGN, default_value = quizcomp.parser.style.ALLOWED_VALUES_ALIGNMENT_CENTER)
+        border_table = quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_BORDER_TABLE, quizcomp.parser.style.DEFAULT_TABLE_BORDER_TABLE)
+        border_cells = quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_BORDER_CELLS, quizcomp.parser.style.DEFAULT_TABLE_BORDER_CELLS)
+        default_alignment = quizcomp.parser.style.get_alignment(
+                style, quizcomp.parser.style.KEY_TEXT_ALIGN, default_value = quizcomp.parser.style.ALLOWED_VALUES_ALIGNMENT_CENTER)
 
         column_infos = _discover_column_info(node)
 
@@ -203,7 +204,8 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
     def _thead(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
-        head_rule = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_HEAD_RULE, quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE)
+        head_rule = quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_HEAD_RULE, quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE)
 
         content = "\n".join([self._render_node(child, context) for child in node.children()])
 
@@ -214,7 +216,8 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
     def _tbody(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
-        border_cells = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_BORDER_CELLS, quizcomp.parser.style.DEFAULT_TABLE_BORDER_CELLS)
+        border_cells = quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_BORDER_CELLS, quizcomp.parser.style.DEFAULT_TABLE_BORDER_CELLS)
 
         delim = "\n"
         if (border_cells):
@@ -229,7 +232,8 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
     def _th(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
-        bold = quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_HEAD_BOLD, quizcomp.parser.style.DEFAULT_TABLE_HEAD_BOLD)
+        bold = quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_HEAD_BOLD, quizcomp.parser.style.DEFAULT_TABLE_HEAD_BOLD)
 
         content = ''.join([self._render_node(child, context) for child in node.children()])
 
@@ -262,7 +266,7 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
 
         index = level - 1
         if ((index < 0) or (index >= len(HEADINGS))):
-            raise ValueError("Heading index is out of range: %d." % (index))
+            raise ValueError(f"Heading index is out of range: {index}.")
 
         heading = HEADINGS[index]
         content = ''.join([self._render_node(child, context) for child in node.children()])
@@ -331,15 +335,15 @@ def _discover_column_info(
         return info
 
     if (type == 'tr'):
-        for i in range(len(children)):
+        for (i, child) in enumerate(children):
             if (i >= len(info)):
                 info.append({})
 
-            info[i] = _discover_column_info_cells(children[i], style = info[i])
+            info[i] = _discover_column_info_cells(child, style = info[i])
 
         return info
 
-    logging.warning("Unexpected table node type '%s'." % (type))
+    logging.warning("Unexpected table node type '%s'.", type)
     return info
 
 def _discover_column_info_cells(

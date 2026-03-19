@@ -19,17 +19,19 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.constan
 
     def _validate_matches(self) -> None:
         if ('matches' not in self.answers):
-            raise quizcomp.common.QuestionValidationError("Matching 'answers' value is missing the 'matches' field.", ids = self.ids)
+            raise quizcomp.common.QuestionValidationError(
+                    "Matching 'answers' value is missing the 'matches' field.",
+                    ids = self.ids)
 
         matches = self.answers['matches']
         new_matches = []
 
-        for i in range(len(matches)):
-            match = matches[i]
-
+        for (i, match) in enumerate(matches):
             if (isinstance(match, list)):
                 if (len(match) != 2):
-                    raise quizcomp.common.QuestionValidationError(f"Expected exactly two items for a match list, found {len(match)} items at element {i}.", ids = self.ids)
+                    raise quizcomp.common.QuestionValidationError(
+                            f"Expected exactly two items for a match list, found {len(match)} items at element {i}.",
+                            ids = self.ids)
 
                 match = {
                     'left': match[0],
@@ -39,11 +41,13 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.constan
             keys = ['left', 'right']
             for key in keys:
                 if (key not in match):
-                    raise quizcomp.common.QuestionValidationError("Missing key '{key}' for for match item {i}.", ids = self.ids)
+                    raise quizcomp.common.QuestionValidationError(
+                            f"Missing key '{key}' for for match item {i}.",
+                            ids = self.ids)
 
             new_matches.append({
-                'left': self._validate_text_item(match['left'], "Left value for match item %d" % (i)),
-                'right': self._validate_text_item(match['right'], "Right value for match item %d" % (i)),
+                'left': self._validate_text_item(match['left'], f"Left value for match item {i}"),
+                'right': self._validate_text_item(match['right'], f"Right value for match item {i}"),
             })
 
         self.answers['matches'] = new_matches
@@ -55,8 +59,8 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.constan
         distractors = self.answers['distractors']
         new_distractors = []
 
-        for i in range(len(distractors)):
-            new_distractors.append(self._validate_text_item(distractors[i], "distractor at index %d" % (i),
+        for (i, distractor) in enumerate(distractors):
+            new_distractors.append(self._validate_text_item(distractor, f"distractor at index {i}",
                     clean_whitespace = True))
 
         self.answers['distractors'] = new_distractors

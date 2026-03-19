@@ -14,9 +14,8 @@ class Numerical(quizcomp.question.base.Question, question_type = quizcomp.consta
     def _validate_answers(self) -> None:
         self._check_type(self.answers, list, "'answers' key")
 
-        for i in range(len(self.answers)):
-            answer = self.answers[i]
-            label = "'answers' value index %d" % (i)
+        for (i, answer) in enumerate(self.answers):
+            label = f"'answers' value index {i}"
 
             self._check_type(answer, dict, label)
 
@@ -37,7 +36,8 @@ class Numerical(quizcomp.question.base.Question, question_type = quizcomp.consta
 
             for key in required_keys:
                 if (key not in answer):
-                    raise quizcomp.common.QuestionValidationError(f"Missing required key '{key}' for numerical answer type '{answer['type']}'.", ids = self.ids)
+                    raise quizcomp.common.QuestionValidationError(f"Missing required key '{key}' for numerical answer type '{answer['type']}'.",
+                            ids = self.ids)
 
             feedback = self._validate_feedback_item(answer.get('feedback', None), label)
             if (feedback is not None):

@@ -1,5 +1,4 @@
 import argparse
-import typing
 
 import markdown_it
 import mdformat.plugins
@@ -23,7 +22,7 @@ def math_block(node: mdformat.renderer.RenderTreeNode, context: mdformat.rendere
 def placeholder(node: mdformat.renderer.RenderTreeNode, context: mdformat.renderer.RenderContext) -> str:
     """ Render an answer placeholder. """
 
-    return "<placeholder>%s</placeholder>" % (node.content)
+    return f"<placeholder>{node.content}</placeholder>"
 
 def container_block(node: mdformat.renderer.RenderTreeNode, context: mdformat.renderer.RenderContext) -> str:
     """ Render a container block. """

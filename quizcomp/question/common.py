@@ -16,12 +16,16 @@ class ParsedTextWithFeedback(quizcomp.parser.public.ParsedText):
         self.feedback: typing.Union[quizcomp.parser.public.ParsedText, None] = feedback
         """ Feedback associated with this text. """
 
-    def to_pod(self, skip_feedback: bool = False, force_dict: bool = False, **kwargs: typing.Any) -> quizcomp.util.serial.POD:  # type: ignore[override]
+    def to_pod(self,
+            skip_feedback: bool = False,
+            force_dict: bool = False,
+            **kwargs: typing.Any,
+            ) -> quizcomp.util.serial.POD:  # type: ignore[override]
         if (skip_feedback or (self.feedback is None)):
             if (force_dict):
                 return {'text': self.text}
-            else:
-                return self.text
+
+            return self.text
 
         return {
             'text': self.text,
@@ -52,7 +56,7 @@ class ParsedTextChoice(ParsedTextWithFeedback):
 
         return self.correct
 
-    def to_pod(self, **kwargs: typing.Any) -> quizcomp.util.serial.POD:  # type: ignore[override]
+    def to_pod(self, **kwargs: typing.Any) -> quizcomp.util.serial.POD:  # type: ignore[override] # pylint: disable=arguments-differ
         data = super().to_pod(force_dict = True, **kwargs)
 
         value = typing.cast(typing.Dict[str, typing.Any], data)

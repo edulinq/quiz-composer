@@ -33,7 +33,7 @@ class FITB(quizcomp.question.base.Question, question_type = quizcomp.constants.Q
             if ((isinstance(self.answers, dict)) and ('values' in self.answers)):
                 self.answers = self.answers['values']
 
-        self._check_type(self.answers, list, f"'answers' value")
+        self._check_type(self.answers, list, "'answers' value")
 
         if (len(self.answers) == 0):
             raise quizcomp.common.QuestionValidationError("Expected 'answers' value to be non-empty.", ids = self.ids)

@@ -40,7 +40,7 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
         method_name = '_' + node.type()
         method = getattr(self, method_name, None)
         if (method is None):
-            raise TypeError("Could not find TeX render method: '%s'." % (method_name))
+            raise TypeError(f"Could not find TeX render method: '{method_name}'.")
 
         return method(node, context)
 
@@ -208,6 +208,6 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
         try:
             level = int(tag[1])
         except Exception as ex:
-            raise ValueError("Failed to parse heading level from '%s'." % (tag)) from ex
+            raise ValueError(f"Failed to parse heading level from '{tag}'.") from ex
 
         return level

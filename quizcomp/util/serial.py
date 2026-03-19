@@ -16,6 +16,8 @@ POD: typing.TypeAlias = typing.Union[bool, float, int, str, typing.List['POD'], 
 UNKNOWN_TYPE: str = '_unknown_'
 
 class PODSerializer(abc.ABC):
+    """ An abstract base for a class that can convert itselt for a POD type. """
+
     @abc.abstractmethod
     def to_pod(self, **kwargs: typing.Any) -> POD:
         """
@@ -74,8 +76,6 @@ class JSONSerializer(PODSerializer):
         """
         The true validation implementation.
         """
-
-        pass
 
     def to_pod(self, **kwargs: typing.Any) -> POD:
         return self.to_dict(**kwargs)
@@ -187,13 +187,17 @@ def _serialize(
 
     if (isinstance(item, PODSerializer) and convert_serializers):
         return item.to_pod(**kwargs)
-    elif (isinstance(item, enum.Enum)):
+
+    if (isinstance(item, enum.Enum)):
         return item.value
-    elif (isinstance(item, list) and recursive):
+
+    if (isinstance(item, list) and recursive):
         return [_serialize(value, **kwargs) for value in item]
-    elif (isinstance(item, dict) and recursive):
+
+    if (isinstance(item, dict) and recursive):
         return {key: _serialize(value, **kwargs) for (key, value) in item.items() if (not (skip_private and key.startswith('_')))}
-    elif (isinstance(item, (datetime.date, datetime.time, datetime.datetime)) and convert_dates):
+
+    if (isinstance(item, (datetime.date, datetime.time, datetime.datetime)) and convert_dates):
         return item.isoformat()
 
     return item

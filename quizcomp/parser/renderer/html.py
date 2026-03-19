@@ -1,7 +1,5 @@
-import copy
 import os
 import re
-import types
 import typing
 
 import markdown_it.renderer
@@ -26,8 +24,7 @@ class ProcessImageTokenFunction(typing.Protocol):
     def __call__(self, token: markdown_it.token.Token, context: typing.Dict[str, typing.Any], path: str) -> markdown_it.token.Token:
         """ Process the image token before rendering. """
 
-        ...
-
+# pylint: disable=abstract-method
 class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parser.renderer.base.QuizComposerRendererBase):
     """
     A renderer for HTML.
@@ -36,7 +33,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
 
     __output__ = quizcomp.constants.FORMAT_HTML
 
-    def image(self,  # type: ignore[override]
+    def image(self,  # type: ignore[override] # pylint: disable=arguments-renamed
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,
             options: markdown_it.utils.OptionsDict,
@@ -56,7 +53,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
 
         # Set width.
         width_float = quizcomp.parser.style.get_image_width(style)
-        tokens[token_index].attrSet('width', "%0.2f%%" % (width_float * 100.0))
+        tokens[token_index].attrSet('width', f"{(width_float * 100.0):0.2f}%")
 
         original_src = str(tokens[token_index].attrGet('src'))
         src = quizcomp.parser.image.handle_callback(callback, original_src, base_dir)
@@ -144,7 +141,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
             ) -> str:
         """ Render an answer placeholder. """
 
-        return "<placeholder>%s</placeholder>" % (tokens[token_index].content)
+        return f"<placeholder>{tokens[token_index].content}</placeholder>"
 
     def table_open(self,
             tokens: typing.List[markdown_it.token.Token],
@@ -162,15 +159,18 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
             'border-collapse: collapse',
         ]
 
-        if (quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_BORDER_TABLE, quizcomp.parser.style.DEFAULT_TABLE_BORDER_TABLE)):
-            table_style.append("border: %s" % HTML_BORDER_SPEC)
+        has_border = quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_BORDER_TABLE, quizcomp.parser.style.DEFAULT_TABLE_BORDER_TABLE)
+
+        if (has_border):
+            table_style.append(f"border: {HTML_BORDER_SPEC}")
         else:
             table_style.append('border-style: hidden')
 
         # HTML tables require extra encouragement to align.
         text_align = quizcomp.parser.style.get_alignment(style, quizcomp.parser.style.KEY_TEXT_ALIGN)
         if (text_align is not None):
-            table_style.append("text-align: %s" % (text_align))
+            table_style.append(f"text-align: {text_align}")
 
         _join_html_style(token, table_style)
 
@@ -188,8 +188,11 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
         style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
-        if (quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_HEAD_RULE, quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE)):
-            _join_html_style(token, ["border-bottom: %s" % (HTML_BORDER_SPEC)])
+        has_head = quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_HEAD_RULE, quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE)
+
+        if (has_head):
+            _join_html_style(token, [f"border-bottom: {HTML_BORDER_SPEC}"])
 
         return super().renderToken(tokens, token_index, options, env)
 
@@ -208,10 +211,13 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         self._cell_html(token, style)
 
         weight = 'normal'
-        if (quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_HEAD_BOLD, quizcomp.parser.style.DEFAULT_TABLE_HEAD_BOLD)):
+        use_bold = quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_HEAD_BOLD, quizcomp.parser.style.DEFAULT_TABLE_HEAD_BOLD)
+
+        if (use_bold):
             weight = 'bold'
 
-        _join_html_style(token, ["font-weight: %s" % (weight)])
+        _join_html_style(token, [f"font-weight: {weight}"])
 
         return super().renderToken(tokens, token_index, options, env)
 
@@ -243,14 +249,15 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         horizontal_padding = width - 1.0
 
         cell_style = {
-            'padding-top': "%0.2fem" % (vertical_padding / 2),
-            'padding-bottom': "%0.2fem" % (vertical_padding / 2),
-            'padding-left': "%0.2fem" % (horizontal_padding / 2),
-            'padding-right': "%0.2fem" % (horizontal_padding / 2),
+            'padding-top': f"{(vertical_padding / 2):0.2f}em",
+            'padding-bottom': f"{(vertical_padding / 2):0.2f}em",
+            'padding-left': f"{(horizontal_padding / 2):0.2f}em",
+            'padding-right': f"{(horizontal_padding / 2):0.2f}em",
         }
 
-        if (quizcomp.parser.style.get_boolean_style_key(style, quizcomp.parser.style.KEY_TABLE_BORDER_CELLS, quizcomp.parser.style.DEFAULT_TABLE_BORDER_CELLS)):
-            cell_style['border'] = "%s" % (HTML_BORDER_SPEC)
+        if (quizcomp.parser.style.get_boolean_style_key(
+                style, quizcomp.parser.style.KEY_TABLE_BORDER_CELLS, quizcomp.parser.style.DEFAULT_TABLE_BORDER_CELLS)):
+            cell_style['border'] = HTML_BORDER_SPEC
 
         _join_html_style(token, [': '.join(item) for item in cell_style.items()])
 
