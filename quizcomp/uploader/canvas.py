@@ -48,7 +48,7 @@ QUESTION_FEEDBACK_MAPPING: typing.Dict[str, str] = {
 class InstanceInfo:
     """ Info on how to connect to a Canvas instance. """
 
-    def __init__(self, base_url: str, course_id: str, token: str) -> None:
+    def __init__(self, base_url: str, course_id: str, token: str, testing: bool = False) -> None:
         self.base_url: str = base_url
         """ URL for the target Canvas server. """
 
@@ -59,7 +59,10 @@ class InstanceInfo:
         """ Canvas authentication token. """
 
         self.context: typing.Dict[str, typing.Any] = {}
-        """ Context informaation. """
+        """ Context information. """
+
+        self.testing: bool = testing
+        """ Indicates that this is an instance used in testing and should not try to be used for a real server. """
 
     def base_headers(self) -> typing.Dict[str, str]:
         """ Get standard Canvas headers. """
@@ -244,7 +247,7 @@ def create_question_group(quiz_id: str, group: quizcomp.group.Group, instance: I
     for (i, question) in enumerate(group.questions):
         create_question(quiz_id, group_id, question, i, instance)
 
-def create_question(quiz_id: str, group_id: str, question: quizcomp.question.base.Question, index: int, instance: InstanceInfo) -> None:
+def create_question(quiz_id: str, group_id: int, question: quizcomp.question.base.Question, index: int, instance: InstanceInfo) -> None:
     """ Create a question within the given quiz/group. """
 
     data = _create_question_json(group_id, question, index, instance)
@@ -257,7 +260,7 @@ def create_question(quiz_id: str, group_id: str, question: quizcomp.question.bas
     response.raise_for_status()
 
 def _create_question_json(
-        group_id: str,
+        group_id: int,
         question: quizcomp.question.base.Question,
         index: int,
         instance: InstanceInfo,

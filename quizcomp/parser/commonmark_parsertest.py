@@ -1,12 +1,11 @@
 import os
-import re
 import typing
 
-import edq.testing.unittest
 import edq.util.json
 
 import quizcomp.constants
 import quizcomp.parser.public
+import quizcomp.testing.base
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 TESTDATA_DIR: str = os.path.join(THIS_DIR, 'testdata')
@@ -16,7 +15,7 @@ SKIP_COMMONMARK_TESTS: typing.Set[int] = {
     176,  # Has non-JSON HTML style.
 }
 
-class TestCommonMark(edq.testing.unittest.BaseTest):
+class TestCommonMark(quizcomp.testing.base.BaseTest):
     """
     Test cases provided by CommonMark.
     """
@@ -37,7 +36,7 @@ def _add_commonmark_tests() -> None:
             continue
 
         text = test_case['markdown']
-        section = _clean_name_part(test_case['section'])
+        section = quizcomp.testing.base.clean_name_part(test_case['section'])
 
         for format in quizcomp.constants.PARSER_FORMATS:
             name = f"test_commonmark__{id:04d}__{section}__{format}"
@@ -56,12 +55,5 @@ def _get_commonmark_test(text: str, format: str) -> typing.Callable:
         parsed_text.document.to_format(format, **options)
 
     return __method
-
-def _clean_name_part(text: str) -> str:
-    """ Clean a test name component. """
-
-    clean_text = text.lower().strip().replace(' ', '_')
-    clean_text = re.sub(r'\W+', '', clean_text)
-    return clean_text
 
 _add_commonmark_tests()

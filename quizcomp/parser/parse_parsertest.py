@@ -1,37 +1,27 @@
 import glob
 import os
 import re
-import sys
 import typing
 
-import edq.testing.unittest
 import edq.util.json
 
 import quizcomp.constants
 import quizcomp.parser.common
 import quizcomp.parser.public
+import quizcomp.testing.base
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 TESTDATA_DIR: str = os.path.join(THIS_DIR, 'testdata')
+
 DOCUMENTS_DIR = os.path.join(TESTDATA_DIR, 'documents')
 GOOD_DOCUMENTS_DIR = os.path.join(DOCUMENTS_DIR, "good")
 BAD_DOCUMENTS_DIR = os.path.join(DOCUMENTS_DIR, "bad")
 
-class TestParser(edq.testing.unittest.BaseTest):
+class TestParser(quizcomp.testing.base.BaseTest):
     """
     Test parsing text.
     Good and bad situations will be loaded from files into individual test methods.
     """
-
-    @classmethod
-    def setUpClass(cls):
-        # Disable KaTeX in Windows for testing.
-        if (sys.platform.startswith("win")):
-            quizcomp.parser.math._katex_available = False
-
-    @classmethod
-    def tearDownClass(cls):
-        quizcomp.parser.math._katex_available = None
 
 def _add_good_parse_questions():
     """ Add test cases for parsing valid documents. """
@@ -151,7 +141,7 @@ def _get_bad_parse_test(text: str, base_dir: str, options: typing.Union[str, typ
 def _make_name(prefix: str, path: str, name: str, doc_format: typing.Union[str, None] = None) -> str:
     """ Create a name for a test case. """
 
-    clean_name = _clean_name_part(name)
+    clean_name = quizcomp.testing.base.clean_name_part(name)
 
     filename = os.path.splitext(os.path.basename(path))[0]
 
@@ -161,13 +151,6 @@ def _make_name(prefix: str, path: str, name: str, doc_format: typing.Union[str, 
         test_name += ('__' + doc_format)
 
     return test_name
-
-def _clean_name_part(text: str) -> str:
-    """ Clean a test name component. """
-
-    clean_text = text.lower().strip().replace(' ', '_')
-    clean_text = re.sub(r'\W+', '', clean_text)
-    return clean_text
 
 def _apply_text_options(options: typing.Dict[str, typing.Any], a: str, b: str) -> typing.Tuple[str, str]:
     """ Apply some custom text options. """

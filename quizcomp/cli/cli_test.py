@@ -1,7 +1,8 @@
 import os
 
 import edq.testing.cli
-import edq.testing.unittest
+
+import quizcomp.testing.base
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 ROOT_DIR: str = os.path.join(THIS_DIR, '..', '..')
@@ -10,7 +11,7 @@ CLI_TESTDATA_DIR: str = os.path.join(ROOT_DIR, 'quizcomp', 'cli', 'testdata')
 CLI_TESTS_DIR: str = os.path.join(CLI_TESTDATA_DIR, 'tests')
 CLI_DATA_DIR: str = os.path.join(CLI_TESTDATA_DIR, 'data')
 
-class CLITest(edq.testing.unittest.BaseTest):
+class CLITest(quizcomp.testing.base.BaseTest):
     """
     CLI tests.
     """

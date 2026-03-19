@@ -45,7 +45,7 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
 
         # If there is no canvas instance, we are probably just parsing and not uploading.
         canvas_instance = context.get('canvas_instance', None)
-        if (canvas_instance is None):
+        if ((canvas_instance is None) or canvas_instance.testing):
             force_raw_image_src = False
             process_token = None
 
