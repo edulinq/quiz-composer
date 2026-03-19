@@ -8,7 +8,7 @@ import quizcomp.converter.markdown
 import quizcomp.converter.tex
 import quizcomp.converter.qti
 import quizcomp.question.base
-import quizcomp.variant
+import quizcomp.quiz
 
 SUPPORTED_FORMATS: typing.List[str] = [
     quizcomp.constants.FORMAT_CANVAS,
@@ -51,7 +51,7 @@ def get_converter(format: str = quizcomp.constants.FORMAT_JSON, **kwargs: typing
     return converter_class(**kwargs)
 
 def convert_variant(
-        variant: quizcomp.variant.Variant,
+        variant: quizcomp.quiz.Variant,
         format: str = quizcomp.constants.FORMAT_JSON,
         constructor_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
         converter_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
@@ -64,8 +64,8 @@ def convert_variant(
     if (converter_args is None):
         converter_args = {}
 
-    if (not isinstance(variant, quizcomp.variant.Variant)):
-        raise ValueError(f"convert_variant() requires a quizcomp.variant.Variant type, found {type(variant)}.")
+    if (not isinstance(variant, quizcomp.quiz.Variant)):
+        raise ValueError(f"convert_variant() requires a quizcomp.quiz.Variant type, found {type(variant)}.")
 
     converter = get_converter(format = format, **constructor_args)
     return converter.convert_variant(variant, **converter_args)

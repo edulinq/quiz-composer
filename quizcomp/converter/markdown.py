@@ -4,7 +4,7 @@ import typing
 import quizcomp.constants
 import quizcomp.converter.template
 import quizcomp.question.base
-import quizcomp.variant
+import quizcomp.quiz
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-md')
@@ -23,6 +23,6 @@ class MarkdownTemplateConverter(quizcomp.converter.template.TemplateConverter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         return self._create_answers_mcq_list(question.answers)

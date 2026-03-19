@@ -14,14 +14,13 @@ import quizcomp.converter.tex
 import quizcomp.latex
 import quizcomp.question.base
 import quizcomp.quiz
-import quizcomp.variant
 
 OPTIONS_FILENAME: str = 'options.json'
 
 def make_with_args(
         args: argparse.Namespace,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.variant.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
     """
     Use a standard args object from set_cli_args() to make a PDF quiz.
     """
@@ -36,7 +35,7 @@ def make_with_args(
 def make_with_path(
         quiz_path: str,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.variant.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
     """ Make a PDF given the path to a quiz JSON. """
 
     if (not os.path.exists(quiz_path)):
@@ -51,7 +50,7 @@ def make_with_path(
 def make_from_question_with_args(
         args: argparse.Namespace,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.variant.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
     """
     Use a standard args object to make a PDF from a single question.
     """
@@ -67,7 +66,7 @@ def make_from_question_with_args(
 def make_from_question_with_path(
         question_path: str,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.variant.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
     """ Make a PDF given the path to a question JSON. """
 
     if (not os.path.exists(question_path)):
@@ -82,10 +81,10 @@ def make_from_question_with_path(
 def make_from_question(
         question: quizcomp.question.base.Question,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.variant.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
     """ Make a PDF given a question. """
 
-    quiz = quizcomp.variant.Variant.get_dummy(question)
+    quiz = quizcomp.quiz.Variant.get_dummy(question)
     return make(quiz, **kwargs)
 
 def make(
@@ -99,7 +98,7 @@ def make(
         skip_tex: bool = False,
         skip_pdf: bool = False,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.variant.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
     """ Make a PDF given a quiz. """
 
     if (base_out_dir is None):
@@ -178,7 +177,7 @@ def make(
     return (quiz, variants, options)
 
 def make_pdf(
-        variant: quizcomp.variant.Variant,
+        variant: quizcomp.quiz.Variant,
         out_dir: typing.Union[str, None] = None,
         is_key: bool = False,
         skip_tex: bool = False,

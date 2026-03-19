@@ -17,7 +17,6 @@ import quizcomp.parser.public
 import quizcomp.question.base
 import quizcomp.question.common
 import quizcomp.quiz
-import quizcomp.variant
 
 TEMPLATE_FILENAME_QUIZ: str = 'quiz.template'
 TEMPLATE_FILENAME_QUESTION_SEP: str = 'question-separator.template'
@@ -135,8 +134,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return self._convert_container(quiz, quizcomp.quiz.Quiz, 'quiz')
 
-    def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
-        return self._convert_container(variant, quizcomp.variant.Variant, 'variant')
+    def convert_variant(self, variant: quizcomp.quiz.Variant, **kwargs: typing.Any) -> str:
+        return self._convert_container(variant, quizcomp.quiz.Variant, 'variant')
 
     def _convert_container(self, container: quizcomp.quiz.Quiz, container_type: typing.Type, container_label: str) -> str:
         """ Convert a quiz or variant. """
@@ -228,7 +227,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant) -> typing.Tuple[int, str]:
+            variant: quizcomp.quiz.Variant) -> typing.Tuple[int, str]:
         """
         Convert a question to the target format.
         Return the new (current) question number and converted text.
@@ -272,7 +271,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def modify_question_context(self,
             context: typing.Dict[str, typing.Any],
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant) -> typing.Dict[str, typing.Any]:
+            variant: quizcomp.quiz.Variant) -> typing.Dict[str, typing.Any]:
         """
         Provide an opportunity for children to modify the question context.
         The new context reference (which may be new, unchanged, or modified version of the passed-in context).
@@ -305,7 +304,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -315,7 +314,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a matching question answers. """
 
@@ -428,7 +427,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for an MCQ question answers. """
 
@@ -452,7 +451,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> None:
         """ Create the template data for a text only question answers. """
 
@@ -462,7 +461,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a numerical question answers. """
 
@@ -493,7 +492,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -513,7 +512,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -523,7 +522,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a TF question answers. """
 
@@ -547,7 +546,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a TF question answers. """
 
@@ -557,7 +556,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -567,7 +566,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -577,7 +576,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_id: str,
             question_number: int,
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant,
+            variant: quizcomp.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 

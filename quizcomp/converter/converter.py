@@ -2,7 +2,7 @@ import abc
 import typing
 
 import quizcomp.question.base
-import quizcomp.variant
+import quizcomp.quiz
 
 class Converter(abc.ABC):
     """
@@ -16,7 +16,7 @@ class Converter(abc.ABC):
         """ If the generated output should be an answer key. """
 
     @abc.abstractmethod
-    def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
+    def convert_variant(self, variant: quizcomp.quiz.Variant, **kwargs: typing.Any) -> str:
         """ Convert the given variant to the converter's target format and return the converted artifact. """
 
     def convert_question(self, question: quizcomp.question.base.Question, **kwargs: typing.Any) -> str:
@@ -24,5 +24,5 @@ class Converter(abc.ABC):
         Convert a single question using a dummy quiz layout.
         """
 
-        variant = quizcomp.variant.Variant.get_dummy(question)
+        variant = quizcomp.quiz.Variant.get_dummy(question)
         return self.convert_variant(variant, **kwargs)

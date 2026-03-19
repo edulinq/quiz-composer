@@ -5,7 +5,7 @@ import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.converter.template
 import quizcomp.question.base
-import quizcomp.variant
+import quizcomp.quiz
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-json')
@@ -25,7 +25,7 @@ class JSONTemplateConverter(quizcomp.converter.template.TemplateConverter):
     def modify_question_context(self,
             context: typing.Dict[str, typing.Any],
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant) -> typing.Dict[str, typing.Any]:
+            variant: quizcomp.quiz.Variant) -> typing.Dict[str, typing.Any]:
         question_context = context['question']
         answers = question_context['answers']
         question_type = question_context['question_type']
@@ -128,5 +128,5 @@ class JSONConverter(quizcomp.converter.converter.Converter):
     def __init__(self, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-    def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
+    def convert_variant(self, variant: quizcomp.quiz.Variant, **kwargs: typing.Any) -> str:
         return variant.to_json()

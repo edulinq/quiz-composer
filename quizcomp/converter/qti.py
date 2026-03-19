@@ -11,7 +11,6 @@ import edq.util.dirent
 import quizcomp.constants
 import quizcomp.converter.template
 import quizcomp.quiz
-import quizcomp.variant
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
@@ -76,7 +75,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         self.canvas = canvas
 
-    def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
+    def convert_variant(self, variant: quizcomp.quiz.Variant, **kwargs: typing.Any) -> str:
         # Parse and format the XML.
         text = super().convert_variant(variant, **kwargs)
         return self._format_xml(text)
@@ -84,7 +83,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
     def modify_question_context(self,
             context: typing.Dict[str, typing.Any],
             question: quizcomp.question.base.Question,
-            variant: quizcomp.variant.Variant) -> typing.Dict[str, typing.Any]:
+            variant: quizcomp.quiz.Variant) -> typing.Dict[str, typing.Any]:
         context['question']['mapped_question_type'] = QUESTION_TYPE_MAP[question.question_type]
         return context
 
