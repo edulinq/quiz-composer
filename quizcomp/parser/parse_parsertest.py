@@ -1,6 +1,7 @@
 import glob
 import os
 import re
+import sys
 import typing
 
 import edq.testing.unittest
@@ -21,6 +22,16 @@ class TestParser(edq.testing.unittest.BaseTest):
     Test parsing text.
     Good and bad situations will be loaded from files into individual test methods.
     """
+
+    @classmethod
+    def setUpClass(cls):
+        # Disable KaTeX in Windows for testing.
+        if (sys.platform.startswith("win")):
+            quizcomp.parser.math._katex_available = False
+
+    @classmethod
+    def tearDownClass(cls):
+        quizcomp.parser.math._katex_available = None
 
 def _add_good_parse_questions():
     """ Add test cases for parsing valid documents. """

@@ -1,4 +1,5 @@
-build
-packaging>=21.3
+mypy>=1.14.1
+pdoc>=14.7.0
+pylint
 twine
 vermin

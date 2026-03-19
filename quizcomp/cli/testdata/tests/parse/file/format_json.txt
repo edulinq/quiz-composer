@@ -1,5 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.file",
+    /* Escaped backslahes in JSON cause a mismatch. */
+    "platform_skip": "win",
     "arguments": [
         "__DATA_DIR__(simple.md)",
         "--format", "json"

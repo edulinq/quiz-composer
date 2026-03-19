@@ -58,7 +58,7 @@ def to_html(text: str, cwd: str = '.') -> str:
 
     return result.stdout
 
-def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, typing.Any]) -> argparse.ArgumentParser:
+def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, typing.Any]) -> None:
     """ Set KaTeX-related CLI options. """
 
     parser.add_argument('--nodejs-bin-dir', dest = 'node_bin_dir',
@@ -67,12 +67,8 @@ def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, 
                 + ' If not specified, $PATH will be searched.'
                 + ' Used for HTML equations.'))
 
-    return parser
-
-def init_from_args(parser: argparse.ArgumentParser, args: argparse.Namespace, extra_state: typing.Dict[str, typing.Any]) -> argparse.Namespace:
+def init_from_args(parser: argparse.ArgumentParser, args: argparse.Namespace, extra_state: typing.Dict[str, typing.Any]) -> None:
     """ Initialize this module from the CLI options set in set_cli_args(). """
 
     if (args.node_bin_dir is not None):
         set_nodejs_bin_dir(args.node_bin_dir)
-
-    return args

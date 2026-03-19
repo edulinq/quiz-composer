@@ -435,7 +435,7 @@ class GradeScopeUploader:
         if (len(nodes) != 1):
             raise ValueError(f"Did not find exactly one assignments table, found {len(nodes)}.")
 
-        assignment_data = edq.util.json.loads(nodes[0].get('data-react-props'))
+        assignment_data = edq.util.json.loads(str(nodes[0].get('data-react-props')))
 
         for row in assignment_data['table_data']:
             if (row['type'] != 'assignment'):

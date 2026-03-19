@@ -37,7 +37,7 @@ def get_parser(description: str,
     if (include_katex):
         parser.register_callbacks('katex', quizcomp.katex.set_cli_args, quizcomp.katex.init_from_args)
 
-    if (include_katex):
+    if (include_latex):
         parser.register_callbacks('latex', quizcomp.latex.set_cli_args, quizcomp.latex.init_from_args)
 
     return typing.cast(argparse.ArgumentParser, parser)

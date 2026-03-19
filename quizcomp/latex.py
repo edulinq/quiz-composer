@@ -99,7 +99,7 @@ def _compile_docker(path: str) -> None:
     if (result.returncode != 0):
         raise ValueError(f"Docker compilation failed with exit code '{result.returncode}'. Stdout: '{result.stdout}', Stderr: '{result.stderr}'")
 
-def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, typing.Any]) -> argparse.ArgumentParser:
+def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, typing.Any]) -> None:
     """ Set LaTeX-related CLI options. """
 
     parser.add_argument('--pdflatex-bin-path', dest = 'pdflatex_bin_path',
@@ -113,9 +113,7 @@ def set_cli_args(parser: argparse.ArgumentParser, extra_state: typing.Dict[str, 
         help = ('Use Docker to compile PDFs with pdflatex.'
                 + f" The Docker image '{DOCKER_IMAGE}' will be used."))
 
-    return parser
-
-def init_from_args(parser: argparse.ArgumentParser, args: argparse.Namespace, extra_state: typing.Dict[str, typing.Any]) -> argparse.Namespace:
+def init_from_args(parser: argparse.ArgumentParser, args: argparse.Namespace, extra_state: typing.Dict[str, typing.Any]) -> None:
     """ Initialize this module from the CLI options set in set_cli_args(). """
 
     if (args.pdflatex_use_docker):
@@ -123,5 +121,3 @@ def init_from_args(parser: argparse.ArgumentParser, args: argparse.Namespace, ex
 
     if (args.pdflatex_bin_path is not None):
         set_pdflatex_bin_path(args.pdflatex_bin_path)
-
-    return args
