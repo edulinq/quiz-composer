@@ -32,7 +32,7 @@ class Project(quizcomp.util.serial.JSONSerializer):
         try:
             self.validate(cls = Project, **kwargs)
         except Exception as ex:
-            raise quizcomp.common.QuizValidationError("Error while validating project '%s' ('%s')." % (self.name, self._base_dir)) from ex
+            raise quizcomp.common.QuizValidationError(f"Error while validating project '{self.name}' ('{self._base_dir}').") from ex
 
     def _validate(self, **kwargs: typing.Any) -> None:
         """ Check if this project is valid. """
@@ -41,7 +41,7 @@ class Project(quizcomp.util.serial.JSONSerializer):
             raise quizcomp.common.QuizValidationError("Base directory cannot be empty.")
 
         if (not os.path.isdir(self._base_dir)):
-            raise quizcomp.common.QuizValidationError("Base directory '%s' does not exist or is not a directory." % (self._base_dir))
+            raise quizcomp.common.QuizValidationError(f"Base directory '{self._base_dir}' does not exist or is not a directory.")
 
     def find_resources(self) -> typing.Tuple[typing.List[str], typing.List[str]]:
         """
@@ -90,11 +90,11 @@ class Project(quizcomp.util.serial.JSONSerializer):
             self.to_path(os.path.join(self._base_dir, quizcomp.constants.PROJECT_FILENAME))
             return
 
-        edq.util.dirent.copy(self._base_dir, out_dir, symlinks = True, dirs_exist_ok = True)
+        edq.util.dirent.copy(self._base_dir, out_dir)
         self.to_path(os.path.join(out_dir, quizcomp.constants.PROJECT_FILENAME))
 
     @classmethod
-    def from_path(cls, path: str, **kwargs: typing.Any) -> 'Project':  # type: ignore[override]
+    def from_path(cls, path: str, **kwargs: typing.Any) -> 'Project':  # type: ignore[override] # pylint: disable=arguments-differ
         # If we are looking at a dir, assume the project file is directly inside.
         if (os.path.isdir(path)):
             path = os.path.join(path, quizcomp.constants.PROJECT_FILENAME)

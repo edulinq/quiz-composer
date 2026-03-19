@@ -1,7 +1,6 @@
 import html
 import logging
 import os
-import pathlib
 import shutil
 import typing
 import warnings
@@ -79,7 +78,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
     def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
         # Parse and format the XML.
-        text = super(QTITemplateConverter, self).convert_variant(variant, **kwargs)
+        text = super().convert_variant(variant, **kwargs)
         return self._format_xml(text)
 
     def modify_question_context(self,
@@ -108,7 +107,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
             os.makedirs(self.image_base_dir)
 
         path = os.path.join(quiz_dir, OUT_FILENAME_QUIZ)
-        text = super(QTITemplateConverter, self).convert_quiz(quiz, **kwargs)
+        text = super().convert_quiz(quiz, **kwargs)
         edq.util.dirent.write_file(path, self._format_xml(text))
 
         self._convert_assessment_meta(quiz, quiz_dir)
@@ -116,7 +115,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         self._create_zip(quiz, temp_out_path, out_path, temp_dir)
 
-        logging.info("Created QTI quiz at '%s'." % (out_path))
+        logging.info("Created QTI quiz at '%s'.", out_path)
         return path
 
     def _create_zip(self, quiz: quizcomp.quiz.Quiz, temp_out_path: str, out_path: str, temp_dir: str) -> None:
@@ -140,7 +139,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         quiz_context = quiz.to_dict()
 
         description_text = quiz.description.document.to_format(self.format)
-        description_text = "<p>%s</p><br /><hr /><p>Version: %s</p>" % (description_text, quiz.version)
+        description_text = f"<p>{description_text}</p><br /><hr /><p>Version: {quiz.version}</p>"
 
         if (self.canvas):
             description_text = html.escape(description_text)
@@ -167,7 +166,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
             'files': [],
         }
 
-        for (old_path, new_path) in self.image_paths.items():
+        for new_path in self.image_paths.values():
             data['files'].append({
                 'type': 'image',
                 'id': os.path.splitext(os.path.basename(new_path))[0],
@@ -188,7 +187,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         Note that this method should only be called when (self.canvas == True).
         """
 
-        path = super(QTITemplateConverter, self)._store_images(link, base_dir)
+        path = super()._store_images(link, base_dir)
 
         if (self.image_base_dir is None):
             raise ValueError("Missing image base dir.")

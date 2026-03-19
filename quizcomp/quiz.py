@@ -132,10 +132,10 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         elif (isinstance(self.date, str)):
             self.date = datetime.date.fromisoformat(self.date)
         else:
-            raise quizcomp.common.QuizValidationError("Date should be a string or datetime.date, found '%s'." % (str(type(self.date))))
+            raise quizcomp.common.QuizValidationError(f"Date should be a string or datetime.date, found '{str(type(self.date))}'.")
 
         for key in kwargs:
-            logging.warning("Unknown quiz option: '%s'." % (key))
+            logging.warning("Unknown quiz option: '%s'.", key)
 
     def _validate_time_limit(self) -> None:
         """ Validate the time limit component of this quiz. """
@@ -144,21 +144,21 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             return
 
         if (not isinstance(self.time_limit_mins, (str, int))):
-            raise quizcomp.common.QuizValidationError("Time limit must be a positive int, found '%s'." % (str(self.time_limit_mins)))
+            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
 
         try:
             self.time_limit_mins = int(self.time_limit_mins)
         except:
-            raise quizcomp.common.QuizValidationError("Time limit must be a positive int, found '%s'." % (str(self.time_limit_mins)))
+            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")  # pylint: disable=raise-missing-from
 
         if (self.time_limit_mins < 0):
-            raise quizcomp.common.QuizValidationError("Time limit must be a positive int, found '%s'." % (str(self.time_limit_mins)))
+            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
 
         if (self.time_limit_mins == 0):
             self.time_limit_mins = None
 
     @classmethod
-    def from_path(cls, path: str, **kwargs: typing.Any) -> 'Quiz':  # type: ignore[override]
+    def from_path(cls, path: str, **kwargs: typing.Any) -> 'Quiz':  # type: ignore[override] # pylint: disable=arguments-differ
         """ Construct a quiz from a JSON file. """
 
         # Check for a description file.
@@ -174,7 +174,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         return super().from_path(path, data_callback = _check_description_file, **kwargs)
 
     @staticmethod
-    def from_dict(  # type: ignore[override]
+    def from_dict(  # type: ignore[override] # pylint: disable=arguments-renamed
             quiz_info: typing.Dict[str, typing.Any],
             base_dir: str,
             flatten_groups: bool = False,
@@ -187,21 +187,21 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
 
         groups = []
         group_infos = quiz_info.get('groups', [])
-        for i in range(len(group_infos)):
+        for (i, group_info) in enumerate(group_infos):
             ids = ids.copy()
             ids['index'] = i
-            groups.append(quizcomp.group.Group.from_dict(group_infos[i], base_dir, ids = ids))
+            groups.append(quizcomp.group.Group.from_dict(group_info, base_dir, ids = ids))
 
         if (flatten_groups):
             new_groups = []
 
             for old_group in groups:
-                for i in range(len(old_group.questions)):
+                for question in old_group.questions:
                     info: typing.Dict[str, typing.Any] = {
                         'name': old_group.name,
                         'pick_count': 1,
                         'points': old_group.points,
-                        'questions': [old_group.questions[i]],
+                        'questions': [question],
                     }
 
                     new_groups.append(quizcomp.group.Group(**info))
@@ -260,8 +260,8 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         version = self.version
 
         if (identifier is not None):
-            title = "%s - %s" % (title, identifier)
-            version = "%s, Variant: %s" % (version, identifier)
+            title = f"{title} - {identifier}"
+            version = f"{version}, Variant: {identifier}"
 
         data = self.__dict__.copy()
 

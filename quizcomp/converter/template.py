@@ -142,8 +142,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         """ Convert a quiz or variant. """
 
         if (not isinstance(container, container_type)):
-            raise ValueError("Template %s converter requires a %s, found %s." % (
-                    container_label, str(container_type), type(container)))
+            raise ValueError(f"Template {container_label} converter requires a {container_type}, found {type(container)}.")
 
         _, inner_text = self.create_groups(container)
 
@@ -183,9 +182,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         result = []
         items = getattr(container, container_attr)
 
-        for index in range(len(items)):
-            item = items[index]
-
+        for (index, item) in enumerate(items):
             item_id = str(index)
             if (id_prefix is not None):
                 item_id = self.id_delim.join([id_prefix, item_id])
@@ -197,7 +194,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
                 question_number, text = item_creation_function(item_id, question_number, item, container)
                 result.append(text)
             except Exception as ex:
-                raise ValueError("Failed to convert %s %d (%s: %s)." % (label, index, item_id, item.name)) from ex
+                raise ValueError(f"Failed to convert {label} {index} ({item_id}: {item.name}).") from ex
 
         return question_number, "\n\n".join(result)
 
@@ -212,7 +209,9 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         data = group.to_dict()
         data['id'] = group_index
 
-        question_number, questions_text = self._create_item_collection(group, 'questions', 'question', question_number, self.create_question, id_prefix = group_index)
+        question_number, questions_text = self._create_item_collection(
+                group, 'questions', 'question', question_number, self.create_question,
+                id_prefix = group_index)
 
         context = {
             'quiz': quiz,
@@ -237,7 +236,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         question_type = question.question_type
         if (question_type not in self.answer_functions):
-            raise ValueError("Unsupported question type: '%s'." % (question_type))
+            raise ValueError(f"Unsupported question type: '{question_type}'.")
 
         data = question.to_dict()
         data['prompt_text'] = self._format_doc(question.prompt.document)
@@ -259,7 +258,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             'question': data,
         }
 
-        template_name = "%s.template" % (question_type)
+        template_name = f"{question_type}.template"
         template = self.env.get_template(template_name)
 
         context = self.modify_question_context(context, question, variant)
@@ -374,11 +373,15 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             new_rights = [rights[index] for index in right_indexes]
             rights = new_rights
 
-            new_matches = {left_indexes.index(old_left_index): right_indexes.index(old_right_index) for (old_left_index, old_right_index) in matches.items()}
+            new_matches = {
+                left_indexes.index(old_left_index): right_indexes.index(old_right_index)
+                for (old_left_index, old_right_index)
+                in matches.items()
+            }
             matches = new_matches
 
         # Augment the left and rights with more information for the template.
-        for left_index in range(len(lefts)):
+        for left_index in range(len(lefts)):  # pylint: disable=consider-using-enumerate
             right_index = matches[left_index]
 
             lefts[left_index] = {
@@ -394,7 +397,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
                 'solution_one_index': right_index + 1,
             }
 
-        for right_index in range(len(rights)):
+        for right_index in range(len(rights)):  # pylint: disable=consider-using-enumerate
             rights[right_index] = {
                 'id': self.id_delim.join([question_id, right_ids[right_index]]),
                 'text': rights[right_index]['text'],
@@ -436,8 +439,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         choices = []
 
-        for i in range(len(answers)):
-            answer = answers[i]
+        for (i, answer) in enumerate(answers):
             choice = self._create_answers_text_value(answer)
             choice['correct'] = answer.is_correct()
             choice['marker'] = string.ascii_uppercase[i]
@@ -468,13 +470,13 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         if (answer.type == quizcomp.constants.NUMERICAL_ANSWER_TYPE_EXACT):
             if (math.isclose(answer.margin, 0.0)):
-                content = "%s" % (str(answer.value))
+                content = str(answer.value)
             else:
-                content = "%s ± %f" % (str(answer.value), answer.margin)
+                content = f"{answer.value} ± {answer.margin}"
         elif (answer.type == quizcomp.constants.NUMERICAL_ANSWER_TYPE_RANGE):
-            content = "[%s, %s]" % (str(answer.min), str(answer.max))
+            content = f"[{answer.min}, {answer.max}]"
         elif (answer.type == quizcomp.constants.NUMERICAL_ANSWER_TYPE_PRECISION):
-            content = "%s (precision: %s)" % (str(answer.value), str(answer.precision))
+            content = f"{answer.value} (precision: {answer.precision})"
         else:
             raise ValueError(f"Unknown numerical answer type: '{answer.type}'.")
 
@@ -497,7 +499,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         answers = []
 
-        for key, items in question.answers.items():
+        for items in question.answers.values():
             answers.append({
                 'label': self._format_doc(items['key'].document),
                 'initial_label': items['key'].text,
@@ -640,7 +642,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             image_id = image_path
 
         ext = os.path.splitext(image_path)[-1]
-        filename = "%03d%s" % (len(self.image_paths), ext)
+        filename = f"{len(self.image_paths):03d}{ext}"
         out_path = os.path.join(self.image_base_dir, filename)
 
         edq.util.dirent.copy(image_path, out_path)

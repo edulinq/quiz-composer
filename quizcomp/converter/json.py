@@ -72,9 +72,7 @@ class JSONTemplateConverter(quizcomp.converter.template.TemplateConverter):
             ) -> typing.List[typing.Any]:
         """ Clean a questions answers that are in a list format. """
 
-        for i in range(len(answers)):
-            old_answer = answers[i]
-
+        for (i, old_answer) in enumerate(answers):
             if (not isinstance(old_answer, dict)):
                 old_answer = old_answer.to_pod()
 

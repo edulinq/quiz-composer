@@ -27,7 +27,7 @@ def make_with_args(
     """
 
     if ((args.variants < 1) or (args.variants >= len(string.ascii_uppercase))):
-        raise ValueError("Number of variants must be in [1, %d), found %d." % (len(string.ascii_uppercase), args.variants))
+        raise ValueError(f"Number of variants must be in [1, {len(string.ascii_uppercase)}), found {args.variants}.")
 
     return make_with_path(args.path, base_out_dir = args.out_dir, seed = args.seed, num_variants = args.variants,
             skip_key = args.skip_key, skip_tex = args.skip_tex, skip_pdf = args.skip_pdf,
@@ -57,7 +57,7 @@ def make_from_question_with_args(
     """
 
     if ((args.variants < 1) or (args.variants >= len(string.ascii_uppercase))):
-        raise ValueError("Number of variants must be in [1, %d), found %d." % (len(string.ascii_uppercase), args.variants))
+        raise ValueError(f"Number of variants must be in [1, {len(string.ascii_uppercase)}), found {args.variants}.")
 
     return make_from_question_with_path(args.path,
             base_out_dir = args.out_dir, seed = args.seed, num_variants = args.variants,
@@ -140,7 +140,7 @@ def make(
         variant = quiz.create_variant(identifier = variant_id, seed = variant_seed)
         variants.append(variant)
 
-        out_path = os.path.join(out_dir, "%s.json" % (variant.title))
+        out_path = os.path.join(out_dir, f"{variant.title}.json")
         edq.util.dirent.write_file(out_path, variant.to_json())
 
         make_pdf(variant, out_dir = out_dir, is_key = False, skip_tex = skip_tex, skip_pdf = skip_pdf)
@@ -151,10 +151,10 @@ def make(
         has_key = False
         if (not skip_key):
             try:
-                variant.title = "%s -- Answer Key" % (title)
+                variant.title = f"{title} -- Answer Key"
                 make_pdf(variant, out_dir = out_dir, is_key = True, skip_tex = skip_tex, skip_pdf = skip_pdf)
                 has_key = True
-            except Exception as ex:
+            except Exception:
                 logging.warning("Failed to generate answer key for '%s'.", title)
                 logging.debug(traceback.format_exc())
             finally:
@@ -173,8 +173,7 @@ def make(
 
     if (write_options):
         path = os.path.join(out_dir, OPTIONS_FILENAME)
-        with open(path, 'w') as file:
-            edq.util.json.dump(options, file, indent = 4)
+        edq.util.json.dump_path(options, path, indent = 4)
 
     return (quiz, variants, options)
 
@@ -193,7 +192,7 @@ def make_pdf(
     image_relative_root = os.path.join('images', variant.title)
     image_dir = os.path.join(out_dir, image_relative_root)
 
-    out_path = os.path.join(out_dir, "%s.tex" % (variant.title))
+    out_path = os.path.join(out_dir, f"{variant.title}.tex")
 
     if (not skip_tex):
         converter = quizcomp.converter.tex.TexTemplateConverter(answer_key = is_key,

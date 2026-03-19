@@ -42,7 +42,7 @@ def get_converter_class(format: str = quizcomp.constants.FORMAT_JSON) -> typing.
     elif (format == quizcomp.constants.FORMAT_JSON_TEMPLATE):
         return quizcomp.converter.json.JSONTemplateConverter
     else:
-        raise ValueError("No known converter for format '%s'." % (format))
+        raise ValueError(f"No known converter for format '{format}'.")
 
 def get_converter(format: str = quizcomp.constants.FORMAT_JSON, **kwargs: typing.Any) -> quizcomp.converter.converter.Converter:
     """ Get the converter for the specified format. """
@@ -65,7 +65,7 @@ def convert_variant(
         converter_args = {}
 
     if (not isinstance(variant, quizcomp.variant.Variant)):
-        raise ValueError("convert_variant() requires a quizcomp.variant.Variant type, found %s." % (type(variant)))
+        raise ValueError(f"convert_variant() requires a quizcomp.variant.Variant type, found {type(variant)}.")
 
     converter = get_converter(format = format, **constructor_args)
     return converter.convert_variant(variant, **converter_args)

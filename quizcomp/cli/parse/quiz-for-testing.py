@@ -26,19 +26,19 @@ def run_cli(args: argparse.Namespace) -> int:
 
     for quiz_format in args.formats:
         if (quiz_format not in quizcomp.converter.convert.SUPPORTED_FORMATS):
-            raise ValueError("Unknown quiz format '%s', must be one of: [%s]." % (quiz_format, ', '.join(quizcomp.converter.convert.SUPPORTED_FORMATS)))
+            raise ValueError(f"Unknown quiz format '{quiz_format}', must be one of: {quizcomp.converter.convert.SUPPORTED_FORMATS}.")
 
     seed = args.seed
     if (seed is None):
         seed = random.randint(0, 2**64)
 
-    print("Parsing quiz: '%s'." % (args.path))
+    print(f"Parsing quiz: '{args.path}'.")
 
     quiz = quizcomp.quiz.Quiz.from_path(args.path, flatten_groups = args.flatten_groups)
-    variant = quiz.create_variant(all_questions = args.flatten_groups, seed = seed)
+    variant = quiz.create_variant(all_questions = args.flatten_groups, seed = seed)  # pylint: disable=no-member
 
     for quiz_format in args.formats:
-        print("Generating quiz content for '%s'." % (quiz_format))
+        print(f"Generating quiz content for '{quiz_format}'.")
         quizcomp.converter.convert.convert_variant(variant, format = quiz_format,
                 constructor_args = {'answer_key': args.answer_key})
 

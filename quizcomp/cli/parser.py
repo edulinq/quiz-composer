@@ -59,7 +59,8 @@ def add_out_arg(
         help = ('The path specifying where to put the output.'
                 + f' If the path points to an existing dir, the result will be written to `<{name}>/{default_filename}`.'
                 + ' If the path point to an existing file, the file will be overwritten with the result.'
-                + ' If the path points to a non-existing dir (denoted with a trailing path separator (e.g., slash)), the dir will be created and the output will be written as it is to an existing dir.'
+                + ' If the path points to a non-existing dir (denoted with a trailing path separator (e.g., slash)),'
+                + ' the dir will be created and the output will be written as it is to an existing dir.'
                 + ' Finally if the path does not exist, the result will be written to the full path (creating any parent directories along the way).'
                 + ' (default: %(default)s).'))
 

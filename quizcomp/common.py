@@ -21,7 +21,7 @@ class QuizValidationError(ValueError):
             parsed_ids[str(key)] = value
 
         if (len(parsed_ids) > 0):
-            message = "%s %s" % (message, edq.util.json.dumps(parsed_ids))
+            message = f"{message} {edq.util.json.dumps(parsed_ids)}"
 
         super().__init__(message)
 

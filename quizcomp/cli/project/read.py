@@ -15,15 +15,15 @@ def run_cli(args: argparse.Namespace) -> int:
 
     quizzes, questions = project.load_resources()
 
-    print("Found %d quizzes." % (len(quizzes)))
+    print(f"Found {len(quizzes)} quizzes.")
     for (path, quiz) in quizzes:
-        print("    %s (%s)" % (path, quiz.title))
+        print(f"    {path} ({quiz.title})")
 
-    print("Found %d question." % (len(questions)))
+    print(f"Found {len(questions)} question.")
     for (path, question) in questions:
-        text = "    %s" % (path)
+        text = f"    {path}"
         if (question.name != ''):
-            text += " (%s)" % (question.name)
+            text += f" ({question.name})"
 
         print(text)
 

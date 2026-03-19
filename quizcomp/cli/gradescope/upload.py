@@ -26,13 +26,11 @@ def run_cli(args: argparse.Namespace) -> int:
         'user': args.user,
     }
 
-    for i in range(len(variants)):
-        variant = variants[i]
-
+    for (i, variant) in enumerate(variants):
         uploader = quizcomp.uploader.gradescope.GradeScopeUploader(args.course_id, args.user, args.password,
                 force = args.force, rubric = args.rubric,
                 save_http = args.save_http)
-        gradescope_id, created = uploader.upload_quiz(variant, base_dir = out_dir)
+        gradescope_id, _ = uploader.upload_quiz(variant, base_dir = out_dir)
 
         options['variants'][i]['gradescope_id'] = gradescope_id
 
@@ -46,8 +44,7 @@ def run_cli(args: argparse.Namespace) -> int:
         logging.info("Created GradeScope Assignment Group: '%s'.", quiz.title)
 
     path = os.path.join(out_dir, quizcomp.pdf.OPTIONS_FILENAME)
-    with open(path, 'w') as file:
-        edq.util.json.dump(options, file, indent = 4)
+    edq.util.json.dump_path(options, path, indent = 4)
 
     return 0
 

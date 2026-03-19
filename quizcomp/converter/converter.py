@@ -19,8 +19,6 @@ class Converter(abc.ABC):
     def convert_variant(self, variant: quizcomp.variant.Variant, **kwargs: typing.Any) -> str:
         """ Convert the given variant to the converter's target format and return the converted artifact. """
 
-        pass
-
     def convert_question(self, question: quizcomp.question.base.Question, **kwargs: typing.Any) -> str:
         """
         Convert a single question using a dummy quiz layout.

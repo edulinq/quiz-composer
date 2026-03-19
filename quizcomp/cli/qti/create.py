@@ -22,7 +22,7 @@ def run_cli(args: argparse.Namespace) -> int:
 
     quiz = quizcomp.quiz.Quiz.from_path(args.path)
 
-    out_path = quizcomp.cli.parser.resolve_out_arg(args.out, f'{quiz.title}.qti.zip')
+    out_path = quizcomp.cli.parser.resolve_out_arg(args.out, f'{quiz.title}.qti.zip')  # pylint: disable=no-member
 
     converter = quizcomp.converter.qti.QTITemplateConverter(canvas = args.canvas)
     converter.convert_quiz(quiz, out_path = out_path)
