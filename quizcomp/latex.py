@@ -5,21 +5,21 @@ import shutil
 import subprocess
 import typing
 
-_pdflatex_bin_path: typing.Union[str, None] = None
-_pdflatex_use_docker: bool = False
+_pdflatex_bin_path: typing.Union[str, None] = None  # pylint: disable=invalid-name
+_pdflatex_use_docker: bool = False  # pylint: disable=invalid-name
 
 DOCKER_IMAGE: str = "ghcr.io/edulinq/pdflatex-docker:1.0.0"
 
 def set_pdflatex_bin_path(path: str) -> None:
     """ Set the binary path to use for NodeJS (node). """
 
-    global _pdflatex_bin_path
+    global _pdflatex_bin_path  # pylint: disable=global-statement
     _pdflatex_bin_path = path
 
 def set_pdflatex_use_docker(pdflatex_use_docker: bool) -> None:
     """ Set whether or not to use the pdflatex Docker container. """
 
-    global _pdflatex_use_docker
+    global _pdflatex_use_docker  # pylint: disable=global-statement
     _pdflatex_use_docker = pdflatex_use_docker
 
 def is_available() -> bool:
@@ -47,7 +47,7 @@ def _is_docker_available() -> bool:
     if (shutil.which('docker') is None):
         return False
 
-    result = subprocess.run(["docker", "info"], stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
+    result = subprocess.run(["docker", "info"], stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL, check = False)
     return (result.returncode == 0)
 
 def compile(path: str) -> None:
@@ -78,7 +78,7 @@ def _compile_local(path: str) -> None:
     # Need to compile twice to get positioning information.
     for _ in range(2):
         result = subprocess.run([bin_path, '-interaction=nonstopmode', tex_filename],
-                                cwd = out_dir, text = True, capture_output = True)
+                                cwd = out_dir, text = True, capture_output = True, check = False)
         if (result.returncode != 0):
             raise ValueError(f"pdflatex did not exit cleanly. Stdout: '{result.stdout}', Stderr: '{result.stderr}'")
 
@@ -95,7 +95,7 @@ def _compile_docker(path: str) -> None:
         tex_filename
     ]
 
-    result = subprocess.run(docker_cmd, capture_output = True, text = True)
+    result = subprocess.run(docker_cmd, capture_output = True, text = True, check = False)
     if (result.returncode != 0):
         raise ValueError(f"Docker compilation failed with exit code '{result.returncode}'. Stdout: '{result.stdout}', Stderr: '{result.stderr}'")
 

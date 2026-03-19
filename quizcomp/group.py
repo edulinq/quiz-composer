@@ -10,6 +10,11 @@ import quizcomp.question.base
 import quizcomp.util.serial
 
 class Group(quizcomp.util.serial.JSONSerializer):
+    """
+    A group/bank of questions for a quiz.
+    Questions can be grouped together and then a subset can be randomly chosen to create variety in quizzes.
+    """
+
     def __init__(self,
             name: str = '',
             pick_count: int = 1,
@@ -98,7 +103,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
             self.hints_last = {}
 
         if (not isinstance(self.questions, list)):
-            raise quizcomp.common.QuizValidationError("Questions must be a non-empty list, found: '%s'." % (str(self.questions)))
+            raise quizcomp.common.QuizValidationError(f"Questions must be a non-empty list, found: {self.questions}.")
 
         if (len(self.questions) == 0):
             raise quizcomp.common.QuizValidationError("Questions must be non-empty.")
@@ -107,8 +112,8 @@ class Group(quizcomp.util.serial.JSONSerializer):
             question.inherit_from_group(self)
 
         if (self.pick_count > len(self.questions)):
-            logging.warning("Group '%s' was asked to pick more questions than available (pick_count: %d, group size: %d)." % (
-                    self.name, self.pick_count, len(self.questions)))
+            logging.warning("Group '%s' was asked to pick more questions than available (pick_count: %d, group size: %d).",
+                    self.name, self.pick_count, len(self.questions))
             self.pick_count = len(self.questions)
 
     def collect_file_paths(self) -> typing.List[str]:
@@ -122,7 +127,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
         return paths
 
     @staticmethod
-    def from_dict(group_info: typing.Dict[str, typing.Any], base_dir: str, **kwargs: typing.Any) -> 'Group':  # type: ignore[override]
+    def from_dict(group_info: typing.Dict[str, typing.Any], base_dir: str, **kwargs: typing.Any) -> 'Group':  # type: ignore[override] # pylint: disable=arguments-differ
         """ Construct a group from a dict. """
 
         group_info = group_info.copy()
@@ -151,8 +156,8 @@ class Group(quizcomp.util.serial.JSONSerializer):
         """ Choose a list of questions to use for an instantiated variant of this group. """
 
         if ((self.pick_count == 0) or (len(self.questions) == 0)):
-            logging.warning("Group '%s' will select no questions (pick_count: %d, group size: %d)." % (
-                    self.name, self.pick_count, len(self.questions)))
+            logging.warning("Group '%s' will select no questions (pick_count: %d, group size: %d).",
+                    self.name, self.pick_count, len(self.questions))
             return []
 
         with_replacement = (self.pick_with_replacement and with_replacement)
@@ -169,8 +174,8 @@ class Group(quizcomp.util.serial.JSONSerializer):
 
         # Rename questions if there are more than one.
         if (len(questions) > 1):
-            for i in range(len(questions)):
-                questions[i].name = "%s - %d" % (self.name, i + 1)
+            for (i, question) in enumerate(questions):
+                question.name = f"{self.name} - {i + 1}"
 
         # Inherit position-specific hints.
         questions[0].add_hints(self.hints_first)
@@ -191,7 +196,7 @@ class Group(quizcomp.util.serial.JSONSerializer):
             indexes = list(set(indexes) - self._used_question_indexes)
 
             if (count > len(indexes)):
-                logging.warning("Group '%s' does not have enough questions to pick without replacement." % (self.name))
+                logging.warning("Group '%s' does not have enough questions to pick without replacement.", self.name)
                 # Reset the selection pool.
                 indexes = list(range(len(self.questions)))
                 self._used_question_indexes = set()

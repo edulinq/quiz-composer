@@ -1,3 +1,5 @@
+# pylint: disable=invalid-name
+
 """
 Parse a quiz for the purposes of testing.
 The quiz will be parsed one and content will be generated for (but not output)

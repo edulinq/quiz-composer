@@ -8,7 +8,7 @@ import quizcomp.constants
 import quizcomp.katex
 import quizcomp.parser.common
 
-_katex_available: typing.Union[bool, None] = None
+_katex_available: typing.Union[bool, None] = None  # pylint: disable=invalid-name
 
 def render(
         format: str,
@@ -48,7 +48,7 @@ def _render_tex(text: str, inline: bool, context: typing.Dict[str, typing.Any]) 
 def _render_html(text: str, inline: bool, context: typing.Dict[str, typing.Any]) -> str:
     """ Render the given token content as HTML. """
 
-    global _katex_available
+    global _katex_available  # pylint: disable=global-statement
 
     if (_katex_available is None):
         _katex_available = quizcomp.katex.is_available()

@@ -10,7 +10,7 @@ import edq.util.json
 
 import quizcomp.common
 
-POD: typing.TypeAlias = typing.Union[bool, float, int, str, typing.List['POD'], typing.Dict[str, 'POD']]
+POD: typing.TypeAlias = typing.Union[bool, float, int, str, typing.List['POD'], typing.Dict[str, 'POD']]  # pylint: disable=invalid-name
 """ A "Plain Old Data" type that can be easily represented (e.g. in JSON). """
 
 UNKNOWN_TYPE: str = '_unknown_'

@@ -44,12 +44,10 @@ class Variant(quizcomp.quiz.Quiz):
         """ Check if this variant is valid, will raise if the group is not valid. """
 
         # Ensure that each group has the correct number of questions.
-        for i in range(len(self.groups)):
-            group = self.groups[i]
-
+        for (i, group) in enumerate(self.groups):
             if (len(group.questions) != group.pick_count):
                 raise quizcomp.common.QuizValidationError(
-                        "Group at index {i} ('{group.name}') has {len(group.questions)} questions, expecting exactly {group.pick_count}.")
+                        f"Group at index {i} ('{group.name}') has {len(group.questions)} questions, expecting exactly {group.pick_count}.")
 
     @staticmethod
     def get_dummy(question: quizcomp.question.base.Question) -> 'Variant':

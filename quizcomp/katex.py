@@ -5,18 +5,18 @@ import shutil
 import subprocess
 import typing
 
-_nodejs_bin_dir: typing.Union[str, None] = None
+_nodejs_bin_dir: typing.Union[str, None] = None  # pylint: disable=invalid-name
 
 def set_nodejs_bin_dir(path: str) -> None:
     """ Set the binary path to use for NodeJS (node). """
 
-    global _nodejs_bin_dir
+    global _nodejs_bin_dir  # pylint: disable=global-statement
     _nodejs_bin_dir = path
 
 def _has_command(command: str, cwd: str = '.') -> bool:
     """ Check if the given command is found on the current shell. """
 
-    result = subprocess.run(["which", command], cwd = cwd, capture_output = True)
+    result = subprocess.run(["which", command], cwd = cwd, capture_output = True, check = False)
     return (result.returncode == 0)
 
 def _has_package(package: str, cwd: str = '.') -> bool:
@@ -26,7 +26,7 @@ def _has_package(package: str, cwd: str = '.') -> bool:
     if (_nodejs_bin_dir is not None):
         bin_path = os.path.join(_nodejs_bin_dir, bin_path)
 
-    result = subprocess.run([bin_path, "list", package], cwd = cwd, capture_output = True)
+    result = subprocess.run([bin_path, "list", package], cwd = cwd, capture_output = True, check = False)
     return (result.returncode == 0)
 
 def is_available(cwd: str = '.') -> bool:
@@ -50,8 +50,8 @@ def to_html(text: str, cwd: str = '.') -> str:
         bin_path = os.path.join(_nodejs_bin_dir, bin_path)
 
     result = subprocess.run([bin_path, "katex", "--format", "mathml"], cwd = cwd,
-        input = text, text = True,
-        capture_output = True)
+        input = text, text = True, capture_output = True,
+        check = False)
 
     if (result.returncode != 0):
         raise ValueError(f"KaTeX did not exit cleanly. Stdout: '{result.stdout}', Stderr: '{result.stderr}'")
