@@ -8,6 +8,7 @@ import quizcomp.constants
 import quizcomp.group
 import quizcomp.parser.public
 import quizcomp.uploader.canvas
+import quizcomp.uploader.google_forms
 import quizcomp.util.dirent
 import quizcomp.util.git
 import quizcomp.util.serial
@@ -27,6 +28,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             base_dir = '.',
             version = None, seed = None,
             canvas = {},
+            google_forms = {},
             ids = {},
             **kwargs):
         super().__init__(**kwargs)
@@ -54,6 +56,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         self._rng = random.Random(self.seed)
 
         self.canvas = canvas.copy()
+        self.google_forms = google_forms.copy()
 
         try:
             self.validate(cls = Quiz, **kwargs)
@@ -77,6 +80,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
                 logging.warning("Could not get a version for the quiz (is it in a git repo?).")
 
         self.canvas = quizcomp.uploader.canvas.validate_options(self.canvas)
+        self.google_forms = quizcomp.uploader.google_forms.validate_options(self.google_forms)
 
         self._validate_time_limit()
 
