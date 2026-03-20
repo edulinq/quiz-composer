@@ -1,0 +1,66 @@
+{
+    "answer_key": false,
+    "groups": [
+        {
+            "group": {
+                "custom_header": null,
+                "hints": {},
+                "hints_first": {},
+                "hints_last": {},
+                "id": "0",
+                "name": "mcq-basic",
+                "pick_count": 1,
+                "pick_with_replacement": true,
+                "points": 10,
+                "shuffle_answers": true,
+                "skip_numbering": null
+            },
+            "questions": [
+                {
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "A"
+                        },
+                        {
+                            "correct": false,
+                            "text": "B"
+                        },
+                        {
+                            "correct": false,
+                            "text": "C"
+                        },
+                        {
+                            "correct": false,
+                            "text": "D"
+                        }
+                    ],
+                    "base_dir": "questions/good/mcq-basic",
+                    "custom_header": null,
+                    "hints": {},
+                    "id": "0.0",
+                    "name": "mcq-basic",
+                    "number": 1,
+                    "points": 10,
+                    "prompt": "Multiple Choice: Basic",
+                    "question_type": "multiple_choice",
+                    "shuffle_answers": true,
+                    "skip_numbering": null
+                }
+            ]
+        }
+    ],
+    "quiz": {
+        "course_title": "",
+        "date": "2026-03-21",
+        "description": "A minimal sample quiz used for Google Forms uploader tests.",
+        "pick_with_replacement": true,
+        "seed": 0,
+        "shuffle_answers": false,
+        "term_title": "",
+        "time_limit_mins": null,
+        "title": "Google Forms Basic Quiz",
+        "total_points": 10,
+        "version": "test"
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "title": "Google Forms Basic Quiz",
+    "date": "2026-03-21",
+    "description": "A minimal sample quiz used for Google Forms uploader tests.",
+    "shuffle_answers": false,
+    "google_forms": {
+        "published": true,
+        "shuffle_questions": false,
+        "collect_email": false,
+        "one_response_per_user": false,
+        "matching_style": "grid"
+    },
+    "groups": [
+        {
+            "name": "mcq-basic",
+            "questions": [
+                "../../../questions/good/mcq-basic"
+            ]
+        }
+    ]
+}
