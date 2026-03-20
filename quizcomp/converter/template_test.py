@@ -1,21 +1,23 @@
+import glob
 import os
 import re
+import typing
 
 import edq.util.json
 
 import quizcomp.constants
 import quizcomp.converter.convert
 import quizcomp.quiz
-import tests.base
+import quizcomp.testing.base
 
-EXPECTED_FILENAME = 'expected.json'
+EXPECTED_FILENAME: str = 'expected.json'
 
-class TestTemplateConversion(tests.base.BaseTest):
+class TestTemplateConversion(quizcomp.testing.base.BaseTest):
     """
-    Test template conversion.
+    Test template conversions.
     """
 
-    def _assert_exists_replace(self, container, key, replacement):
+    def _assert_exists_replace(self, container: typing.Dict[str, typing.Any], key: str, replacement: typing.Any) -> typing.Any:
         """
         Ensure a value exists (and is not None), and then replace it.
         The old value will be returned.
@@ -28,23 +30,20 @@ class TestTemplateConversion(tests.base.BaseTest):
 
         return value
 
-def _add_good_convert_questions():
-    for quiz_path in tests.base.discover_good_quiz_files():
-        test_name = _make_name('good_convert', quiz_path)
-        setattr(TestTemplateConversion, test_name, _get_good_convert_test(quiz_path))
+def _add_good_convert_questions() -> None:
+    """ Add test cases for converting quizzes via templates. """
 
-def _get_good_convert_test(quiz_path):
-    """
-    That that the tests here rely on the `quizcomp.converter.json.JSONTemplateConverter` converter.
-    This is not meant for production use and may not have full functionality.
-    The main difficulty it has is when converting answers to an easy format for testing.
-    As more tests are developed, this conversion may need to be adjusted to better test different aspects,
-    e.g., feedback is currently ignored when converting answers.
-    """
+    glob_path = os.path.join(quizcomp.testing.base.GOOD_QUIZZES_DIR, "**", quizcomp.constants.QUIZ_FILENAME)
+    paths = sorted(glob.glob(glob_path, recursive = True))
+    for path in paths:
+        test_name = _make_name('good_convert', path)
+        setattr(TestTemplateConversion, test_name, _get_good_convert_test(path))
 
-    def __method(self):
-        base_dir = os.path.dirname(quiz_path)
-        name = os.path.basename(base_dir)
+def _get_good_convert_test(path: str) -> typing.Callable:
+    """ Get a test method for converting a good quiz. """
+
+    def __method(self) -> None:
+        base_dir = os.path.dirname(path)
 
         expected_path = os.path.join(base_dir, EXPECTED_FILENAME)
         if (not os.path.exists(expected_path)):
@@ -52,10 +51,8 @@ def _get_good_convert_test(quiz_path):
 
         expected = edq.util.json.load_path(expected_path)
 
-        quizcomp.converter.convert
-
-        quiz = quizcomp.quiz.Quiz.from_path(quiz_path)
-        variant = quiz.create_variant()
+        quiz = quizcomp.quiz.Quiz.from_path(path)
+        variant = quiz.create_variant()  # pylint: disable=no-member
         raw_result = quizcomp.converter.convert.convert_variant(variant, format = quizcomp.constants.FORMAT_JSON_TEMPLATE)
 
         result = edq.util.json.loads(raw_result)
@@ -68,7 +65,7 @@ def _get_good_convert_test(quiz_path):
         for group in result['groups']:
             for question in group['questions']:
                 base_dir = self._assert_exists_replace(question, 'base_dir', '')
-                rel_dir = os.path.relpath(base_dir, tests.base.TESTS_DIR)
+                rel_dir = os.path.relpath(base_dir, quizcomp.testing.base.TESTDATA_DIR)
                 question['base_dir'] = rel_dir
 
         # Convert the paths in the expected output to the system path separator.
@@ -80,15 +77,21 @@ def _get_good_convert_test(quiz_path):
 
     return __method
 
-def _add_bad_validate_questions():
-    for quiz_path in tests.base.discover_bad_quiz_files():
-        test_name = _make_name('bad_validate', quiz_path)
-        setattr(TestTemplateConversion, test_name, _get_bad_validate_test(quiz_path))
+def _add_bad_validate_questions() -> None:
+    """ Add test cases for failing to convert quizzes. """
 
-def _get_bad_validate_test(quiz_path):
-    def __method(self):
+    glob_path = os.path.join(quizcomp.testing.base.BAD_QUIZZES_DIR, "**", quizcomp.constants.QUIZ_FILENAME)
+    paths = sorted(glob.glob(glob_path, recursive = True))
+    for path in paths:
+        test_name = _make_name('bad_validate', path)
+        setattr(TestTemplateConversion, test_name, _get_bad_validate_test(path))
+
+def _get_bad_validate_test(path: str) -> typing.Callable:
+    """ Get a test method for failing to ceate a quiz. """
+
+    def __method(self) -> None:
         try:
-            quiz = quizcomp.quiz.Quiz.from_path(quiz_path)
+            quizcomp.quiz.Quiz.from_path(path)
         except Exception:
             # Expected.
             return
@@ -97,18 +100,15 @@ def _get_bad_validate_test(quiz_path):
 
     return __method
 
-def _make_name(prefix, path):
+def _make_name(prefix: str, path: str) -> str:
     dirname = os.path.basename(os.path.dirname(path))
-    dirname = _clean_name_part(dirname)
+    dirname = quizcomp.testing.base.clean_name_part(dirname)
 
-    return "test_%s__%s" % (prefix, dirname)
+    return f"test_{prefix}__{dirname}"
 
-def _clean_name_part(text):
-    clean_text = text.lower().strip().replace(' ', '_')
-    clean_text = re.sub(r'\W+', '', clean_text)
-    return clean_text
+def _apply_text_options(options: typing.Dict[str, typing.Any], a: str, b: str) -> typing.Tuple[str, str]:
+    """ Apply a test option to text. """
 
-def _apply_text_options(options, a, b):
     if (options.get("ignore-whitespace", False)):
         a = re.sub(r'\s+', '', a)
         b = re.sub(r'\s+', '', b)

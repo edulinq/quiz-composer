@@ -40,7 +40,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             title: str = '',
             course_title: str = '',
             term_title: str = '',
-            description: typing.Union[str, None] = '',
+            description: typing.Union[str, quizcomp.parser.public.ParsedText, None] = '',
             date: typing.Union[str, datetime.date] = '',
             time_limit_mins: typing.Union[int, None] = None,
             shuffle_answers: bool = True,
@@ -69,7 +69,14 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         self.description: quizcomp.parser.public.ParsedText = quizcomp.parser.public.parse_text('')
         """ The description/prompt for this quiz. """
 
-        self._raw_description: typing.Union[str, None] = description
+        if (description is None):
+            description = ''
+
+        if (isinstance(description, quizcomp.parser.public.ParsedText)):
+            self.description = description
+            description = description.text
+
+        self._raw_description: str = description
         """ The raw text for the description. """
 
         self.time_limit_mins: typing.Union[int, None] = time_limit_mins

@@ -2,7 +2,6 @@ import glob
 import os
 import typing
 
-import edq.testing.unittest
 import edq.util.json
 
 import quizcomp.common
@@ -23,7 +22,7 @@ _test_canvas_instance: quizcomp.uploader.canvas.InstanceInfo = quizcomp.uploader
     testing = True,
 )
 
-class QuestionsTest(edq.testing.unittest.BaseTest):
+class QuestionsTest(quizcomp.testing.base.BaseTest):
     """
     Test parsing/generating all questions in the 'testsdata/questions/good' directory.
     A 'question.json' indicates a question that should be parsed.
