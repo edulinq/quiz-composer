@@ -8,3 +8,6 @@ mdformat>=0.7.19
 mdformat_tables>=1.0.0
 mdit-py-plugins>=0.4.2
 requests>=2.31.0
+google-auth>=2.22.0
+google-auth-oauthlib>=1.1.0
+google-api-python-client>=2.100.0
