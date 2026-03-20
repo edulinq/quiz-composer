@@ -12,9 +12,9 @@ import quizcomp.testing.base
 
 EXPECTED_FILENAME: str = 'expected.json'
 
-class TestTemplateConversion(quizcomp.testing.base.BaseTest):
+class TestQuizConverter(quizcomp.testing.base.BaseTest):
     """
-    Test template conversions.
+    Test converting quizzes.
     """
 
     def _assert_exists_replace(self, container: typing.Dict[str, typing.Any], key: str, replacement: typing.Any) -> typing.Any:
@@ -37,7 +37,7 @@ def _add_good_convert_questions() -> None:
     paths = sorted(glob.glob(glob_path, recursive = True))
     for path in paths:
         test_name = _make_name('good_convert', path)
-        setattr(TestTemplateConversion, test_name, _get_good_convert_test(path))
+        setattr(TestQuizConverter, test_name, _get_good_convert_test(path))
 
 def _get_good_convert_test(path: str) -> typing.Callable:
     """ Get a test method for converting a good quiz. """
@@ -84,7 +84,7 @@ def _add_bad_validate_questions() -> None:
     paths = sorted(glob.glob(glob_path, recursive = True))
     for path in paths:
         test_name = _make_name('bad_validate', path)
-        setattr(TestTemplateConversion, test_name, _get_bad_validate_test(path))
+        setattr(TestQuizConverter, test_name, _get_bad_validate_test(path))
 
 def _get_bad_validate_test(path: str) -> typing.Callable:
     """ Get a test method for failing to ceate a quiz. """
