@@ -70,7 +70,7 @@ def _add_good_question_test(path: str) -> None:
 def _get_question_parse_test_method(path: str) -> typing.Callable:
     """ Get a test for just parsing a question file. """
 
-    def __method(self) -> None:
+    def __method(self: QuestionsTest) -> None:
         question = quizcomp.question.base.Question.from_path(path)
         self.assertIsNotNone(question)
 
@@ -79,7 +79,7 @@ def _get_question_parse_test_method(path: str) -> typing.Callable:
 def _get_question_reparse_test_method(path: str) -> typing.Callable:
     """ Get a test for parsing a question file, converting the question to a dict, then re-parsing the same question. """
 
-    def __method(self) -> None:
+    def __method(self: QuestionsTest) -> None:
         question = quizcomp.question.base.Question.from_path(path)
         question_data = question.to_dict()
 
@@ -93,7 +93,7 @@ def _get_question_reparse_test_method(path: str) -> typing.Callable:
 def _get_question_canvas_test_method(path: str, canvas_path: str) -> typing.Callable:
     """ Get a test for reprsenting a question in a Canvas API format. """
 
-    def __method(self) -> None:
+    def __method(self: QuestionsTest) -> None:
         question = quizcomp.question.base.Question.from_path(path)
         canvas_info = quizcomp.uploader.canvas._create_question_json(CANVAS_TEST_GROUP_ID, question, CANVAS_TEST_INDEX, _test_canvas_instance)
 
@@ -114,7 +114,7 @@ def _add_bad_question_test(path: str) -> None:
 def _get_question_bad_test_method(path: str) -> typing.Callable:
     """ Get a test for failing to parse a question. """
 
-    def __method(self):
+    def __method(self: QuestionsTest) -> None:
         with self.assertRaises(quizcomp.common.QuizValidationError):
             quizcomp.question.base.Question.from_path(path)
 

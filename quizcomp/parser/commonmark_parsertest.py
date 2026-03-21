@@ -45,7 +45,7 @@ def _add_commonmark_tests() -> None:
 def _get_commonmark_test(text: str, format: str) -> typing.Callable:
     """ Get a test method. """
 
-    def __method(self):
+    def __method(self: TestCommonMark) -> None:
         parsed_text = quizcomp.parser.public.parse_text(text)
 
         options = {

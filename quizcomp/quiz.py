@@ -36,7 +36,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
     """
 
     def __init__(self,
-            type = quizcomp.constants.TYPE_QUIZ,
+            type: str = quizcomp.constants.TYPE_QUIZ,
             title: str = '',
             course_title: str = '',
             term_title: str = '',
@@ -184,7 +184,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         """ Construct a quiz from a JSON file. """
 
         # Check for a description file.
-        def _check_description_file(path, data):
+        def _check_description_file(path: str, data: typing.Dict[str, typing.Any]) -> typing.Dict[str, typing.Any]:
             description_filename = os.path.splitext(os.path.basename(path))[0]
             description_path = os.path.join(os.path.dirname(path), description_filename + '.md')
             if (os.path.exists(description_path)):
@@ -193,7 +193,8 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
 
             return data
 
-        return super().from_path(path, data_callback = _check_description_file, **kwargs)
+        quiz: 'Quiz' = super().from_path(path, data_callback = _check_description_file, **kwargs)
+        return quiz
 
     @staticmethod
     def from_dict(  # type: ignore[override] # pylint: disable=arguments-renamed
@@ -321,7 +322,7 @@ class Variant(Quiz):
     """
 
     def __init__(self,
-            type = quizcomp.constants.TYPE_VARIANT,
+            type: str = quizcomp.constants.TYPE_VARIANT,
             **kwargs: typing.Any) -> None:
         super().__init__(type = type, **kwargs)
         self.validate(cls = Variant, **kwargs)

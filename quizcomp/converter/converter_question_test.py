@@ -21,7 +21,7 @@ class TestQuestionConverter(quizcomp.testing.base.BaseTest):
         if (path in TestQuestionConverter._question_cache):
             return TestQuestionConverter._question_cache[path]
 
-        question = quizcomp.question.base.Question.from_path(path)
+        question: quizcomp.question.base.Question = quizcomp.question.base.Question.from_path(path)
         TestQuestionConverter._question_cache[path] = question
 
         return question
@@ -42,7 +42,7 @@ def _add_converter_tests() -> None:
 def _get_template_test(path: str, format_name: str, is_key: bool) -> typing.Callable:
     """ Get a test method for converting a question to a specific format. """
 
-    def __method(self) -> None:
+    def __method(self: TestQuestionConverter) -> None:
         constructor_args = {'answer_key': is_key}
 
         question = self._get_question(path)

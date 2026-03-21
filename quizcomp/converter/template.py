@@ -308,7 +308,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
-        return question.answers
+        return question.answers  # type: ignore[no-any-return]
 
     def create_answers_matching(self,
             question_id: str,
@@ -550,7 +550,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a TF question answers. """
 
-        return self.create_answers_fimb(question_id, question_number, question, variant)['']['solutions']
+        return self.create_answers_fimb(question_id, question_number, question, variant)['']['solutions']  # type: ignore[no-any-return]
 
     def create_answers_sa(self,
             question_id: str,

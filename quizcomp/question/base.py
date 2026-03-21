@@ -316,7 +316,8 @@ class Question(quizcomp.util.serial.JSONSerializer):
             raise quizcomp.common.QuizValidationError("Question does not contain a 'question_type' field.", ids = ids)
 
         question_class = Question._fetch_question_class(question_type, ids = ids, **kwargs)
-        return quizcomp.util.serial._from_dict(question_class, data, ids = ids, **kwargs)
+        question: 'Question' = quizcomp.util.serial._from_dict(question_class, data, ids = ids, **kwargs)
+        return question
 
     @staticmethod
     def _fetch_question_class(

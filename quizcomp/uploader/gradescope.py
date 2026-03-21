@@ -365,7 +365,7 @@ class GradeScopeUploader:
 
         return assignment_id, True
 
-    def login(self, session: requests.Session):
+    def login(self, session: requests.Session) -> None:
         """ Login to GradeScope. """
 
         token = self.get_authenticity_token(session, URL_HOMEPAGE, action = '/login')
@@ -441,7 +441,7 @@ class GradeScopeUploader:
             if (row['type'] != 'assignment'):
                 continue
 
-            id = row['id'].strip().removeprefix('assignment_')
+            id = str(row['id']).strip().removeprefix('assignment_')
             name = row['title'].strip()
 
             if (name == variant.title):
@@ -449,7 +449,7 @@ class GradeScopeUploader:
 
         return None
 
-    def delete_assignment(self, session: requests.Session, assignment_id: str):
+    def delete_assignment(self, session: requests.Session, assignment_id: str) -> None:
         """ Delete an assignment from GradeScope. """
 
         form_url = URL_ASSIGNMENT_EDIT % (self.course_id, assignment_id)

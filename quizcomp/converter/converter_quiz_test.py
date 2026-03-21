@@ -42,7 +42,7 @@ def _add_good_convert_questions() -> None:
 def _get_good_convert_test(path: str) -> typing.Callable:
     """ Get a test method for converting a good quiz. """
 
-    def __method(self) -> None:
+    def __method(self: TestQuizConverter) -> None:
         base_dir = os.path.dirname(path)
 
         expected_path = os.path.join(base_dir, EXPECTED_FILENAME)
@@ -89,7 +89,7 @@ def _add_bad_validate_questions() -> None:
 def _get_bad_validate_test(path: str) -> typing.Callable:
     """ Get a test method for failing to ceate a quiz. """
 
-    def __method(self) -> None:
+    def __method(self: TestQuizConverter) -> None:
         try:
             quizcomp.quiz.Quiz.from_path(path)
         except Exception:

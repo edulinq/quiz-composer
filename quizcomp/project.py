@@ -17,7 +17,7 @@ class Project(quizcomp.util.serial.JSONSerializer):
     """
 
     def __init__(self,
-            type = quizcomp.constants.TYPE_PROJECT,
+            type: str = quizcomp.constants.TYPE_PROJECT,
             name: str = '',
             base_dir: str = '',
             **kwargs: typing.Any) -> None:
@@ -105,4 +105,5 @@ class Project(quizcomp.util.serial.JSONSerializer):
         if (not os.path.exists(path)):
             return Project(base_dir = os.path.dirname(path), **kwargs)
 
-        return super().from_path(path, **kwargs)
+        project: 'Project' = super().from_path(path, **kwargs)
+        return project

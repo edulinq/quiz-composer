@@ -8,7 +8,7 @@ class QuizTest(quizcomp.testing.base.BaseTest):
     Test base functionally of quizzes.
     """
 
-    def test_total_points_base(self):
+    def test_total_points_base(self) -> None:
         """ Test that quizzes have the correct number of total points. """
 
         # [(path, expected total), ...]

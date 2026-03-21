@@ -126,7 +126,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
     def _format_xml(self, text: str) -> str:
         """ Format/Prettify the XML. """
 
-        warnings.filterwarnings('ignore', category = bs4.builder.XMLParsedAsHTMLWarning)
+        warnings.filterwarnings('ignore', category = bs4.builder.XMLParsedAsHTMLWarning)  # type: ignore[attr-defined]
         document = bs4.BeautifulSoup(text, 'html.parser')
         return document.prettify(formatter = bs4.formatter.HTMLFormatter(indent = 4))
 

@@ -116,7 +116,7 @@ def upload_quiz(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo, force: bool = 
 
     return True
 
-def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo):
+def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo) -> typing.Dict[str, str]:
     """
     Upload a file to Canvas.
     Canvas requires that images (and other files) be uploaded to their side (instead of embedded),
@@ -182,7 +182,7 @@ def fetch_assignment_group(name: str, instance: InstanceInfo) -> typing.Union[st
 
     for assignment in response.json():
         if (assignment['name'] == name):
-            return assignment['id']
+            return str(assignment['id'])
 
     return None
 
@@ -371,7 +371,7 @@ def _serialize_answer(
         feedback_html = answer.feedback.document.to_canvas(canvas_instance = instance, pretty = False)
         data[f"question[answers][{index}][answer_comment_html]"] = feedback_html
 
-def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: InstanceInfo):
+def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: InstanceInfo) -> None:
     """ Concert the answers for a matching-type question to Canvas API data. """
 
     for i in range(len(question.answers['matches'])):
@@ -516,7 +516,7 @@ def _upload_file_contents(path: str, upload_url: str, upload_params: typing.Dict
     if (file_id is None):
         raise ValueError(f"Could not find id for uploaded file in response from Canvas: '{path}'.")
 
-    return file_id
+    return str(file_id)
 
 def ensure_folder(canvas_path: str, instance: InstanceInfo) -> str:
     """ Ensure that a Canvas folder exists and fetch its ID. """
@@ -546,7 +546,7 @@ def get_folder(canvas_path: str, instance: InstanceInfo) -> typing.Union[str, No
 
     response.raise_for_status()
 
-    return response.json()[-1]['id']
+    return str(response.json()[-1]['id'])
 
 def create_folder(canvas_path: str, instance: InstanceInfo) -> str:
     """ Create a folder in Canvas. """
@@ -568,9 +568,7 @@ def create_folder(canvas_path: str, instance: InstanceInfo) -> str:
         data = data)
     response.raise_for_status()
 
-    folder_id = response.json()['id']
-
-    return folder_id
+    return str(response.json()['id'])
 
 def hide_folder(canvas_path: str, instance: InstanceInfo) -> None:
     """ Ensure that a Canvas folder (specified by path) is hidden. """
