@@ -20,7 +20,7 @@ class ParsedTextWithFeedback(quizcomp.parser.public.ParsedText):
             skip_feedback: bool = False,
             force_dict: bool = False,
             **kwargs: typing.Any,
-            ) -> quizcomp.util.serial.POD:  # type: ignore[override]
+            ) -> quizcomp.util.serial.POD:
         if (skip_feedback or (self.feedback is None)):
             if (force_dict):
                 return {'text': self.text}
@@ -99,7 +99,7 @@ class NumericChoice(quizcomp.util.serial.PODSerializer):
         self.feedback: typing.Union[quizcomp.parser.public.ParsedText, None] = feedback
         """ Feedback associated with this text. """
 
-    def to_pod(self, skip_feedback: bool = False, **kwargs: typing.Any) -> quizcomp.util.serial.POD:  # type: ignore[override]
+    def to_pod(self, skip_feedback: bool = False, **kwargs: typing.Any) -> quizcomp.util.serial.POD:
         data = self.__dict__.copy()
 
         for (key, value) in list(data.items()):

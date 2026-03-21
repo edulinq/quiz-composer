@@ -42,7 +42,7 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
         if (method is None):
             raise TypeError(f"Could not find TeX render method: '{method_name}'.")
 
-        return method(node, context)
+        return str(method(node, context))
 
     def _root(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         """ Render the 'root' token. """

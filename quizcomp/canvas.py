@@ -49,11 +49,11 @@ def _validate_allowed_attempts(allowed_attempts: typing.Any) -> int:
         raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")
 
     try:
-        allowed_attempts = int(allowed_attempts)
+        int_allowed_attempts = int(allowed_attempts)
     except:
         raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")  # pylint: disable=raise-missing-from
 
-    if ((allowed_attempts < -1) or (allowed_attempts == 0)):
-        raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")
+    if ((int_allowed_attempts < -1) or (int_allowed_attempts == 0)):
+        raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(int_allowed_attempts)}'.")
 
-    return allowed_attempts
+    return int_allowed_attempts

@@ -23,7 +23,7 @@ class TestParser(quizcomp.testing.base.BaseTest):
     Good and bad situations will be loaded from files into individual test methods.
     """
 
-def _add_good_parse_questions():
+def _add_good_parse_questions() -> None:
     """ Add test cases for parsing valid documents. """
 
     paths = sorted(glob.glob(os.path.join(GOOD_DOCUMENTS_DIR, "**", "*.json"), recursive = True))
@@ -46,18 +46,18 @@ def _get_good_parse_test(
         doc_format: str,
         base_expected: typing.Union[str, typing.List[typing.Dict[str, typing.Any]], typing.Dict[str, typing.Any]],
         base_dir: str,
-        options: typing.Union[str, typing.Any],
-        context: typing.Union[str, typing.Any],
+        options: typing.Dict[str, typing.Any],
+        context: typing.Dict[str, typing.Any],
         ) -> typing.Callable:
     """ Get a test method for a valid document. """
 
-    def __method(self):
+    def __method(self: TestParser) -> None:
         document = quizcomp.parser.public.parse_text(text).document
         result = document.to_format(doc_format, base_dir = base_dir, include_metadata = False, **context)
 
         if (doc_format == quizcomp.constants.FORMAT_JSON):
             result = edq.util.json.loads(result)
-            expected = {
+            expected: typing.Any = {
                 'type': 'document',
                 'ast': {
                     'type': 'root',
@@ -89,7 +89,7 @@ def _get_good_parse_test(
             self.assertJSONDictEqual(expected, result)
         elif (doc_format in {quizcomp.constants.FORMAT_CANVAS, quizcomp.constants.FORMAT_HTML}):
             # If the HTML does not have a root block, then add one.
-            raw_expected = base_expected
+            raw_expected = str(base_expected)
             if (options.get('strip', True)):
                 raw_expected = raw_expected.strip()
 
@@ -102,7 +102,7 @@ def _get_good_parse_test(
             expected, result = _apply_text_options(options, expected, result)
             self.assertEqual(expected, result)
         else:
-            expected = base_expected.strip()
+            expected = str(base_expected).strip()
             result = result.strip()
 
             expected, result = _apply_text_options(options, expected, result)
@@ -110,7 +110,7 @@ def _get_good_parse_test(
 
     return __method
 
-def _add_bad_parse_questions():
+def _add_bad_parse_questions() -> None:
     """ Add test cases for parsing invalid documents. """
 
     paths = sorted(glob.glob(os.path.join(BAD_DOCUMENTS_DIR, "**", "*.json"), recursive = True))
@@ -126,10 +126,10 @@ def _add_bad_parse_questions():
             test_name = _make_name('bad_parse', path, name)
             setattr(TestParser, test_name, _get_bad_parse_test(text, base_dir, options))
 
-def _get_bad_parse_test(text: str, base_dir: str, options: typing.Union[str, typing.Any]) -> typing.Callable:
+def _get_bad_parse_test(text: str, base_dir: str, options: typing.Dict[str, typing.Any]) -> typing.Callable:
     """ Get a test method for an invalid document. """
 
-    def __method(self):
+    def __method(self: TestParser) -> None:
         try:
             quizcomp.parser.public.parse_text(text)
         except Exception:

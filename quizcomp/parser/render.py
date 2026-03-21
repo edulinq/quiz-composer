@@ -41,7 +41,7 @@ def canvas(
     _, options = _get_parser()
 
     renderer = quizcomp.parser.renderer.canvas.get_renderer(options)
-    raw_html = renderer.render(tokens, options, env)  # type: ignore[arg-type]
+    raw_html = renderer.render(tokens, options, env)
 
     return clean_html(raw_html, pretty = pretty)
 
@@ -58,7 +58,7 @@ def html(
     _, options = _get_parser()
 
     renderer = quizcomp.parser.renderer.html.get_renderer(options)
-    raw_html = renderer.render(tokens, options, env)  # type: ignore[arg-type]
+    raw_html = renderer.render(tokens, options, env)
 
     return clean_html(raw_html, pretty = pretty)
 
@@ -74,7 +74,7 @@ def md(
     _, options = _get_parser()
 
     renderer = quizcomp.parser.renderer.markdown.get_renderer(options)
-    content = renderer.render(tokens, options, env)  # type: ignore[arg-type]
+    content = renderer.render(tokens, options, env)
 
     return content.strip()
 
@@ -90,7 +90,7 @@ def tex(
     _, options = _get_parser()
 
     renderer = quizcomp.parser.renderer.tex.get_renderer(options)
-    content = renderer.render(tokens, options, env)  # type: ignore[arg-type]
+    content = renderer.render(tokens, options, env)
 
     return content.strip()
 
@@ -106,7 +106,7 @@ def text(
     _, options = _get_parser()
 
     renderer = quizcomp.parser.renderer.text.get_renderer(options)
-    content = renderer.render(tokens, options, env)  # type: ignore[arg-type]
+    content = renderer.render(tokens, options, env)
 
     return content.strip()
 
@@ -124,7 +124,7 @@ def render(
     if (render_function is None):
         raise ValueError(f"Could not find render function: 'quizcomp.parser.render.{format}'.")
 
-    return render_function(tokens, env = env, **kwargs)
+    return str(render_function(tokens, env = env, **kwargs))
 
 # pylint: disable=c-extension-no-member
 def clean_html(raw_html: str, pretty: bool = False) -> str:

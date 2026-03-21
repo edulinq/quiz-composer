@@ -146,7 +146,7 @@ class ParsedDocument:
         if (formatter is None):
             raise ValueError(f"Unknown format '{format}'.")
 
-        return formatter(**kwargs)
+        return str(formatter(**kwargs))
 
     def get_ast(self) -> quizcomp.parser.ast.ASTNode:
         """

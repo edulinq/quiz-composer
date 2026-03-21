@@ -25,13 +25,13 @@ class BaseTest(edq.testing.unittest.BaseTest):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         # Disable KaTeX in Windows for testing.
         if (sys.platform.startswith("win")):
             quizcomp.parser.math._katex_available = False
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         quizcomp.parser.math._katex_available = None
 
 def clean_name_part(text: str) -> str:

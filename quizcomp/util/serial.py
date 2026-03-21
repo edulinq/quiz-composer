@@ -91,7 +91,7 @@ class JSONSerializer(PODSerializer):
         if (copy):
             data = pycopy.deepcopy(data)
 
-        return _serialize(data, **kwargs)
+        return typing.cast(typing.Dict[str, typing.Any], _serialize(data, **kwargs))
 
     def to_json(self, indent: int = 4, sort_keys: bool = True, **kwargs: typing.Any) -> str:
         """ Serialize as a JSON string. """
