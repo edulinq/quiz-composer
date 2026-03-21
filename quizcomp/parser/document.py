@@ -67,7 +67,7 @@ class ParsedDocument:
 
         data = {
             'type': 'document',
-            'ast': self.get_ast(),
+            'ast': self.get_ast().to_pod(),
         }
 
         if (include_metadata):

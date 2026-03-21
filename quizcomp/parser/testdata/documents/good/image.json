@@ -15,7 +15,9 @@
                         "children": [
                             {
                                 "type": "image",
-                                "src": "http://test.edulinq.org/image.png",
+                                "attributes": {
+                                    "src": "http://test.edulinq.org/image.png"
+                                },
                                 "children": [
                                     {
                                         "type": "text",
@@ -46,7 +48,9 @@
                         "children": [
                             {
                                 "type": "image",
-                                "src": "../../images/tiny.png",
+                                "attributes": {
+                                    "src": "../../images/tiny.png"
+                                },
                                 "children": [
                                     {
                                         "type": "text",
@@ -77,7 +81,9 @@
                         "children": [
                             {
                                 "type": "image",
-                                "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII=",
+                                "attributes": {
+                                    "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAEUlEQVQI12NgYGD4z4AE/gMADwMB/4OExBQAAAAASUVORK5CYII="
+                                },
                                 "children": [
                                     {
                                         "type": "text",

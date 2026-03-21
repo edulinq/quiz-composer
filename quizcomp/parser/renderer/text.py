@@ -34,7 +34,7 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
         return text
 
     def _text(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
-        return _clean_text(node.text())
+        return _clean_text(node.text)
 
     def _softbreak(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         return "\n"
@@ -43,10 +43,10 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
         return "\n\n"
 
     def _em(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
-        return ''.join([self._render_node(child, context) for child in node.children()])
+        return ''.join([self._render_node(child, context) for child in node.children])
 
     def _strong(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
-        return ''.join([self._render_node(child, context) for child in node.children()])
+        return ''.join([self._render_node(child, context) for child in node.children])
 
     def _fence(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         return self._handle_special_text(node, context)
@@ -70,7 +70,7 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
         return ''
 
     def _placeholder(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
-        return _clean_text(node.text())
+        return _clean_text(node.text)
 
     def _table(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         return ''
@@ -103,10 +103,10 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
         return ''
 
     def _heading(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
-        return ''.join([self._render_node(child, context) for child in node.children()])
+        return ''.join([self._render_node(child, context) for child in node.children])
 
     def _blockquote(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
-        return ''.join([self._render_node(child, context) for child in node.children()])
+        return ''.join([self._render_node(child, context) for child in node.children])
 
     def _handle_special_text(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         """
@@ -115,7 +115,7 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
         """
 
         if (context.get(quizcomp.parser.common.CONTEXT_KEY_TEXT_ALLOW_SPECIAL_TEXT, False)):
-            return node.text().strip()
+            return node.text.strip()
 
         return ''
 

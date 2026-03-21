@@ -9,6 +9,9 @@
     "ast": {
         "children": [
             {
+                "attributes": {
+                    "qg_root": true
+                },
                 "children": [
                     {
                         "children": [
@@ -25,7 +28,6 @@
                         "type": "paragraph"
                     }
                 ],
-                "qg_root": true,
                 "type": "container_block"
             }
         ],

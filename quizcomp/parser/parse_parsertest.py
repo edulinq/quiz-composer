@@ -75,11 +75,13 @@ def _get_good_parse_test(
 
             if (len(expected_children) > 0):
                 # If the first node is not the root block, then automatically insert it.
-                if (not expected_children[0].get(quizcomp.parser.common.TOKEN_META_KEY_ROOT, False)):
+                if (not expected_children[0].get('attributes', {}).get(quizcomp.parser.common.TOKEN_META_KEY_ROOT, False)):
                     expected_children = [{
                         'type': 'container_block',
-                        quizcomp.parser.common.TOKEN_META_KEY_ROOT: True,
                         'children': expected_children,
+                        'attributes': {
+                            quizcomp.parser.common.TOKEN_META_KEY_ROOT: True,
+                        },
                     }]
 
                 expected['ast']['children'] = expected_children

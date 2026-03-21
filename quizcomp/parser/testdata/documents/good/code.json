@@ -165,7 +165,9 @@
             "text": "",
             "json": {
                 "type": "fence",
-                "info": "golang",
+                "attributes": {
+                    "info": "golang"
+                },
                 "text": "code_block();\n"
             }
         }

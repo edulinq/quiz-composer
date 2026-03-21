@@ -9,9 +9,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "table-head-rule": false
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "table-head-rule": false
+                    }
                 },
                 "children": [
                     {
@@ -138,9 +140,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "table-head-bold": false
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "table-head-bold": false
+                    }
                 },
                 "children": [
                     {
@@ -267,9 +271,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "table-border-cells": true
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "table-border-cells": true
+                    }
                 },
                 "children": [
                     {
@@ -396,9 +402,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "table-border-cells": true
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "table-border-cells": true
+                    }
                 },
                 "children": [
                     {
@@ -572,9 +580,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "table-border-table": true
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "table-border-table": true
+                    }
                 },
                 "children": [
                     {
@@ -701,10 +711,12 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "table-border-cells": true,
-                    "table-border-table": true
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "table-border-cells": true,
+                        "table-border-table": true
+                    }
                 },
                 "children": [
                     {
@@ -831,9 +843,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "table-cell-height": 1.0
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "table-cell-height": 1.0
+                    }
                 },
                 "children": [
                     {
@@ -960,9 +974,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "table-cell-width": 1.0
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "table-cell-width": 1.0
+                    }
                 },
                 "children": [
                     {
@@ -1089,10 +1105,12 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "content-align": "center",
-                    "text-align": "right"
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "content-align": "center",
+                        "text-align": "right"
+                    }
                 },
                 "children": [
                     {

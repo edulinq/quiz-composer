@@ -137,7 +137,9 @@
                                 "children": [
                                     {
                                         "type": "th",
-                                        "style": "text-align:left",
+                                        "attributes": {
+                                            "style": "text-align:left"
+                                        },
                                         "children": [
                                             {
                                                 "type": "inline",
@@ -152,7 +154,9 @@
                                     },
                                     {
                                         "type": "th",
-                                        "style": "text-align:center",
+                                        "attributes": {
+                                            "style": "text-align:center"
+                                        },
                                         "children": [
                                             {
                                                 "type": "inline",
@@ -167,7 +171,9 @@
                                     },
                                     {
                                         "type": "th",
-                                        "style": "text-align:right",
+                                        "attributes": {
+                                            "style": "text-align:right"
+                                        },
                                         "children": [
                                             {
                                                 "type": "inline",
@@ -192,7 +198,9 @@
                                 "children": [
                                     {
                                         "type": "td",
-                                        "style": "text-align:left",
+                                        "attributes": {
+                                            "style": "text-align:left"
+                                        },
                                         "children": [
                                             {
                                                 "type": "inline",
@@ -207,7 +215,9 @@
                                     },
                                     {
                                         "type": "td",
-                                        "style": "text-align:center",
+                                        "attributes": {
+                                            "style": "text-align:center"
+                                        },
                                         "children": [
                                             {
                                                 "type": "inline",
@@ -222,7 +232,9 @@
                                     },
                                     {
                                         "type": "td",
-                                        "style": "text-align:right",
+                                        "attributes": {
+                                            "style": "text-align:right"
+                                        },
                                         "children": [
                                             {
                                                 "type": "inline",

@@ -9,9 +9,11 @@
             "text": "Text",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "content-align": "center"
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "content-align": "center"
+                    }
                 },
                 "children": [
                     {
@@ -43,9 +45,11 @@
             "text": "Text",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "content-align": "left"
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "content-align": "left"
+                    }
                 },
                 "children": [
                     {
@@ -77,9 +81,11 @@
             "text": "Text",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "content-align": "right"
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "content-align": "right"
+                    }
                 },
                 "children": [
                     {
@@ -144,9 +150,11 @@
             "text": "Text",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "text-align": "center"
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "text-align": "center"
+                    }
                 },
                 "children": [
                     {
@@ -178,9 +186,11 @@
             "text": "Text",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "text-align": "left"
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "text-align": "left"
+                    }
                 },
                 "children": [
                     {

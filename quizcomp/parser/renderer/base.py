@@ -37,7 +37,7 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
         Route rendering to the method '_render_<type>(self, node, context)', e.g.: '_image'.
         """
 
-        method_name = '_' + node.type()
+        method_name = '_' + node.type
         method = getattr(self, method_name, None)
         if (method is None):
             raise TypeError(f"Could not find TeX render method: '{method_name}'.")
@@ -47,7 +47,7 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
     def _root(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         """ Render the 'root' token. """
 
-        content = "\n\n".join([self._render_node(child, context) for child in node.children()])
+        content = "\n\n".join([self._render_node(child, context) for child in node.children])
         content = self.clean_final(content, context)
         return content
 
@@ -55,18 +55,18 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
         """ Render the 'container_block' token. """
 
         # Pull any style attatched to this block and put it in a copy of the context.
-        context, _, _ = quizcomp.parser.common.handle_block_style(node, context)
-        return "\n\n".join([self._render_node(child, context) for child in node.children()])
+        context, _, _ = quizcomp.parser.common.handle_block_style(node.attributes, context)
+        return "\n\n".join([self._render_node(child, context) for child in node.children])
 
     def _paragraph(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         """ Render the 'paragraph' token. """
 
-        return "\n".join([self._render_node(child, context) for child in node.children()])
+        return "\n".join([self._render_node(child, context) for child in node.children])
 
     def _inline(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         """ Render the 'inline' token. """
 
-        return ''.join([self._render_node(child, context) for child in node.children()])
+        return ''.join([self._render_node(child, context) for child in node.children])
 
     def _text(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
         """ Render the 'text' token. """

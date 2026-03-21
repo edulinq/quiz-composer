@@ -431,7 +431,9 @@
             "text": "A",
             "json": {
                 "type": "heading",
-                "tag": "h1",
+                "attributes": {
+                    "tag": "h1"
+                },
                 "children": [
                     {
                         "type": "inline",
@@ -458,7 +460,9 @@
             "json": [
                 {
                     "type": "heading",
-                    "tag": "h1",
+                    "attributes": {
+                        "tag": "h1"
+                    },
                     "children": [
                         {
                             "type": "inline",
@@ -473,7 +477,9 @@
                 },
                 {
                     "type": "heading",
-                    "tag": "h2",
+                    "attributes": {
+                        "tag": "h2"
+                    },
                     "children": [
                         {
                             "type": "inline",
@@ -488,7 +494,9 @@
                 },
                 {
                     "type": "heading",
-                    "tag": "h3",
+                    "attributes": {
+                        "tag": "h3"
+                    },
                     "children": [
                         {
                             "type": "inline",
@@ -503,7 +511,9 @@
                 },
                 {
                     "type": "heading",
-                    "tag": "h4",
+                    "attributes": {
+                        "tag": "h4"
+                    },
                     "children": [
                         {
                             "type": "inline",
@@ -518,7 +528,9 @@
                 },
                 {
                     "type": "heading",
-                    "tag": "h5",
+                    "attributes": {
+                        "tag": "h5"
+                    },
                     "children": [
                         {
                             "type": "inline",
@@ -533,7 +545,9 @@
                 },
                 {
                     "type": "heading",
-                    "tag": "h6",
+                    "attributes": {
+                        "tag": "h6"
+                    },
                     "children": [
                         {
                             "type": "inline",
@@ -574,7 +588,9 @@
             "text": "A",
             "json": {
                 "type": "heading",
-                "tag": "h1",
+                "attributes": {
+                    "tag": "h1"
+                },
                 "children": [
                     {
                         "type": "inline",

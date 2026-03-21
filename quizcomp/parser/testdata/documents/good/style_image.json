@@ -9,9 +9,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "image-width": 0.5
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "image-width": 0.5
+                    }
                 },
                 "children": [
                     {
@@ -22,7 +24,9 @@
                                 "children": [
                                     {
                                         "type": "image",
-                                        "src": "http://test.edulinq.org/image.png",
+                                        "attributes": {
+                                            "src": "http://test.edulinq.org/image.png"
+                                        },
                                         "children": [
                                             {
                                                 "type": "text",
@@ -49,9 +53,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "image-width": 0.5
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "image-width": 0.5
+                    }
                 },
                 "children": [
                     {
@@ -62,7 +68,9 @@
                                 "children": [
                                     {
                                         "type": "image",
-                                        "src": "http://test.edulinq.org/image.png",
+                                        "attributes": {
+                                            "src": "http://test.edulinq.org/image.png"
+                                        },
                                         "children": [
                                             {
                                                 "type": "text",
@@ -85,7 +93,9 @@
                                         "children": [
                                             {
                                                 "type": "image",
-                                                "src": "http://test.edulinq.org/image.png",
+                                                "attributes": {
+                                                    "src": "http://test.edulinq.org/image.png"
+                                                },
                                                 "children": [
                                                     {
                                                         "type": "text",
@@ -114,9 +124,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "image-width": 0.5
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "image-width": 0.5
+                    }
                 },
                 "children": [
                     {
@@ -127,7 +139,9 @@
                                 "children": [
                                     {
                                         "type": "image",
-                                        "src": "http://test.edulinq.org/image.png",
+                                        "attributes": {
+                                            "src": "http://test.edulinq.org/image.png"
+                                        },
                                         "children": [
                                             {
                                                 "type": "text",
@@ -141,8 +155,10 @@
                     },
                     {
                         "type": "container_block",
-                        "qg_style": {
-                            "image-width": 0.75
+                        "attributes": {
+                            "qg_style": {
+                                "image-width": 0.75
+                            }
                         },
                         "children": [
                             {
@@ -153,7 +169,9 @@
                                         "children": [
                                             {
                                                 "type": "image",
-                                                "src": "http://test.edulinq.org/image.png",
+                                                "attributes": {
+                                                    "src": "http://test.edulinq.org/image.png"
+                                                },
                                                 "children": [
                                                     {
                                                         "type": "text",
@@ -182,9 +200,11 @@
             "text": "",
             "json": {
                 "type": "container_block",
-                "qg_root": true,
-                "qg_style": {
-                    "image-width": 0.5
+                "attributes": {
+                    "qg_root": true,
+                    "qg_style": {
+                        "image-width": 0.5
+                    }
                 },
                 "children": [
                     {
@@ -195,7 +215,9 @@
                                 "children": [
                                     {
                                         "type": "image",
-                                        "src": "http://test.edulinq.org/image.png",
+                                        "attributes": {
+                                            "src": "http://test.edulinq.org/image.png"
+                                        },
                                         "children": [
                                             {
                                                 "type": "text",
@@ -209,8 +231,10 @@
                     },
                     {
                         "type": "container_block",
-                        "qg_style": {
-                            "image-width": null
+                        "attributes": {
+                            "qg_style": {
+                                "image-width": null
+                            }
                         },
                         "children": [
                             {
@@ -221,7 +245,9 @@
                                         "children": [
                                             {
                                                 "type": "image",
-                                                "src": "http://test.edulinq.org/image.png",
+                                                "attributes": {
+                                                    "src": "http://test.edulinq.org/image.png"
+                                                },
                                                 "children": [
                                                     {
                                                         "type": "text",
