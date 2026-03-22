@@ -10,8 +10,8 @@ import requests
 
 import quizcomp.constants
 import quizcomp.group
+import quizcomp.model.text
 import quizcomp.question.base
-import quizcomp.question.common
 import quizcomp.quiz
 
 # TODO(eriq): This code assumes there will never be more than a page of items returned.
@@ -329,7 +329,7 @@ def _serialize_answers(data: typing.Dict[str, typing.Any], question: quizcomp.qu
 
 def _serialize_answer_list(
         data: typing.Dict[str, typing.Any],
-        answers: typing.List[quizcomp.question.common.ParsedTextChoice],
+        answers: typing.List[quizcomp.model.text.ParsedTextChoice],
         instance: InstanceInfo,
         start_index: int = 0,
         blank_id: typing.Union[str, None] = None,
@@ -343,7 +343,7 @@ def _serialize_answer_list(
 
 def _serialize_answer(
         data: typing.Dict[str, typing.Any],
-        answer: quizcomp.question.common.ParsedTextChoice,
+        answer: quizcomp.model.text.ParsedTextChoice,
         index: int,
         instance: InstanceInfo,
         blank_id: typing.Union[str, None] = None,
@@ -416,7 +416,7 @@ def _serialize_fimb_answers(data: typing.Dict[str, typing.Any], question: quizco
 
 def _serialize_numeric_answers(
         data: typing.Dict[str, typing.Any],
-        answers: typing.List[quizcomp.question.common.NumericChoice],
+        answers: typing.List[quizcomp.model.text.NumericChoice],
         instance: InstanceInfo,
         ) -> None:
     """ Concert the answers for a numeric-type question to Canvas API data. """

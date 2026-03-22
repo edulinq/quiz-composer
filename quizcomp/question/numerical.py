@@ -2,8 +2,8 @@ import typing
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.model.text
 import quizcomp.question.base
-import quizcomp.question.common
 
 class Numerical(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_NUMERICAL):
     """ A question answered by filling in a single blank with a numerical answer. """
@@ -45,4 +45,4 @@ class Numerical(quizcomp.question.base.Question, question_type = quizcomp.consta
             else:
                 answer.pop('feedback', None)
 
-            self.answers[i] = quizcomp.question.common.NumericChoice(**answer)
+            self.answers[i] = quizcomp.model.text.NumericChoice(**answer)

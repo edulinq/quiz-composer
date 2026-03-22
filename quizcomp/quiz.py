@@ -11,6 +11,7 @@ import quizcomp.canvas
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.group
+import quizcomp.model.text
 import quizcomp.parser.public
 import quizcomp.question.base
 import quizcomp.util.serial
@@ -40,7 +41,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             title: str = '',
             course_title: str = '',
             term_title: str = '',
-            description: typing.Union[str, quizcomp.parser.public.ParsedText, None] = '',
+            description: typing.Union[str, quizcomp.model.text.ParsedText, None] = '',
             date: typing.Union[str, datetime.date] = '',
             time_limit_mins: typing.Union[int, None] = None,
             shuffle_answers: bool = True,
@@ -66,13 +67,13 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         self.date: typing.Union[str, datetime.date] = date
         """ The date of this quiz. """
 
-        self.description: quizcomp.parser.public.ParsedText = quizcomp.parser.public.parse_text('')
+        self.description: quizcomp.model.text.ParsedText = quizcomp.parser.public.parse_text('')
         """ The description/prompt for this quiz. """
 
         if (description is None):
             description = ''
 
-        if (isinstance(description, quizcomp.parser.public.ParsedText)):
+        if (isinstance(description, quizcomp.model.text.ParsedText)):
             self.description = description
             description = description.text
 

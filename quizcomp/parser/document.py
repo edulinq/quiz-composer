@@ -14,9 +14,12 @@ class ParsedDocument:
     """ The result of parsing some text. """
 
     def __init__(self,
-            tokens: typing.List[markdown_it.token.Token],
+            tokens: typing.Union[typing.List[markdown_it.token.Token], None] = None,
             base_dir: str = '.',
             ) -> None:
+        if (tokens is None):
+            tokens = []
+
         self._tokens: typing.List[markdown_it.token.Token] = tokens
         """ The tokens that were parsed from the starting text. """
 

@@ -12,10 +12,10 @@ import jinja2
 import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.group
+import quizcomp.model.text
 import quizcomp.parser.document
 import quizcomp.parser.public
 import quizcomp.question.base
-import quizcomp.question.common
 import quizcomp.quiz
 
 TEMPLATE_FILENAME_QUIZ: str = 'quiz.template'
@@ -434,7 +434,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         return self._create_answers_mcq_list(question.answers)
 
     def _create_answers_mcq_list(self,
-            answers: typing.List[quizcomp.question.common.ParsedTextChoice],
+            answers: typing.List[quizcomp.model.text.ParsedTextChoice],
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         choices = []
 
@@ -586,7 +586,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return solutions
 
-    def _create_answers_text_value(self, value: quizcomp.question.common.ParsedTextChoice) -> typing.Dict[str, typing.Any]:
+    def _create_answers_text_value(self, value: quizcomp.model.text.ParsedTextChoice) -> typing.Dict[str, typing.Any]:
         """
         Create an output dict for a value that was parsed from text (the result of a parsed string).
         """

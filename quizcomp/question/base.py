@@ -13,9 +13,9 @@ import edq.util.dirent
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.model.text
 import quizcomp.parser.document
 import quizcomp.parser.public
-import quizcomp.question.common
 import quizcomp.util.serial
 
 BASE_MODULE_NAME: str = 'quizcomp.question'
@@ -84,7 +84,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
         self._raw_prompt: typing.Union[str, None] = prompt
         """ The raw (unparsed) prompt. """
 
-        self.prompt: quizcomp.question.common.ParsedTextWithFeedback = quizcomp.question.common.ParsedTextWithFeedback.empty()
+        self.prompt: quizcomp.model.text.ParsedTextWithFeedback = quizcomp.model.text.ParsedTextWithFeedback()
         """ The parsed prompt. """
 
         self._prompt_path: typing.Union[str, None] = prompt_path
@@ -255,7 +255,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
             for value in target:
                 documents += self._collect_documents(value)
             return documents
-        elif (isinstance(target, quizcomp.parser.public.ParsedText)):
+        elif (isinstance(target, quizcomp.model.text.ParsedText)):
             return [target.document]
         else:
             return []
@@ -376,12 +376,12 @@ class Question(quizcomp.util.serial.JSONSerializer):
         self.feedback = new_feedback
 
     def _validate_feedback_item(self,
-            item: typing.Union[str, quizcomp.parser.public.ParsedText, None],
+            item: typing.Union[str, quizcomp.model.text.ParsedText, None],
             label: str,
-            ) -> typing.Union[quizcomp.parser.public.ParsedText, None]:
+            ) -> typing.Union[quizcomp.model.text.ParsedText, None]:
         """ Parse and return the given feedback text. """
 
-        if ((item is None) or isinstance(item, quizcomp.parser.public.ParsedText)):
+        if ((item is None) or isinstance(item, quizcomp.model.text.ParsedText)):
             # Nothing to do.
             return item
 
@@ -404,7 +404,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
             base_dir: str,
             min_correct: int = 0,
             max_correct: int = MAX_CHOICES,
-            ) -> typing.List[quizcomp.question.common.ParsedTextChoice]:
+            ) -> typing.List[quizcomp.model.text.ParsedTextChoice]:
         """ Check that the given answers are a list with the specified range of correct choices. """
 
         self._check_type(answers, list, "'answers'")
@@ -436,7 +436,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
         new_answers = []
         for (i, answer) in enumerate(answers):
             parsed_text = self._validate_text_item(answer, f"'answers' values (element {i})")
-            new_answer = quizcomp.question.common.ParsedTextChoice(parsed_text, answer['correct'])
+            new_answer = quizcomp.model.text.ParsedTextChoice(parsed_text, answer['correct'])
             new_answers.append(new_answer)
 
         return new_answers
@@ -465,13 +465,13 @@ class Question(quizcomp.util.serial.JSONSerializer):
         self.answers = new_answers
 
     def _validate_text_item(self,
-            item: typing.Union[str, typing.Dict[str, typing.Any], quizcomp.question.common.ParsedTextWithFeedback],
+            item: typing.Union[str, typing.Dict[str, typing.Any], quizcomp.model.text.ParsedTextWithFeedback],
             label: str,
             check_feedback: bool = True,
             allow_empty: bool = True,
             strip: bool = True,
             clean_whitespace: bool = False,
-            ) -> quizcomp.question.common.ParsedTextWithFeedback:
+            ) -> quizcomp.model.text.ParsedTextWithFeedback:
         """
         Validate a portion of an answer/choice/field that is a parsed string.
 
@@ -479,14 +479,14 @@ class Question(quizcomp.util.serial.JSONSerializer):
          - None (will be converted to an empty string).
          - Empty String (if allow_empty is True).
          - String
-         - quizcomp.question.common.ParsedTextWithFeedback (will be passed back without any checks).
+         - quizcomp.model.text.ParsedTextWithFeedback (will be passed back without any checks).
          - Dict with required key 'text' and optional key 'feedback'.
 
-        If no exception is raised, a quizcomp.question.common.ParsedTextWithFeedback (child of quizcomp.parser.public.ParsedText)
+        If no exception is raised, a quizcomp.model.text.ParsedTextWithFeedback (child of quizcomp.model.text.ParsedText)
         will be returned, even if there is no feedback.
         """
 
-        if (isinstance(item, quizcomp.question.common.ParsedTextWithFeedback)):
+        if (isinstance(item, quizcomp.model.text.ParsedTextWithFeedback)):
             # Nothing to do if the item is already parsed.
             return item
 
@@ -517,7 +517,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
         if (check_feedback):
             feedback = self._validate_feedback_item(item.get('feedback', None), label)
 
-        return quizcomp.question.common.ParsedTextWithFeedback(quizcomp.parser.public.parse_text(text,
+        return quizcomp.model.text.ParsedTextWithFeedback(quizcomp.parser.public.parse_text(text,
                 base_dir = self.base_dir), feedback = feedback)
 
     def _validate_fimb_answers(self) -> None:
