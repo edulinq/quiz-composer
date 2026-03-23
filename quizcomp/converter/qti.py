@@ -10,25 +10,26 @@ import edq.util.dirent
 
 import quizcomp.constants
 import quizcomp.converter.template
+import quizcomp.model.question
 import quizcomp.quiz
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
 
-QUESTION_TYPE_MAP: typing.Dict[str, str] = {
+QUESTION_TYPE_MAP: typing.Dict[quizcomp.model.question.QuestionType, str] = {
     # Direct Mappings
-    quizcomp.constants.QUESTION_TYPE_ESSAY: 'essay_question',
-    quizcomp.constants.QUESTION_TYPE_FIMB: 'fill_in_multiple_blanks_question',
-    quizcomp.constants.QUESTION_TYPE_MATCHING: 'matching_question',
-    quizcomp.constants.QUESTION_TYPE_MA: 'multiple_answers_question',
-    quizcomp.constants.QUESTION_TYPE_MCQ: 'multiple_choice_question',
-    quizcomp.constants.QUESTION_TYPE_MDD: 'multiple_dropdowns_question',
-    quizcomp.constants.QUESTION_TYPE_NUMERICAL: 'numerical_question',
-    quizcomp.constants.QUESTION_TYPE_TEXT_ONLY: 'text_only_question',
-    quizcomp.constants.QUESTION_TYPE_TF: 'true_false_question',
+    quizcomp.model.question.QuestionType.ESSAY: 'essay_question',
+    quizcomp.model.question.QuestionType.FIMB: 'fill_in_multiple_blanks_question',
+    quizcomp.model.question.QuestionType.MATCHING: 'matching_question',
+    quizcomp.model.question.QuestionType.MA: 'multiple_answers_question',
+    quizcomp.model.question.QuestionType.MCQ: 'multiple_choice_question',
+    quizcomp.model.question.QuestionType.MDD: 'multiple_dropdowns_question',
+    quizcomp.model.question.QuestionType.NUMERICAL: 'numerical_question',
+    quizcomp.model.question.QuestionType.TEXT_ONLY: 'text_only_question',
+    quizcomp.model.question.QuestionType.TF: 'true_false_question',
     # Indirect Mappings
-    quizcomp.constants.QUESTION_TYPE_FITB: 'short_answer_question',
-    quizcomp.constants.QUESTION_TYPE_SA: 'essay_question',
+    quizcomp.model.question.QuestionType.FITB: 'short_answer_question',
+    quizcomp.model.question.QuestionType.SA: 'essay_question',
 }
 
 TEMPLATE_FILENAME_ASSESSMENT_META: str = 'qti_assessment_meta.template'

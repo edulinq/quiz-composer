@@ -5,6 +5,7 @@ import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.converter.template
 import quizcomp.question.base
+import quizcomp.model.question
 import quizcomp.quiz
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -36,7 +37,7 @@ class JSONTemplateConverter(quizcomp.converter.template.TemplateConverter):
 
     def _clean_answers(self,
             answers: typing.Union[None, typing.List[typing.Any], typing.Dict[str, typing.Any]],
-            question_type: str,
+            question_type: quizcomp.model.question.QuestionType,
             ) -> typing.Union[None, typing.List[typing.Any], typing.Dict[str, typing.Any]]:
         """ Clean a questions answers before output. """
 
@@ -47,13 +48,13 @@ class JSONTemplateConverter(quizcomp.converter.template.TemplateConverter):
         if (isinstance(answers, list)):
             return self._clean_answers_list(answers, question_type)
 
-        if (question_type == quizcomp.constants.QUESTION_TYPE_MATCHING):
+        if (question_type == quizcomp.model.question.QuestionType.MATCHING):
             return self._clean_answers_matching(answers)
 
-        if (question_type == quizcomp.constants.QUESTION_TYPE_NUMERICAL):
+        if (question_type == quizcomp.model.question.QuestionType.NUMERICAL):
             return [raw_answer.to_pod() for raw_answer in answers['raw_answers']]
 
-        if (question_type == quizcomp.constants.QUESTION_TYPE_FIMB):
+        if (question_type == quizcomp.model.question.QuestionType.FIMB):
             result = []
             for answer in answers.values():
                 result.append({
@@ -68,7 +69,7 @@ class JSONTemplateConverter(quizcomp.converter.template.TemplateConverter):
 
     def _clean_answers_list(self,
             answers: typing.List[typing.Any],
-            question_type: typing.Union[str, None],
+            question_type: typing.Union[quizcomp.model.question.QuestionType, None],
             ) -> typing.List[typing.Any]:
         """ Clean a questions answers that are in a list format. """
 
@@ -78,7 +79,7 @@ class JSONTemplateConverter(quizcomp.converter.template.TemplateConverter):
 
             new_answer = {}
 
-            if (question_type == quizcomp.constants.QUESTION_TYPE_MDD):
+            if (question_type == quizcomp.model.question.QuestionType.MDD):
                 new_answer['label'] = old_answer['raw_label']
                 new_answer['choices'] = self._clean_answers_list(old_answer['choices'], None)
             else:

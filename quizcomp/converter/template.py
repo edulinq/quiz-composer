@@ -12,6 +12,7 @@ import jinja2
 import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.group
+import quizcomp.model.question
 import quizcomp.model.text
 import quizcomp.parser.document
 import quizcomp.parser.public
@@ -111,18 +112,18 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         for (name, function) in jinja_filters.items():
             self.env.filters[name] = function
 
-        self.answer_functions = {
-            quizcomp.constants.QUESTION_TYPE_ESSAY: 'create_answers_essay',
-            quizcomp.constants.QUESTION_TYPE_FIMB: 'create_answers_fimb',
-            quizcomp.constants.QUESTION_TYPE_FITB: 'create_answers_fitb',
-            quizcomp.constants.QUESTION_TYPE_MA: 'create_answers_ma',
-            quizcomp.constants.QUESTION_TYPE_MATCHING: 'create_answers_matching',
-            quizcomp.constants.QUESTION_TYPE_MCQ: 'create_answers_mcq',
-            quizcomp.constants.QUESTION_TYPE_MDD: 'create_answers_mdd',
-            quizcomp.constants.QUESTION_TYPE_NUMERICAL: 'create_answers_numerical',
-            quizcomp.constants.QUESTION_TYPE_SA: 'create_answers_sa',
-            quizcomp.constants.QUESTION_TYPE_TEXT_ONLY: 'create_answers_text_only',
-            quizcomp.constants.QUESTION_TYPE_TF: 'create_answers_tf',
+        self.answer_functions: typing.Dict[quizcomp.model.question.QuestionType, str] = {
+            quizcomp.model.question.QuestionType.ESSAY: 'create_answers_essay',
+            quizcomp.model.question.QuestionType.FIMB: 'create_answers_fimb',
+            quizcomp.model.question.QuestionType.FITB: 'create_answers_fitb',
+            quizcomp.model.question.QuestionType.MA: 'create_answers_ma',
+            quizcomp.model.question.QuestionType.MATCHING: 'create_answers_matching',
+            quizcomp.model.question.QuestionType.MCQ: 'create_answers_mcq',
+            quizcomp.model.question.QuestionType.MDD: 'create_answers_mdd',
+            quizcomp.model.question.QuestionType.NUMERICAL: 'create_answers_numerical',
+            quizcomp.model.question.QuestionType.SA: 'create_answers_sa',
+            quizcomp.model.question.QuestionType.TEXT_ONLY: 'create_answers_text_only',
+            quizcomp.model.question.QuestionType.TF: 'create_answers_tf',
         }
         """
         Methods to generate answers.

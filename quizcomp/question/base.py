@@ -1,6 +1,5 @@
 import abc
 import copy
-import enum
 import importlib
 import logging
 import os
@@ -13,6 +12,7 @@ import edq.util.dirent
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.model.question
 import quizcomp.model.text
 import quizcomp.parser.document
 import quizcomp.parser.public
@@ -22,24 +22,6 @@ BASE_MODULE_NAME: str = 'quizcomp.question'
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
 MAX_CHOICES: int = 2**64
-
-class QuestionType(enum.Enum):
-    """ The types of questions supported by the Quiz Composer. """
-
-    ESSAY = quizcomp.constants.QUESTION_TYPE_ESSAY
-    FIMB = quizcomp.constants.QUESTION_TYPE_FIMB
-    FITB = quizcomp.constants.QUESTION_TYPE_FITB
-    MATCHING = quizcomp.constants.QUESTION_TYPE_MATCHING
-    MA = quizcomp.constants.QUESTION_TYPE_MA
-    MCQ = quizcomp.constants.QUESTION_TYPE_MCQ
-    MDD = quizcomp.constants.QUESTION_TYPE_MDD
-    NUMERICAL = quizcomp.constants.QUESTION_TYPE_NUMERICAL
-    SA = quizcomp.constants.QUESTION_TYPE_SA
-    TEXT_ONLY = quizcomp.constants.QUESTION_TYPE_TEXT_ONLY
-    TF = quizcomp.constants.QUESTION_TYPE_TF
-
-    def __str__(self) -> str:
-        return str(self.value)
 
 class Question(quizcomp.util.serial.JSONSerializer):
     """ The base question class. """
@@ -64,10 +46,9 @@ class Question(quizcomp.util.serial.JSONSerializer):
         cls._types[question_type] = cls
 
     def __init__(self,
-            type: str = quizcomp.constants.TYPE_QUESTION,
+            question_type: quizcomp.model.question.QuestionType,
             prompt: typing.Union[str, None] = None,
             prompt_path: typing.Union[str, None] = None,
-            question_type: str = '',
             answers: typing.Any = None,
             base_dir: str = '.',
             points: float = 0,
@@ -79,7 +60,10 @@ class Question(quizcomp.util.serial.JSONSerializer):
             feedback: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ids: typing.Union[typing.Dict[str, typing.Any], None] = None,
             **kwargs: typing.Any) -> None:
-        super().__init__(type = type, **kwargs)
+        super().__init__(type = quizcomp.constants.TYPE_QUESTION, **kwargs)
+
+        self.question_type: quizcomp.model.question.QuestionType = question_type
+        """ The type of this question. """
 
         self._raw_prompt: typing.Union[str, None] = prompt
         """ The raw (unparsed) prompt. """
@@ -89,9 +73,6 @@ class Question(quizcomp.util.serial.JSONSerializer):
 
         self._prompt_path: typing.Union[str, None] = prompt_path
         """ The path to the prompt file file. """
-
-        self.question_type: str = question_type
-        """ The type of this question. """
 
         self.answers: typing.Any = answers
         """ The answers for this question. """

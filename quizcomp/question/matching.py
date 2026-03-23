@@ -3,9 +3,10 @@ import typing
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.model.question
 import quizcomp.question.base
 
-class Matching(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_MATCHING):
+class Matching(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.MATCHING):
     """ A question answered by matching components from a left-hand list to component on a right-hand list. """
 
     def __init__(self, **kwargs: typing.Any) -> None:

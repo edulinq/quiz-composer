@@ -1,9 +1,10 @@
 import typing
 
 import quizcomp.constants
+import quizcomp.model.question
 import quizcomp.question.base
 
-class Essay(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_ESSAY):
+class Essay(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.ESSAY):
     """ A question answered with an essay (long text entry). """
 
     def __init__(self, **kwargs: typing.Any) -> None:

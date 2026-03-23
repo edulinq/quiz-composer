@@ -29,33 +29,6 @@ DOC_FORMATS: typing.List[str] = [FORMAT_CANVAS, FORMAT_HTML, FORMAT_JSON, FORMAT
 # Formats that the parser understands basic conversions to.
 PARSER_FORMATS: typing.List[str] = [FORMAT_CANVAS, FORMAT_HTML, FORMAT_JSON, FORMAT_MD, FORMAT_TEX, FORMAT_TEXT]
 
-QUESTION_TYPE_ESSAY: str = 'essay'
-QUESTION_TYPE_FIMB: str = 'fill_in_multiple_blanks'
-QUESTION_TYPE_FITB: str = 'fill_in_the_blank'
-QUESTION_TYPE_MATCHING: str = 'matching'
-QUESTION_TYPE_MA: str = 'multiple_answers'
-QUESTION_TYPE_MCQ: str = 'multiple_choice'
-QUESTION_TYPE_MDD: str = 'multiple_dropdowns'
-QUESTION_TYPE_NUMERICAL: str = 'numerical'
-QUESTION_TYPE_SA: str = 'short_answer'
-QUESTION_TYPE_TEXT_ONLY: str = 'text_only'
-QUESTION_TYPE_TF: str = 'true_false'
-
-# Supported question types.
-QUESTION_TYPES: typing.List[str] = [
-    QUESTION_TYPE_ESSAY,
-    QUESTION_TYPE_FIMB,
-    QUESTION_TYPE_FITB,
-    QUESTION_TYPE_MATCHING,
-    QUESTION_TYPE_MA,
-    QUESTION_TYPE_MCQ,
-    QUESTION_TYPE_MDD,
-    QUESTION_TYPE_NUMERICAL,
-    QUESTION_TYPE_SA,
-    QUESTION_TYPE_TEXT_ONLY,
-    QUESTION_TYPE_TF,
-]
-
 NUMERICAL_ANSWER_TYPE_EXACT: str = 'exact'
 NUMERICAL_ANSWER_TYPE_RANGE: str = 'range'
 NUMERICAL_ANSWER_TYPE_PRECISION: str = 'precision'

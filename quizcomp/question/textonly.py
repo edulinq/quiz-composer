@@ -2,9 +2,10 @@ import typing
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.model.question
 import quizcomp.question.base
 
-class TextOnly(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_TEXT_ONLY):
+class TextOnly(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.TEXT_ONLY):
     """ A question that accepts no answer. """
 
     def __init__(self, **kwargs: typing.Any) -> None:

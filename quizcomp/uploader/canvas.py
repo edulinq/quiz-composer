@@ -10,6 +10,7 @@ import requests
 
 import quizcomp.constants
 import quizcomp.group
+import quizcomp.model.question
 import quizcomp.model.text
 import quizcomp.question.base
 import quizcomp.quiz
@@ -23,20 +24,20 @@ CANVAS_QUIZCOMP_QUIZ_DIRNAME: str = 'quiz'
 QUIZ_TYPE_ASSIGNMENT: str = 'assignment'
 QUIZ_TYPE_PRACTICE: str = 'practice_quiz'
 
-QUESTION_TYPE_MAP: typing.Dict[str, str] = {
+QUESTION_TYPE_MAP: typing.Dict[quizcomp.model.question.QuestionType, str] = {
     # Direct Mappings
-    quizcomp.constants.QUESTION_TYPE_ESSAY: 'essay_question',
-    quizcomp.constants.QUESTION_TYPE_FIMB: 'fill_in_multiple_blanks_question',
-    quizcomp.constants.QUESTION_TYPE_MATCHING: 'matching_question',
-    quizcomp.constants.QUESTION_TYPE_MA: 'multiple_answers_question',
-    quizcomp.constants.QUESTION_TYPE_MCQ: 'multiple_choice_question',
-    quizcomp.constants.QUESTION_TYPE_MDD: 'multiple_dropdowns_question',
-    quizcomp.constants.QUESTION_TYPE_NUMERICAL: 'numerical_question',
-    quizcomp.constants.QUESTION_TYPE_TEXT_ONLY: 'text_only_question',
-    quizcomp.constants.QUESTION_TYPE_TF: 'true_false_question',
+    quizcomp.model.question.QuestionType.ESSAY: 'essay_question',
+    quizcomp.model.question.QuestionType.FIMB: 'fill_in_multiple_blanks_question',
+    quizcomp.model.question.QuestionType.MATCHING: 'matching_question',
+    quizcomp.model.question.QuestionType.MA: 'multiple_answers_question',
+    quizcomp.model.question.QuestionType.MCQ: 'multiple_choice_question',
+    quizcomp.model.question.QuestionType.MDD: 'multiple_dropdowns_question',
+    quizcomp.model.question.QuestionType.NUMERICAL: 'numerical_question',
+    quizcomp.model.question.QuestionType.TEXT_ONLY: 'text_only_question',
+    quizcomp.model.question.QuestionType.TF: 'true_false_question',
     # Indirect Mappings
-    quizcomp.constants.QUESTION_TYPE_FITB: 'short_answer_question',
-    quizcomp.constants.QUESTION_TYPE_SA: 'essay_question',
+    quizcomp.model.question.QuestionType.FITB: 'short_answer_question',
+    quizcomp.model.question.QuestionType.SA: 'essay_question',
 }
 
 QUESTION_FEEDBACK_MAPPING: typing.Dict[str, str] = {
@@ -301,22 +302,22 @@ def _serialize_answers(data: typing.Dict[str, typing.Any], question: quizcomp.qu
     """ Convert a question's answers to Canvas JSON. """
 
     # In Canvas, short answer questions also get mapped to the essay Canvas type.
-    if (question.question_type in [quizcomp.constants.QUESTION_TYPE_ESSAY, quizcomp.constants.QUESTION_TYPE_SA]):
+    if (question.question_type in [quizcomp.model.question.QuestionType.ESSAY, quizcomp.model.question.QuestionType.SA]):
         # Essay questions have no answers.
         pass
-    elif (question.question_type == quizcomp.constants.QUESTION_TYPE_FIMB):
+    elif (question.question_type == quizcomp.model.question.QuestionType.FIMB):
         _serialize_fimb_answers(data, question, instance)
-    elif (question.question_type == quizcomp.constants.QUESTION_TYPE_FITB):
+    elif (question.question_type == quizcomp.model.question.QuestionType.FITB):
         _serialize_fimb_answers(data, question, instance)
-    elif (question.question_type == quizcomp.constants.QUESTION_TYPE_MATCHING):
+    elif (question.question_type == quizcomp.model.question.QuestionType.MATCHING):
         _serialize_matching_answers(data, question, instance)
-    elif (question.question_type == quizcomp.constants.QUESTION_TYPE_NUMERICAL):
+    elif (question.question_type == quizcomp.model.question.QuestionType.NUMERICAL):
         _serialize_numeric_answers(data, question.answers, instance)
-    elif (question.question_type == quizcomp.constants.QUESTION_TYPE_TEXT_ONLY):
+    elif (question.question_type == quizcomp.model.question.QuestionType.TEXT_ONLY):
         # Text-Only questions have no answers.
         pass
     elif (isinstance(question.answers, list)):
-        use_text = (question.question_type == quizcomp.constants.QUESTION_TYPE_TF)
+        use_text = (question.question_type == quizcomp.model.question.QuestionType.TF)
         _serialize_answer_list(data, question.answers, instance, use_text = use_text)
     elif (isinstance(question.answers, dict)):
         count = 0

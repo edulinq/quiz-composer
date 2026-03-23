@@ -2,9 +2,10 @@ import typing
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.model.question
 import quizcomp.question.base
 
-class FITB(quizcomp.question.base.Question, question_type = quizcomp.constants.QUESTION_TYPE_FITB):
+class FITB(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.FITB):
     """ A question answered by filling in a single blank with text. """
 
     def __init__(self, **kwargs: typing.Any) -> None:
