@@ -9,6 +9,12 @@ References:
 """
 
 import logging
+import os
+
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
 
 import quizcomp.common
 import quizcomp.constants
@@ -132,7 +138,36 @@ class GoogleFormsUploader:
 
     def _build_service(self):
         """Build and cache the Google API service client. (Milestone 2)"""
-        raise NotImplementedError("Authentication not yet implemented (Milestone 2).")
+        if self._service is not None:
+            return self._service
+
+        creds = None
+
+        if self.use_service_account:
+            # Service account path (Task 2.3)
+            raise NotImplementedError("Service account auth not yet implemented (Task 2.3).")
+        else:
+            # OAuth 2.0 flow
+            if os.path.exists(self.token_path):
+                creds = Credentials.from_authorized_user_file(self.token_path, SCOPES)
+
+            # If there are no (valid) credentials available, let the user log in.
+            if not creds or not creds.valid:
+                if creds and creds.expired and creds.refresh_token:
+                    creds.refresh(Request())
+                else:
+                    if not self.credentials_path or not os.path.exists(self.credentials_path):
+                        raise ValueError(f"OAuth credentials file not found: {self.credentials_path}")
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        self.credentials_path, SCOPES)
+                    creds = flow.run_local_server(port=0)
+
+                # Save the credentials for the next run
+                with open(self.token_path, 'w') as token:
+                    token.write(creds.to_json())
+
+        self._service = build('forms', 'v1', credentials=creds)
+        return self._service
 
     def upload_quiz(self, quiz, **kwargs):
         """Upload *quiz* to Google Forms and return the result dict. (Milestone 3)"""
