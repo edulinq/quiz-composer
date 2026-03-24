@@ -10,14 +10,6 @@
     "feedback": null,
     "lms_id": null,
     "name": "",
-    "options": {
-        "custom_header": null,
-        "feedback": null,
-        "name": "",
-        "points": 0,
-        "shuffle_answers": true,
-        "skip_numbering": false
-    },
     "points": 0,
     "prompt": "Multiple Choice: Basic",
     "question_type": "multiple_choice",

@@ -1,9 +1,12 @@
+import string
 import typing
 
 import edq.util.serial
 
+import quizcomp.errors
 import quizcomp.model.feedback
-import quizcomp.model.text
+
+MAX_CHOICES: int = len(string.ascii_uppercase)
 
 class Choice(edq.util.serial.DictConverter):
     """
@@ -11,17 +14,16 @@ class Choice(edq.util.serial.DictConverter):
     This is for questions with a finite number of choices (e.g., MCQ, MA, TF).
     """
 
-    # Don't allow deserialization, it requires more complex parsing.
     _dictconverter_options = edq.util.serial.DictConverterOptions(
-        allow_from_dict = False,
+        omit_none = True,
     )
 
     def __init__(self,
-            text: quizcomp.model.text.ParsedText,
+            text: quizcomp.parser.document.ParsedDocument,
             correct: bool,
             feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = None,
             **kwargs: typing.Any) -> None:
-        self.text: quizcomp.model.text.ParsedText = text
+        self.text: quizcomp.parser.document.ParsedDocument = text
         """ The text/label for this choice. """
 
         self.correct: bool = correct
@@ -33,44 +35,125 @@ class Choice(edq.util.serial.DictConverter):
         self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
         """ Feedback specific to this choice. """
 
-    def to_dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        data = super().to_dict()
-
-        data['text'] = data['text']['text']
-
-        return data
-
-class QuestionAnswers(edq.util.serial.DictConverter):
+class QuestionAnswers(edq.util.serial.PODConverter):
     """
     The base type that represents all the listed answers/choices for a question.
     The exact contents of answers vary depending on the question's type.
     """
 
-    # Don't allow deserialization, it requires more complex parsing.
-    _dictconverter_options = edq.util.serial.DictConverterOptions(
-        allow_from_dict = False,
-    )
-
     def __init__(self, **kwargs: typing.Any) -> None:
         pass
+
+    @classmethod
+    def from_pod(cls: typing.Type[QuestionAnswers],
+            data: PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> QuestionAnswers:
+        """
+        Create an answers object for a specific question type from some serialized data
+        This data will normally come from a JSON file.
+        Because of the differing nature of questions, several different forms of answers may need to be processed
+        (even for the same question type).
+
+        This function will not return a generic QuestionAnswers, but a subclass of QuestionAnswers.
+        """
+
+        if (serialization_options is None):
+            serialization_options = {}
+
+        raw_question_type = serialization_options.get('question_type', None)
+        base_dir = serialization_options.get('base_dir', None)
+
+        if (raw_question_type is None):
+            raise quizcomp.errors.QuestionValidationError("Could not parse question answers because of lack of question type.")
+
+        question_type = quizcomp.model.constants.QuestionType(raw_question_type)
+
+        if (question_type == quizcomp.model.constants.QuestionType.MCQ):
+            return _answers_from_dict_mcq(data, base_dir)
+        else:
+            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.")
 
 class ChoiceAnswers(QuestionAnswers):
     """ Answers that include a finite set of choices. """
 
     def __init__(self,
             choices: typing.List[Choice],
+            *args: typing.Any,
             **kwargs: typing.Any) -> None:
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
         self.choices: typing.List[Choice] = choices
         """ The possible choices. """
 
-    def to_dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        data = super().to_dict()
+    # TEST - This should be in edq (handling a list (or dict)).
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> edq.util.serial.PODType:
+        return [choice.to_dict() for choice in self.choices]
 
-        data['answers'] = data.pop('choices')
+def _answers_from_dict_mcq(
+        raw_data: typing.Union[typing.Any, None],
+        base_dir: typing.Union[str, None] = None,
+        ) -> ChoiceAnswers:
+    """ Create answers for an MCQ. """
 
-        return data
+    choices = _parse_choices(raw_data, min_correct = 1, base_dir = base_dir)
+    return ChoiceAnswers(choices)
+
+def _parse_choices(
+        raw_data: typing.Union[typing.Any, None],
+        min_correct: int = 0,
+        max_correct: int = MAX_CHOICES,
+        base_dir: typing.Union[str, None] = None,
+        ) -> typing.List[Choice]:
+    """ Check that the given answers are a list with the specified range of correct choices. """
+
+    quizcomp.errors.check_type(raw_data, list, "'answers'")
+
+    raw_choices: typing.List[typing.Any] = typing.cast(list, raw_data)
+
+    if (len(raw_choices) == 0):
+        raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", base_dir = base_dir)
+
+    num_correct = 0
+    choices = []
+
+    for (i, raw_choice) in enumerate(raw_choices):
+        # TEST - Check that choice is a dict.
+        label = f"Choice at index {i}"
+
+        raw_correct = raw_choice.get('correct', None)
+        if (raw_correct is None):
+            raise quizcomp.errors.QuestionValidationError(f"{label} has no 'correct' field set.", base_dir = base_dir)
+
+        raw_text = raw_choice.get('text', None)
+        if (raw_text is None):
+            raise quizcomp.errors.QuestionValidationError(f"{label} has no 'text' field set.", base_dir = base_dir)
+
+        correct = edq.util.parse.soft_boolean(raw_correct)
+        if (correct is None):
+            raise quizcomp.errors.QuestionValidationError(f"{label}'s 'correct' field does not contain a boolean: '{raw_correct}'.")
+
+        if (correct):
+            num_correct += 1
+
+        parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_text, base_dir = base_dir)
+        feedback = quizcomp.model.feedback.Feedback.from_raw_data(raw_choice.get('feedback', None), base_dir = base_dir)
+
+        choices.append(Choice(parsed_text, correct, feedback))
+
+    if (num_correct < min_correct):
+        raise quizcomp.errors.QuestionValidationError(("Did not find enough correct choices."
+            + f" Expected at least {min_correct}, found {num_correct}."),
+            base_dir = base_dir)
+
+    if (num_correct > max_correct):
+        raise quizcomp.errors.QuestionValidationError(("Found too many correct choices."
+            + f" Expected at most {max_correct}, found {num_correct}."),
+            base_dir = base_dir)
+
+    return choices
 
 # TEST
 ''' TEST
@@ -163,7 +246,7 @@ class ChoiceAnswers(QuestionAnswers):
          - quizcomp.model.text.ParsedTextWithFeedback (will be passed back without any checks).
          - Dict with required key 'text' and optional key 'feedback'.
 
-        If no exception is raised, a quizcomp.model.text.ParsedTextWithFeedback (child of quizcomp.model.text.ParsedText)
+        If no exception is raised, a quizcomp.model.text.ParsedTextWithFeedback (child of quizcomp.parser.document.ParsedDocument)
         will be returned, even if there is no feedback.
         """
 
@@ -270,4 +353,42 @@ class ChoiceAnswers(QuestionAnswers):
                     (f"Mismatch between the placeholders found in the question prompt ({output_document_placeholders})"
                         + f" and answers config ({output_answer_placeholders})."),
                     ids = self.ids)
+'''
+
+# TEST
+''' TEST
+class NumericChoice(edq.util.serial.DictConverter):
+    """
+    Numeric choices have no parsed text (aside from optional feedback).
+    """
+
+    def __init__(self,
+            type: str,
+            margin: typing.Union[float, None] = None,
+            min: typing.Union[float, None] = None,
+            max: typing.Union[float, None] = None,
+            value: typing.Union[float, None] = None,
+            precision: typing.Union[int, None] = None,
+            feedback: typing.Union[ParsedText, None] = None,
+            ) -> None:
+        self.type: str = type
+        """ The type of numeric answer for this choice. """
+
+        self.margin: typing.Union[float, None] = margin
+        """ The allowed/error margin. """
+
+        self.min: typing.Union[float, None] = min
+        """ The min value. """
+
+        self.max: typing.Union[float, None] = max
+        """ The max value. """
+
+        self.value: typing.Union[float, None] = value
+        """ The expected/correct value. """
+
+        self.precision: typing.Union[int, None] = precision
+        """ The number of expected significant places. """
+
+        self.feedback: typing.Union[ParsedText, None] = feedback
+        """ Feedback associated with this text. """
 '''

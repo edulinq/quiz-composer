@@ -3,8 +3,7 @@ import typing
 import edq.util.serial
 
 import quizcomp.errors
-import quizcomp.model.text
-import quizcomp.parser.public
+import quizcomp.parser.document
 
 class Feedback(edq.util.serial.DictConverter):
     """
@@ -12,19 +11,18 @@ class Feedback(edq.util.serial.DictConverter):
     Feedback can be specific to a correct/incorrect action, or just general.
     """
 
-    # TEST - These should all be ParsedText
     def __init__(self,
-            general: typing.Union[quizcomp.model.text.ParsedText, None] = None,
-            correct: typing.Union[quizcomp.model.text.ParsedText, None] = None,
-            incorrect: typing.Union[quizcomp.model.text.ParsedText, None] = None,
+            general: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
+            correct: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
+            incorrect: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
             **kwargs: typing.Any) -> None:
-        self.general: typing.Union[quizcomp.model.text.ParsedText, None] = general
+        self.general: typing.Union[quizcomp.parser.document.ParsedDocument, None] = general
         """ Feedback to be shown regardless of the outcome. """
 
-        self.correct: typing.Union[quizcomp.model.text.ParsedText, None] = correct
+        self.correct: typing.Union[quizcomp.parser.document.ParsedDocument, None] = correct
         """ Feedback to be shown if the action/choice/answer was correct. """
 
-        self.incorrect: typing.Union[quizcomp.model.text.ParsedText, None] = incorrect
+        self.incorrect: typing.Union[quizcomp.parser.document.ParsedDocument, None] = incorrect
         """ Feedback to be shown if the action/choice/answer was incorrect. """
 
     def is_empty(self) -> bool:
@@ -42,8 +40,8 @@ class Feedback(edq.util.serial.DictConverter):
         if (raw_data is None):
             return Feedback()
 
-        if (isinstance(str, raw_data)):
-            parsed_text = quizcomp.parser.public.parse_text(raw_data, base_dir = base_dir)
+        if (isinstance(raw_data, str)):
+            parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_data, base_dir = base_dir)
             return Feedback(general = parsed_text)
 
         quizcomp.errors.check_type(raw_data, dict, "'feedback'")
@@ -70,6 +68,6 @@ class Feedback(edq.util.serial.DictConverter):
             if (len(value) == 0):
                 continue
 
-            result[key] = quizcomp.parser.public.parse_text(value, base_dir = base_dir)
+            result[key] = quizcomp.parser.document.ParsedDocument.parse_text(value, base_dir = base_dir)
 
         return Feedback(**result)

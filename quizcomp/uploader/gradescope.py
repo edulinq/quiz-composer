@@ -9,7 +9,7 @@ import edq.util.json
 import requests
 
 import quizcomp.constants
-import quizcomp.model.question
+import quizcomp.model.constants
 import quizcomp.quiz
 
 URL_BASE: str = 'https://www.gradescope.com'
@@ -38,19 +38,19 @@ SPECIAL_QUESTION_TYPES: typing.List[str] = [
 ]
 
 EXTEND_BOX_QUESTION_TYPES: typing.List[str] = [
-    quizcomp.model.question.QuestionType.MA,
-    quizcomp.model.question.QuestionType.MCQ,
-    quizcomp.model.question.QuestionType.MDD,
-    quizcomp.model.question.QuestionType.TF,
+    quizcomp.model.constants.QuestionType.MA,
+    quizcomp.model.constants.QuestionType.MCQ,
+    quizcomp.model.constants.QuestionType.MDD,
+    quizcomp.model.constants.QuestionType.TF,
 ]
 
 STANDARD_BOX_QUESTION_TYPES: typing.List[str] = [
-    quizcomp.model.question.QuestionType.ESSAY,
-    quizcomp.model.question.QuestionType.FIMB,
-    quizcomp.model.question.QuestionType.FITB,
-    quizcomp.model.question.QuestionType.MATCHING,
-    quizcomp.model.question.QuestionType.NUMERICAL,
-    quizcomp.model.question.QuestionType.SA,
+    quizcomp.model.constants.QuestionType.ESSAY,
+    quizcomp.model.constants.QuestionType.FIMB,
+    quizcomp.model.constants.QuestionType.FITB,
+    quizcomp.model.constants.QuestionType.MATCHING,
+    quizcomp.model.constants.QuestionType.NUMERICAL,
+    quizcomp.model.constants.QuestionType.SA,
 ]
 
 BOX_TYPES: typing.List[str] = EXTEND_BOX_QUESTION_TYPES + STANDARD_BOX_QUESTION_TYPES + SPECIAL_QUESTION_TYPES
@@ -180,7 +180,7 @@ class GradeScopeUploader:
                     extend_box_right = True
 
                     # There is a special case for inline MA questions.
-                    if (question_type == quizcomp.model.question.QuestionType.MA):
+                    if (question_type == quizcomp.model.constants.QuestionType.MA):
                         extend_box_right = False
 
                 (x1, y1), (x2, y2) = self._compute_box(ll_x, ll_y, ur_x, ur_y, page_width, page_height, extend_box_right = extend_box_right)

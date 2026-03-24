@@ -12,10 +12,12 @@ import edq.util.dirent
 
 import quizcomp.common
 import quizcomp.constants
-import quizcomp.model.question
-import quizcomp.model.text
+import quizcomp.model.constants
+# TEST
+# import quizcomp.model.text
 import quizcomp.parser.document
-import quizcomp.parser.public
+# TEST
+# import quizcomp.parser.public
 import quizcomp.util.serial
 
 BASE_MODULE_NAME: str = 'quizcomp.question'
@@ -46,7 +48,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
         cls._types[question_type] = cls
 
     def __init__(self,
-            question_type: quizcomp.model.question.QuestionType,
+            question_type: quizcomp.model.constants.QuestionType,
             prompt: typing.Union[str, None] = None,
             prompt_path: typing.Union[str, None] = None,
             answers: typing.Any = None,
@@ -62,7 +64,7 @@ class Question(quizcomp.util.serial.JSONSerializer):
             **kwargs: typing.Any) -> None:
         super().__init__(type = quizcomp.constants.TYPE_QUESTION, **kwargs)
 
-        self.question_type: quizcomp.model.question.QuestionType = question_type
+        self.question_type: quizcomp.model.constants.QuestionType = question_type
         """ The type of this question. """
 
         self._raw_prompt: typing.Union[str, None] = prompt

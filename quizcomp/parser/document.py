@@ -2,6 +2,7 @@ import os
 import re
 import typing
 
+import edq.util.dirent
 import edq.util.json
 import markdown_it.token
 
@@ -10,22 +11,36 @@ import quizcomp.parser.ast
 import quizcomp.parser.render
 import quizcomp.parser.common
 
-class ParsedDocument:
+class ParsedDocument(edq.util.serial.PODConverter):
     """ The result of parsing some text. """
 
     def __init__(self,
+            text: typing.Union[str, None] = None,
             tokens: typing.Union[typing.List[markdown_it.token.Token], None] = None,
             base_dir: typing.Union[str, None] = None,
             ) -> None:
+        if (base_dir is None):
+            base_dir = '.'
+
+        if (text is None):
+            text = ''
+
         if (tokens is None):
             tokens = []
+
+        if ((len(text) == 0) and (len(tokens) > 0)):
+            raise ValueError(f"Cannot create a document that contains tokens, but not text: {tokens}.")
+
+        if ((len(text) > 0) and (len(tokens) == 0)):
+            text, tokens = quizcomp.parser.render._parse_text(text, base_dir)
+
+        self.text: str = text
+        """ The cleaned text that was parsed to create this document. """
 
         self._tokens: typing.List[markdown_it.token.Token] = tokens
         """ The tokens that were parsed from the starting text. """
 
-        if (base_dir is None):
-            base_dir = '.'
-
+        # TEST - Remove
         self._context: typing.Dict[str, str] = {
             quizcomp.parser.common.BASE_DIR_KEY: base_dir,
         }
@@ -67,19 +82,6 @@ class ParsedDocument:
         context = quizcomp.parser.common.prep_context(self._context, options = kwargs)
         env = {quizcomp.parser.common.CONTEXT_ENV_KEY: context}
         return quizcomp.parser.render.render(format, self._tokens, env = env, **kwargs)
-
-    def to_pod(self, include_metadata: bool = True, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        """ Convert this document to a dict that contains only simple types. """
-
-        data = {
-            'type': 'document',
-            'ast': self.get_ast().to_pod(),
-        }
-
-        if (include_metadata):
-            data["context"] = self._context
-
-        return data
 
     def collect_placeholders(self) -> typing.Set[str]:
         """
@@ -132,3 +134,37 @@ class ParsedDocument:
         """
 
         return quizcomp.parser.ast.build(self._tokens)
+
+    def __repr__(self) -> str:
+        return self.text
+
+    @classmethod
+    def parse_text(cls, text: str, base_dir: typing.Union[str, None] = None) -> 'ParsedDocument':
+        """ Parse some text into a document. """
+
+        if (base_dir is None):
+            base_dir = '.'
+
+        text, tokens = quizcomp.parser.render._parse_text(text, base_dir)
+        return quizcomp.parser.document.ParsedDocument(text, tokens, base_dir = base_dir)
+
+    @classmethod
+    def parse_file(cls, raw_path: str, base_dir: typing.Union[str, None] = None) -> 'ParsedDocument':
+        """ Parse a text file into a document. """
+
+        if (base_dir is None):
+            base_dir = '.'
+
+        # Prepend the base dir if the path is not absolute.
+        if (not os.path.isabs(raw_path)):
+            raw_path = os.path.join(base_dir, raw_path)
+
+        path = os.path.abspath(raw_path)
+
+        if (not os.path.isfile(path)):
+            raise ValueError(f"Path to parse ('{raw_path}') does not exist or is not a file.")
+
+        text = edq.util.dirent.read_file(path)
+        base_dir = os.path.dirname(path)
+
+        return cls.parse_text(text, base_dir = base_dir)

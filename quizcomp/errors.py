@@ -15,7 +15,7 @@ class QuizValidationError(ValueError):
         super().__init__(message)
 
         self.context_object: typing.Union[quizcomp.model.base.CoreType, None] = context_object
-        """ The context_object that this error occured within. """
+        """ The context_object that this error occurred within. """
 
         self.base_dir: typing.Union[str, None] = base_dir
         """ Context for where the error came from. """

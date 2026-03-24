@@ -3,11 +3,11 @@ import typing
 
 import quizcomp.common
 import quizcomp.constants
-import quizcomp.model.question
+import quizcomp.model.constants
 import quizcomp.parser.public
 import quizcomp.question.base
 
-class MDD(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.MDD):
+class MDD(quizcomp.question.base.Question, question_type = quizcomp.model.constants.QuestionType.MDD):
     """ A question answered by selecting exactly one of the provided choices for multiple instances. """
 
     def __init__(self, **kwargs: typing.Any) -> None:

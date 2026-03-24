@@ -1,10 +1,10 @@
 import typing
 
 import quizcomp.constants
-import quizcomp.model.question
+import quizcomp.model.constants
 import quizcomp.question.base
 
-class SA(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.SA):
+class SA(quizcomp.question.base.Question, question_type = quizcomp.model.constants.QuestionType.SA):
     """ A question answered with a short piece of text (e.g. sentence or paragraph). """
 
     def __init__(self, **kwargs: typing.Any) -> None:

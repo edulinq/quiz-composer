@@ -10,26 +10,26 @@ import edq.util.dirent
 
 import quizcomp.constants
 import quizcomp.converter.template
-import quizcomp.model.question
+import quizcomp.model.constants
 import quizcomp.quiz
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
 
-QUESTION_TYPE_MAP: typing.Dict[quizcomp.model.question.QuestionType, str] = {
+QUESTION_TYPE_MAP: typing.Dict[quizcomp.model.constants.QuestionType, str] = {
     # Direct Mappings
-    quizcomp.model.question.QuestionType.ESSAY: 'essay_question',
-    quizcomp.model.question.QuestionType.FIMB: 'fill_in_multiple_blanks_question',
-    quizcomp.model.question.QuestionType.MATCHING: 'matching_question',
-    quizcomp.model.question.QuestionType.MA: 'multiple_answers_question',
-    quizcomp.model.question.QuestionType.MCQ: 'multiple_choice_question',
-    quizcomp.model.question.QuestionType.MDD: 'multiple_dropdowns_question',
-    quizcomp.model.question.QuestionType.NUMERICAL: 'numerical_question',
-    quizcomp.model.question.QuestionType.TEXT_ONLY: 'text_only_question',
-    quizcomp.model.question.QuestionType.TF: 'true_false_question',
+    quizcomp.model.constants.QuestionType.ESSAY: 'essay_question',
+    quizcomp.model.constants.QuestionType.FIMB: 'fill_in_multiple_blanks_question',
+    quizcomp.model.constants.QuestionType.MATCHING: 'matching_question',
+    quizcomp.model.constants.QuestionType.MA: 'multiple_answers_question',
+    quizcomp.model.constants.QuestionType.MCQ: 'multiple_choice_question',
+    quizcomp.model.constants.QuestionType.MDD: 'multiple_dropdowns_question',
+    quizcomp.model.constants.QuestionType.NUMERICAL: 'numerical_question',
+    quizcomp.model.constants.QuestionType.TEXT_ONLY: 'text_only_question',
+    quizcomp.model.constants.QuestionType.TF: 'true_false_question',
     # Indirect Mappings
-    quizcomp.model.question.QuestionType.FITB: 'short_answer_question',
-    quizcomp.model.question.QuestionType.SA: 'essay_question',
+    quizcomp.model.constants.QuestionType.FITB: 'short_answer_question',
+    quizcomp.model.constants.QuestionType.SA: 'essay_question',
 }
 
 TEMPLATE_FILENAME_ASSESSMENT_META: str = 'qti_assessment_meta.template'

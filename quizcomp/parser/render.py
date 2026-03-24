@@ -174,6 +174,9 @@ def _parse_text(raw_text: str, base_dir: str) -> typing.Tuple[str, typing.List[m
 
     clean_text = _clean_text(raw_text)
 
+    if (len(clean_text) == 0):
+        return '', []
+
     parser, _ = _get_parser()
 
     tokens = parser.parse(clean_text)

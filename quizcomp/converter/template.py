@@ -12,10 +12,8 @@ import jinja2
 import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.group
-import quizcomp.model.question
-import quizcomp.model.text
+import quizcomp.model.constants
 import quizcomp.parser.document
-import quizcomp.parser.public
 import quizcomp.question.base
 import quizcomp.quiz
 
@@ -112,18 +110,18 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         for (name, function) in jinja_filters.items():
             self.env.filters[name] = function
 
-        self.answer_functions: typing.Dict[quizcomp.model.question.QuestionType, str] = {
-            quizcomp.model.question.QuestionType.ESSAY: 'create_answers_essay',
-            quizcomp.model.question.QuestionType.FIMB: 'create_answers_fimb',
-            quizcomp.model.question.QuestionType.FITB: 'create_answers_fitb',
-            quizcomp.model.question.QuestionType.MA: 'create_answers_ma',
-            quizcomp.model.question.QuestionType.MATCHING: 'create_answers_matching',
-            quizcomp.model.question.QuestionType.MCQ: 'create_answers_mcq',
-            quizcomp.model.question.QuestionType.MDD: 'create_answers_mdd',
-            quizcomp.model.question.QuestionType.NUMERICAL: 'create_answers_numerical',
-            quizcomp.model.question.QuestionType.SA: 'create_answers_sa',
-            quizcomp.model.question.QuestionType.TEXT_ONLY: 'create_answers_text_only',
-            quizcomp.model.question.QuestionType.TF: 'create_answers_tf',
+        self.answer_functions: typing.Dict[quizcomp.model.constants.QuestionType, str] = {
+            quizcomp.model.constants.QuestionType.ESSAY: 'create_answers_essay',
+            quizcomp.model.constants.QuestionType.FIMB: 'create_answers_fimb',
+            quizcomp.model.constants.QuestionType.FITB: 'create_answers_fitb',
+            quizcomp.model.constants.QuestionType.MA: 'create_answers_ma',
+            quizcomp.model.constants.QuestionType.MATCHING: 'create_answers_matching',
+            quizcomp.model.constants.QuestionType.MCQ: 'create_answers_mcq',
+            quizcomp.model.constants.QuestionType.MDD: 'create_answers_mdd',
+            quizcomp.model.constants.QuestionType.NUMERICAL: 'create_answers_numerical',
+            quizcomp.model.constants.QuestionType.SA: 'create_answers_sa',
+            quizcomp.model.constants.QuestionType.TEXT_ONLY: 'create_answers_text_only',
+            quizcomp.model.constants.QuestionType.TF: 'create_answers_tf',
         }
         """
         Methods to generate answers.
@@ -435,7 +433,9 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         return self._create_answers_mcq_list(question.answers)
 
     def _create_answers_mcq_list(self,
-            answers: typing.List[quizcomp.model.text.ParsedTextChoice],
+            # TEST
+            # answers: typing.List[quizcomp.model.text.ParsedTextChoice],
+            answers: typing.List[typing.Any],
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         choices = []
 
@@ -480,7 +480,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         else:
             raise ValueError(f"Unknown numerical answer type: '{answer.type}'.")
 
-        document = quizcomp.parser.public.parse_text(content).document
+        document = quizcomp.parser.document.ParsedDocument.parse_text(content).document
 
         return {
             'solution': self.clean_solution_content(document),
@@ -587,7 +587,9 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return solutions
 
-    def _create_answers_text_value(self, value: quizcomp.model.text.ParsedTextChoice) -> typing.Dict[str, typing.Any]:
+    # TEST
+    # def _create_answers_text_value(self, value: quizcomp.model.text.ParsedTextChoice) -> typing.Dict[str, typing.Any]:
+    def _create_answers_text_value(self, value: typing.Any) -> typing.Dict[str, typing.Any]:
         """
         Create an output dict for a value that was parsed from text (the result of a parsed string).
         """

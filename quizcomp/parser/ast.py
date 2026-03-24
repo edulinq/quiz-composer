@@ -77,6 +77,7 @@ class ASTNode:
 
         return self.attributes.get(key, default_value)
 
+    # TEST - old usage of to_pod (from quizcomp, not edq).
     def to_pod(self, omit_empty: bool = True) -> typing.Dict[str, typing.Any]:
         """ Represent this AST as a dictionary, potentially leaving out any empty elements. """
 

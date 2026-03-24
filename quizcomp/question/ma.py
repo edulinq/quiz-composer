@@ -2,10 +2,10 @@ import random
 import typing
 
 import quizcomp.constants
-import quizcomp.model.question
+import quizcomp.model.constants
 import quizcomp.question.base
 
-class MA(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.MA):
+class MA(quizcomp.question.base.Question, question_type = quizcomp.model.constants.QuestionType.MA):
     """ A question answered by selecting zero or more provided choices. """
 
     def __init__(self, **kwargs: typing.Any) -> None:

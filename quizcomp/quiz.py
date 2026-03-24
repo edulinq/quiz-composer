@@ -11,8 +11,7 @@ import quizcomp.canvas
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.group
-import quizcomp.model.text
-import quizcomp.parser.public
+import quizcomp.parser.document
 import quizcomp.question.base
 import quizcomp.util.serial
 
@@ -41,7 +40,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             title: str = '',
             course_title: str = '',
             term_title: str = '',
-            description: typing.Union[str, quizcomp.model.text.ParsedText, None] = '',
+            description: typing.Union[str, quizcomp.parser.document.ParsedDocument, None] = '',
             date: typing.Union[str, datetime.date] = '',
             time_limit_mins: typing.Union[int, None] = None,
             shuffle_answers: bool = True,
@@ -67,13 +66,13 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         self.date: typing.Union[str, datetime.date] = date
         """ The date of this quiz. """
 
-        self.description: quizcomp.model.text.ParsedText = quizcomp.parser.public.parse_text('')
+        self.description: quizcomp.parser.document.ParsedDocument = quizcomp.parser.document.ParsedDocument()
         """ The description/prompt for this quiz. """
 
         if (description is None):
             description = ''
 
-        if (isinstance(description, quizcomp.model.text.ParsedText)):
+        if (isinstance(description, quizcomp.parser.document.ParsedDocument)):
             self.description = description
             description = description.text
 
@@ -139,7 +138,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         if ((self._raw_description is None) or (self._raw_description == "")):
             raise quizcomp.common.QuizValidationError("Description cannot be empty.")
 
-        self.description = quizcomp.parser.public.parse_text(self._raw_description, base_dir = self.base_dir)
+        self.description = quizcomp.parser.document.ParsedDocument.parse_text(self._raw_description, base_dir = self.base_dir)
 
         if (self.version is None):
             self.version = edq.util.git.get_version(self.base_dir, throw = False)

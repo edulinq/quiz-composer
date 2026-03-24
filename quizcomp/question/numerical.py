@@ -2,11 +2,11 @@ import typing
 
 import quizcomp.common
 import quizcomp.constants
-import quizcomp.model.question
+import quizcomp.model.constants
 import quizcomp.model.text
 import quizcomp.question.base
 
-class Numerical(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.NUMERICAL):
+class Numerical(quizcomp.question.base.Question, question_type = quizcomp.model.constants.QuestionType.NUMERICAL):
     """ A question answered by filling in a single blank with a numerical answer. """
 
     def __init__(self, **kwargs: typing.Any) -> None:

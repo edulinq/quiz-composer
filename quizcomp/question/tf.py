@@ -3,10 +3,10 @@ import typing
 
 import quizcomp.common
 import quizcomp.constants
-import quizcomp.model.question
+import quizcomp.model.constants
 import quizcomp.question.base
 
-class TF(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.TF):
+class TF(quizcomp.question.base.Question, question_type = quizcomp.model.constants.QuestionType.TF):
     """ A question answered by choosing true or false. """
 
     def __init__(self, **kwargs: typing.Any) -> None:

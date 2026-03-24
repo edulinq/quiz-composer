@@ -2,10 +2,10 @@ import random
 import typing
 
 import quizcomp.constants
-import quizcomp.model.question
+import quizcomp.model.constants
 import quizcomp.question.base
 
-class MC(quizcomp.question.base.Question, question_type = quizcomp.model.question.QuestionType.MCQ):
+class MC(quizcomp.question.base.Question, question_type = quizcomp.model.constants.QuestionType.MCQ):
     """ A question answered by selecting exactly one of the provided choices. """
 
     def __init__(self, **kwargs: typing.Any) -> None:

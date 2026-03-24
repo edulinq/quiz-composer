@@ -10,8 +10,7 @@ import requests
 
 import quizcomp.constants
 import quizcomp.group
-import quizcomp.model.question
-import quizcomp.model.text
+import quizcomp.model.constants
 import quizcomp.question.base
 import quizcomp.quiz
 
@@ -24,20 +23,20 @@ CANVAS_QUIZCOMP_QUIZ_DIRNAME: str = 'quiz'
 QUIZ_TYPE_ASSIGNMENT: str = 'assignment'
 QUIZ_TYPE_PRACTICE: str = 'practice_quiz'
 
-QUESTION_TYPE_MAP: typing.Dict[quizcomp.model.question.QuestionType, str] = {
+QUESTION_TYPE_MAP: typing.Dict[quizcomp.model.constants.QuestionType, str] = {
     # Direct Mappings
-    quizcomp.model.question.QuestionType.ESSAY: 'essay_question',
-    quizcomp.model.question.QuestionType.FIMB: 'fill_in_multiple_blanks_question',
-    quizcomp.model.question.QuestionType.MATCHING: 'matching_question',
-    quizcomp.model.question.QuestionType.MA: 'multiple_answers_question',
-    quizcomp.model.question.QuestionType.MCQ: 'multiple_choice_question',
-    quizcomp.model.question.QuestionType.MDD: 'multiple_dropdowns_question',
-    quizcomp.model.question.QuestionType.NUMERICAL: 'numerical_question',
-    quizcomp.model.question.QuestionType.TEXT_ONLY: 'text_only_question',
-    quizcomp.model.question.QuestionType.TF: 'true_false_question',
+    quizcomp.model.constants.QuestionType.ESSAY: 'essay_question',
+    quizcomp.model.constants.QuestionType.FIMB: 'fill_in_multiple_blanks_question',
+    quizcomp.model.constants.QuestionType.MATCHING: 'matching_question',
+    quizcomp.model.constants.QuestionType.MA: 'multiple_answers_question',
+    quizcomp.model.constants.QuestionType.MCQ: 'multiple_choice_question',
+    quizcomp.model.constants.QuestionType.MDD: 'multiple_dropdowns_question',
+    quizcomp.model.constants.QuestionType.NUMERICAL: 'numerical_question',
+    quizcomp.model.constants.QuestionType.TEXT_ONLY: 'text_only_question',
+    quizcomp.model.constants.QuestionType.TF: 'true_false_question',
     # Indirect Mappings
-    quizcomp.model.question.QuestionType.FITB: 'short_answer_question',
-    quizcomp.model.question.QuestionType.SA: 'essay_question',
+    quizcomp.model.constants.QuestionType.FITB: 'short_answer_question',
+    quizcomp.model.constants.QuestionType.SA: 'essay_question',
 }
 
 QUESTION_FEEDBACK_MAPPING: typing.Dict[str, str] = {
@@ -307,22 +306,22 @@ def _serialize_answers(data: typing.Dict[str, typing.Any], question: quizcomp.qu
     """ Convert a question's answers to Canvas JSON. """
 
     # In Canvas, short answer questions also get mapped to the essay Canvas type.
-    if (question.question_type in [quizcomp.model.question.QuestionType.ESSAY, quizcomp.model.question.QuestionType.SA]):
+    if (question.question_type in [quizcomp.model.constants.QuestionType.ESSAY, quizcomp.model.constants.QuestionType.SA]):
         # Essay questions have no answers.
         pass
-    elif (question.question_type == quizcomp.model.question.QuestionType.FIMB):
+    elif (question.question_type == quizcomp.model.constants.QuestionType.FIMB):
         _serialize_fimb_answers(data, question, instance)
-    elif (question.question_type == quizcomp.model.question.QuestionType.FITB):
+    elif (question.question_type == quizcomp.model.constants.QuestionType.FITB):
         _serialize_fimb_answers(data, question, instance)
-    elif (question.question_type == quizcomp.model.question.QuestionType.MATCHING):
+    elif (question.question_type == quizcomp.model.constants.QuestionType.MATCHING):
         _serialize_matching_answers(data, question, instance)
-    elif (question.question_type == quizcomp.model.question.QuestionType.NUMERICAL):
+    elif (question.question_type == quizcomp.model.constants.QuestionType.NUMERICAL):
         _serialize_numeric_answers(data, question.answers, instance)
-    elif (question.question_type == quizcomp.model.question.QuestionType.TEXT_ONLY):
+    elif (question.question_type == quizcomp.model.constants.QuestionType.TEXT_ONLY):
         # Text-Only questions have no answers.
         pass
     elif (isinstance(question.answers, list)):
-        use_text = (question.question_type == quizcomp.model.question.QuestionType.TF)
+        use_text = (question.question_type == quizcomp.model.constants.QuestionType.TF)
         _serialize_answer_list(data, question.answers, instance, use_text = use_text)
     elif (isinstance(question.answers, dict)):
         count = 0
@@ -335,7 +334,9 @@ def _serialize_answers(data: typing.Dict[str, typing.Any], question: quizcomp.qu
 
 def _serialize_answer_list(
         data: typing.Dict[str, typing.Any],
-        answers: typing.List[quizcomp.model.text.ParsedTextChoice],
+        # TEST
+        # answers: typing.List[quizcomp.model.text.ParsedTextChoice],
+        answers: typing.List[typing.Any],
         instance: InstanceInfo,
         start_index: int = 0,
         blank_id: typing.Union[str, None] = None,
@@ -349,7 +350,9 @@ def _serialize_answer_list(
 
 def _serialize_answer(
         data: typing.Dict[str, typing.Any],
-        answer: quizcomp.model.text.ParsedTextChoice,
+        # TEST
+        # answer: quizcomp.model.text.ParsedTextChoice,
+        answer: typing.Any,
         index: int,
         instance: InstanceInfo,
         blank_id: typing.Union[str, None] = None,
@@ -422,7 +425,9 @@ def _serialize_fimb_answers(data: typing.Dict[str, typing.Any], question: quizco
 
 def _serialize_numeric_answers(
         data: typing.Dict[str, typing.Any],
-        answers: typing.List[quizcomp.model.text.NumericChoice],
+        # TEST
+        # answers: typing.List[quizcomp.model.text.NumericChoice],
+        answers: typing.List[typing.Any],
         instance: InstanceInfo,
         ) -> None:
     """ Concert the answers for a numeric-type question to Canvas API data. """
