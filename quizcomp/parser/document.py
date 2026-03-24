@@ -15,13 +15,16 @@ class ParsedDocument:
 
     def __init__(self,
             tokens: typing.Union[typing.List[markdown_it.token.Token], None] = None,
-            base_dir: str = '.',
+            base_dir: typing.Union[str, None] = None,
             ) -> None:
         if (tokens is None):
             tokens = []
 
         self._tokens: typing.List[markdown_it.token.Token] = tokens
         """ The tokens that were parsed from the starting text. """
+
+        if (base_dir is None):
+            base_dir = '.'
 
         self._context: typing.Dict[str, str] = {
             quizcomp.parser.common.BASE_DIR_KEY: base_dir,
@@ -103,34 +106,6 @@ class ParsedDocument:
             placeholders += self._collect_placeholders_helper(token.children)
 
         return placeholders
-
-    def collect_file_paths(self, base_dir: str) -> typing.Set[str]:
-        """
-        Fetch all the file paths in this document.
-        """
-
-        return set(self._collect_file_paths_helper(self._tokens, base_dir))
-
-    def _collect_file_paths_helper(self, tokens: typing.Union[typing.List[markdown_it.token.Token], None], base_dir: str) -> typing.List[str]:
-        """ Collect the file paths in a sequence of tokens. """
-
-        if ((tokens is None) or (len(tokens) == 0)):
-            return []
-
-        file_paths: typing.List[str] = []
-
-        if ((tokens is None) or (len(tokens) == 0)):
-            return file_paths
-
-        for token in tokens:
-            if (token.type == 'image'):
-                src = str(token.attrGet('src'))
-                if ((not re.match(r'^http(s)?://', src)) and (not src.startswith('data:image'))):
-                    file_paths.append(os.path.realpath(os.path.join(base_dir, src)))
-
-            file_paths += self._collect_file_paths_helper(token.children, base_dir)
-
-        return file_paths
 
     def is_empty(self) -> bool:
         """ Check if this document contains any content (tokens). """

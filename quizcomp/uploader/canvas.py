@@ -124,6 +124,10 @@ def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo) -> typ
     so upload all images in one method so we don't upload duplicates.
     """
 
+    # TEST - Use image callbacks instead.
+    return {}
+    '''
+
     # {path: <canvas file id>, ...}
     file_ids = {}
 
@@ -143,6 +147,7 @@ def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo) -> typ
         file_ids[path] = file_id
 
     return file_ids
+    '''
 
 def get_matching_quiz_ids(title: str, instance: InstanceInfo) -> typing.List[str]:
     """ Get Canvas IDs for any quizzes that match the given title. """

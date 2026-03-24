@@ -1,0 +1,273 @@
+import typing
+
+import edq.util.serial
+
+import quizcomp.model.feedback
+import quizcomp.model.text
+
+class Choice(edq.util.serial.DictConverter):
+    """
+    One possible choice for an answer.
+    This is for questions with a finite number of choices (e.g., MCQ, MA, TF).
+    """
+
+    # Don't allow deserialization, it requires more complex parsing.
+    _dictconverter_options = edq.util.serial.DictConverterOptions(
+        allow_from_dict = False,
+    )
+
+    def __init__(self,
+            text: quizcomp.model.text.ParsedText,
+            correct: bool,
+            feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = None,
+            **kwargs: typing.Any) -> None:
+        self.text: quizcomp.model.text.ParsedText = text
+        """ The text/label for this choice. """
+
+        self.correct: bool = correct
+        """ Whether this choice is a correct answer. """
+
+        if ((feedback is not None) and feedback.is_empty()):
+            feedback = None
+
+        self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
+        """ Feedback specific to this choice. """
+
+    def to_dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        data = super().to_dict()
+
+        data['text'] = data['text']['text']
+
+        return data
+
+class QuestionAnswers(edq.util.serial.DictConverter):
+    """
+    The base type that represents all the listed answers/choices for a question.
+    The exact contents of answers vary depending on the question's type.
+    """
+
+    # Don't allow deserialization, it requires more complex parsing.
+    _dictconverter_options = edq.util.serial.DictConverterOptions(
+        allow_from_dict = False,
+    )
+
+    def __init__(self, **kwargs: typing.Any) -> None:
+        pass
+
+class ChoiceAnswers(QuestionAnswers):
+    """ Answers that include a finite set of choices. """
+
+    def __init__(self,
+            choices: typing.List[Choice],
+            **kwargs: typing.Any) -> None:
+        super().__init__(**kwargs)
+
+        self.choices: typing.List[Choice] = choices
+        """ The possible choices. """
+
+    def to_dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        data = super().to_dict()
+
+        data['answers'] = data.pop('choices')
+
+        return data
+
+# TEST
+''' TEST
+    def _validate_self_answer_list(self, min_correct: int = 0, max_correct: int = MAX_CHOICES) -> None:
+        """ Check that the answers are a list with the specified range of correct choices. """
+
+        self.answers = self._validate_answer_list(self.answers, self.base_dir,
+                min_correct = min_correct, max_correct = max_correct)
+
+    def _validate_answer_list(self,
+            answers: typing.List[typing.Dict[str, typing.Any]],
+            base_dir: str,
+            min_correct: int = 0,
+            max_correct: int = MAX_CHOICES,
+            ) -> typing.List[quizcomp.model.text.ParsedTextChoice]:
+        """ Check that the given answers are a list with the specified range of correct choices. """
+
+        self._check_type(answers, list, "'answers'")
+
+        if (len(answers) == 0):
+            raise quizcomp.common.QuestionValidationError("No answers provided, at least one answer required.", ids = self.ids)
+
+        num_correct = 0
+        for answer in answers:
+            if ('correct' not in answer):
+                raise quizcomp.common.QuestionValidationError("Answer has no 'correct' field.", ids = self.ids)
+
+            if ('text' not in answer):
+                raise quizcomp.common.QuestionValidationError("Answer has no 'text' field.", ids = self.ids)
+
+            if (answer['correct']):
+                num_correct += 1
+
+        if (num_correct < min_correct):
+            raise quizcomp.common.QuestionValidationError(("Did not find enough correct answers."
+                + f" Expected at least {min_correct}, found {num_correct}."),
+                ids = self.ids)
+
+        if (num_correct > max_correct):
+            raise quizcomp.common.QuestionValidationError(("Found too many correct answers."
+                + f" Expected at most {max_correct}, found {num_correct}."),
+                ids = self.ids)
+
+        new_answers = []
+        for (i, answer) in enumerate(answers):
+            parsed_text = self._validate_text_item(answer, f"'answers' values (element {i})")
+            new_answer = quizcomp.model.text.ParsedTextChoice(parsed_text, answer['correct'])
+            new_answers.append(new_answer)
+
+        return new_answers
+
+    def _validate_text_answers(self) -> None:
+        """ Check that the answers are valid text answer. """
+
+        possible_answers = 'null/None, string, empty list, list of strings, or list of objects'
+
+        if (self.answers is None):
+            self.answers = ['']
+        elif (isinstance(self.answers, str)):
+            self.answers = [self.answers]
+
+        if (not isinstance(self.answers, list)):
+            raise quizcomp.common.QuestionValidationError(
+                    f"'answers' value must be {possible_answers}, found: {self.answers}.", ids = self.ids)
+
+        if (len(self.answers) == 0):
+            self.answers = ['']
+
+        new_answers = []
+        for (i, answer) in enumerate(self.answers):
+            new_answers.append(self._validate_text_item(answer, f"'answers' values (element {i})"))
+
+        self.answers = new_answers
+
+    def _validate_text_item(self,
+            item: typing.Union[str, typing.Dict[str, typing.Any], quizcomp.model.text.ParsedTextWithFeedback],
+            label: str,
+            check_feedback: bool = True,
+            allow_empty: bool = True,
+            strip: bool = True,
+            clean_whitespace: bool = False,
+            ) -> quizcomp.model.text.ParsedTextWithFeedback:
+        """
+        Validate a portion of an answer/choice/field that is a parsed string.
+
+        Allowed values are:
+         - None (will be converted to an empty string).
+         - Empty String (if allow_empty is True).
+         - String
+         - quizcomp.model.text.ParsedTextWithFeedback (will be passed back without any checks).
+         - Dict with required key 'text' and optional key 'feedback'.
+
+        If no exception is raised, a quizcomp.model.text.ParsedTextWithFeedback (child of quizcomp.model.text.ParsedText)
+        will be returned, even if there is no feedback.
+        """
+
+        if (isinstance(item, quizcomp.model.text.ParsedTextWithFeedback)):
+            # Nothing to do if the item is already parsed.
+            return item
+
+        if (item is None):
+            item = ''
+
+        if (isinstance(item, str)):
+            item = {'text': item}
+
+        self._check_type(item, dict, label)
+
+        if ('text' not in item):
+            raise quizcomp.common.QuestionValidationError(f"{label} is missing a 'text' key.", ids = self.ids)
+
+        text = item['text']
+        self._check_type(item['text'], str, f"{label} 'text' key")
+
+        if (clean_whitespace):
+            text = re.sub(r'\s+', ' ', text)
+
+        if (strip):
+            text = text.strip()
+
+        if ((not allow_empty) and (text == '')):
+            raise quizcomp.common.QuestionValidationError(f"{label} text is empty.", ids = self.ids)
+
+        feedback = None
+        if (check_feedback):
+            feedback = self._validate_feedback_item(item.get('feedback', None), label)
+
+        return quizcomp.model.text.ParsedTextWithFeedback(quizcomp.parser.public.parse_text(text,
+                base_dir = self.base_dir), feedback = feedback)
+
+    def _validate_fimb_answers(self) -> None:
+        """ Check that the answers are valid fill in multiple blanks answers. """
+
+        self._check_type(self.answers, dict, "'answers' key")
+
+        if (len(self.answers) == 0):
+            raise quizcomp.common.QuestionValidationError("Expected 'answers' dict to be non-empty.", ids = self.ids)
+
+        for (key, values) in self.answers.items():
+            # If this was already in the full FIMB format, then we need to pull out the values.
+            if ((isinstance(values, dict)) and ('values' in values)):
+                self.answers[key] = values['values']
+            elif (not isinstance(values, list)):
+                self.answers[key] = [values]
+
+        new_answers = {}
+
+        for (key, values) in self.answers.items():
+            self._check_type(key, str, "key in 'answers' dict")
+
+            if (len(values) == 0):
+                raise quizcomp.common.QuestionValidationError("Expected possible values to be non-empty.", ids = self.ids)
+
+            new_values = []
+            for (i, value) in enumerate(values):
+                label = f"answers key '{key}' index {i}"
+                new_values.append(self._validate_text_item(value, label))
+
+            new_answers[key] = {
+                'key': quizcomp.parser.public.parse_text(key, base_dir = self.base_dir),
+                'values': new_values,
+            }
+
+        self.answers = new_answers
+
+        self._check_placeholders(self.answers.keys())
+
+    def _check_type(self, value: typing.Any, expected_type: typing.Type, label: str) -> None:
+        """ Check that the given value has the expected type. """
+
+        if (not isinstance(value, expected_type)):
+            raise quizcomp.common.QuestionValidationError(f"{label} must be a {expected_type}, found '{value}' ({type(value)}).",
+                    ids = self.ids)
+
+    def _check_placeholders(self, answer_placeholders: typing.Set[str]) -> None:
+        """
+        Check placeholders from the answers against placeholders in the prompt.
+        """
+
+        document_placeholders = self.prompt.document.collect_placeholders()
+
+        # Special case for FITB documents.
+        if ((len(answer_placeholders) == 1) and (list(answer_placeholders)[0] == '')):
+            if (len(document_placeholders) != 0):
+                output_answer_placeholders = list(sorted(answer_placeholders))
+                raise quizcomp.common.QuestionValidationError(
+                        f"Found placeholders ({output_answer_placeholders}) in the question prompt when none were expected.",
+                        ids = self.ids)
+
+            return
+
+        if (answer_placeholders != document_placeholders):
+            output_answer_placeholders = list(sorted(answer_placeholders))
+            output_document_placeholders = list(sorted(document_placeholders))
+
+            raise quizcomp.common.QuestionValidationError(
+                    (f"Mismatch between the placeholders found in the question prompt ({output_document_placeholders})"
+                        + f" and answers config ({output_answer_placeholders})."),
+                    ids = self.ids)
+'''

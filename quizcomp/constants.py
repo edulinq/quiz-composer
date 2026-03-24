@@ -10,7 +10,6 @@ JSON_OBJECT_TYPES: typing.List[str] = [TYPE_PROJECT, TYPE_QUIZ, TYPE_QUESTION, T
 PROJECT_FILENAME: str = 'project.json'
 QUIZ_FILENAME: str = 'quiz.json'
 QUESTION_FILENAME: str = 'question.json'
-PROMPT_FILENAME: str = 'prompt.md'
 
 FORMAT_CANVAS: str = 'canvas'
 FORMAT_HTML: str = 'html'
