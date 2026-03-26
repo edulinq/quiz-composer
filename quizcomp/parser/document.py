@@ -138,6 +138,13 @@ class ParsedDocument(edq.util.serial.PODConverter):
     def __repr__(self) -> str:
         return self.text
 
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            # TEST
+            # ) -> edq.util.serial.PODType:
+            ) -> str:
+        return self.text
+
     @classmethod
     def parse_text(cls, text: str, base_dir: typing.Union[str, None] = None) -> 'ParsedDocument':
         """ Parse some text into a document. """

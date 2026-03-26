@@ -14,11 +14,13 @@ import quizcomp.parser.document
 
 DEFAULT_PROMPT_FILENAME: str = 'prompt.md'
 
-@dataclasses.dataclass
-class QuestionOptions(edq.util.serial.DictConverter):
-    """ Standard options that can appear with a group or question. """
+class Question(quizcomp.model.base.CoreType):
+    """ A class that represents a question and all answers/feedback for the question. """
 
     def __init__(self,
+            question_type: quizcomp.model.constants.QuestionType,
+            prompt: quizcomp.parser.document.ParsedDocument,
+            answers: quizcomp.model.answer.QuestionAnswers,
             name: str = '',
             points: float = 0,
             shuffle_answers: bool = True,
@@ -26,8 +28,19 @@ class QuestionOptions(edq.util.serial.DictConverter):
             custom_header: typing.Union[str, None] = None,
             feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = None,
             **kwargs: typing.Any) -> None:
+        super().__init__(**kwargs)
+
+        self.question_type: quizcomp.model.constants.QuestionType = question_type
+        """ The type of this question. """
+
         self.name: str = name
         """ The name. """
+
+        self.prompt: quizcomp.parser.document.ParsedDocument = prompt
+        """ The parsed prompt of this question. """
+
+        self.answers: quizcomp.model.answer.QuestionAnswers = answers
+        """ The answers for this question. """
 
         self.points: float = points
         """ The number of points possible. """
@@ -44,46 +57,6 @@ class QuestionOptions(edq.util.serial.DictConverter):
         self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
         """ Object-level feedback. """
 
-class Question(quizcomp.model.base.CoreType):
-    """ A class that represents a question and all answers/feedback for the question. """
-
-    def __init__(self,
-            question_type: quizcomp.model.constants.QuestionType,
-            prompt: quizcomp.parser.document.ParsedDocument,
-            answers: quizcomp.model.answer.QuestionAnswers,
-            options: typing.Union[QuestionOptions, None] = None,
-            **kwargs: typing.Any) -> None:
-        super().__init__(**kwargs)
-
-        self.question_type: quizcomp.model.constants.QuestionType = question_type
-        """ The type of this question. """
-
-        self.prompt: quizcomp.parser.document.ParsedDocument = prompt
-        """ The parsed prompt of this question. """
-
-        self.answers: quizcomp.model.answer.QuestionAnswers = answers
-        """ The answers for this question. """
-
-        if (options is None):
-            options = QuestionOptions()
-
-        self.options: QuestionOptions = options
-        """ Options for this question. """
-
-    def to_dict(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
-            ) -> typing.Dict[str, typing.Any]:
-        data = super().to_dict()
-
-        data['question_type'] = self.question_type.value
-        data['prompt'] = self.prompt.text
-
-        # Instead of putting these values as nested dicts, add their keys directly.
-        data.pop('options', None)
-        data.update(self.options.to_dict())
-
-        return data
-
     @classmethod
     def prep_init_data(cls,
             data: typing.Dict[str, typing.Any],
@@ -98,7 +71,6 @@ class Question(quizcomp.model.base.CoreType):
 
         base_dir = serialization_options.get('base_dir', None)
 
-        data['options'] = QuestionOptions.from_dict(data)
         data['prompt'] = cls._collect_prompt(data.get('prompt', None), data.get('prompt_path', None), base_dir)
 
         return data

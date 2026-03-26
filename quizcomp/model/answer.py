@@ -14,9 +14,7 @@ class Choice(edq.util.serial.DictConverter):
     This is for questions with a finite number of choices (e.g., MCQ, MA, TF).
     """
 
-    _dictconverter_options = edq.util.serial.DictConverterOptions(
-        omit_none = True,
-    )
+    serialization_omit_none = True,
 
     def __init__(self,
             text: quizcomp.parser.document.ParsedDocument,
@@ -40,9 +38,6 @@ class QuestionAnswers(edq.util.serial.PODConverter):
     The base type that represents all the listed answers/choices for a question.
     The exact contents of answers vary depending on the question's type.
     """
-
-    def __init__(self, **kwargs: typing.Any) -> None:
-        pass
 
     @classmethod
     def from_pod(cls: typing.Type[QuestionAnswers],
@@ -86,7 +81,6 @@ class ChoiceAnswers(QuestionAnswers):
         self.choices: typing.List[Choice] = choices
         """ The possible choices. """
 
-    # TEST - This should be in edq (handling a list (or dict)).
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> edq.util.serial.PODType:
