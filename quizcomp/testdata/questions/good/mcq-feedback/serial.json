@@ -1,0 +1,33 @@
+{
+    "answers": [
+        {
+            "correct": true,
+            "text": "A"
+        },
+        {
+            "correct": false,
+            "feedback": {
+                "general": "X"
+            },
+            "text": "B"
+        },
+        {
+            "correct": false,
+            "feedback": {
+                "general": "Y"
+            },
+            "text": "C"
+        },
+        {
+            "correct": false,
+            "text": "D"
+        }
+    ],
+    "base_dir": ".",
+    "name": "",
+    "points": 0,
+    "prompt": "Multiple Choice: Feedback",
+    "question_type": "multiple_choice",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

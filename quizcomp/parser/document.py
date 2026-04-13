@@ -114,6 +114,11 @@ class ParsedDocument(edq.util.serial.PODConverter):
 
         return (len(self._tokens) == 0)
 
+    def _serialization_is_empty(self) -> bool:
+        """ A special method for the serialization library to check. """
+
+        return self.is_empty()
+
     def to_json(self, indent: int = 4, sort_keys: bool = True, **kwargs: typing.Any) -> str:
         """ Convert this document to JSON. """
 

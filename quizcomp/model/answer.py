@@ -8,7 +8,27 @@ import quizcomp.model.feedback
 
 MAX_CHOICES: int = len(string.ascii_uppercase)
 
-class Choice(edq.util.serial.DictConverter):
+class TextOption(edq.util.serial.DictConverter):
+    """
+    One possible answer to a question.
+    """
+
+    serialization_omit_none = True,
+
+    def __init__(self,
+            text: quizcomp.parser.document.ParsedDocument,
+            feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = None,
+            **kwargs: typing.Any) -> None:
+        self.text: quizcomp.parser.document.ParsedDocument = text
+        """ The text/label for this choice. """
+
+        if ((feedback is not None) and feedback.is_empty()):
+            feedback = None
+
+        self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
+        """ Feedback specific to this choice. """
+
+class Choice(TextOption):
     """
     One possible choice for an answer.
     This is for questions with a finite number of choices (e.g., MCQ, MA, TF).
@@ -21,17 +41,10 @@ class Choice(edq.util.serial.DictConverter):
             correct: bool,
             feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = None,
             **kwargs: typing.Any) -> None:
-        self.text: quizcomp.parser.document.ParsedDocument = text
-        """ The text/label for this choice. """
+        super().__init__(text, feedback)
 
         self.correct: bool = correct
         """ Whether this choice is a correct answer. """
-
-        if ((feedback is not None) and feedback.is_empty()):
-            feedback = None
-
-        self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
-        """ Feedback specific to this choice. """
 
 class QuestionAnswers(edq.util.serial.PODConverter):
     """
@@ -60,14 +73,43 @@ class QuestionAnswers(edq.util.serial.PODConverter):
         base_dir = serialization_options.get('base_dir', None)
 
         if (raw_question_type is None):
-            raise quizcomp.errors.QuestionValidationError("Could not parse question answers because of lack of question type.")
+            raise quizcomp.errors.QuestionValidationError("Could not parse question answers because of lack of question type.", base_dir = base_dir)
 
         question_type = quizcomp.model.constants.QuestionType(raw_question_type)
 
         if (question_type == quizcomp.model.constants.QuestionType.MCQ):
-            return _answers_from_dict_mcq(data, base_dir)
-        else:
-            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.")
+            return _answers_from_pod_mcq(data, base_dir)
+
+        elif (question_type == quizcomp.model.constants.QuestionType.ESSAY):
+            return _answers_from_pod_text_list(data, base_dir)
+
+        raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
+
+class TextAnswers(QuestionAnswers):
+    """
+    Answers that include a list of possible text options.
+    Note that the text options are not choices (i.e., they are not presented in a multiple choice fashion),
+    instead they are possible answers.
+    Question types with this type of answers are often graded via text equality or manually
+    (where these answers would serve as a guide/rubric).
+    """
+
+    def __init__(self,
+            options: typing.Union[typing.List[TextOption], None] = None,
+            *args: typing.Any,
+            **kwargs: typing.Any) -> None:
+        super().__init__(*args, **kwargs)
+
+        if (options is None):
+            options = []
+
+        self.options: typing.List[TextOption] = options
+        """ The possible text options. """
+
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> edq.util.serial.PODType:
+        return [option.to_dict() for option in self.options]
 
 class ChoiceAnswers(QuestionAnswers):
     """ Answers that include a finite set of choices. """
@@ -86,7 +128,7 @@ class ChoiceAnswers(QuestionAnswers):
             ) -> edq.util.serial.PODType:
         return [choice.to_dict() for choice in self.choices]
 
-def _answers_from_dict_mcq(
+def _answers_from_pod_mcq(
         raw_data: typing.Union[typing.Any, None],
         base_dir: typing.Union[str, None] = None,
         ) -> ChoiceAnswers:
@@ -121,10 +163,6 @@ def _parse_choices(
         if (raw_correct is None):
             raise quizcomp.errors.QuestionValidationError(f"{label} has no 'correct' field set.", base_dir = base_dir)
 
-        raw_text = raw_choice.get('text', None)
-        if (raw_text is None):
-            raise quizcomp.errors.QuestionValidationError(f"{label} has no 'text' field set.", base_dir = base_dir)
-
         correct = edq.util.parse.soft_boolean(raw_correct)
         if (correct is None):
             raise quizcomp.errors.QuestionValidationError(f"{label}'s 'correct' field does not contain a boolean: '{raw_correct}'.")
@@ -132,8 +170,7 @@ def _parse_choices(
         if (correct):
             num_correct += 1
 
-        parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_text, base_dir = base_dir)
-        feedback = quizcomp.model.feedback.Feedback.from_raw_data(raw_choice.get('feedback', None), base_dir = base_dir)
+        parsed_text, feedback = _parse_text_dict(raw_choice, label, base_dir)
 
         choices.append(Choice(parsed_text, correct, feedback))
 
@@ -148,6 +185,61 @@ def _parse_choices(
             base_dir = base_dir)
 
     return choices
+
+def _answers_from_pod_text_list(
+        raw_data: typing.Union[typing.Any, None],
+        base_dir: typing.Union[str, None] = None,
+        ) -> TextAnswers:
+    """ Create answers from a list of text items. """
+
+    if (raw_data is None):
+        return TextAnswers()
+
+    if (isinstance(raw_data, str)):
+        parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_data, base_dir = base_dir)
+        return TextAnswers([TextOption(parsed_text, None)])
+
+    if (isinstance(raw_data, dict)):
+        raw_data = [raw_data]
+
+    quizcomp.errors.check_type(raw_data, list, "'answers'")
+
+    if (len(raw_data) == 0):
+        return TextAnswers()
+
+    options = []
+    for (i, raw_option) in enumerate(raw_data):
+        label = f"Choice at index {i}"
+
+        feedback = None
+        if (isinstance(raw_option, str)):
+            parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_option, base_dir = base_dir)
+        elif (isinstance(raw_option, dict)):
+            parsed_text, feedback = _parse_text_dict(raw_option, label, base_dir)
+        else:
+            raise quizcomp.errors.QuestionValidationError(
+                f"{label} has text in an unknown format (not a string or dict): '{raw_option}' (type: {type(raw_option)}.",
+                base_dir = base_dir)
+
+        options.append(TextOption(parsed_text, feedback))
+
+    return TextAnswers(options)
+
+def _parse_text_dict(
+        raw_data: typing.Dict[str, typing.Any],
+        label: str,
+        base_dir: typing.Union[str, None],
+        ) -> typing.Tuple[quizcomp.parser.document.ParsedDocument, typing.Union[quizcomp.model.feedback.Feedback, None]]:
+    """ Parse some text that may have feedback from a dict. """
+
+    raw_text = raw_data.get('text', None)
+    if (raw_text is None):
+        raise quizcomp.errors.QuestionValidationError(f"{label} has no 'text' field set.", base_dir = base_dir)
+
+    parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_text, base_dir = base_dir)
+    feedback = quizcomp.model.feedback.Feedback.from_raw_data(raw_data.get('feedback', None), base_dir = base_dir)
+
+    return parsed_text, feedback
 
 # TEST
 ''' TEST

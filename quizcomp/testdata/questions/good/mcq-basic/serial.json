@@ -6,9 +6,6 @@
         {"correct": false, "text": "D"}
     ],
     "base_dir": ".",
-    "custom_header": null,
-    "feedback": null,
-    "lms_id": null,
     "name": "",
     "points": 0,
     "prompt": "Multiple Choice: Basic",

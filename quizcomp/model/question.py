@@ -3,6 +3,7 @@ import enum
 import os
 import typing
 
+import edq.util.enum
 import edq.util.parse
 import edq.util.serial
 
@@ -14,15 +15,24 @@ import quizcomp.parser.document
 
 DEFAULT_PROMPT_FILENAME: str = 'prompt.md'
 
+EMPTY_ANSWER_QUESTION_TYPES: typing.Set[quizcomp.model.constants.QuestionType] = {
+    quizcomp.model.constants.QuestionType.ESSAY,
+    quizcomp.model.constants.QuestionType.SA,
+    quizcomp.model.constants.QuestionType.TEXT_ONLY,
+}
+""" Question types that do not have to have an answer. """
+
 class Question(quizcomp.model.base.CoreType):
     """ A class that represents a question and all answers/feedback for the question. """
+
+    serialization_omit_none = True
 
     def __init__(self,
             question_type: quizcomp.model.constants.QuestionType,
             prompt: quizcomp.parser.document.ParsedDocument,
             answers: quizcomp.model.answer.QuestionAnswers,
-            name: str = '',
-            points: float = 0,
+            name: typing.Union[str, None] = None,
+            points: typing.Union[float, None] = None,
             shuffle_answers: bool = True,
             skip_numbering: bool = False,
             custom_header: typing.Union[str, None] = None,
@@ -33,6 +43,9 @@ class Question(quizcomp.model.base.CoreType):
         self.question_type: quizcomp.model.constants.QuestionType = question_type
         """ The type of this question. """
 
+        if (name is None):
+            name = ''
+
         self.name: str = name
         """ The name. """
 
@@ -41,6 +54,9 @@ class Question(quizcomp.model.base.CoreType):
 
         self.answers: quizcomp.model.answer.QuestionAnswers = answers
         """ The answers for this question. """
+
+        if (points is None):
+            points = 0
 
         self.points: float = points
         """ The number of points possible. """
@@ -73,7 +89,26 @@ class Question(quizcomp.model.base.CoreType):
 
         data['prompt'] = cls._collect_prompt(data.get('prompt', None), data.get('prompt_path', None), base_dir)
 
+        cls._validate_init_data(data, serialization_options)
+
         return data
+
+    @classmethod
+    def _validate_init_data(cls, data: typing.Dict[str, typing.Any], serialization_options: typing.Dict[str, typing.Any]) -> None:
+        """ Validate the data to be sent to __init__() right before construction. """
+
+        base_dir = serialization_options.get('base_dir', None)
+
+        question_type = data.get('question_type', None)
+        if (not edq.util.enum.has_value(quizcomp.model.constants.QuestionType, question_type)):
+            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{question_type}'.", base_dir = base_dir)
+
+        answers = data.get('answers', None)
+        if (answers is None):
+            if (question_type not in EMPTY_ANSWER_QUESTION_TYPES):
+                raise quizcomp.errors.QuestionValidationError('No answers to question provided.', base_dir = base_dir)
+
+            data['answers'] = quizcomp.model.answer.TextAnswers()
 
     @classmethod
     def _collect_prompt(cls,
@@ -85,12 +120,12 @@ class Question(quizcomp.model.base.CoreType):
         Collect the prompt from one of several possible locations.
 
         The prompt is allowed to appear (in order of priority):
-        1) in the `prompt` field (`text` argument),
-        2) pointed to by the `prompt_path` field (`path` argument),
+        1) in the `prompt` field (sent to this function as the `text` argument),
+        2) pointed to by the `prompt_path` field (send to this function as the `path` argument),
         3) or be in `<base dir>/DEFAULT_PROMPT_FILENAME`.
 
         Will raise an exception on an empty prompt.
-        Null, empty, and only white strings all count as empty.
+        Null, empty, and only white space all count as empty.
         """
 
         if (text is None):

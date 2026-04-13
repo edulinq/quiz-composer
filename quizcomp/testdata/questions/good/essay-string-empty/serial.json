@@ -1,0 +1,14 @@
+{
+    "answers": [
+        {
+            "text": ""
+        }
+    ],
+    "base_dir": ".",
+    "name": "",
+    "points": 0,
+    "prompt": "Essay: String Empty",
+    "question_type": "essay",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

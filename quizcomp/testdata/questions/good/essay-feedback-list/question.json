@@ -8,7 +8,9 @@
         },
         {
             "text": "b",
-            "feedback": "2"
+            "feedback": {
+                "correct": "2"
+            }
         }
     ]
 }

@@ -11,16 +11,28 @@ class Feedback(edq.util.serial.DictConverter):
     Feedback can be specific to a correct/incorrect action, or just general.
     """
 
+    serialization_omit_none = True
+    serialization_omit_empty = True
+
     def __init__(self,
             general: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
             correct: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
             incorrect: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
             **kwargs: typing.Any) -> None:
+        if ((general is not None) and general.is_empty()):
+            general = None
+
         self.general: typing.Union[quizcomp.parser.document.ParsedDocument, None] = general
         """ Feedback to be shown regardless of the outcome. """
 
+        if ((correct is not None) and correct.is_empty()):
+            correct = None
+
         self.correct: typing.Union[quizcomp.parser.document.ParsedDocument, None] = correct
         """ Feedback to be shown if the action/choice/answer was correct. """
+
+        if ((incorrect is not None) and incorrect.is_empty()):
+            incorrect = None
 
         self.incorrect: typing.Union[quizcomp.parser.document.ParsedDocument, None] = incorrect
         """ Feedback to be shown if the action/choice/answer was incorrect. """
@@ -29,6 +41,11 @@ class Feedback(edq.util.serial.DictConverter):
         """ Check if this feedback item contains any actual feedback. """
 
         return ((self.general is None) and (self.correct is None) and (self.incorrect is None))
+
+    def _serialization_is_empty(self) -> bool:
+        """ A special method for the serialization library to check. """
+
+        return self.is_empty()
 
     @classmethod
     def from_raw_data(cls,

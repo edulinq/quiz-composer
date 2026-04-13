@@ -1,0 +1,23 @@
+{
+    "answers": [
+        {
+            "feedback": {
+                "general": "1"
+            },
+            "text": "a"
+        },
+        {
+            "feedback": {
+                "correct": "2"
+            },
+            "text": "b"
+        }
+    ],
+    "base_dir": ".",
+    "name": "",
+    "points": 0,
+    "prompt": "Essay: Feedback List",
+    "question_type": "essay",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}
