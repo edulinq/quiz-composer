@@ -79,11 +79,31 @@ class QuestionAnswers(edq.util.serial.PODConverter):
 
         if (question_type == quizcomp.model.constants.QuestionType.MCQ):
             return _answers_from_pod_mcq(data, base_dir)
-
         elif (question_type == quizcomp.model.constants.QuestionType.ESSAY):
             return _answers_from_pod_text_list(data, base_dir)
+        elif (question_type == quizcomp.model.constants.QuestionType.FIMB):
+            return _answers_from_pod_multiple_text_lists(data, base_dir)
+        else:
+            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
 
-        raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
+class MultiplePartAnswers(QuestionAnswers):
+    """
+    Answers that have multiple parts, each having their own answers.
+    """
+
+    def __init__(self,
+            parts: typing.Dict[str, QuestionAnswers],
+            *args: typing.Any,
+            **kwargs: typing.Any) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.parts: typing.Dict[str, QuestionAnswers] = parts
+        """ The different parts of this question. """
+
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> edq.util.serial.PODType:
+        return {key: value.to_pod() for (key, value) in self.parts.items()}
 
 class TextAnswers(QuestionAnswers):
     """
@@ -229,6 +249,23 @@ def _answers_from_pod_text_list(
         options.append(TextOption(parsed_text, feedback))
 
     return TextAnswers(options)
+
+def _answers_from_pod_multiple_text_lists(
+        raw_data: typing.Union[typing.Any, None],
+        base_dir: typing.Union[str, None] = None,
+        ) -> TextAnswers:
+    """ Create answers from multiple lists of text (which should be in a dict). """
+
+    quizcomp.errors.check_type(raw_data, dict, "'answers'")
+
+    parts = {}
+    for (key, raw_options) in raw_data.items():
+        # Try to parse the key, even though we are not storing it right now.
+        quizcomp.parser.document.ParsedDocument.parse_text(key, base_dir = base_dir)
+
+        parts[key] = _answers_from_pod_text_list(raw_options, base_dir = base_dir)
+
+    return MultiplePartAnswers(parts)
 
 def _parse_text_dict(
         raw_data: typing.Dict[str, typing.Any],

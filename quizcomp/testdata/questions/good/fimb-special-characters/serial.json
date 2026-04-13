@@ -1,0 +1,30 @@
+{
+    "answers": {
+        "A": [
+            {
+                "text": "1.0"
+            },
+            {
+                "text": "-2"
+            },
+            {
+                "text": "3/4"
+            },
+            {
+                "text": "0x56"
+            },
+            {
+                "text": "7e8"
+            },
+            {
+                "text": "9^0"
+            }
+        ]
+    },
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Fill in Multiple Blanks: Special Characters -- <placeholder>A</placeholder>",
+    "question_type": "fill_in_multiple_blanks",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

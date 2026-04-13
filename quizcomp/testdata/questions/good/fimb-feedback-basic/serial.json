@@ -1,0 +1,36 @@
+{
+    "answers": {
+        "A": [
+            {
+                "text": "1"
+            }
+        ],
+        "B": [
+            {
+                "feedback": {
+                    "general": "X"
+                },
+                "text": "2"
+            }
+        ],
+        "C": [
+            {
+                "feedback": {
+                    "general": "Y"
+                },
+                "text": "3"
+            }
+        ],
+        "D": [
+            {
+                "text": "4"
+            }
+        ]
+    },
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Fill in Multiple Blanks: Feedback Basic -- <placeholder>A</placeholder> <placeholder>B</placeholder> <placeholder>C</placeholder> <placeholder>D</placeholder>",
+    "question_type": "fill_in_multiple_blanks",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

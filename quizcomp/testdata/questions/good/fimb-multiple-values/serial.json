@@ -1,0 +1,39 @@
+{
+    "answers": {
+        "A": [
+            {
+                "text": "1"
+            }
+        ],
+        "B": [
+            {
+                "text": "2"
+            }
+        ],
+        "C": [
+            {
+                "text": "3"
+            },
+            {
+                "text": "4"
+            }
+        ],
+        "D": [
+            {
+                "text": "5"
+            },
+            {
+                "text": "6"
+            },
+            {
+                "text": "7"
+            }
+        ]
+    },
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Fill in Multiple Blanks: Multiple Values -- <placeholder>A</placeholder> <placeholder>B</placeholder> <placeholder>C</placeholder> <placeholder>D</placeholder>",
+    "question_type": "fill_in_multiple_blanks",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}
