@@ -5,7 +5,6 @@
         }
     ],
     "base_dir": ".",
-    "name": "",
     "points": 0,
     "prompt": "Essay: String",
     "question_type": "essay",

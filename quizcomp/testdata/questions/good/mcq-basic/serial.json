@@ -6,7 +6,6 @@
         {"correct": false, "text": "D"}
     ],
     "base_dir": ".",
-    "name": "",
     "points": 0,
     "prompt": "Multiple Choice: Basic",
     "question_type": "multiple_choice",

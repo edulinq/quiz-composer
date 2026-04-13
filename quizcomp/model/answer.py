@@ -111,6 +111,11 @@ class TextAnswers(QuestionAnswers):
             ) -> edq.util.serial.PODType:
         return [option.to_dict() for option in self.options]
 
+    def _serialization_is_empty(self) -> bool:
+        """ A special method for the serialization library to check. """
+
+        return (len(self.options) == 0)
+
 class ChoiceAnswers(QuestionAnswers):
     """ Answers that include a finite set of choices. """
 

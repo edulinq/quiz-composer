@@ -2,20 +2,20 @@
     "answers": [
         {
             "correct": true,
+            "feedback": {
+                "general": "1"
+            },
             "text": "A"
         },
         {
             "correct": false,
             "feedback": {
-                "general": "X"
+                "general": "Foo Bar"
             },
             "text": "B"
         },
         {
             "correct": false,
-            "feedback": {
-                "general": "Y"
-            },
             "text": "C"
         },
         {
@@ -24,8 +24,13 @@
         }
     ],
     "base_dir": ".",
+    "feedback": {
+        "correct": "Y",
+        "general": "X",
+        "incorrect": "Z"
+    },
     "points": 0,
-    "prompt": "Multiple Choice: Feedback",
+    "prompt": "Feedback: All",
     "question_type": "multiple_choice",
     "shuffle_answers": true,
     "skip_numbering": false

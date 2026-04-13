@@ -6,16 +6,10 @@
         },
         {
             "correct": false,
-            "feedback": {
-                "general": "X"
-            },
             "text": "B"
         },
         {
             "correct": false,
-            "feedback": {
-                "general": "Y"
-            },
             "text": "C"
         },
         {
@@ -25,7 +19,7 @@
     ],
     "base_dir": ".",
     "points": 0,
-    "prompt": "Multiple Choice: Feedback",
+    "prompt": "Feedback: Empty",
     "question_type": "multiple_choice",
     "shuffle_answers": true,
     "skip_numbering": false

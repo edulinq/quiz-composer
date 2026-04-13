@@ -26,11 +26,12 @@ class Question(quizcomp.model.base.CoreType):
     """ A class that represents a question and all answers/feedback for the question. """
 
     serialization_omit_none = True
+    serialization_omit_empty = True
 
     def __init__(self,
             question_type: quizcomp.model.constants.QuestionType,
             prompt: quizcomp.parser.document.ParsedDocument,
-            answers: quizcomp.model.answer.QuestionAnswers,
+            answers: typing.Union[quizcomp.model.answer.QuestionAnswers, None] = None,
             name: typing.Union[str, None] = None,
             points: typing.Union[float, None] = None,
             shuffle_answers: bool = True,
@@ -51,6 +52,9 @@ class Question(quizcomp.model.base.CoreType):
 
         self.prompt: quizcomp.parser.document.ParsedDocument = prompt
         """ The parsed prompt of this question. """
+
+        if (answers is None):
+            answers = quizcomp.model.answer.TextAnswers()
 
         self.answers: quizcomp.model.answer.QuestionAnswers = answers
         """ The answers for this question. """
@@ -81,13 +85,21 @@ class Question(quizcomp.model.base.CoreType):
         if (serialization_options is None):
             serialization_options = {}
 
-        serialization_options['question_type'] = data.get('question_type', None)
+        base_dir = serialization_options.get('base_dir', None)
+
+        raw_question_type = data.get('question_type', None)
+        if (raw_question_type is None):
+            raise quizcomp.errors.QuestionValidationError("Question data does not include 'question_type'.", base_dir = base_dir)
+
+        question_type = quizcomp.model.constants.QuestionType(raw_question_type)
+        serialization_options['question_type'] = question_type
+
+        raw_feedback = data.pop('feedback', None)
 
         data = super().prep_init_data(data, serialization_options)
 
-        base_dir = serialization_options.get('base_dir', None)
-
         data['prompt'] = cls._collect_prompt(data.get('prompt', None), data.get('prompt_path', None), base_dir)
+        data['feedback'] = quizcomp.model.feedback.Feedback.from_raw_data(raw_feedback, base_dir = base_dir)
 
         cls._validate_init_data(data, serialization_options)
 
