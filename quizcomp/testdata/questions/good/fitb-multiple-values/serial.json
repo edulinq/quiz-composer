@@ -1,0 +1,19 @@
+{
+    "answers": [
+        {
+            "text": "1"
+        },
+        {
+            "text": "2"
+        },
+        {
+            "text": "3"
+        }
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Short Answer \\/ Fill in The Blank: Multiple Values",
+    "question_type": "fill_in_the_blank",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

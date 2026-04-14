@@ -1,0 +1,28 @@
+{
+    "answers": [
+        {
+            "text": "1.0"
+        },
+        {
+            "text": "-2"
+        },
+        {
+            "text": "3/4"
+        },
+        {
+            "text": "0x56"
+        },
+        {
+            "text": "7e8"
+        },
+        {
+            "text": "9^0"
+        }
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Short Answer \\/ Fill in The Blank: Special Characters",
+    "question_type": "fill_in_the_blank",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

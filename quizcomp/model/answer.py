@@ -83,6 +83,8 @@ class QuestionAnswers(edq.util.serial.PODConverter):
             return _answers_from_pod_text_list(data, base_dir)
         elif (question_type == quizcomp.model.constants.QuestionType.FIMB):
             return _answers_from_pod_multiple_text_lists(data, base_dir)
+        elif (question_type == quizcomp.model.constants.QuestionType.FITB):
+            return _answers_from_pod_text_list(data, base_dir)
         else:
             raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
 

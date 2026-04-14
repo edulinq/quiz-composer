@@ -1,0 +1,16 @@
+{
+    "answers": [
+        {
+            "feedback": {
+                "general": "X"
+            },
+            "text": "1"
+        }
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Short Answer \\/ Fill in The Blank: Feedback Basic",
+    "question_type": "fill_in_the_blank",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

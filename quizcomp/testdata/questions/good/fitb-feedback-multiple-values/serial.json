@@ -1,0 +1,25 @@
+{
+    "answers": [
+        {
+            "text": "1"
+        },
+        {
+            "feedback": {
+                "general": "X"
+            },
+            "text": "2"
+        },
+        {
+            "feedback": {
+                "general": "Y"
+            },
+            "text": "3"
+        }
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Short Answer \\/ Fill in The Blank: Feedback Multiple Values",
+    "question_type": "fill_in_the_blank",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}
