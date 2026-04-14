@@ -4,27 +4,21 @@
             "4",
             "5",
             {
-                "feedback": {
-                    "general": "A"
-                },
+                "feedback": "A",
                 "text": "6"
             }
         ],
         "pairs": [
             [
                 {
-                    "feedback": {
-                        "general": "W"
-                    },
+                    "feedback": "W",
                     "text": "A"
                 },
                 "1"
             ],
             [
                 {
-                    "feedback": {
-                        "general": "Y"
-                    },
+                    "feedback": "Y",
                     "text": "B"
                 },
                 "2"

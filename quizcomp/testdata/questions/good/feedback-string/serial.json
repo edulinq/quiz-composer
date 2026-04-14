@@ -18,9 +18,7 @@
         }
     ],
     "base_dir": ".",
-    "feedback": {
-        "general": "X"
-    },
+    "feedback": "X",
     "points": 0,
     "prompt": "Feedback: String",
     "question_type": "multiple_choice",

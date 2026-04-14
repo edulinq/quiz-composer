@@ -1,14 +1,8 @@
 {
     "answers": [
-        {
-            "text": "a"
-        },
-        {
-            "text": "b"
-        },
-        {
-            "text": "c"
-        }
+        "a",
+        "b",
+        "c"
     ],
     "base_dir": ".",
     "points": 0,

@@ -1,8 +1,6 @@
 {
     "answers": [
-        {
-            "text": "test"
-        }
+        "test"
     ],
     "base_dir": ".",
     "points": 0,

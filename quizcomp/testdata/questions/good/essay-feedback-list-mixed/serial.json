@@ -1,14 +1,10 @@
 {
     "answers": [
         {
-            "feedback": {
-                "general": "1"
-            },
+            "feedback": "1",
             "text": "a"
         },
-        {
-            "text": "b"
-        }
+        "b"
     ],
     "base_dir": ".",
     "points": 0,

@@ -2,16 +2,12 @@
     "answers": [
         {
             "correct": true,
-            "feedback": {
-                "general": "1"
-            },
+            "feedback": "1",
             "text": "A"
         },
         {
             "correct": false,
-            "feedback": {
-                "general": "Foo Bar"
-            },
+            "feedback": "Foo Bar",
             "text": "B"
         },
         {

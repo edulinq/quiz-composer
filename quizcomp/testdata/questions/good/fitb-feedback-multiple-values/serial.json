@@ -1,18 +1,12 @@
 {
     "answers": [
+        "1",
         {
-            "text": "1"
-        },
-        {
-            "feedback": {
-                "general": "X"
-            },
+            "feedback": "X",
             "text": "2"
         },
         {
-            "feedback": {
-                "general": "Y"
-            },
+            "feedback": "Y",
             "text": "3"
         }
     ],

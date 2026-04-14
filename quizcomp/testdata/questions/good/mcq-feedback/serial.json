@@ -6,16 +6,12 @@
         },
         {
             "correct": false,
-            "feedback": {
-                "general": "X"
-            },
+            "feedback": "X",
             "text": "B"
         },
         {
             "correct": false,
-            "feedback": {
-                "general": "Y"
-            },
+            "feedback": "Y",
             "text": "C"
         },
         {

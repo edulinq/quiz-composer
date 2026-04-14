@@ -1,9 +1,7 @@
 {
     "answers": [
         {
-            "feedback": {
-                "general": "X"
-            },
+            "feedback": "X",
             "text": "1"
         }
     ],

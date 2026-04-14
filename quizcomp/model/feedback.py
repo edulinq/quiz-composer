@@ -5,7 +5,7 @@ import edq.util.serial
 import quizcomp.errors
 import quizcomp.parser.document
 
-class Feedback(edq.util.serial.DictConverter):
+class Feedback(edq.util.serial.PODConverter):
     """
     Text that can be attached to objects (generally questions and answers) as a form of feedback for an action.
     Feedback can be specific to a correct/incorrect action, or just general.
@@ -46,6 +46,17 @@ class Feedback(edq.util.serial.DictConverter):
         """ A special method for the serialization library to check. """
 
         return self.is_empty()
+
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> edq.util.serial.PODType:
+        if (self.is_empty()):
+            return None
+
+        if ((self.correct is None) and (self.incorrect is None)):
+            return self.general.to_pod()
+
+        return super().to_pod(serialization_options)
 
     @classmethod
     def from_raw_data(cls,

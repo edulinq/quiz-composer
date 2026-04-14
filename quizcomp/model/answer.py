@@ -37,7 +37,7 @@ class TextOption(edq.util.serial.PODConverter):
 
         return {
             'text': self.text.to_pod(),
-            'feedback': self.feedback.to_dict(),
+            'feedback': self.feedback.to_pod(),
         }
 
 class Choice(TextOption):
@@ -67,7 +67,7 @@ class Choice(TextOption):
         }
 
         if (self.feedback is not None):
-            data['feedback'] = self.feedback.to_dict()
+            data['feedback'] = self.feedback.to_pod()
 
         return data
 
