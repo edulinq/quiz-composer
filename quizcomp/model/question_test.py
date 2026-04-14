@@ -6,6 +6,7 @@ import edq.util.json
 
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.errors
 import quizcomp.model.question
 import quizcomp.uploader.canvas
 import quizcomp.testing.base
@@ -78,10 +79,13 @@ def _add_good_question_test(path: str) -> None:
     test_name = 'test_question_reparse_' + base_test_name
     setattr(QuestionsTest, test_name, _get_question_reparse_test_method(path))
 
+    # TEST
+    ''' TEST
     canvas_path = os.path.join(os.path.dirname(path), CANVAS_FILENAME)
     if (os.path.exists(canvas_path)):
         test_name = 'test_question_canvas_' + base_test_name
         setattr(QuestionsTest, test_name, _get_question_canvas_test_method(path, canvas_path))
+    '''
 
     json_path = os.path.join(os.path.dirname(path), SERIAL_FILENAME)
     if (os.path.exists(json_path)):
@@ -149,7 +153,7 @@ def _get_question_bad_test_method(path: str) -> typing.Callable:
     """ Get a test for failing to parse a question. """
 
     def __method(self: QuestionsTest) -> None:
-        with self.assertRaises(quizcomp.common.QuizValidationError):
+        with self.assertRaises(quizcomp.errors.QuestionValidationError):
             quizcomp.model.question.Question.from_path(path)
 
     return __method

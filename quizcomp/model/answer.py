@@ -161,7 +161,7 @@ def _answers_from_pod_mcq(
         ) -> ChoiceAnswers:
     """ Create answers for an MCQ. """
 
-    choices = _parse_choices(raw_data, min_correct = 1, base_dir = base_dir)
+    choices = _parse_choices(raw_data, min_correct = 1, max_correct = 1, base_dir = base_dir)
     return ChoiceAnswers(choices)
 
 def _parse_choices(
