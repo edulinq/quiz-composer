@@ -77,14 +77,16 @@ class QuestionAnswers(edq.util.serial.PODConverter):
 
         question_type = quizcomp.model.constants.QuestionType(raw_question_type)
 
-        if (question_type == quizcomp.model.constants.QuestionType.MCQ):
-            return _answers_from_pod_mcq(data, base_dir)
-        elif (question_type == quizcomp.model.constants.QuestionType.ESSAY):
+        if (question_type == quizcomp.model.constants.QuestionType.ESSAY):
             return _answers_from_pod_text_list(data, base_dir)
         elif (question_type == quizcomp.model.constants.QuestionType.FIMB):
             return _answers_from_pod_multiple_text_lists(data, base_dir)
         elif (question_type == quizcomp.model.constants.QuestionType.FITB):
             return _answers_from_pod_text_list(data, base_dir)
+        elif (question_type == quizcomp.model.constants.QuestionType.MA):
+            return _answers_from_pod_ma(data, base_dir)
+        elif (question_type == quizcomp.model.constants.QuestionType.MCQ):
+            return _answers_from_pod_mcq(data, base_dir)
         else:
             raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
 
@@ -162,6 +164,15 @@ def _answers_from_pod_mcq(
     """ Create answers for an MCQ. """
 
     choices = _parse_choices(raw_data, min_correct = 1, max_correct = 1, base_dir = base_dir)
+    return ChoiceAnswers(choices)
+
+def _answers_from_pod_ma(
+        raw_data: typing.Union[typing.Any, None],
+        base_dir: typing.Union[str, None] = None,
+        ) -> ChoiceAnswers:
+    """ Create answers for an MCQ. """
+
+    choices = _parse_choices(raw_data, min_correct = 0, base_dir = base_dir)
     return ChoiceAnswers(choices)
 
 def _parse_choices(
