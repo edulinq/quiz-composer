@@ -4,22 +4,27 @@
     "answers": {
         "matches": [
             [
-                "A",
+                {
+                    "text": "A",
+                    "feedback": "W"
+                },
                 "1"
             ],
             {
                 "left": {
                     "text": "B",
-                    "feedback": "X"
+                    "feedback": "Y"
                 },
                 "right": "2"
             },
             {
-                "left": {
-                    "text": "C",
-                    "feedback": "Y"
-                },
-                "right": "3"
+                "left": "C",
+                "right": {
+                    "text": "3",
+                    "feedback": {
+                        "incorrect": "Z"
+                    }
+                }
             }
         ],
         "distractors": [
@@ -29,7 +34,7 @@
             },
             {
                 "text": "6",
-                "feedback": "Z"
+                "feedback": "A"
             }
         ]
     }

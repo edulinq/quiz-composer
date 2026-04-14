@@ -1,0 +1,23 @@
+{
+    "answers": {
+        "distractors": [
+            "$ f(x) = x + 2 $"
+        ],
+        "pairs": [
+            [
+                "$ A $",
+                "$ 1 $"
+            ],
+            [
+                "$$ B $$",
+                "$$ 2 $$"
+            ]
+        ]
+    },
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Matching: Equations",
+    "question_type": "matching",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

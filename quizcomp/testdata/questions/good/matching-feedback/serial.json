@@ -1,0 +1,49 @@
+{
+    "answers": {
+        "distractors": [
+            "4",
+            "5",
+            {
+                "feedback": {
+                    "general": "A"
+                },
+                "text": "6"
+            }
+        ],
+        "pairs": [
+            [
+                {
+                    "feedback": {
+                        "general": "W"
+                    },
+                    "text": "A"
+                },
+                "1"
+            ],
+            [
+                {
+                    "feedback": {
+                        "general": "Y"
+                    },
+                    "text": "B"
+                },
+                "2"
+            ],
+            [
+                "C",
+                {
+                    "feedback": {
+                        "incorrect": "Z"
+                    },
+                    "text": "3"
+                }
+            ]
+        ]
+    },
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Matching: Basic",
+    "question_type": "matching",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}
