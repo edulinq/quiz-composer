@@ -1,0 +1,8 @@
+{
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Short Answer: Empty List",
+    "question_type": "short_answer",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

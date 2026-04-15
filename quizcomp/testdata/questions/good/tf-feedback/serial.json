@@ -1,0 +1,20 @@
+{
+    "answers": [
+        {
+            "correct": true,
+            "feedback": "X",
+            "text": "True"
+        },
+        {
+            "correct": false,
+            "feedback": "Y",
+            "text": "False"
+        }
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "True\\/False: Feedback",
+    "question_type": "true_false",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

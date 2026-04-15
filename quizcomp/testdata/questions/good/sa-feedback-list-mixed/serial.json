@@ -1,0 +1,15 @@
+{
+    "answers": [
+        {
+            "feedback": "1",
+            "text": "a"
+        },
+        "b"
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "SA: Feedback List Mixed",
+    "question_type": "short_answer",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

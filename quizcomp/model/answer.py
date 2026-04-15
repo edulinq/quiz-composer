@@ -176,6 +176,8 @@ class QuestionAnswers(edq.util.serial.PODConverter):
             return TextAnswers.from_pod(data, serialization_options)
         elif (question_type == quizcomp.model.constants.QuestionType.TEXT_ONLY):
             return TextAnswers.from_pod(data, serialization_options)
+        elif (question_type == quizcomp.model.constants.QuestionType.TF):
+            return TFAnswers.from_pod(data, serialization_options)
         else:
             raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
 
@@ -312,6 +314,8 @@ class ChoiceAnswers(QuestionAnswers):
         base_dir = serialization_options.get('base_dir', None)
         min_correct = serialization_options.get('min_correct', 0)
         max_correct = serialization_options.get('max_correct', MAX_CHOICES)
+        min_incorrect = serialization_options.get('min_incorrect', 0)
+        max_incorrect = serialization_options.get('max_incorrect', MAX_CHOICES)
 
         quizcomp.errors.check_type(data, list, "'answers'")
 
@@ -321,6 +325,8 @@ class ChoiceAnswers(QuestionAnswers):
             raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", base_dir = base_dir)
 
         num_correct = 0
+        num_incorrect = 0
+
         choices = []
 
         for (i, raw_choice) in enumerate(raw_choices):
@@ -338,6 +344,8 @@ class ChoiceAnswers(QuestionAnswers):
 
             if (correct):
                 num_correct += 1
+            else:
+                num_incorrect += 1
 
             option = TextOption.from_pod_with_error(raw_choice, serialization_options, label, base_dir)
             choices.append(Choice(option.text, correct, option.feedback))
@@ -352,7 +360,51 @@ class ChoiceAnswers(QuestionAnswers):
                 + f" Expected at most {max_correct}, found {num_correct}."),
                 base_dir = base_dir)
 
+        if (num_incorrect < min_incorrect):
+            raise quizcomp.errors.QuestionValidationError(("Did not find enough incorrect choices."
+                + f" Expected at least {min_incorrect}, found {num_incorrect}."),
+                base_dir = base_dir)
+
+        if (num_incorrect > max_incorrect):
+            raise quizcomp.errors.QuestionValidationError(("Found too many incorrect choices."
+                + f" Expected at most {max_incorrect}, found {num_incorrect}."),
+                base_dir = base_dir)
+
         return ChoiceAnswers(choices)
+
+class TFAnswers(ChoiceAnswers):
+    """ Answers that must be true or false. """
+
+    def __init__(self,
+            *args: typing.Any,
+            **kwargs: typing.Any) -> None:
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def from_pod(cls: typing.Type[TFAnswers],
+            data: PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) ->  TFAnswers:
+        if (serialization_options is None):
+            serialization_options = {}
+
+        base_dir = serialization_options.get('base_dir', None)
+
+        if (isinstance(data, bool)):
+            choices = [
+                Choice(TextOption.from_pod_with_error("True", serialization_options, 'true', base_dir), data),
+                Choice(TextOption.from_pod_with_error("False", serialization_options, 'false', base_dir), (not data)),
+            ]
+            return TFAnswers(choices)
+
+        serialization_options['min_correct'] = 1
+        serialization_options['max_correct'] = 1
+        serialization_options['min_incorrect'] = 1
+        serialization_options['max_incorrect'] = 1
+
+        answers = ChoiceAnswers.from_pod(data, serialization_options)
+
+        return TFAnswers(answers.choices)
 
 class MultiplePartChoiceAnswers(QuestionAnswers):
     """

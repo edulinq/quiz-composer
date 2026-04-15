@@ -1,0 +1,18 @@
+{
+    "answers": [
+        {
+            "correct": true,
+            "text": "True"
+        },
+        {
+            "correct": false,
+            "text": "False"
+        }
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "True\\/False: True",
+    "question_type": "true_false",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

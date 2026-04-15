@@ -1,0 +1,8 @@
+{
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Text\\-Only: Null",
+    "question_type": "text_only",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}
