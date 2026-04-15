@@ -167,6 +167,11 @@ class QuestionAnswers(edq.util.serial.PODConverter):
             serialization_options['min_correct'] = 1
             serialization_options['max_correct'] = 1
             return ChoiceAnswers.from_pod(data, serialization_options)
+        elif (question_type == quizcomp.model.constants.QuestionType.MDD):
+            serialization_options = serialization_options.copy()
+            serialization_options['min_correct'] = 1
+            serialization_options['max_correct'] = 1
+            return MultiplePartChoiceAnswers.from_pod(data, serialization_options)
         else:
             raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
 
@@ -344,6 +349,46 @@ class ChoiceAnswers(QuestionAnswers):
                 base_dir = base_dir)
 
         return ChoiceAnswers(choices)
+
+class MultiplePartChoiceAnswers(QuestionAnswers):
+    """
+    Answers that have multiple parts, each having their own choice-based answers.
+    """
+
+    def __init__(self,
+            parts: typing.Dict[str, ChoiceAnswers],
+            *args: typing.Any,
+            **kwargs: typing.Any) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.parts: typing.Dict[str, ChoiceAnswers] = parts
+        """ The different parts of this question. """
+
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> edq.util.serial.PODType:
+        return {key: value.to_pod() for (key, value) in self.parts.items()}
+
+    @classmethod
+    def from_pod(cls: typing.Type[MultiplePartTextAnswers],
+            data: PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> MultiplePartTextAnswers:
+        if (serialization_options is None):
+            serialization_options = {}
+
+        base_dir = serialization_options.get('base_dir', None)
+
+        quizcomp.errors.check_type(data, dict, "'answers'")
+
+        parts = {}
+        for (key, raw_options) in data.items():
+            # Try to parse the key, even though we are not storing it right now.
+            quizcomp.parser.document.ParsedDocument.parse_text(key, base_dir = base_dir)
+
+            parts[key] = ChoiceAnswers.from_pod(raw_options, serialization_options)
+
+        return MultiplePartChoiceAnswers(parts)
 
 class MatchingAnswers(QuestionAnswers):
     """ Answers for matching-type questions. """

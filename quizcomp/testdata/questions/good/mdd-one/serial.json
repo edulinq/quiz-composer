@@ -1,0 +1,24 @@
+{
+    "answers": {
+        "part1": [
+            {
+                "correct": true,
+                "text": "a"
+            },
+            {
+                "correct": false,
+                "text": "b"
+            },
+            {
+                "correct": false,
+                "text": "c"
+            }
+        ]
+    },
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Multiple Drop Downs: One <placeholder>part1</placeholder>",
+    "question_type": "multiple_dropdowns",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

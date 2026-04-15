@@ -1,0 +1,38 @@
+{
+    "answers": {
+        "part1": [
+            {
+                "correct": true,
+                "text": "a"
+            },
+            {
+                "correct": false,
+                "text": "b"
+            },
+            {
+                "correct": false,
+                "text": "c"
+            }
+        ],
+        "part2": [
+            {
+                "correct": true,
+                "text": "1"
+            },
+            {
+                "correct": false,
+                "text": "2"
+            },
+            {
+                "correct": false,
+                "text": "3"
+            }
+        ]
+    },
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Multiple Drop Downs: Basic <placeholder>part1</placeholder> and <placeholder>part2</placeholder>",
+    "question_type": "multiple_dropdowns",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}
