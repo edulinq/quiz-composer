@@ -172,7 +172,9 @@ class QuestionAnswers(edq.util.serial.PODConverter):
             serialization_options['min_correct'] = 1
             serialization_options['max_correct'] = 1
             return MultiplePartChoiceAnswers.from_pod(data, serialization_options)
-        if (question_type == quizcomp.model.constants.QuestionType.SA):
+        elif (question_type == quizcomp.model.constants.QuestionType.SA):
+            return TextAnswers.from_pod(data, serialization_options)
+        elif (question_type == quizcomp.model.constants.QuestionType.TEXT_ONLY):
             return TextAnswers.from_pod(data, serialization_options)
         else:
             raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
