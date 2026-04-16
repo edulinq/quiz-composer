@@ -12,6 +12,7 @@ class CoreType(edq.util.serial.DictConverter):
     def __init__(self,
             base_dir: str = '.',
             lms_id: typing.Union[str, None] = None,
+            hints: typing.Union[typing.Dict[str, typing.Any], None] = None,
             **kwargs: typing.Any) -> None:
         self.base_dir: str = base_dir
         """ The base directory for any relative paths this object needs to resolve. """
@@ -19,5 +20,5 @@ class CoreType(edq.util.serial.DictConverter):
         self.lms_id: typing.Union[str, None] = lms_id
         """ An ID to tie this object to an LMS (e.g. Moodle or Canvas). """
 
-        # TEST
-        # hints: typing.Union[typing.Dict[str, typing.Any], None] = None,
+        self.hints: typing.Union[typing.Dict[str, typing.Any], None] = hints
+        """ Hints (generally layout hints) for this object. """

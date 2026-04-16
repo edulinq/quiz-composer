@@ -1,0 +1,25 @@
+{
+    "answers": {
+        "A": [
+            "1"
+        ],
+        "B": [
+            "2"
+        ],
+        "C": [
+            "3"
+        ],
+        "D": [
+            "4"
+        ]
+    },
+    "base_dir": ".",
+    "hints": {
+        "inline": true
+    },
+    "points": 0,
+    "prompt": "Hints: Inline -- <placeholder>A</placeholder> <placeholder>B</placeholder> <placeholder>C</placeholder> <placeholder>D</placeholder>",
+    "question_type": "fill_in_multiple_blanks",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

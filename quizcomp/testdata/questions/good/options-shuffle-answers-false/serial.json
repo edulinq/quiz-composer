@@ -1,0 +1,26 @@
+{
+    "answers": [
+        {
+            "correct": true,
+            "text": "A"
+        },
+        {
+            "correct": false,
+            "text": "B"
+        },
+        {
+            "correct": false,
+            "text": "C"
+        },
+        {
+            "correct": false,
+            "text": "D"
+        }
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Shuffle Answers: False",
+    "question_type": "multiple_choice",
+    "shuffle_answers": false,
+    "skip_numbering": false
+}

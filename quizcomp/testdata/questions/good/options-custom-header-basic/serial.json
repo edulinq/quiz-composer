@@ -1,0 +1,27 @@
+{
+    "answers": [
+        {
+            "correct": true,
+            "text": "A"
+        },
+        {
+            "correct": false,
+            "text": "B"
+        },
+        {
+            "correct": false,
+            "text": "C"
+        },
+        {
+            "correct": false,
+            "text": "D"
+        }
+    ],
+    "base_dir": ".",
+    "custom_header": "Custom Name",
+    "points": 0,
+    "prompt": "Custom Header",
+    "question_type": "multiple_choice",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}
