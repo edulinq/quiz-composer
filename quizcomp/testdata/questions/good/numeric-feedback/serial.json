@@ -1,0 +1,36 @@
+{
+    "answers": [
+        {
+            "margin": 0.01,
+            "type": "exact",
+            "value": 0.08
+        },
+        {
+            "feedback": "X",
+            "max": 0.09,
+            "min": 0.07,
+            "type": "range"
+        },
+        {
+            "feedback": "Y",
+            "precision": 2,
+            "type": "precision",
+            "value": 0.08
+        },
+        {
+            "feedback": {
+                "correct": "Z",
+                "incorrect": "ZZ"
+            },
+            "precision": 2,
+            "type": "precision",
+            "value": 0.08
+        }
+    ],
+    "base_dir": ".",
+    "points": 0,
+    "prompt": "Numeric: Feedback",
+    "question_type": "numerical",
+    "shuffle_answers": true,
+    "skip_numbering": false
+}

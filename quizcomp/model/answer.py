@@ -1,6 +1,8 @@
+import enum
 import string
 import typing
 
+import edq.util.enum
 import edq.util.serial
 
 import quizcomp.errors
@@ -8,9 +10,16 @@ import quizcomp.model.feedback
 
 MAX_CHOICES: int = len(string.ascii_uppercase)
 
+class NumericAnswerType(enum.StrEnum):
+    """ The types of numeric answers supported by the Quiz Composer. """
+
+    EXACT = 'exact'
+    RANGE = 'range'
+    PRECISION = 'precision'
+
 class TextOption(edq.util.serial.PODConverter):
     """
-    One possible answer to a question.
+    One possible text answer to a question.
     """
 
     serialization_omit_none = True,
@@ -87,6 +96,158 @@ class TextOption(edq.util.serial.PODConverter):
         serialization_options['base_dir'] = base_dir
 
         return cls.from_pod(data, serialization_options)
+
+class NumericOption(edq.util.serial.PODConverter):
+    """
+    One possible numeric answer to a question.
+    """
+
+    serialization_omit_none = True,
+    serialization_omit_empty = True,
+
+    def __init__(self,
+            type: NumericAnswerType,
+            feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = None,
+            **kwargs: typing.Any) -> None:
+        self.type: NumericAnswerType = type
+        """ The type of numeric answer. """
+
+        if ((feedback is not None) and feedback.is_empty()):
+            feedback = None
+
+        self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
+        """ Feedback specific to this choice. """
+
+    @classmethod
+    def from_pod(cls: typing.Type[NumericOption],
+            data: PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> NumericOption:
+        if (serialization_options is None):
+            serialization_options = {}
+
+        label = serialization_options.get('label', '')
+        base_dir = serialization_options.get('base_dir', None)
+
+        quizcomp.errors.check_type(data, dict, label, base_dir = base_dir)
+
+        answer_type = data.get('type', None)
+        if (not edq.util.enum.has_value(NumericAnswerType, answer_type)):
+            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", base_dir = base_dir)
+
+        feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), base_dir = base_dir)
+
+        if (answer_type == NumericAnswerType.EXACT):
+            value = data.get('value', None)
+            if (value is None):
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", base_dir = base_dir)
+
+            if (not isinstance(value, (int, float))):
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'value' that is not an int or float, found '{type(value)}'.", base_dir = base_dir)
+
+            margin = data.get('margin', 0.0)
+            if (not isinstance(margin, (int, float))):
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'margin' that is not an int or float, found '{type(margin)}'.", base_dir = base_dir)
+
+            return NumericOptionExact(value, margin, feedback = feedback)
+        elif (answer_type == NumericAnswerType.RANGE):
+            min = data.get('min', None)
+            if (min is None):
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'min' key.", base_dir = base_dir)
+
+            if (not isinstance(min, (int, float))):
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'min' that is not an int or float, found '{type(min)}'.", base_dir = base_dir)
+
+            max = data.get('max', None)
+            if (max is None):
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'max' key.", base_dir = base_dir)
+
+            if (not isinstance(max, (int, float))):
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'max' that is not an int or float, found '{type(max)}'.", base_dir = base_dir)
+
+            return NumericOptionRange(min, max, feedback = feedback)
+        elif (answer_type == NumericAnswerType.PRECISION):
+            value = data.get('value', None)
+            if (value is None):
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", base_dir = base_dir)
+
+            if (not isinstance(value, (int, float))):
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'value' that is not an int or float, found '{type(value)}'.", base_dir = base_dir)
+
+            precision = data.get('precision', None)
+            if (precision is None):
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'precision' key.", base_dir = base_dir)
+
+            if (not isinstance(precision, int)):
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'precision' that is not an int, found '{type(precision)}'.", base_dir = base_dir)
+
+            return NumericOptionPrecision(value, precision, feedback = feedback)
+        else:
+            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", base_dir = base_dir)
+
+    @classmethod
+    def from_pod_with_error(cls: typing.Type[NumericOption],
+            data: PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None],
+            label: str,
+            base_dir: typing.Union[str, None],
+            ) -> NumericOption:
+        """ Wrap from_pod() with some error information. """
+
+        if (serialization_options is None):
+            serialization_options = {}
+        else:
+            serialization_options = serialization_options.copy()
+
+        serialization_options['label'] = label
+        serialization_options['base_dir'] = base_dir
+
+        return cls.from_pod(data, serialization_options)
+
+class NumericOptionExact(NumericOption):
+    """ A numeric option to represent an exact value (within a margin). """
+
+    def __init__(self,
+            value: typing.Union[float, int],
+            margin: typing.Union[float, int] = 0.0,
+            **kwargs) -> None:
+        super().__init__(type = NumericAnswerType.EXACT, **kwargs)
+
+        self.value: typing.Union[float, int] = value
+        """ The value for this answer. """
+
+        self.margin: typing.Union[float, int] = margin
+        """ The allowed margin or error for this answer. """
+
+class NumericOptionRange(NumericOption):
+    """ A numeric option to represent a value within a range. """
+
+    def __init__(self,
+            min: typing.Union[float, int],
+            max: typing.Union[float, int],
+            **kwargs) -> None:
+        super().__init__(type = NumericAnswerType.RANGE, **kwargs)
+
+        self.min: typing.Union[float, int] = min
+        """ The minimum allowed value. """
+
+        self.max: typing.Union[float, int] = max
+        """ The maximum allowed value. """
+
+class NumericOptionPrecision(NumericOption):
+    """ A numeric option to represent a value within a specified order of magnitudes. """
+
+    def __init__(self,
+            value: typing.Union[float, int],
+            precision: int,
+            **kwargs) -> None:
+        super().__init__(type = NumericAnswerType.PRECISION, **kwargs)
+
+        self.value: typing.Union[float, int] = value
+        """ The value for this answer. """
+
+        self.precision: int = precision
+        """ The number of order of magnitudes allowed. """
 
 class Choice(TextOption):
     """
@@ -172,6 +333,8 @@ class QuestionAnswers(edq.util.serial.PODConverter):
             serialization_options['min_correct'] = 1
             serialization_options['max_correct'] = 1
             return MultiplePartChoiceAnswers.from_pod(data, serialization_options)
+        elif (question_type == quizcomp.model.constants.QuestionType.NUMERICAL):
+            return NumericAnswers.from_pod(data, serialization_options)
         elif (question_type == quizcomp.model.constants.QuestionType.SA):
             return TextAnswers.from_pod(data, serialization_options)
         elif (question_type == quizcomp.model.constants.QuestionType.TEXT_ONLY):
@@ -232,7 +395,7 @@ class TextAnswers(QuestionAnswers):
         if (isinstance(data, dict)):
             data = [data]
 
-        quizcomp.errors.check_type(data, list, "'answers'")
+        quizcomp.errors.check_type(data, list, "'answers'", base_dir = base_dir)
 
         if (len(data) == 0):
             return TextAnswers()
@@ -275,7 +438,7 @@ class MultiplePartTextAnswers(QuestionAnswers):
 
         base_dir = serialization_options.get('base_dir', None)
 
-        quizcomp.errors.check_type(data, dict, "'answers'")
+        quizcomp.errors.check_type(data, dict, "'answers'", base_dir = base_dir)
 
         parts = {}
         for (key, raw_options) in data.items():
@@ -317,7 +480,7 @@ class ChoiceAnswers(QuestionAnswers):
         min_incorrect = serialization_options.get('min_incorrect', 0)
         max_incorrect = serialization_options.get('max_incorrect', MAX_CHOICES)
 
-        quizcomp.errors.check_type(data, list, "'answers'")
+        quizcomp.errors.check_type(data, list, "'answers'", base_dir = base_dir)
 
         raw_choices: typing.List[typing.Any] = typing.cast(list, data)
 
@@ -332,7 +495,7 @@ class ChoiceAnswers(QuestionAnswers):
         for (i, raw_choice) in enumerate(raw_choices):
             label = f"Choice at index {i}"
 
-            quizcomp.errors.check_type(raw_choice, dict, label)
+            quizcomp.errors.check_type(raw_choice, dict, label, base_dir = base_dir)
 
             raw_correct = raw_choice.get('correct', None)
             if (raw_correct is None):
@@ -435,7 +598,7 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
 
         base_dir = serialization_options.get('base_dir', None)
 
-        quizcomp.errors.check_type(data, dict, "'answers'")
+        quizcomp.errors.check_type(data, dict, "'answers'", base_dir = base_dir)
 
         parts = {}
         for (key, raw_options) in data.items():
@@ -485,13 +648,13 @@ class MatchingAnswers(QuestionAnswers):
 
         base_dir = serialization_options.get('base_dir', None)
 
-        quizcomp.errors.check_type(data, dict, "'answers'")
+        quizcomp.errors.check_type(data, dict, "'answers'", base_dir = base_dir)
 
         raw_matches = data.get('matches', None)
         if (raw_matches is None):
             raise quizcomp.errors.QuestionValidationError("The 'matches' key was not provided for a matching-type question.", base_dir = base_dir)
 
-        quizcomp.errors.check_type(raw_matches, list, "'matches'")
+        quizcomp.errors.check_type(raw_matches, list, "'matches'", base_dir = base_dir)
 
         if (len(raw_matches) == 0):
             raise quizcomp.errors.QuestionValidationError("At least one matching pair must be specified for matching questions.", base_dir = base_dir)
@@ -534,7 +697,7 @@ class MatchingAnswers(QuestionAnswers):
         if (raw_distractors is None):
             raw_distractors = []
 
-        quizcomp.errors.check_type(raw_distractors, list, "'distractors'")
+        quizcomp.errors.check_type(raw_distractors, list, "'distractors'", base_dir = base_dir)
 
         distractors = []
         for (i, raw_distractor) in enumerate(raw_distractors):
@@ -544,6 +707,49 @@ class MatchingAnswers(QuestionAnswers):
             distractors.append(option)
 
         return MatchingAnswers(pairs, distractors)
+
+class NumericAnswers(QuestionAnswers):
+    """ Answers that include a finite set of numeric options. """
+
+    def __init__(self,
+            options: typing.List[NumericOption],
+            *args: typing.Any,
+            **kwargs: typing.Any) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.options: typing.List[NumericOption] = options
+        """ The possible options. """
+
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> edq.util.serial.PODType:
+        return [option.to_pod() for option in self.options]
+
+    @classmethod
+    def from_pod(cls: typing.Type[MultiplePartTextAnswers],
+            data: PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> MultiplePartTextAnswers:
+        if (serialization_options is None):
+            serialization_options = {}
+
+        base_dir = serialization_options.get('base_dir', None)
+
+        quizcomp.errors.check_type(data, list, "'answers'", base_dir = base_dir)
+
+        raw_options: typing.List[typing.Any] = typing.cast(list, data)
+
+        if (len(raw_options) == 0):
+            raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", base_dir = base_dir)
+
+        options = []
+        for (i, raw_option) in enumerate(raw_options):
+            label = f"Option at index {i}"
+
+            option = NumericOption.from_pod_with_error(raw_option, serialization_options, label, base_dir)
+            options.append(option)
+
+        return NumericAnswers(options)
 
 # TEST
 ''' TEST

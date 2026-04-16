@@ -19,6 +19,15 @@
             "value": 0.08,
             "precision": 2,
             "feedback": "Y"
+        },
+        {
+            "type": "precision",
+            "value": 0.08,
+            "precision": 2,
+            "feedback": {
+                "correct": "Z",
+                "incorrect": "ZZ"
+            }
         }
     ]
 }

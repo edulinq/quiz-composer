@@ -1,10 +1,10 @@
 {
-    "prompt": "Basic Number Question with All Answer Types",
+    "prompt": "Bad Numeric: Non-Numeric Min",
     "question_type": "numerical",
     "answers": [
         {"type": "exact", "value": 0.08},
         {"type": "exact", "value": 0.08, "margin": 0.01},
-        {"type": "range", "min": 0.07, "max": 0.09},
+        {"type": "range", "min": "0.07", "max": 0.09},
         {"type": "precision", "value": 0.08, "precision": 2}
     ]
 }
