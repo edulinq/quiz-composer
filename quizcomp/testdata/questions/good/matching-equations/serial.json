@@ -3,7 +3,7 @@
         "distractors": [
             "$ f(x) = x + 2 $"
         ],
-        "pairs": [
+        "matches": [
             [
                 "$ A $",
                 "$ 1 $"

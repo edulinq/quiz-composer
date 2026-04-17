@@ -108,7 +108,7 @@ def _get_question_reparse_test_method(path: str) -> typing.Callable:
         question = self.load_question(path)
         question_data = question.to_dict()
 
-        new_question = quizcomp.model.question.Question.from_dict(question_data)
+        new_question = quizcomp.model.question.Question.from_dict(question_data.copy())
         new_question_data = new_question.to_dict()
 
         self.assertJSONDictEqual(question_data, new_question_data)

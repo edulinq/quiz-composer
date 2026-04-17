@@ -634,7 +634,7 @@ class MatchingAnswers(QuestionAnswers):
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> edq.util.serial.PODType:
         return {
-            'pairs': [[left.to_pod(), right.to_pod()] for (left, right) in self.pairs],
+            'matches': [[left.to_pod(), right.to_pod()] for (left, right) in self.pairs],
             'distractors': [value.to_pod() for value in self.distractors],
         }
 
