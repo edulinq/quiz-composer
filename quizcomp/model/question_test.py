@@ -116,7 +116,7 @@ def _get_question_reparse_test_method(path: str) -> typing.Callable:
     return __method
 
 def _get_question_canvas_test_method(path: str, canvas_path: str) -> typing.Callable:
-    """ Get a test for reprsenting a question in a Canvas API format. """
+    """ Get a test for representing a question in a Canvas API format. """
 
     def __method(self: QuestionsTest) -> None:
         question = self.load_question(path)

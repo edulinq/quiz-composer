@@ -21,6 +21,12 @@ EMPTY_ANSWER_QUESTION_TYPES: typing.Set[quizcomp.model.constants.QuestionType] =
 }
 """ Question types that do not have to have an answer. """
 
+PLACEHOLDER_QUESTION_TYPES: typing.Set[quizcomp.model.constants.QuestionType] = {
+    quizcomp.model.constants.QuestionType.FIMB,
+    quizcomp.model.constants.QuestionType.MDD,
+}
+""" Question types that have placeholders. """
+
 class Question(quizcomp.model.base.CoreType):
     """ A class that represents a question and all answers/feedback for the question. """
 
@@ -120,6 +126,23 @@ class Question(quizcomp.model.base.CoreType):
                 raise quizcomp.errors.QuestionValidationError('No answers to question provided.', base_dir = base_dir)
 
             data['answers'] = quizcomp.model.answer.TextAnswers()
+
+        prompt_placeholders = data['prompt'].collect_placeholders()
+        if (question_type in PLACEHOLDER_QUESTION_TYPES):
+            answers_placeholders = set(data['answers'].parts.keys())
+
+            if (answers_placeholders != prompt_placeholders):
+                output_answers_placeholders = list(sorted(answers_placeholders))
+                output_prompt_placeholders = list(sorted(prompt_placeholders))
+
+                raise quizcomp.errors.QuestionValidationError(
+                        (f"Mismatch between the placeholders found in the question prompt ({output_prompt_placeholders})"
+                            + f" and answers config ({output_answers_placeholders})."),
+                        base_dir = base_dir)
+        elif (len(prompt_placeholders) != 0):
+            raise quizcomp.errors.QuestionValidationError(
+                    f"Found placeholders in the prompt for questions that do not use placeholders: '{question_type}'.",
+                    base_dir = base_dir)
 
     @classmethod
     def _collect_prompt(cls,
