@@ -10,6 +10,7 @@ import requests
 
 import quizcomp.constants
 import quizcomp.group
+import quizcomp.model.base
 import quizcomp.model.constants
 import quizcomp.question.base
 import quizcomp.quiz
@@ -275,8 +276,10 @@ def _create_question_json(
     question_type = QUESTION_TYPE_MAP[question.question_type]
 
     name = question.name
-    if (question.custom_header is not None):
-        name = question.custom_header
+
+    custom_header = self.get_attribute(quizcomp.model.base.ATTR_CUSTOM_HEADER_KEY, quizcomp.model.base.ATTR_CUSTOM_HEADER_DEFAULT)
+    if (custom_header is not None):
+        name = custom_header
 
     data = {
         'question[question_type]': question_type,

@@ -8,9 +8,6 @@
         "9^0"
     ],
     "base_dir": ".",
-    "points": 0,
     "prompt": "Short Answer \\/ Fill in The Blank: Special Characters",
-    "question_type": "fill_in_the_blank",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "fill_in_the_blank"
 }

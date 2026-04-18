@@ -1,8 +1,5 @@
 {
     "base_dir": ".",
-    "points": 0,
     "prompt": "Essay: Null",
-    "question_type": "essay",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "essay"
 }

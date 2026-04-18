@@ -22,9 +22,6 @@
         }
     ],
     "base_dir": ".",
-    "points": 0,
     "prompt": "Basic Number Question with All Answer Types",
-    "question_type": "numerical",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "numerical"
 }

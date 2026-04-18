@@ -25,9 +25,6 @@
         "general": "X",
         "incorrect": "Z"
     },
-    "points": 0,
     "prompt": "Feedback: All",
-    "question_type": "multiple_choice",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "multiple_choice"
 }

@@ -1,8 +1,5 @@
 {
     "base_dir": ".",
-    "points": 0,
     "prompt": "Short Answer: Null",
-    "question_type": "short_answer",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "short_answer"
 }

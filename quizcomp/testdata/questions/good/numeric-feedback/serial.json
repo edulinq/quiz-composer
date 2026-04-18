@@ -28,9 +28,6 @@
         }
     ],
     "base_dir": ".",
-    "points": 0,
     "prompt": "Numeric: Feedback",
-    "question_type": "numerical",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "numerical"
 }

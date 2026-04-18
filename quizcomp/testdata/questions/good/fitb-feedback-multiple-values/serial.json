@@ -11,9 +11,6 @@
         }
     ],
     "base_dir": ".",
-    "points": 0,
     "prompt": "Short Answer \\/ Fill in The Blank: Feedback Multiple Values",
-    "question_type": "fill_in_the_blank",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "fill_in_the_blank"
 }

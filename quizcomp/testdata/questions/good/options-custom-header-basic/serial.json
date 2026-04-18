@@ -17,11 +17,10 @@
             "text": "D"
         }
     ],
+    "attributes": {
+        "custom_header": "Custom Name"
+    },
     "base_dir": ".",
-    "custom_header": "Custom Name",
-    "points": 0,
     "prompt": "Custom Header",
-    "question_type": "multiple_choice",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "multiple_choice"
 }

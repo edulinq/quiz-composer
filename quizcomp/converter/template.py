@@ -12,6 +12,7 @@ import jinja2
 import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.group
+import quizcomp.model.base
 import quizcomp.model.constants
 import quizcomp.parser.document
 import quizcomp.question.base
@@ -262,7 +263,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         context = self.modify_question_context(context, question, variant)
         text = template.render(**context)
 
-        if (not question.should_skip_numbering()):
+        if (self.get_attribute(quizcomp.model.base.ATTR_SKIP_NUMBERING_KEY, quizcomp.model.base.ATTR_SKIP_NUMBERING_DEFAULT) is True):
             question_number += 1
 
         return question_number, text

@@ -10,9 +10,6 @@
         }
     ],
     "base_dir": ".",
-    "points": 0,
     "prompt": "True\\/False: List",
-    "question_type": "true_false",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "true_false"
 }

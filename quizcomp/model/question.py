@@ -37,23 +37,12 @@ class Question(quizcomp.model.base.CoreType):
             question_type: quizcomp.model.constants.QuestionType,
             prompt: quizcomp.parser.document.ParsedDocument,
             answers: typing.Union[quizcomp.model.answer.QuestionAnswers, None] = None,
-            name: typing.Union[str, None] = None,
-            points: typing.Union[float, None] = None,
-            shuffle_answers: bool = True,
-            skip_numbering: bool = False,
-            custom_header: typing.Union[str, None] = None,
             feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = None,
             **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
         self.question_type: quizcomp.model.constants.QuestionType = question_type
         """ The type of this question. """
-
-        if (name is None):
-            name = ''
-
-        self.name: str = name
-        """ The name. """
 
         self.prompt: quizcomp.parser.document.ParsedDocument = prompt
         """ The parsed prompt of this question. """
@@ -63,21 +52,6 @@ class Question(quizcomp.model.base.CoreType):
 
         self.answers: quizcomp.model.answer.QuestionAnswers = answers
         """ The answers for this question. """
-
-        if (points is None):
-            points = 0
-
-        self.points: float = points
-        """ The number of points possible. """
-
-        self.shuffle_answers: bool = shuffle_answers
-        """ Whether the answers should be shuffled. """
-
-        self.skip_numbering: typing.Union[bool, None] = skip_numbering
-        """ Whether to skip numbering. """
-
-        self.custom_header: typing.Union[str, None] = custom_header
-        """ A custom header, instead of something generic like "Question 4". """
 
         self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
         """ Object-level feedback. """

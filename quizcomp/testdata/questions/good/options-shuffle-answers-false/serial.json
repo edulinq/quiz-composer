@@ -18,9 +18,6 @@
         }
     ],
     "base_dir": ".",
-    "points": 0,
     "prompt": "Shuffle Answers: False",
-    "question_type": "multiple_choice",
-    "shuffle_answers": false,
-    "skip_numbering": false
+    "question_type": "multiple_choice"
 }

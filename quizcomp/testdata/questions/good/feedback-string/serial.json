@@ -19,9 +19,6 @@
     ],
     "base_dir": ".",
     "feedback": "X",
-    "points": 0,
     "prompt": "Feedback: String",
-    "question_type": "multiple_choice",
-    "shuffle_answers": true,
-    "skip_numbering": false
+    "question_type": "multiple_choice"
 }
