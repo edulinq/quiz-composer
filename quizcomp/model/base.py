@@ -39,8 +39,14 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
             base_dir: str = '.',
             lms_id: typing.Union[str, None] = None,
             attributes: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            attributes_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            attributes_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             hints: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            hints_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            hints_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            style_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            style_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             **kwargs: typing.Any) -> None:
         self.name: typing.Union[str, None] = name
         """
@@ -54,10 +60,10 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         The general pattern is: Quiz -> Variant -> Group -> Question.
         """
 
-        if ((children is not None) and len(children) == 0):
-            children = None
+        if (children is None):
+            children = []
 
-        self.children: typing.Union[typing.List[CoreType], None] = children
+        self.children: typing.List[CoreType] = children
         """
         Children of this object.
         The general pattern is: Quiz -> Variant -> Group -> Question.
@@ -87,6 +93,18 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         Attributes will always be observed (as long as the current version supports them).
         """
 
+        if (attributes_first is None):
+            attributes_first = {}
+
+        self.attributes_first: typing.Dict[str, edq.util.serial.POD] = attributes_first.copy()
+        """ Attributes to pass along to the first child of this object. """
+
+        if (attributes_last is None):
+            attributes_last = {}
+
+        self.attributes_last: typing.Dict[str, edq.util.serial.POD] = attributes_last.copy()
+        """ Attributes to pass along to the last child of this object. """
+
         if (hints is None):
             hints = {}
 
@@ -97,6 +115,18 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         Hints may be ignored.
         """
 
+        if (hints_first is None):
+            hints_first = {}
+
+        self.hints_first: typing.Dict[str, edq.util.serial.POD] = hints_first.copy()
+        """ Hints to pass along to the first child of this object. """
+
+        if (hints_last is None):
+            hints_last = {}
+
+        self.hints_last: typing.Dict[str, edq.util.serial.POD] = hints_last.copy()
+        """ Hints to pass along to the last child of this object. """
+
         if (style is None):
             style = {}
 
@@ -105,6 +135,18 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         Styling rules for this object.
         Style may be defined in text or in JSON.
         """
+
+        if (style_first is None):
+            style_first = {}
+
+        self.style_first: typing.Dict[str, edq.util.serial.POD] = style_first.copy()
+        """ Styles to pass along to the first child of this object. """
+
+        if (style_last is None):
+            style_last = {}
+
+        self.style_last: typing.Dict[str, edq.util.serial.POD] = style_last.copy()
+        """ Styles to pass along to the last child of this object. """
 
     def get_available_points(self) -> float:
         """
@@ -173,21 +215,56 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
 
         return value
 
-    def _get_hierarchical_value(self, value_type: str, key: str) -> typing.Union[edq.util.serial.POD, None]:
+    def _get_hierarchical_value(self, value_type: str, key: str,
+            child: typing.Union['CoreType', None] = None,
+            ) -> typing.Union[edq.util.serial.POD, None]:
         """
         Get a value from either self or a parent (which may check its parent and so on).
         Return None if no value is found.
+
+        If a value is passed for `child`, that value will be checked to see if it is the first or last child of this object,
+        which will then prompt for checking in the `_first` and `_last` containers.
+        `_first` and `_last` values will override base values.
+        Only children will favor `_last` if both are present.
         """
 
         if (not hasattr(self, value_type)):
             raise ValueError(f"Unknown value type: '{value_type}'.")
 
-        conainter = getattr(self, value_type)
+        container = getattr(self, value_type)
 
+        found = False
+        value = None
+
+        # Check for the value normally.
         if (key in container):
-            return container[key]
+            found = True
+            value = container[key]
 
+        # Check if the given child is present.
+        if ((child is not None) and (child in self.children)):
+            child_index = self.children.index(child)
+
+            # Check if the child is a first.
+            if (child_index == 0):
+                context_container = getattr(self, value_type + '_first')
+                if ((context_container is not None) and (key in context_container)):
+                    found = True
+                    value = context_container[key]
+
+            # Check if the child is a last.
+            if (child_index == (len(self.children) - 1)):
+                context_container = getattr(self, value_type + '_last')
+                if ((context_container is not None) and (key in context_container)):
+                    found = True
+                    value = context_container[key]
+
+        if (found):
+            return value
+
+        # No value found here, and no parents.
         if (self.parent is None):
             return None
 
-        return self.parent._get_hierarchical_value(value_type, key)
+        # No value found here, check the parent (using ourself as the context child).
+        return self.parent._get_hierarchical_value(value_type, key, child = self)
