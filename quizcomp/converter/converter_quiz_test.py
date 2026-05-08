@@ -52,7 +52,7 @@ def _get_good_convert_test(path: str) -> typing.Callable:
         expected = edq.util.json.load_path(expected_path)
 
         quiz = quizcomp.quiz.Quiz.from_path(path)
-        variant = quiz.create_variant()  # pylint: disable=no-member
+        variant = quiz.create_variants()[0]  # pylint: disable=no-member
         raw_result = quizcomp.converter.convert.convert_variant(variant, format = quizcomp.constants.FORMAT_JSON_TEMPLATE)
 
         result = edq.util.json.loads(raw_result)

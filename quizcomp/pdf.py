@@ -3,7 +3,7 @@ import datetime
 import logging
 import os
 import random
-import string
+import string  # TEST
 import traceback
 import typing
 
@@ -126,19 +126,12 @@ def make(
     # Options for each variant.
     variant_options = []
 
-    logging.info("Using seed %d.", seed)
+    logging.debug("Using seed %d.", seed)
     rng = random.Random(seed)
 
-    variants = []
-    for i in range(num_variants):
-        variant_id = None
-        if (num_variants > 1):
-            variant_id = string.ascii_uppercase[i]
+    variants = quiz.create_variants(count = num_variants, seed = seed)
 
-        variant_seed = rng.randint(0, 2**64)
-        variant = quiz.create_variant(identifier = variant_id, seed = variant_seed)
-        variants.append(variant)
-
+    for variant in variants:
         out_path = os.path.join(out_dir, f"{variant.title}.json")
         edq.util.dirent.write_file(out_path, variant.to_json())
 
@@ -160,7 +153,7 @@ def make(
                 variant.title = title
 
         variant_options.append({
-            'id': variant_id,
+            'id': variant.variant_id,
             'title': title,
             'seed': variant_seed,
             'has_key': has_key,

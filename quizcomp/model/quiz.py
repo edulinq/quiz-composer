@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 import random
+import string
 import typing
 
 import edq.util.dirent
@@ -11,6 +12,7 @@ import edq.util.time
 import quizcomp.canvas
 import quizcomp.common
 import quizcomp.constants
+import quizcomp.errors
 import quizcomp.group
 import quizcomp.model.base
 import quizcomp.parser.document
@@ -31,6 +33,9 @@ DUMMY_GROUP_DATA: typing.Dict[str, typing.Any] = {
     'hints_first': {},
     'hints_last': {},
 }
+
+DEFAULT_VARIANT_IDS: typing.List[str] = list(string.ascii_uppercase)
+""" Default IDs for quiz variants. """
 
 class Quiz(quizcomp.model.base.CoreType):
     """
@@ -214,47 +219,70 @@ class Quiz(quizcomp.model.base.CoreType):
 
         return count
 
-    def create_variant(self,
-            identifier: typing.Union[str, None] = None,
+    def create_variants(self,
+            count: int = 1,
             seed: typing.Union[int, None] = None,
-            all_questions: bool = False) -> 'Variant':
-        """ Create a variant based on this quiz. """
+            identifiers: typing.Union[typing.List[str], None] = None,
+            all_questions: bool = False,
+            ) -> typing.List['Variant']:
+        """
+        Create a collection of variants based on this quiz.
+        These variants will share the same question pool,
+        which is influenced by `pick_with_replacement`.
+        """
 
         if (seed is None):
             seed = self._rng.randint(0, 2**64)
 
-        logging.debug("Creating variant with seed %s.", str(seed))
         rng = random.Random(seed)
+
+        if (identifiers is None):
+            identifiers = DEFAULT_VARIANT_IDS
+
+        if (count < 0):
+            raise quizcomp.common.QuizValidationError(f"Variant count must be non-negative, found: {count}.", base_dir = self.base_dir)
+
+        if (count > len(identifiers)):
+            raise quizcomp.common.QuizValidationError(f"Not enough variant identifiers supplied. Got {len(identifiers)} identifiers and {count} requested variants. Given identifiers: {identifiers}.", base_dir = base_dir)
+
+        logging.debug("Creating %d variants with seed %d.", count, seed)
+
+        used_question_indexes = [set() for _ in self.groups]
+        varaints = [self._create_variant(identifiers[i], rng, used_question_indexes, all_questions) for i in range count]
+
+        return variants
+
+    # TEST
+    def _create_variant(self,
+            identifier: str,
+            rng: random.Random,
+            used_question_indexes: typing.List[typing.Set[int]],
+            all_questions: bool,
+            ) -> 'Variant':
+        """ Create a single variant based on this quiz. """
 
         new_groups = []
         for group in self.groups:
-            questions = group.choose_questions(all_questions = all_questions, rng = rng,
-                    with_replacement = self.pick_with_replacement)
+            questions = group.choose_variant_questions(all_questions, self.pick_with_replacement, used_question_indexes, rng)
 
-            group_data = group.__dict__.copy()
+            group_data = group.to_dict()
             group_data['questions'] = questions
-            # Skip validation.
-            group_data['_skip_all_validation'] = True
 
-            new_groups.append(quizcomp.group.Group(**group_data))
+            new_groups.append(quizcomp.group.Group.from_dict(group_data))
 
+        # TEST
+        ''' TEST - This needs to be changes to questions/groups can also apseicy this key.
         if (self.get_attribute(quizcomp.model.base.ATTR_SHUFFLE_ANSWERS_KEY, quizcomp.model.base.ATTR_SHUFFLE_ANSWERS_DEFAULT) is True):
             for group in new_groups:
                 for question in group.questions:
                     question.shuffle(rng)
-
-        name = self.name
-        version = self.version
-
-        if (identifier is not None):
-            name = f"{name} - {identifier}"
-            version = f"{version}, Variant: {identifier}"
+        '''
 
         data = self.__dict__.copy()
 
-        data['name'] = name
-        data['version'] = version
-        data['seed'] = seed
+        data['variant_id'] = identifier
+        data['name'] = f"{self.name} - {identifier}"
+        data['version'] = f"{self.version}, Variant: {identifier}"
         data['groups'] = new_groups
 
         # Skip quiz validation.
@@ -264,7 +292,7 @@ class Quiz(quizcomp.model.base.CoreType):
 
 class Variant(Quiz):
     """
-    A quiz varint is an instantiation of a quiz with specific set of questions chosen for each group.
+    A quiz variant is an instantiation of a quiz with specific set of questions chosen for each group.
     Variants still have question groups, but each group must only have the exact number of questions required for each group
     (or it is a validation error).
 
@@ -274,10 +302,14 @@ class Variant(Quiz):
     """
 
     def __init__(self,
+            variant_id: str,
             type: str = quizcomp.constants.TYPE_VARIANT,
             **kwargs: typing.Any) -> None:
         super().__init__(type = type, **kwargs)
         self.validate(cls = Variant, **kwargs)
+
+        self.variant_id: str = variant_id
+        """ An identifier to differentiate this variant from its siblings. """
 
         self.questions = []
         for group in self.groups:

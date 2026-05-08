@@ -3,6 +3,8 @@ import typing
 
 import edq.util.serial
 
+import quizcomp.errors
+
 ATTR_CUSTOM_HEADER_KEY: str = 'custom_header'
 """ An attribute for a custom header, instead of something generic like "Question 4". """
 
@@ -48,6 +50,12 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
             style_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             **kwargs: typing.Any) -> None:
+        self.base_dir: str = base_dir
+        """ The base directory for any relative paths this object needs to resolve. """
+
+        if ((name is not None) and (len(name) == 0)):
+            name = None
+
         self.name: typing.Union[str, None] = name
         """
         The name of this object.
@@ -69,6 +77,9 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         The general pattern is: Quiz -> Variant -> Group -> Question.
         """
 
+        if ((points is not None) and (points < 0)):
+            raise quizcomp.errors.QuizValidationError(f"Points must be either null/None or non-negative, found: {points}.", base_dir = base_dir)
+
         self.points: typing.Union[float, None] = points
         """
         The number of points associated with this object.
@@ -76,9 +87,6 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         for a question it is the number of available points,
         and for a group it is the number of points for each question in the group.
         """
-
-        self.base_dir: str = base_dir
-        """ The base directory for any relative paths this object needs to resolve. """
 
         self.lms_id: typing.Union[str, None] = lms_id
         """ An ID to tie this object to an LMS (e.g. Moodle or Canvas). """
@@ -147,6 +155,14 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
 
         self.style_last: typing.Dict[str, edq.util.serial.POD] = style_last.copy()
         """ Styles to pass along to the last child of this object. """
+
+    def get_name(self, default: str = '') -> str:
+        """ Get the name of this object, using the default value if name is None. """
+
+        if (self.name is None):
+            return default
+
+        return self.name
 
     def get_available_points(self) -> float:
         """
@@ -226,6 +242,8 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         which will then prompt for checking in the `_first` and `_last` containers.
         `_first` and `_last` values will override base values.
         Only children will favor `_last` if both are present.
+
+        The full order is: self, parent (first child), parent (last child), parent, gradnparent (first child), ...
         """
 
         if (not hasattr(self, value_type)):
