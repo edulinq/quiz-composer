@@ -28,12 +28,17 @@ class Group(quizcomp.model.base.CoreType):
 
     # TEST - pick_with_replacement should be allowed at the quiz level.
 
+    serialization_alias_fields = [
+        # TEST
+        # ('children', 'questions'),
+    ]
+
     def __init__(self,
+            questions: typing.Union[typing.List[quizcomp.model.question.Question], None] = None,
             pick_count: int = DEFAULT_PICK_COUNT,
             pick_with_replacement: bool = DEFAULT_PICK_WITH_REPLACEMENT,
-            questions: typing.Union[typing.List[quizcomp.model.question.Question], None] = None,
             **kwargs: typing.Any) -> None:
-        super().__init__(**kwargs)
+        super().__init__(children = questions, **kwargs)
 
         if (pick_count < 0):
             raise quizcomp.common.QuizValidationError(f"Pick count must be non-negative, found: {pick_count}.", base_dir = base_dir)
@@ -58,7 +63,10 @@ class Group(quizcomp.model.base.CoreType):
             used_question_indexes: typing.Set[int],
             rng: random.Random,
             ) -> typing.List[quizcomp.question.base.Question]:
-        """ Choose a list of questions to use for an instantiated variant of this group. """
+        """
+        Get a list of questions to use for an instantiated variant of this group.
+        The returned questions will be copies of the original and shuffled (it set in config).
+        """
 
         if ((self.pick_count == 0) or (len(self.children) == 0)):
             logging.warning("Group '%s' will select no questions (pick_count: %d, group size: %d).",
@@ -106,4 +114,11 @@ class Group(quizcomp.model.base.CoreType):
         if (not with_replacement):
             used_question_indexes |= set(indexes)
 
-        return [self.children[index].copy() for index in indexes]
+        questions = []
+        for index in indexes:
+            question = self.children[index].copy()
+            question.shuffle(rng)
+
+            questions.append(question)
+
+        return questions

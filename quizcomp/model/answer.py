@@ -1,4 +1,5 @@
 import enum
+import random
 import string
 import typing
 
@@ -286,6 +287,9 @@ class QuestionAnswers(edq.util.serial.PODConverter):
     The exact contents of answers vary depending on the question's type.
     """
 
+    def shuffle(self, rng: random.Random) -> None:
+        """ Shuffle the choices/options (if applicable). """
+
     @classmethod
     def from_pod(cls: typing.Type[QuestionAnswers],
             data: PODType,
@@ -365,6 +369,9 @@ class TextAnswers(QuestionAnswers):
         self.options: typing.List[TextOption] = options
         """ The possible text options. """
 
+    def shuffle(self, rng: random.Random) -> None:
+        rng.shuffle(self.options)
+
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> edq.util.serial.PODType:
@@ -423,6 +430,10 @@ class MultiplePartTextAnswers(QuestionAnswers):
         self.parts: typing.Dict[str, TextAnswers] = parts
         """ The different parts of this question. """
 
+    def shuffle(self, rng: random.Random) -> None:
+        for part in self.parts:
+            part.shuffle(rng)
+
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> edq.util.serial.PODType:
@@ -460,6 +471,9 @@ class ChoiceAnswers(QuestionAnswers):
 
         self.choices: typing.List[Choice] = choices
         """ The possible choices. """
+
+    def shuffle(self, rng: random.Random) -> None:
+        rng.shuffle(self.choices)
 
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
@@ -583,6 +597,10 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
         self.parts: typing.Dict[str, ChoiceAnswers] = parts
         """ The different parts of this question. """
 
+    def shuffle(self, rng: random.Random) -> None:
+        for part in self.parts:
+            part.shuffle(rng)
+
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> edq.util.serial.PODType:
@@ -629,6 +647,10 @@ class MatchingAnswers(QuestionAnswers):
 
         self.distractors: typing.List[TextOption] = distractors
         """ Extra options to serve as a distraction. """
+
+    def shuffle(self, rng: random.Random) -> None:
+        rng.shuffle(self.pairs)
+        rng.shuffle(self.distractors)
 
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
@@ -719,6 +741,9 @@ class NumericAnswers(QuestionAnswers):
 
         self.options: typing.List[NumericOption] = options
         """ The possible options. """
+
+    def shuffle(self, rng: random.Random) -> None:
+        rng.shuffle(self.options)
 
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,

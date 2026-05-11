@@ -1,5 +1,6 @@
 import dataclasses
 import os
+import random
 import typing
 
 import edq.util.enum
@@ -9,6 +10,7 @@ import edq.util.serial
 import quizcomp.errors
 import quizcomp.model.answer
 import quizcomp.model.base
+import quizcomp.model.config
 import quizcomp.model.feedback
 import quizcomp.parser.document
 
@@ -26,10 +28,6 @@ PLACEHOLDER_QUESTION_TYPES: typing.Set[quizcomp.model.constants.QuestionType] = 
     quizcomp.model.constants.QuestionType.MDD,
 }
 """ Question types that have placeholders. """
-
-# TEST - Shuffle answers (rearrange answer order).
-#        This used to be called by the quiz (when creaating a variant).
-#        But, this should probably be done at some other finalization time, so the shuffle option can be located on the quiz. group, or question.
 
 class Question(quizcomp.model.base.CoreType):
     """ A class that represents a question and all answers/feedback for the question. """
@@ -161,3 +159,14 @@ class Question(quizcomp.model.base.CoreType):
             raise quizcomp.errors.QuestionValidationError("Could not find any non-empty prompt.", base_dir = base_dir)
 
         return quizcomp.parser.document.ParsedDocument.parse_file(path, base_dir = base_dir)
+
+    def shuffle(self, rng: random.Random) -> None:
+        """
+        Shuffle the answers for this question.
+        This method will do nothing if question shuffling is not allowed by the config settings.
+        """
+
+        if (self.get_config(quizcomp.model.config.OPTION_SHUFFLE_ANSWERS) is not True):
+            return
+
+        self.answers.shuffle(rng)

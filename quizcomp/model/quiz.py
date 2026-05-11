@@ -43,17 +43,17 @@ class Quiz(quizcomp.model.base.CoreType):
     """
 
     def __init__(self,
+            groups: typing.Union[typing.List[quizcomp.group.Group], None] = None,
             course_name: typing.Union[str, None] = None,
             term_name: typing.Union[str, None] = None,
             description: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
             date: typing.Union[edq.util.time.Timestamp, None] = None,
             time_limit_mins: typing.Union[int, None] = None,
             pick_with_replacement: bool = True,
-            groups: typing.Union[typing.List[quizcomp.group.Group], None] = None,
             version: typing.Union[str, None] = None,
             seed: typing.Union[int, None] = None,
             **kwargs: typing.Any) -> None:
-        super().__init__(**kwargs)
+        super().__init__(children = groups, **kwargs)
 
         self.course_name: typing.Union[str, None] = course_name
         """ The optional name for the course associated with this quiz. """
@@ -269,14 +269,6 @@ class Quiz(quizcomp.model.base.CoreType):
             group_data['questions'] = questions
 
             new_groups.append(quizcomp.group.Group.from_dict(group_data))
-
-        # TEST
-        ''' TEST - This needs to be changes to questions/groups can also apseicy this key.
-        if (self.get_attribute(quizcomp.model.base.ATTR_SHUFFLE_ANSWERS_KEY, quizcomp.model.base.ATTR_SHUFFLE_ANSWERS_DEFAULT) is True):
-            for group in new_groups:
-                for question in group.questions:
-                    question.shuffle(rng)
-        '''
 
         data = self.__dict__.copy()
 
