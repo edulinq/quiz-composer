@@ -49,7 +49,6 @@ class Quiz(quizcomp.model.base.CoreType):
             description: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
             date: typing.Union[edq.util.time.Timestamp, None] = None,
             time_limit_mins: typing.Union[int, None] = None,
-            pick_with_replacement: bool = True,
             version: typing.Union[str, None] = None,
             seed: typing.Union[int, None] = None,
             **kwargs: typing.Any) -> None:
@@ -72,12 +71,6 @@ class Quiz(quizcomp.model.base.CoreType):
 
         self.time_limit_mins: typing.Union[int, None] = time_limit_mins
         """ The time limit (in minutes) for this quiz. """
-
-        self.pick_with_replacement: bool = pick_with_replacement
-        """
-        Whether or not questions are chosen from their respective groups with replacement between variants.
-        Choosing with replacement means that the same question may appear in multiple variants.
-        """
 
         if (groups is None):
             groups = []
@@ -228,7 +221,7 @@ class Quiz(quizcomp.model.base.CoreType):
         """
         Create a collection of variants based on this quiz.
         These variants will share the same question pool,
-        which is influenced by `pick_with_replacement`.
+        which is influenced by the `pick_with_replacement` config option.
         """
 
         if (seed is None):
@@ -263,7 +256,7 @@ class Quiz(quizcomp.model.base.CoreType):
 
         new_groups = []
         for group in self.groups:
-            questions = group.choose_variant_questions(all_questions, self.pick_with_replacement, used_question_indexes, rng)
+            questions = group.choose_variant_questions(all_questions, used_question_indexes, rng)
 
             group_data = group.to_dict()
             group_data['questions'] = questions
