@@ -5,24 +5,6 @@ import edq.util.serial
 
 import quizcomp.errors
 
-ATTR_CUSTOM_HEADER_KEY: str = 'custom_header'
-""" An attribute for a custom header, instead of something generic like "Question 4". """
-
-ATTR_CUSTOM_HEADER_DEFAULT: None = None
-""" The default value for ATTR_CUSTOM_HEADER_KEY. """
-
-ATTR_SHUFFLE_ANSWERS_KEY: str = 'shuffle_answers'
-""" An attribute indicating if the answers in a question should be shuffled. """
-
-ATTR_SHUFFLE_ANSWERS_DEFAULT: bool = True
-""" The default value for ATTR_SHUFFLE_ANSWERS_KEY. """
-
-ATTR_SKIP_NUMBERING_KEY: str = 'skip_numbering'
-""" An attribute indicating if numbering for questions should be skipped. """
-
-ATTR_SKIP_NUMBERING_DEFAULT: bool = False
-""" The default value for ATTR_SKIP_NUMBERING_KEY. """
-
 DEFAULT_AVAILABLE_POINTS: float = 0.0
 """ The default available points for an object. """
 
@@ -32,6 +14,9 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
     This includes things like quizzes, variants, groups, and questions.
     Core types are generally serializable and should be aware of their base dir (for path resolution).
     """
+
+    # TEST - parent? children?
+    # serialization_skip_fields
 
     def __init__(self,
             name: typing.Union[str, None] = None,
@@ -64,7 +49,7 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
 
         self.parent: typing.Union[CoreType, None] = parent
         """
-        The parent/container for this object.
+        The parent/container fr this object.
         The general pattern is: Quiz -> Variant -> Group -> Question.
         """
 
@@ -76,6 +61,10 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         Children of this object.
         The general pattern is: Quiz -> Variant -> Group -> Question.
         """
+
+        # Set the parent of the childen to self.
+        for child in self.children:
+            child.parent = self
 
         if ((points is not None) and (points < 0)):
             raise quizcomp.errors.QuizValidationError(f"Points must be either null/None or non-negative, found: {points}.", base_dir = base_dir)
@@ -228,6 +217,18 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         value = self._get_hierarchical_value('style', key)
         if (value is None):
             return default_value
+
+        return value
+
+    def get_config(self, option: quizcomp.model.config.Option) -> typing.Union[edq.util.serial.POD, None]:
+        """
+        Get a value for a known configuration option.
+        If the key does not exist (or the value is None), return the given default.
+        """
+
+        value = self._get_hierarchical_value(option.value_type, option.key)
+        if (value is None):
+            return option.default_value
 
         return value
 

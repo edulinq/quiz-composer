@@ -11,6 +11,7 @@ import requests
 import quizcomp.constants
 import quizcomp.group
 import quizcomp.model.base
+import quizcomp.model.config
 import quizcomp.model.constants
 import quizcomp.question.base
 import quizcomp.quiz
@@ -277,7 +278,7 @@ def _create_question_json(
 
     name = question.name
 
-    custom_header = self.get_attribute(quizcomp.model.base.ATTR_CUSTOM_HEADER_KEY, quizcomp.model.base.ATTR_CUSTOM_HEADER_DEFAULT)
+    custom_header = question.get_config(quizcomp.model.config.OPTION_CUSTOM_HEADER)
     if (custom_header is not None):
         name = custom_header
 

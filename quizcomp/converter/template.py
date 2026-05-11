@@ -13,6 +13,7 @@ import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.group
 import quizcomp.model.base
+import quizcomp.model.config
 import quizcomp.model.constants
 import quizcomp.parser.document
 import quizcomp.question.base
@@ -263,7 +264,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         context = self.modify_question_context(context, question, variant)
         text = template.render(**context)
 
-        if (self.get_attribute(quizcomp.model.base.ATTR_SKIP_NUMBERING_KEY, quizcomp.model.base.ATTR_SKIP_NUMBERING_DEFAULT) is True):
+        if (question.get_config(quizcomp.model.config.OPTION_SKIP_NUMBERING_KEY) is True):
             question_number += 1
 
         return question_number, text
