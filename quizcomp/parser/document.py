@@ -163,8 +163,14 @@ class ParsedDocument(edq.util.serial.PODConverter):
         return hash(self.text)
 
     @classmethod
-    def parse_text(cls, text: str, base_dir: typing.Union[str, None] = None) -> 'ParsedDocument':
-        """ Parse some text into a document. """
+    def parse_text(cls, text: typing.Union[str, 'ParsedDocument'], base_dir: typing.Union[str, None] = None) -> 'ParsedDocument':
+        """
+        Parse some text into a document.
+        If the text is already a document, that same document will be returned.
+        """
+
+        if (isinstance(text, ParsedDocument)):
+            return text
 
         if (base_dir is None):
             base_dir = '.'
@@ -174,10 +180,14 @@ class ParsedDocument(edq.util.serial.PODConverter):
 
     @classmethod
     def parse_file(cls, raw_path: str, base_dir: typing.Union[str, None] = None) -> 'ParsedDocument':
-        """ Parse a text file into a document. """
+        """
+        Parse a text file into a document.
+
+        If no base dir is provided, the dir of the provided path is used.
+        """
 
         if (base_dir is None):
-            base_dir = '.'
+            base_dir = os.path.dirname(os.path.abspath(raw_path))
 
         # Prepend the base dir if the path is not absolute.
         if (not os.path.isabs(raw_path)):

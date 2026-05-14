@@ -1,0 +1,34 @@
+{
+    "description": "Description\n\nThis is a quiz description that lives in a **file**!",
+    "groups": [
+        {
+            "name": "A",
+            "pick_count": 1,
+            "questions": [
+                {
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "A"
+                        },
+                        {
+                            "correct": false,
+                            "text": "B"
+                        },
+                        {
+                            "correct": false,
+                            "text": "C"
+                        },
+                        {
+                            "correct": false,
+                            "text": "D"
+                        }
+                    ],
+                    "prompt": "Multiple Choice: Basic",
+                    "question_type": "multiple_choice"
+                }
+            ]
+        }
+    ],
+    "name": "Quiz Description - File"
+}

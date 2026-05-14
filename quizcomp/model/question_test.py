@@ -4,7 +4,6 @@ import typing
 
 import edq.util.json
 
-import quizcomp.common
 import quizcomp.constants
 import quizcomp.errors
 import quizcomp.model.question
@@ -87,10 +86,10 @@ def _add_good_question_test(path: str) -> None:
         setattr(QuestionsTest, test_name, _get_question_canvas_test_method(path, canvas_path))
     '''
 
-    json_path = os.path.join(os.path.dirname(path), SERIAL_FILENAME)
-    if (os.path.exists(json_path)):
+    serial_path = os.path.join(os.path.dirname(path), SERIAL_FILENAME)
+    if (os.path.exists(serial_path)):
         test_name = 'test_question_serial_' + base_test_name
-        setattr(QuestionsTest, test_name, _get_question_serial_test_method(path, json_path))
+        setattr(QuestionsTest, test_name, _get_question_serial_test_method(path, serial_path))
 
 def _get_question_parse_test_method(path: str) -> typing.Callable:
     """ Get a test for just parsing a question file. """
@@ -106,10 +105,10 @@ def _get_question_reparse_test_method(path: str) -> typing.Callable:
 
     def __method(self: QuestionsTest) -> None:
         question = self.load_question(path)
-        question_data = question.to_dict()
+        question_data = question.to_pod()
 
-        new_question = quizcomp.model.question.Question.from_dict(question_data.copy())
-        new_question_data = new_question.to_dict()
+        new_question = quizcomp.model.question.Question.from_pod(question_data.copy())
+        new_question_data = new_question.to_pod()
 
         self.assertJSONDictEqual(question_data, new_question_data)
 
@@ -133,7 +132,7 @@ def _get_question_serial_test_method(path: str, serial_path: str) -> typing.Call
 
     def __method(self: QuestionsTest) -> None:
         question = self.load_question(path)
-        actual_data = question.to_dict()
+        actual_data = question.to_pod()
 
         expected_data = edq.util.json.load_path(serial_path)
 

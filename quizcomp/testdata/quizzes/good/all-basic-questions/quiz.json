@@ -1,8 +1,8 @@
 {
-    "title": "All Basic Questions",
+    "name": "All Basic Questions",
     "date": "2025-02-25",
 
-    "description": "All Basic Questions",
+    "description": "Collect the basic version of each question type.",
 
     "shuffle_answers": false,
 

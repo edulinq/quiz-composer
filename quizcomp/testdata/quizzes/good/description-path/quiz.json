@@ -1,0 +1,14 @@
+{
+    "name": "Quiz Description - Path",
+
+    "description_path": "my_description.md",
+
+    "groups": [
+        {
+            "name": "A",
+            "questions": [
+                "../../../questions/good/mcq-basic"
+            ]
+        }
+    ]
+}

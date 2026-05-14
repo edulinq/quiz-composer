@@ -4,6 +4,8 @@ import os
 import random
 import typing
 
+import edq.util.serial
+
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.model.base
@@ -14,22 +16,19 @@ import quizcomp.util.serial
 DEFAULT_PICK_COUNT: int = 1
 """ The default number of questions chosen from this group. """
 
+# TEST - Make some tests.
+
 class Group(quizcomp.model.base.CoreType):
     """
     A group/bank of questions for a quiz.
     Questions can be grouped together and then a subset can be randomly chosen to create variety in quizzes.
     """
 
-    serialization_alias_fields = [
-        # TEST
-        # ('children', 'questions'),
-    ]
-
     def __init__(self,
-            questions: typing.Union[typing.List[quizcomp.model.question.Question], None] = None,
+            children: typing.Union[typing.List[quizcomp.model.question.Question], None] = None,
             pick_count: int = DEFAULT_PICK_COUNT,
             **kwargs: typing.Any) -> None:
-        super().__init__(children = questions, **kwargs)
+        super().__init__(children = children, **kwargs)
 
         if (pick_count < 0):
             raise quizcomp.common.QuizValidationError(f"Pick count must be non-negative, found: {pick_count}.", base_dir = base_dir)
@@ -104,3 +103,58 @@ class Group(quizcomp.model.base.CoreType):
             questions.append(question)
 
         return questions
+
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> edq.util.serial.PODType:
+        data = super().to_pod(serialization_options)
+        data['questions'] = data.pop('children', None)
+        return data
+
+    @classmethod
+    def from_pod(cls,
+            data: edq.util.serial.PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> 'Group':
+        # Expand any question paths that be directories.
+        cls._expand_questions(data, serialization_options)
+        return super().from_pod(data, serialization_options)
+
+    @classmethod
+    def _expand_questions(cls,
+            data: typing.Dict[str, edq.util.serial.PODType],
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> None:
+        """
+        Expand the 'questions' field.
+        This allows questions to be provided as a path.
+        If that path is a dir, then recursivley load all questions found in that dir.
+        """
+
+        if (serialization_options is None):
+            serialization_options = {}
+
+        base_dir = serialization_options.get('base_dir', '.')
+
+        new_questions = []
+        raw_questions = data.pop('questions', [])
+
+        for raw_question in raw_questions:
+            if (not isinstance(raw_question, str)):
+                new_questions.append(raw_question)
+                continue
+
+            path = str(raw_question)
+            if (not os.path.isabs(path)):
+                path = os.path.join(base_dir, path)
+
+            path = os.path.abspath(path)
+
+            if (os.path.isdir(path)):
+                for subpath in sorted(glob.glob(os.path.join(path, '**', quizcomp.constants.QUESTION_FILENAME), recursive = True)):
+                    new_questions.append(subpath)
+
+            else:
+                new_questions.append(path)
+
+        data['children'] = new_questions

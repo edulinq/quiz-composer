@@ -1,6 +1,9 @@
+# TEST - Need abc?
 import abc
+import os
 import typing
 
+import edq.util.json
 import edq.util.serial
 
 import quizcomp.errors
@@ -8,22 +11,25 @@ import quizcomp.errors
 DEFAULT_AVAILABLE_POINTS: float = 0.0
 """ The default available points for an object. """
 
-class CoreType(edq.util.serial.DictConverter, abc.ABC):
+class CoreType(edq.util.serial.PODConverter, abc.ABC):
     """
     The base class for concepts that are considered "core types" to the quiz composer.
     This includes things like quizzes, variants, groups, and questions.
     Core types are generally serializable and should be aware of their base dir (for path resolution).
     """
 
-    # TEST - parent? children?
-    # serialization_skip_fields
+    serialization_omit_none = True
+    serialization_omit_empty = True
+    serialization_skip_fields = [
+        'base_dir',
+        'parent',
+    ]
 
     def __init__(self,
             name: typing.Union[str, None] = None,
             parent: typing.Union[CoreType, None] = None,
             children: typing.Union[typing.List[CoreType], None] = None,
             points: typing.Union[float, None] = None,
-            base_dir: str = '.',
             lms_id: typing.Union[str, None] = None,
             attributes: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             attributes_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
@@ -34,6 +40,7 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
             style: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            base_dir: str = '.',
             **kwargs: typing.Any) -> None:
         self.base_dir: str = base_dir
         """ The base directory for any relative paths this object needs to resolve. """

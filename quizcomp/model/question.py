@@ -32,9 +32,6 @@ PLACEHOLDER_QUESTION_TYPES: typing.Set[quizcomp.model.constants.QuestionType] = 
 class Question(quizcomp.model.base.CoreType):
     """ A class that represents a question and all answers/feedback for the question. """
 
-    serialization_omit_none = True
-    serialization_omit_empty = True
-
     def __init__(self,
             question_type: quizcomp.model.constants.QuestionType,
             prompt: quizcomp.parser.document.ParsedDocument,
@@ -57,6 +54,31 @@ class Question(quizcomp.model.base.CoreType):
 
         self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
         """ Object-level feedback. """
+
+    @classmethod
+    def from_pod(cls,
+            data: edq.util.serial.PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> 'Question':
+        if (serialization_options is None):
+            serialization_options = {}
+
+        base_dir = serialization_options.get('base_dir', '.')
+
+        if (isinstance(data, dict)):
+            return super().from_pod(data, serialization_options)
+
+        if (not isinstance(data, str)):
+            raise quizcomp.errors.QuizValidationError(f"Cannot question object from '{type(data)}' type, need dict or str (path).")
+
+        # If a question is being loaded from a string, it is probably a path.
+        path = str(data)
+        if (not os.path.isabs(path)):
+            path = os.path.join(base_dir, path)
+
+        path = os.path.abspath(path)
+
+        return cls.from_path(path, serialization_options)
 
     @classmethod
     def prep_init_data(cls,

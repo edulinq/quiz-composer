@@ -13,8 +13,8 @@ import quizcomp.canvas
 import quizcomp.common
 import quizcomp.constants
 import quizcomp.errors
-import quizcomp.group
 import quizcomp.model.base
+import quizcomp.model.group
 import quizcomp.parser.document
 import quizcomp.question.base
 import quizcomp.util.serial
@@ -37,22 +37,23 @@ DUMMY_GROUP_DATA: typing.Dict[str, typing.Any] = {
 DEFAULT_VARIANT_IDS: typing.List[str] = list(string.ascii_uppercase)
 """ Default IDs for quiz variants. """
 
+# TEST - Load quiz description from: `descripiton` field, `description_path` field, file named the same as the quiz, but `.md`.
+
 class Quiz(quizcomp.model.base.CoreType):
     """
     A quiz object represents multiple possible assessments (called "variants").
     """
 
     def __init__(self,
-            groups: typing.Union[typing.List[quizcomp.group.Group], None] = None,
+            children: typing.Union[typing.List[quizcomp.model.group.Group], None] = None,
+            description: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
             course_name: typing.Union[str, None] = None,
             term_name: typing.Union[str, None] = None,
-            description: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
             date: typing.Union[edq.util.time.Timestamp, None] = None,
             time_limit_mins: typing.Union[int, None] = None,
             version: typing.Union[str, None] = None,
-            seed: typing.Union[int, None] = None,
             **kwargs: typing.Any) -> None:
-        super().__init__(children = groups, **kwargs)
+        super().__init__(children = children, **kwargs)
 
         self.course_name: typing.Union[str, None] = course_name
         """ The optional name for the course associated with this quiz. """
@@ -72,26 +73,120 @@ class Quiz(quizcomp.model.base.CoreType):
         self.time_limit_mins: typing.Union[int, None] = time_limit_mins
         """ The time limit (in minutes) for this quiz. """
 
-        if (groups is None):
-            groups = []
-
-        self.groups: typing.List[quizcomp.group.Group] = groups
-        """ The question groups for this quiz. """
-
+        # TEST
         self.version: typing.Union[str, None] = version
         """ The version of this quiz. """
 
+        ''' TEST
         if (seed is None):
             seed = random.randint(0, 2**64)
 
+        # TEST - We probably shouldn't cary a seed. Leave it to the CLI.
         self.seed: int = seed
         """ The seed used for this quiz. """
 
         self._rng: random.Random = random.Random(self.seed)
         """ The RNG used for this quiz. """
+        '''
+
+    @classmethod
+    def prep_init_data(cls,
+            data: typing.Dict[str, typing.Any],
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> typing.Dict[str, typing.Any]:
+        date = data.get('date', None)
+        if (date is not None):
+            data['date'] = edq.util.time.Timestamp.guess(date)
+
+        data = super().prep_init_data(data, serialization_options)
+
+        data['description'] = cls._collect_description(data, serialization_options)
+
+        return data
+
+    @classmethod
+    def _collect_description(cls,
+            data: typing.Dict[str, typing.Any],
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> quizcomp.parser.document.ParsedDocument:
+        """
+        Collect the description from one of several possible locations.
+
+        The description is allowed to appear (in order of priority):
+        1) in the `description` field.
+        2) pointed to by the `description_path` field.
+        3) or be in the same path as the quiz JSON, but with an `.md` extension
+           (e.g., `a/b/my_quiz.json` and `a/b/my_quiz.md`).
+
+        None values will be ignored (but empty values are valid).
+        Will return an empty description if none of these are present.
+        """
+
+        if (serialization_options is None):
+            serialization_options = {}
+
+        quiz_path = serialization_options.get('path', None)
+        base_dir = serialization_options.get('base_dir', '.')
+        default_description_path = None
+
+        # If we have a quiz path, use that to resolve paths.
+        if (quiz_path is not None):
+            quiz_path = os.path.abspath(quiz_path)
+            base_dir = os.path.dirname(quiz_path)
+            default_description_path = os.path.splitext(quiz_path)[0] + '.md'
+
+        # Check the `description` field.
+        text = data.get('description', None)
+        if (text is not None):
+            return quizcomp.parser.document.ParsedDocument.parse_text(text, base_dir = base_dir)
+
+        # Check for an explicitly provided path.
+        description_path = data.get('description_path', None)
+        if (description_path is not None):
+            if (not os.path.isabs(description_path)):
+                description_path = os.path.join(base_dir, description_path)
+
+            description_path = os.path.abspath(description_path)
+
+            if (not os.path.isfile(description_path)):
+                raise quizcomp.errors.QuestionValidationError(f"Could not find a description at the provided path: '{data['description_path']}' (Absolute Path: '{description_path}').", base_dir = base_dir)
+
+            return quizcomp.parser.document.ParsedDocument.parse_file(description_path)
+
+        # Check for an implicit path.
+        if (os.path.isfile(default_description_path)):
+            return quizcomp.parser.document.ParsedDocument.parse_file(default_description_path)
+
+        return quizcomp.parser.document.ParsedDocument()
+
+    def shuffle(self, rng: random.Random) -> None:
+        """
+        Shuffle the answers for this question.
+        This method will do nothing if question shuffling is not allowed by the config settings.
+        """
+
+        if (self.get_config(quizcomp.model.config.OPTION_SHUFFLE_ANSWERS) is not True):
+            return
+
+        self.answers.shuffle(rng)
+
+    def to_pod(self,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> edq.util.serial.PODType:
+        data = super().to_pod(serialization_options)
+        data['groups'] = data.pop('children', None)
+        return data
+
+    @classmethod
+    def from_pod(cls,
+            data: edq.util.serial.PODType,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> 'Quiz':
+        data['children'] = data.pop('groups', None)
+        return super().from_pod(data, serialization_options)
 
     # TEST
-
+    ''' TEST
     def _validate(self, **kwargs: typing.Any) -> None:
         """ Check if this quiz is valid, will raise if the group is not valid. """
 
@@ -176,7 +271,7 @@ class Quiz(quizcomp.model.base.CoreType):
         for (i, group_info) in enumerate(group_infos):
             ids = ids.copy()
             ids['index'] = i
-            groups.append(quizcomp.group.Group.from_dict(group_info, base_dir, ids = ids))
+            groups.append(quizcomp.model.group.Group.from_dict(group_info, base_dir, ids = ids))
 
         if (flatten_groups):
             new_groups = []
@@ -189,7 +284,7 @@ class Quiz(quizcomp.model.base.CoreType):
                         'questions': [question],
                     }
 
-                    new_groups.append(quizcomp.group.Group(**info))
+                    new_groups.append(quizcomp.model.group.Group(**info))
 
             groups = new_groups
 
@@ -207,8 +302,8 @@ class Quiz(quizcomp.model.base.CoreType):
 
         count = 0
 
-        for group in self.groups:
-            count += group.pick_count
+        for group in self.children:
+            count += len(group.children)
 
         return count
 
@@ -261,7 +356,7 @@ class Quiz(quizcomp.model.base.CoreType):
             group_data = group.to_dict()
             group_data['questions'] = questions
 
-            new_groups.append(quizcomp.group.Group.from_dict(group_data))
+            new_groups.append(quizcomp.model.group.Group.from_dict(group_data))
 
         data = self.__dict__.copy()
 
@@ -274,7 +369,9 @@ class Quiz(quizcomp.model.base.CoreType):
         data['_skip_class_validations'] = [Quiz]
 
         return Variant(**data)
+        '''
 
+''' TEST
 class Variant(Quiz):
     """
     A quiz variant is an instantiation of a quiz with specific set of questions chosen for each group.
@@ -319,7 +416,8 @@ class Variant(Quiz):
         group_data = DUMMY_GROUP_DATA.copy()
 
         group_data['questions'] = [question]
-        group_data['_skip_class_validations'] = [quizcomp.group.Group]
-        quiz_data['groups'] = [quizcomp.group.Group(**group_data)]
+        group_data['_skip_class_validations'] = [quizcomp.model.group.Group]
+        quiz_data['groups'] = [quizcomp.model.group.Group(**group_data)]
 
         return Variant(**quiz_data)
+'''

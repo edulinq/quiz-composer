@@ -1,0 +1,35 @@
+{
+    "date": 1740463200000,
+    "description": "Collect all the image questions.",
+    "groups": [
+        {
+            "name": "image-question",
+            "pick_count": 1,
+            "questions": [
+                {
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "A"
+                        },
+                        {
+                            "correct": false,
+                            "text": "B"
+                        },
+                        {
+                            "correct": false,
+                            "text": "C"
+                        },
+                        {
+                            "correct": false,
+                            "text": "D"
+                        }
+                    ],
+                    "prompt": "Prompt: Image\n\n![tiny image](../../../images/tiny.png)",
+                    "question_type": "multiple_choice"
+                }
+            ]
+        }
+    ],
+    "name": "Image Questions"
+}
