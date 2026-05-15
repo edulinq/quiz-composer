@@ -94,10 +94,6 @@ class Quiz(quizcomp.model.base.CoreType):
             data: typing.Dict[str, typing.Any],
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> typing.Dict[str, typing.Any]:
-        date = data.get('date', None)
-        if (date is not None):
-            data['date'] = edq.util.time.Timestamp.guess(date)
-
         data = super().prep_init_data(data, serialization_options)
 
         data['description'] = cls._collect_description(data, serialization_options)
@@ -154,7 +150,7 @@ class Quiz(quizcomp.model.base.CoreType):
             return quizcomp.parser.document.ParsedDocument.parse_file(description_path)
 
         # Check for an implicit path.
-        if (os.path.isfile(default_description_path)):
+        if ((default_description_path is not None) and os.path.isfile(default_description_path)):
             return quizcomp.parser.document.ParsedDocument.parse_file(default_description_path)
 
         return quizcomp.parser.document.ParsedDocument()

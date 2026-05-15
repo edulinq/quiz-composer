@@ -20,6 +20,7 @@ class CoreType(edq.util.serial.PODConverter, abc.ABC):
 
     serialization_omit_none = True
     serialization_omit_empty = True
+    serialization_error_class = quizcomp.errors.QuizValidationError
     serialization_skip_fields = [
         'base_dir',
         'parent',
