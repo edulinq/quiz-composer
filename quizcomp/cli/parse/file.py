@@ -7,12 +7,12 @@ import sys
 
 import quizcomp.cli.parser
 import quizcomp.constants
-import quizcomp.parser.public
+import quizcomp.parser.document
 
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
 
-    document = quizcomp.parser.public.parse_file(args.path).document
+    document = quizcomp.parser.document.ParsedDocument.parse_file(args.path)
 
     content = document.to_format(args.format, pretty = True)
     print(content)

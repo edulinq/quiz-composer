@@ -1,5 +1,6 @@
 import typing
 
+import edq.util.serial
 import markdown_it.token
 import markdown_it.tree
 
@@ -42,8 +43,11 @@ AST_TOKEN_METAS: typing.Dict[str, typing.List[str]] = {
     ]
 }
 
-class ASTNode:
+class ASTNode(edq.util.serial.PODSerializer):
     """ A simple representation for an AST node. """
+
+    serialization_omit_none = True
+    serialization_omit_empty = True
 
     def __init__(self,
             type: typing.Union[str, None] = None,
@@ -76,25 +80,6 @@ class ASTNode:
         """ Get an attribute of this node. """
 
         return self.attributes.get(key, default_value)
-
-    # TEST - old usage of to_pod (from quizcomp, not edq).
-    def to_pod(self, omit_empty: bool = True) -> typing.Dict[str, typing.Any]:
-        """ Represent this AST as a dictionary, potentially leaving out any empty elements. """
-
-        data: typing.Dict[str, typing.Any] = {
-            'type': self.type,
-        }
-
-        if (len(self.children) > 0):
-            data['children'] = [child.to_pod() for child in self.children]
-
-        if (len(self.text) > 0):
-            data['text'] = self.text
-
-        if (len(self.attributes) > 0):
-            data['attributes'] = self.attributes
-
-        return data
 
 def build(tokens: typing.Sequence[markdown_it.token.Token]) -> ASTNode:
     """ Build an AST from a stream of tokens. """

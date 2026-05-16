@@ -33,8 +33,5 @@
         ],
         "type": "root"
     },
-    "context": {
-        "base_dir": "__DATA_DIR__()"
-    },
-    "type": "document"
+    "text": "A simple file."
 }

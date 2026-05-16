@@ -11,7 +11,7 @@ import quizcomp.parser.ast
 import quizcomp.parser.render
 import quizcomp.parser.common
 
-class ParsedDocument(edq.util.serial.PODConverter):
+class ParsedDocument(edq.util.serial.PODSerializer):
     """ The result of parsing some text. """
 
     def __init__(self,
@@ -122,7 +122,11 @@ class ParsedDocument(edq.util.serial.PODConverter):
     def to_json(self, indent: int = 4, sort_keys: bool = True, **kwargs: typing.Any) -> str:
         """ Convert this document to JSON. """
 
-        return edq.util.json.dumps(self.to_pod(**kwargs), indent = indent, sort_keys = sort_keys)
+        data = {
+            'text': self.text,
+            'ast': self.get_ast().to_pod(),
+        }
+        return edq.util.json.dumps(data, indent = indent, sort_keys = sort_keys)
 
     def to_format(self, format: str, **kwargs: typing.Any) -> str:
         """ Convert this document to the specified format. """
@@ -145,8 +149,6 @@ class ParsedDocument(edq.util.serial.PODConverter):
 
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
-            # TEST
-            # ) -> edq.util.serial.PODType:
             ) -> str:
         return self.text
 
