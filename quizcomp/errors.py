@@ -1,20 +1,18 @@
 import typing
 
-import quizcomp.model.base
-
 class QuizValidationError(ValueError):
     """ An error that comes up when validating a quiz element. """
 
     def __init__(self,
             message: str,
-            context_object: typing.Union[quizcomp.model.base.CoreType, None] = None,
+            context_object: typing.Union[typing.Any, None] = None,
             base_dir: typing.Union[str, None] = None,
             **kwargs: typing.Any) -> None:
         # TEST - Use context_object or base dir
 
         super().__init__(message)
 
-        self.context_object: typing.Union[quizcomp.model.base.CoreType, None] = context_object
+        self.context_object: typing.Union[typing.Any, None] = context_object
         """ The context_object that this error occurred within. """
 
         self.base_dir: typing.Union[str, None] = base_dir
@@ -30,7 +28,7 @@ def check_type(
         value: typing.Any,
         expected_type: typing.Type,
         label: str,
-        context_object: typing.Union[quizcomp.model.base.CoreType, None] = None,
+        context_object: typing.Union[typing.Any, None] = None,
         base_dir: typing.Union[str, None] = None,
         ) -> None:
     """ Check that the given value has the expected type. """

@@ -7,7 +7,7 @@ import edq.util.json
 
 import quizcomp.constants
 import quizcomp.converter.convert
-import quizcomp.quiz
+import quizcomp.model.quiz
 import quizcomp.testing.base
 
 EXPECTED_FILENAME: str = 'expected.json'
@@ -16,6 +16,21 @@ class TestQuizConverter(quizcomp.testing.base.BaseTest):
     """
     Test converting quizzes.
     """
+
+    _quizzes_cache: typing.Dict[str, quizcomp.model.quiz.Quiz] = {}
+
+    def load_quiz(self, path: str) -> quizcomp.model.quiz.Quiz:
+        """ Load a quiz from either the cache or disk. """
+
+        path = os.path.abspath(path)
+
+        if (path in self._quizzes_cache):
+            return self._quizzes_cache[path]
+
+        quiz = quizcomp.model.quiz.Quiz.from_path(path)
+        self._quizzes_cache[path] = quiz
+
+        return quiz
 
     def _assert_exists_replace(self, container: typing.Dict[str, typing.Any], key: str, replacement: typing.Any) -> typing.Any:
         """
@@ -51,7 +66,7 @@ def _get_good_convert_test(path: str) -> typing.Callable:
 
         expected = edq.util.json.load_path(expected_path)
 
-        quiz = quizcomp.quiz.Quiz.from_path(path)
+        quiz = quizcomp.model.quiz.Quiz.from_path(path)
         variant = quiz.create_variants()[0]  # pylint: disable=no-member
         raw_result = quizcomp.converter.convert.convert_variant(variant, format = quizcomp.constants.FORMAT_JSON_TEMPLATE)
 
@@ -91,7 +106,7 @@ def _get_bad_validate_test(path: str) -> typing.Callable:
 
     def __method(self: TestQuizConverter) -> None:
         try:
-            quizcomp.quiz.Quiz.from_path(path)
+            quizcomp.model.quiz.Quiz.from_path(path)
         except Exception:
             # Expected.
             return

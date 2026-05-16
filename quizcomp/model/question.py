@@ -11,6 +11,7 @@ import quizcomp.errors
 import quizcomp.model.answer
 import quizcomp.model.base
 import quizcomp.model.config
+import quizcomp.model.constants
 import quizcomp.model.feedback
 import quizcomp.parser.document
 
@@ -69,7 +70,7 @@ class Question(quizcomp.model.base.CoreType):
             return super().from_pod(data, serialization_options)
 
         if (not isinstance(data, str)):
-            raise quizcomp.errors.QuizValidationError(f"Cannot question object from '{type(data)}' type, need dict or str (path).")
+            raise quizcomp.errors.QuizValidationError(f"Cannot createquestion object from '{type(data)}' type, need dict or str (path).")
 
         # If a question is being loaded from a string, it is probably a path.
         path = str(data)

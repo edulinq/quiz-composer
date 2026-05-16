@@ -181,7 +181,7 @@
 
 \vspace{1.0cm}
 
-\textbf{Total Points: << quiz.total_points >>}
+\textbf{Total Points: << quiz.get_available_points >>}
 
 << quiz.description_text >>
 

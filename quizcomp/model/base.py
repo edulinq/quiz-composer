@@ -11,7 +11,7 @@ import quizcomp.errors
 DEFAULT_AVAILABLE_POINTS: float = 0.0
 """ The default available points for an object. """
 
-class CoreType(edq.util.serial.PODConverter, abc.ABC):
+class CoreType(edq.util.serial.DictConverter, abc.ABC):
     """
     The base class for concepts that are considered "core types" to the quiz composer.
     This includes things like quizzes, variants, groups, and questions.
@@ -161,20 +161,29 @@ class CoreType(edq.util.serial.PODConverter, abc.ABC):
 
         return self.name
 
-    def get_available_points(self) -> float:
+    def get_available_points(self, check_children: bool = True) -> float:
         """
         Get the total points available for this object.
-        If the number of points is not explicitly set, parent objects may be consulted.
-        If no point configuration can be found, DEFAULT_AVAILABLE_POINTS should be returned.
+
+        This is computes as follows:
+        1) If a value (`points` field) is explicitly set, then return that.
+        2) If we have a parent, then ask them to compute points for is (via get_child_points()).
+        3) If we have children, then sum up their points.
+        4) Use DEFAULT_AVAILABLE_POINTS.
         """
 
-        # First check self points.
         if (self.points is not None):
             return self.points
 
-        # Then check the parent.
         if (self.parent is not None):
             return self.parent.get_child_points()
+
+        if (check_children and (len(self.children) > 0)):
+            total = 0
+            for child in self.children:
+                total += child.get_available_points()
+
+            return total
 
         # Finally, return default.
         return DEFAULT_AVAILABLE_POINTS
@@ -188,9 +197,10 @@ class CoreType(edq.util.serial.PODConverter, abc.ABC):
 
         split = 1
         if (self.children is not None):
-            split = len(children)
+            split = len(self.children)
 
-        return self.get_available_points() / split
+        # Make sure to not try to use the children to compute the available points.
+        return self.get_available_points(check_children = False) / split
 
     def get_attribute(self, key: str, default_value: edq.util.serial.POD) -> edq.util.serial.POD:
         """
@@ -295,3 +305,14 @@ class CoreType(edq.util.serial.PODConverter, abc.ABC):
 
         # No value found here, check the parent (using ourself as the context child).
         return self.parent._get_hierarchical_value(value_type, key, child = self)
+
+    def to_path(self,
+            path: str,
+            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            ) -> None:
+        if (serialization_options is None):
+            serialization_options = {}
+
+        serialization_options.setdefault('json', {}).setdefault('indent', 4)
+
+        super().to_path(path, serialization_options)

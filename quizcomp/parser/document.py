@@ -61,6 +61,15 @@ class ParsedDocument(edq.util.serial.PODSerializer):
 
         return self._render(quizcomp.constants.FORMAT_MD, **kwargs)
 
+    def to_json(self, indent: int = 4, sort_keys: bool = True, **kwargs: typing.Any) -> str:
+        """ Render this document to JSON. """
+
+        data = {
+            'text': self.text,
+            'ast': self.get_ast().to_pod(),
+        }
+        return edq.util.json.dumps(data, indent = indent, sort_keys = sort_keys)
+
     def to_tex(self, **kwargs: typing.Any) -> str:
         """ Render this document to TeX. """
 
@@ -118,15 +127,6 @@ class ParsedDocument(edq.util.serial.PODSerializer):
         """ A special method for the serialization library to check. """
 
         return self.is_empty()
-
-    def to_json(self, indent: int = 4, sort_keys: bool = True, **kwargs: typing.Any) -> str:
-        """ Convert this document to JSON. """
-
-        data = {
-            'text': self.text,
-            'ast': self.get_ast().to_pod(),
-        }
-        return edq.util.json.dumps(data, indent = indent, sort_keys = sort_keys)
 
     def to_format(self, format: str, **kwargs: typing.Any) -> str:
         """ Convert this document to the specified format. """

@@ -1,12 +1,14 @@
 import os
 import typing
 
+import edq.util.json
+
 import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.converter.template
-import quizcomp.question.base
 import quizcomp.model.constants
-import quizcomp.quiz
+import quizcomp.model.question
+import quizcomp.model.quiz
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-json')
@@ -25,8 +27,8 @@ class JSONTemplateConverter(quizcomp.converter.template.TemplateConverter):
     # Simplify parts of the question context (specifically the answers) for testing.
     def modify_question_context(self,
             context: typing.Dict[str, typing.Any],
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant) -> typing.Dict[str, typing.Any]:
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant) -> typing.Dict[str, typing.Any]:
         question_context = context['question']
         answers = question_context['answers']
         question_type = question_context['question_type']
@@ -64,7 +66,6 @@ class JSONTemplateConverter(quizcomp.converter.template.TemplateConverter):
                 })
 
             return result
-
 
         raise ValueError(f"Unknown answers type: '{type(answers)}'.")
 
@@ -131,5 +132,5 @@ class JSONConverter(quizcomp.converter.converter.Converter):
     def __init__(self, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
-    def convert_variant(self, variant: quizcomp.quiz.Variant, **kwargs: typing.Any) -> str:
-        return variant.to_json()
+    def convert_variant(self, variant: quizcomp.model.quiz.Variant, **kwargs: typing.Any) -> str:
+        return edq.util.json.dumps(variant.to_dict(), indent = 4)

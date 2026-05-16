@@ -1,8 +1,8 @@
 {
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
-        "__DATA_DIR__(simple-quiz/quiz.json)",
-        "--flatten-groups"
+        "__DATA_DIR__(../../../testdata/quizzes/good/simple/quiz.json)",
+        "--all-questions"
     ],
     "stdout_assertion_func": "edq.testing.asserts.has_content_100"
 }

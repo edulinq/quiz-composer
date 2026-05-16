@@ -11,7 +11,8 @@ import edq.util.dirent
 import quizcomp.constants
 import quizcomp.converter.template
 import quizcomp.model.constants
-import quizcomp.quiz
+import quizcomp.model.question
+import quizcomp.model.quiz
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
@@ -76,19 +77,19 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         self.canvas = canvas
 
-    def convert_variant(self, variant: quizcomp.quiz.Variant, **kwargs: typing.Any) -> str:
+    def convert_variant(self, variant: quizcomp.model.quiz.Variant, **kwargs: typing.Any) -> str:
         # Parse and format the XML.
         text = super().convert_variant(variant, **kwargs)
         return self._format_xml(text)
 
     def modify_question_context(self,
             context: typing.Dict[str, typing.Any],
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant) -> typing.Dict[str, typing.Any]:
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant) -> typing.Dict[str, typing.Any]:
         context['question']['mapped_question_type'] = QUESTION_TYPE_MAP[question.question_type]
         return context
 
-    def convert_quiz(self, quiz: quizcomp.quiz.Quiz, out_path: typing.Union[str, None] = None, **kwargs: typing.Any) -> str:
+    def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, out_path: typing.Union[str, None] = None, **kwargs: typing.Any) -> str:
         """ Convert an entire quiz (including variants) to QTI. """
 
         if (out_path is None):
@@ -118,7 +119,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         logging.info("Created QTI quiz at '%s'.", out_path)
         return path
 
-    def _create_zip(self, quiz: quizcomp.quiz.Quiz, temp_out_path: str, out_path: str, temp_dir: str) -> None:
+    def _create_zip(self, quiz: quizcomp.model.quiz.Quiz, temp_out_path: str, out_path: str, temp_dir: str) -> None:
         """ Zip up the pending QTI. """
 
         shutil.make_archive(os.path.splitext(temp_out_path)[0], 'zip', os.path.dirname(temp_dir), os.path.basename(temp_dir))
@@ -131,7 +132,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         document = bs4.BeautifulSoup(text, 'html.parser')
         return document.prettify(formatter = bs4.formatter.HTMLFormatter(indent = 4))
 
-    def _convert_assessment_meta(self, quiz: quizcomp.quiz.Quiz, out_dir: str) -> None:
+    def _convert_assessment_meta(self, quiz: quizcomp.model.quiz.Quiz, out_dir: str) -> None:
         """ Write a quiz's metadata. """
 
         template = self.env.get_template(TEMPLATE_FILENAME_ASSESSMENT_META)
@@ -156,7 +157,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         path = os.path.join(out_dir, OUT_FILENAME_ASSESSMENT_META)
         edq.util.dirent.write_file(path, text)
 
-    def _convert_manifest(self, quiz: quizcomp.quiz.Quiz, out_dir: str) -> None:
+    def _convert_manifest(self, quiz: quizcomp.model.quiz.Quiz, out_dir: str) -> None:
         """ Write the manifest for the quiz. """
 
         template = self.env.get_template(TEMPLATE_FILENAME_MANIFEST)

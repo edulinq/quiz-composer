@@ -11,13 +11,13 @@ import jinja2
 
 import quizcomp.constants
 import quizcomp.converter.converter
-import quizcomp.group
 import quizcomp.model.base
 import quizcomp.model.config
 import quizcomp.model.constants
 import quizcomp.parser.document
-import quizcomp.question.base
-import quizcomp.quiz
+import quizcomp.model.group
+import quizcomp.model.question
+import quizcomp.model.quiz
 
 TEMPLATE_FILENAME_QUIZ: str = 'quiz.template'
 TEMPLATE_FILENAME_QUESTION_SEP: str = 'question-separator.template'
@@ -130,15 +130,15 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         Signature: func(self, question_id, question_number, question, variant)
         """
 
-    def convert_quiz(self, quiz: quizcomp.quiz.Quiz, **kwargs: typing.Any) -> str:
+    def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> str:
         """ Convert an entire quiz (including variants). """
 
-        return self._convert_container(quiz, quizcomp.quiz.Quiz, 'quiz')
+        return self._convert_container(quiz, quizcomp.model.quiz.Quiz, 'quiz')
 
-    def convert_variant(self, variant: quizcomp.quiz.Variant, **kwargs: typing.Any) -> str:
-        return self._convert_container(variant, quizcomp.quiz.Variant, 'variant')
+    def convert_variant(self, variant: quizcomp.model.quiz.Variant, **kwargs: typing.Any) -> str:
+        return self._convert_container(variant, quizcomp.model.quiz.Variant, 'variant')
 
-    def _convert_container(self, container: quizcomp.quiz.Quiz, container_type: typing.Type, container_label: str) -> str:
+    def _convert_container(self, container: quizcomp.model.quiz.Quiz, container_type: typing.Type, container_label: str) -> str:
         """ Convert a quiz or variant. """
 
         if (not isinstance(container, container_type)):
@@ -147,8 +147,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         _, inner_text = self.create_groups(container)
 
         inner_context = container.to_dict()
-        inner_context['total_points'] = container.total_points()
-        inner_context['description_text'] = self._format_doc(container.description.document)
+        inner_context['total_points'] = container.get_available_points()
+        inner_context['description_text'] = self._format_doc(container.description)
 
         context = {
             'quiz': inner_context,
@@ -161,14 +161,13 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return text
 
-    def create_groups(self, quiz: quizcomp.quiz.Quiz) -> typing.Tuple[int, str]:
+    def create_groups(self, quiz: quizcomp.model.quiz.Quiz) -> typing.Tuple[int, str]:
         """ Convert question groups. """
 
-        return self._create_item_collection(quiz, 'groups', 'group', 1, self.create_group)
+        return self._create_item_collection(quiz, 'group', 1, self.create_group)
 
     def _create_item_collection(self,
-            container: typing.Union[quizcomp.quiz.Quiz, quizcomp.group.Group],
-            container_attr: str,
+            container: typing.Union[quizcomp.model.quiz.Quiz, quizcomp.model.group.Group],
             label: str,
             question_number: int,
             item_creation_function: typing.Callable,
@@ -180,9 +179,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         """
 
         result = []
-        items = getattr(container, container_attr)
-
-        for (index, item) in enumerate(items):
+        for (index, item) in enumerate(container.children):
             item_id = str(index)
             if (id_prefix is not None):
                 item_id = self.id_delim.join([id_prefix, item_id])
@@ -201,8 +198,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_group(self,
             group_index: str,
             question_number: int,
-            group: quizcomp.group.Group,
-            quiz: quizcomp.quiz.Quiz,
+            group: quizcomp.model.group.Group,
+            quiz: quizcomp.model.quiz.Quiz,
             ) -> typing.Tuple[int, str]:
         """ Convert a single group. """
 
@@ -210,7 +207,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         data['id'] = group_index
 
         question_number, questions_text = self._create_item_collection(
-                group, 'questions', 'question', question_number, self.create_question,
+                group, 'question', question_number, self.create_question,
                 id_prefix = group_index)
 
         context = {
@@ -227,8 +224,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_question(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant) -> typing.Tuple[int, str]:
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant) -> typing.Tuple[int, str]:
         """
         Convert a question to the target format.
         Return the new (current) question number and converted text.
@@ -239,7 +236,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             raise ValueError(f"Unsupported question type: '{question_type}'.")
 
         data = question.to_dict()
-        data['prompt_text'] = self._format_doc(question.prompt.document)
+        data['prompt_text'] = self._format_doc(question.prompt)
         data['id'] = question_id
         data['number'] = question_number
 
@@ -250,7 +247,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         data['feedback'] = {}
         for key, item in question.feedback.items():
-            data['feedback'][key] = self._format_doc(item.document)
+            data['feedback'][key] = self._format_doc(item)
 
         context = {
             'quiz': variant,
@@ -271,8 +268,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
     def modify_question_context(self,
             context: typing.Dict[str, typing.Any],
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant) -> typing.Dict[str, typing.Any]:
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant) -> typing.Dict[str, typing.Any]:
         """
         Provide an opportunity for children to modify the question context.
         The new context reference (which may be new, unchanged, or modified version of the passed-in context).
@@ -288,7 +285,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return self._format_doc(document)
 
-    def create_question_separator(self, quiz: typing.Union[quizcomp.quiz.Quiz, quizcomp.group.Group]) -> str:
+    def create_question_separator(self, quiz: typing.Union[quizcomp.model.quiz.Quiz, quizcomp.model.group.Group]) -> str:
         """ Create a question separator. """
 
         context = {
@@ -304,8 +301,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_tf(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -314,8 +311,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_matching(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a matching question answers. """
 
@@ -330,21 +327,21 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
             lefts.append({
                 'initial_text': items['left'].text,
-                'raw_text': self._format_doc(items['left'].document, doc_format = quizcomp.constants.FORMAT_TEXT),
-                'text': self._format_doc(items['left'].document),
+                'raw_text': self._format_doc(items['left'], doc_format = quizcomp.constants.FORMAT_TEXT),
+                'text': self._format_doc(items['left']),
             })
 
             rights.append({
                 'initial_text': items['right'].text,
-                'raw_text': self._format_doc(items['right'].document, doc_format = quizcomp.constants.FORMAT_TEXT),
-                'text': self._format_doc(items['right'].document),
+                'raw_text': self._format_doc(items['right'], doc_format = quizcomp.constants.FORMAT_TEXT),
+                'text': self._format_doc(items['right']),
             })
 
         for right in question.answers['distractors']:
             rights.append({
                 'initial_text': right.text,
-                'raw_text': self._format_doc(right.document, doc_format = quizcomp.constants.FORMAT_TEXT),
-                'text': self._format_doc(right.document),
+                'raw_text': self._format_doc(right, doc_format = quizcomp.constants.FORMAT_TEXT),
+                'text': self._format_doc(right),
             })
 
         left_ids = self.get_matching_left_ids()
@@ -427,8 +424,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_mcq(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for an MCQ question answers. """
 
@@ -453,8 +450,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_text_only(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> None:
         """ Create the template data for a text only question answers. """
 
@@ -463,8 +460,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_numerical(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a numerical question answers. """
 
@@ -482,7 +479,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         else:
             raise ValueError(f"Unknown numerical answer type: '{answer.type}'.")
 
-        document = quizcomp.parser.document.ParsedDocument.parse_text(content).document
+        document = quizcomp.parser.document.ParsedDocument.parse_text(content)
 
         return {
             'solution': self.clean_solution_content(document),
@@ -494,8 +491,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_mdd(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -503,9 +500,9 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         for items in question.answers.values():
             answers.append({
-                'label': self._format_doc(items['key'].document),
+                'label': self._format_doc(items['key']),
                 'initial_label': items['key'].text,
-                'raw_label': self._format_doc(items['key'].document, doc_format = quizcomp.constants.FORMAT_TEXT),
+                'raw_label': self._format_doc(items['key'], doc_format = quizcomp.constants.FORMAT_TEXT),
                 'choices': self._create_answers_mcq_list(items['values']),
             })
 
@@ -514,8 +511,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_ma(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -524,8 +521,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_fimb(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a TF question answers. """
 
@@ -537,8 +534,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
                 solutions.append(self._create_answers_text_value(value))
 
             answers[key] = {
-                'label': self._format_doc(item['key'].document),
-                'raw_label': self._format_doc(item['key'].document, doc_format = quizcomp.constants.FORMAT_TEXT),
+                'label': self._format_doc(item['key']),
+                'raw_label': self._format_doc(item['key'], doc_format = quizcomp.constants.FORMAT_TEXT),
                 'initial_label': item['key'].text,
                 'solutions': solutions,
             }
@@ -548,8 +545,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_fitb(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.Dict[str, typing.Any]:
         """ Create the template data for a TF question answers. """
 
@@ -558,8 +555,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_sa(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -568,8 +565,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def create_answers_essay(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -578,8 +575,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def _create_answers_text(self,
             question_id: str,
             question_number: int,
-            question: quizcomp.question.base.Question,
-            variant: quizcomp.quiz.Variant,
+            question: quizcomp.model.question.Question,
+            variant: quizcomp.model.quiz.Variant,
             ) -> typing.List[typing.Dict[str, typing.Any]]:
         """ Create the template data for a TF question answers. """
 
@@ -597,16 +594,16 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         """
 
         result = {
-            'text': self._format_doc(value.document),
-            'raw_text': self._format_doc(value.document, doc_format = quizcomp.constants.FORMAT_TEXT),
+            'text': self._format_doc(value),
+            'raw_text': self._format_doc(value, doc_format = quizcomp.constants.FORMAT_TEXT),
             'initial_text': value.text,
-            'clean': self.clean_solution_content(value.document),
+            'clean': self.clean_solution_content(value),
         }
 
         if (value.feedback is not None):
             result.update({
-                'feedback': self._format_doc(value.feedback.document),
-                'raw_feedback': self._format_doc(value.feedback.document, doc_format = quizcomp.constants.FORMAT_TEXT),
+                'feedback': self._format_doc(value.feedback),
+                'raw_feedback': self._format_doc(value.feedback, doc_format = quizcomp.constants.FORMAT_TEXT),
                 'initial_feedback': value.feedback.text,
             })
 

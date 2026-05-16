@@ -1,9 +1,43 @@
 {
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
-        "__DATA_DIR__(simple-quiz/quiz.json)",
+        "__DATA_DIR__(../../../testdata/quizzes/good/simple/quiz.json)",
         "--format", "json"
     ],
-    "stdout_assertion_func": "edq.testing.asserts.has_content_100"
 }
 ---
+{
+    "groups": [
+        {
+            "name": "A",
+            "pick_count": 1,
+            "questions": [
+                {
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "A"
+                        },
+                        {
+                            "correct": false,
+                            "text": "B"
+                        },
+                        {
+                            "correct": false,
+                            "text": "C"
+                        },
+                        {
+                            "correct": false,
+                            "text": "D"
+                        }
+                    ],
+                    "prompt": "Multiple Choice: Basic",
+                    "question_type": "multiple_choice"
+                }
+            ]
+        }
+    ],
+    "name": "Simple Quiz - A",
+    "quiz_name": "Simple Quiz",
+    "variant_id": "A"
+}

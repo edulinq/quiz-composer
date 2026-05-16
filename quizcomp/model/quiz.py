@@ -37,8 +37,6 @@ DUMMY_GROUP_DATA: typing.Dict[str, typing.Any] = {
 DEFAULT_VARIANT_IDS: typing.List[str] = list(string.ascii_uppercase)
 """ Default IDs for quiz variants. """
 
-# TEST - Load quiz description from: `descripiton` field, `description_path` field, file named the same as the quiz, but `.md`.
-
 class Quiz(quizcomp.model.base.CoreType):
     """
     A quiz object represents multiple possible assessments (called "variants").
@@ -73,7 +71,6 @@ class Quiz(quizcomp.model.base.CoreType):
         self.time_limit_mins: typing.Union[int, None] = time_limit_mins
         """ The time limit (in minutes) for this quiz. """
 
-        # TEST
         self.version: typing.Union[str, None] = version
         """ The version of this quiz. """
 
@@ -170,7 +167,7 @@ class Quiz(quizcomp.model.base.CoreType):
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> edq.util.serial.PODType:
         data = super().to_pod(serialization_options)
-        data['groups'] = data.pop('children', None)
+        data['groups'] = data.pop('children', data.get('groups', None))
         return data
 
     @classmethod
@@ -178,7 +175,7 @@ class Quiz(quizcomp.model.base.CoreType):
             data: edq.util.serial.PODType,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> 'Quiz':
-        data['children'] = data.pop('groups', None)
+        data['children'] = data.pop('groups', data.get('children', None))
         return super().from_pod(data, serialization_options)
 
     # TEST
@@ -232,76 +229,7 @@ class Quiz(quizcomp.model.base.CoreType):
 
         if (self.time_limit_mins == 0):
             self.time_limit_mins = None
-
-    @classmethod
-    def from_path(cls, path: str, **kwargs: typing.Any) -> 'Quiz':  # type: ignore[override] # pylint: disable=arguments-differ
-        """ Construct a quiz from a JSON file. """
-
-        # Check for a description file.
-        def _check_description_file(path: str, data: typing.Dict[str, typing.Any]) -> typing.Dict[str, typing.Any]:
-            description_filename = os.path.splitext(os.path.basename(path))[0]
-            description_path = os.path.join(os.path.dirname(path), description_filename + '.md')
-            if (os.path.exists(description_path)):
-                data['description'] = edq.util.dirent.read_file(description_path)
-                logging.debug("Loading quiz description from '%s'.", description_path)
-
-            return data
-
-        quiz: 'Quiz' = super().from_path(path, data_callback = _check_description_file, **kwargs)
-        return quiz
-
-    @staticmethod
-    def from_dict(  # type: ignore[override] # pylint: disable=arguments-renamed
-            quiz_info: typing.Dict[str, typing.Any],
-            base_dir: str,
-            flatten_groups: bool = False,
-            **kwargs: typing.Any) -> 'Quiz':
-        """ Construct a quiz from a dict. """
-
-        ids = {}
-        ids.update(kwargs.pop('ids', {}))
-        ids.update(quiz_info.pop('ids', ids))
-
-        groups = []
-        group_infos = quiz_info.get('groups', [])
-        for (i, group_info) in enumerate(group_infos):
-            ids = ids.copy()
-            ids['index'] = i
-            groups.append(quizcomp.model.group.Group.from_dict(group_info, base_dir, ids = ids))
-
-        if (flatten_groups):
-            new_groups = []
-
-            for old_group in groups:
-                for question in old_group.questions:
-                    info: typing.Dict[str, typing.Any] = {
-                        'name': old_group.name,
-                        'pick_count': 1,
-                        'questions': [question],
-                    }
-
-                    new_groups.append(quizcomp.model.group.Group(**info))
-
-            groups = new_groups
-
-        quiz_info['groups'] = groups
-
-        if (base_dir is not None):
-            quiz_info['base_dir'] = base_dir
-        elif ('base_dir' not in quiz_info):
-            quiz_info['base_dir'] = '.'
-
-        return Quiz(**quiz_info, ids = ids)
-
-    def num_questions(self) -> int:
-        """ Get the number of questions in this quiz. """
-
-        count = 0
-
-        for group in self.children:
-            count += len(group.children)
-
-        return count
+    '''
 
     def create_variants(self,
             count: int = 1,
@@ -331,12 +259,11 @@ class Quiz(quizcomp.model.base.CoreType):
 
         logging.debug("Creating %d variants with seed %d.", count, seed)
 
-        used_question_indexes = [set() for _ in self.groups]
-        varaints = [self._create_variant(identifiers[i], rng, used_question_indexes, all_questions) for i in range count]
+        used_question_indexes = [set() for _ in self.children]
+        variants = [self._create_variant(identifiers[i], rng, used_question_indexes, all_questions) for i in range(count)]
 
         return variants
 
-    # TEST
     def _create_variant(self,
             identifier: str,
             rng: random.Random,
@@ -346,28 +273,26 @@ class Quiz(quizcomp.model.base.CoreType):
         """ Create a single variant based on this quiz. """
 
         new_groups = []
-        for group in self.groups:
+        for group in self.children:
             questions = group.choose_variant_questions(all_questions, used_question_indexes, rng)
 
-            group_data = group.to_dict()
-            group_data['questions'] = questions
+            group_data = vars(group).copy()
+            group_data['children'] = questions
 
-            new_groups.append(quizcomp.model.group.Group.from_dict(group_data))
+            new_groups.append(quizcomp.model.group.Group(**group_data))
 
-        data = self.__dict__.copy()
+        data = vars(self).copy()
 
         data['variant_id'] = identifier
+        data['quiz_name'] = self.name
         data['name'] = f"{self.name} - {identifier}"
-        data['version'] = f"{self.version}, Variant: {identifier}"
         data['groups'] = new_groups
 
-        # Skip quiz validation.
-        data['_skip_class_validations'] = [Quiz]
+        if (self.version is not None):
+            data['version'] = f"{self.version}, Variant: {identifier}"
 
         return Variant(**data)
-        '''
 
-''' TEST
 class Variant(Quiz):
     """
     A quiz variant is an instantiation of a quiz with specific set of questions chosen for each group.
@@ -380,19 +305,19 @@ class Variant(Quiz):
     """
 
     def __init__(self,
+            quiz_name: str,
             variant_id: str,
-            type: str = quizcomp.constants.TYPE_VARIANT,
-            **kwargs: typing.Any) -> None:
-        super().__init__(type = type, **kwargs)
-        self.validate(cls = Variant, **kwargs)
+            **kwargs: typing.Any,
+            ) -> None:
+        super().__init__(**kwargs)
+
+        self.quiz_name: str = quiz_name
+        """ The name of the quiz this variant was generated from. """
 
         self.variant_id: str = variant_id
         """ An identifier to differentiate this variant from its siblings. """
 
-        self.questions = []
-        for group in self.groups:
-            self.questions += group.questions
-
+    ''' TEST
     def _validate(self, **kwargs: typing.Any) -> None:
         """ Check if this variant is valid, will raise if the group is not valid. """
 
@@ -401,6 +326,7 @@ class Variant(Quiz):
             if (len(group.questions) != group.pick_count):
                 raise quizcomp.common.QuizValidationError(
                         f"Group at index {i} ('{group.name}') has {len(group.questions)} questions, expecting exactly {group.pick_count}.")
+    '''
 
     @staticmethod
     def get_dummy(question: quizcomp.question.base.Question) -> 'Variant':
@@ -416,4 +342,3 @@ class Variant(Quiz):
         quiz_data['groups'] = [quizcomp.model.group.Group(**group_data)]
 
         return Variant(**quiz_data)
-'''

@@ -10,7 +10,7 @@ import sys
 import quizcomp.cli.parser
 import quizcomp.converter.convert
 import quizcomp.constants
-import quizcomp.quiz
+import quizcomp.model.quiz
 
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
@@ -25,10 +25,9 @@ def run_cli(args: argparse.Namespace) -> int:
     if (seed is None):
         seed = random.randint(0, 2**64)
 
-    quiz = quizcomp.quiz.Quiz.from_path(args.path, flatten_groups = args.flatten_groups)
-    variant = quiz.create_variants(all_questions = args.flatten_groups, seed = seed)[0]  # pylint: disable=no-member
-    content = quizcomp.converter.convert.convert_variant(variant, format = args.format,
-            constructor_args = {'answer_key': args.answer_key})
+    quiz = quizcomp.model.quiz.Quiz.from_path(args.path)
+    variant = quiz.create_variants(all_questions = args.all_questions, seed = seed)[0]
+    content = quizcomp.converter.convert.convert_variant(variant, format = args.format, constructor_args = {'answer_key': args.answer_key})
 
     print(content)
 
@@ -59,9 +58,9 @@ def _get_parser() -> argparse.ArgumentParser:
         action = 'store_true', default = False,
         help = 'Generate an answer key instead of a blank quiz (default: %(default)s).')
 
-    parser.add_argument('--flatten-groups', dest = 'flatten_groups',
+    parser.add_argument('--all-questions', dest = 'all_questions',
         action = 'store_true', default = False,
-        help = 'Flatten question groups with multiple questions to multiple groups with a single question (default: %(default)s).')
+        help = 'Include every question for each group (instead of the amount listed under `pick_count`) (default: %(default)s).')
 
     parser.add_argument('--seed', dest = 'seed',
         action = 'store', type = int, default = None,

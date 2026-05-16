@@ -3,6 +3,7 @@ import os
 import typing
 
 import quizcomp.converter.convert
+import quizcomp.model.question
 import quizcomp.testing.base
 
 class TestQuestionConverter(quizcomp.testing.base.BaseTest):
@@ -11,18 +12,18 @@ class TestQuestionConverter(quizcomp.testing.base.BaseTest):
     The content of the conversion is not tested, only that it successful and produces content.
     """
 
-    _question_cache: typing.Dict[str, quizcomp.question.base.Question] = {}
-    """ Cache questions (by path) that have already been parased. """
+    _questions_cache: typing.Dict[str, quizcomp.model.question.Question] = {}
 
-    def _get_question(self, path: str) -> quizcomp.question.base.Question:
-        """ Get a parsed question either from the cache or from disk. """
+    def load_question(self, path: str) -> quizcomp.model.question.Question:
+        """ Load a question from either the cache or disk. """
 
         path = os.path.abspath(path)
-        if (path in TestQuestionConverter._question_cache):
-            return TestQuestionConverter._question_cache[path]
 
-        question: quizcomp.question.base.Question = quizcomp.question.base.Question.from_path(path)
-        TestQuestionConverter._question_cache[path] = question
+        if (path in self._questions_cache):
+            return self._questions_cache[path]
+
+        question = quizcomp.model.question.Question.from_path(path)
+        self._questions_cache[path] = question
 
         return question
 
@@ -45,7 +46,7 @@ def _get_template_test(path: str, format_name: str, is_key: bool) -> typing.Call
     def __method(self: TestQuestionConverter) -> None:
         constructor_args = {'answer_key': is_key}
 
-        question = self._get_question(path)
+        question = self.load_question(path)
         content = quizcomp.converter.convert.convert_question(question, format = format_name,
                 constructor_args = constructor_args)
 

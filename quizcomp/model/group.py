@@ -48,7 +48,7 @@ class Group(quizcomp.model.base.CoreType):
             ) -> typing.List[quizcomp.question.base.Question]:
         """
         Get a list of questions to use for an instantiated variant of this group.
-        The returned questions will be copies of the original and shuffled (it set in config).
+        The returned questions will be copies of the original and shuffled (if set in config).
         """
 
         if ((self.pick_count == 0) or (len(self.children) == 0)):
@@ -108,7 +108,7 @@ class Group(quizcomp.model.base.CoreType):
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             ) -> edq.util.serial.PODType:
         data = super().to_pod(serialization_options)
-        data['questions'] = data.pop('children', None)
+        data['questions'] = data.pop('children', data.get('questions', None))
         return data
 
     @classmethod
@@ -137,7 +137,7 @@ class Group(quizcomp.model.base.CoreType):
         base_dir = serialization_options.get('base_dir', '.')
 
         new_questions = []
-        raw_questions = data.pop('questions', [])
+        raw_questions = data.pop('questions', data.get('children', []))
 
         for raw_question in raw_questions:
             if (not isinstance(raw_question, str)):

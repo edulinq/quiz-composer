@@ -133,7 +133,7 @@ def make(
 
     for variant in variants:
         out_path = os.path.join(out_dir, f"{variant.title}.json")
-        edq.util.dirent.write_file(out_path, variant.to_json())
+        variant.to_path(out_path)
 
         make_pdf(variant, out_dir = out_dir, is_key = False, skip_tex = skip_tex, skip_pdf = skip_pdf)
 
