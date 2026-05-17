@@ -7,6 +7,7 @@ import edq.util.json
 import edq.util.serial
 
 import quizcomp.errors
+import quizcomp.model.config
 
 DEFAULT_AVAILABLE_POINTS: float = 0.0
 """ The default available points for an object. """
@@ -161,7 +162,7 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
 
         return self.name
 
-    def get_available_points(self, check_children: bool = True) -> float:
+    def get_points(self, check_children: bool = True) -> float:
         """
         Get the total points available for this object.
 
@@ -181,7 +182,7 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         if (check_children and (len(self.children) > 0)):
             total = 0
             for child in self.children:
-                total += child.get_available_points()
+                total += child.get_points()
 
             return total
 
@@ -200,7 +201,22 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
             split = len(self.children)
 
         # Make sure to not try to use the children to compute the available points.
-        return self.get_available_points(check_children = False) / split
+        return self.get_points(check_children = False) / split
+
+    def get_display_points(self) -> str:
+        """
+        Return the output of get_points() rounded and formatted.
+        """
+
+        precision = self.get_config(quizcomp.model.config.OPTION_POINT_PRECISION)
+
+        points = self.get_points()
+
+        if (precision <= 0):
+            return str(int(points))
+
+        points = round(points, precision)
+        return str(points)
 
     def get_attribute(self, key: str, default_value: edq.util.serial.POD) -> edq.util.serial.POD:
         """

@@ -37,6 +37,14 @@ False means that they cannot, but can also cause a warning if not enough questio
 Defaults to true.
 """
 
+OPTION_POINT_PRECISION: Option = Option('attributes', 'point_precision', 2)
+"""
+The number of decimal places to use when displaying points.
+The point value will first be rounded to this precision, and then formatted.
+
+Defaults to 2.
+"""
+
 OPTION_SHUFFLE_ANSWERS: Option = Option('attributes', 'shuffle_answers', True)
 """
 If the answers in a question should be shuffled.

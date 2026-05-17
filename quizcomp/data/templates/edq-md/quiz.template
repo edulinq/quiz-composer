@@ -10,7 +10,7 @@
 
 {{ this.date.strftime("%Y-%m-%d") }}
 
-Total Points: {{ quiz.get_available_points() }}
+Total Points: {{ quiz.get_points() }}
 
 {{ quiz.description.to_md() }}
 

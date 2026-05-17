@@ -382,6 +382,17 @@ class TextAnswers(QuestionAnswers):
 
         return (len(self.options) == 0)
 
+    def get_first_option_text(self) -> quizcomp.parser.document.ParsedDocument:
+        """
+        Get the text document for the first option.
+        If there is no option, return an empty document.
+        """
+
+        if (len(self.options) == 0):
+            return quizcomp.parser.document.ParsedDocument()
+
+        return self.options[0].text
+
     @classmethod
     def from_pod(cls: typing.Type[TextAnswers],
             data: PODType,

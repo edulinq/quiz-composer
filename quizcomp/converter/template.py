@@ -216,6 +216,10 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             last_child_id = child_id
             last_child_number = child_number
 
+            # TEST
+            if (i >= 1):
+                break
+
         return "\n".join(children_content)
 
     def _convert_group(self,
@@ -324,7 +328,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         _, inner_text = self.create_groups(container)
 
         inner_context = container.to_pod()
-        inner_context['total_points'] = container.get_available_points()
+        inner_context['total_points'] = container.get_points()
         inner_context['description_text'] = self._format_doc(container.description)
 
         context = {

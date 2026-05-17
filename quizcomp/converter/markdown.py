@@ -19,6 +19,7 @@ class MarkdownTemplateConverter(quizcomp.converter.template.TemplateConverter):
             **kwargs: typing.Any) -> None:
         super().__init__(quizcomp.constants.FORMAT_MD, template_dir, **kwargs)
 
+    # TEST
     def create_answers_tf(self,
             question_id: str,
             question_number: int,

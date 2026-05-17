@@ -32,7 +32,7 @@ class QuizTest(quizcomp.testing.base.BaseTest):
 
         return quiz
 
-    def test_get_available_points_base(self) -> None:
+    def test_get_points_base(self) -> None:
         """ Test that quizzes have the correct number of total points. """
 
         # [(path, expected total), ...]
@@ -54,8 +54,8 @@ class QuizTest(quizcomp.testing.base.BaseTest):
                 quiz = quizcomp.model.quiz.Quiz.from_path(path)
                 variant = quiz.create_variant()  # pylint: disable=no-member
 
-                self.assertEqual(quiz.get_available_points(), expected, "quiz")  # pylint: disable=no-member
-                self.assertEqual(variant.get_available_points(), expected, "variant")
+                self.assertEqual(quiz.get_points(), expected, "quiz")  # pylint: disable=no-member
+                self.assertEqual(variant.get_points(), expected, "variant")
 
 def _add_quiz_tests() -> None:
     """ Add test cases for parsing good and bad quizes. """

@@ -19,7 +19,7 @@
                     <h1>{{ quiz.title }}</h1>
                     <p>{{ quiz.course_title }} &mdash; {{ quiz.term_title }}</p>
                     <p>{{ quiz.date }}</p>
-                    <p>Total Points: {{ quiz.get_available_points }}</p>
+                    <p>Total Points: {{ quiz.get_points }}</p>
                 </div>
 
                 {% if quiz.description_text %}

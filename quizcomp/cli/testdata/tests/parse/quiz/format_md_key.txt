@@ -3,6 +3,7 @@
     "arguments": [
         "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
         "--format", "md",
+        "--key",
     ],
 }
 ---
