@@ -431,7 +431,7 @@ class MultiplePartTextAnswers(QuestionAnswers):
         """ The different parts of this question. """
 
     def shuffle(self, rng: random.Random) -> None:
-        for part in self.parts:
+        for part in self.parts.values():
             part.shuffle(rng)
 
     def to_pod(self,
@@ -598,7 +598,7 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
         """ The different parts of this question. """
 
     def shuffle(self, rng: random.Random) -> None:
-        for part in self.parts:
+        for part in self.parts.values():
             part.shuffle(rng)
 
     def to_pod(self,

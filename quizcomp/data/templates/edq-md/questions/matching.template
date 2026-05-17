@@ -1,4 +1,4 @@
-{% extends "partials/question.template" %}
+{% extends "questions/base.template" %}
 
 {% block directions %}
 Match each item on the left with a letter from the right.
@@ -7,15 +7,15 @@ Match each item on the left with a letter from the right.
 {% block body %}
 | Left | Right |
 |------|-------|
-{% for right in question.answers.rights %}
-{% if loop.index0 < question.answers.lefts|length %}
-| {{ question.answers.lefts[loop.index0].text }} | {{ right.label }}. {{ right.text }} |
+{% for right in this.answers.rights %}
+{% if loop.index0 < this.answers.lefts|length %}
+| {{ this.answers.lefts[loop.index0].text }} | {{ right.label }}. {{ right.text }} |
 {% else %}
 | | {{ right.label }}. {{ right.text }} |
 {% endif %}
 {% endfor %}
 
-{% for left in question.answers.lefts %}
+{% for left in this.answers.lefts %}
 {% if answer_key %}
 - {{ left.text }}: *{{ left.solution }}*
 {% else %}

@@ -1,7 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
-        "__DATA_DIR__(../../../testdata/quizzes/good/simple/quiz.json)",
+        "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
         "--format", "json"
     ],
 }

@@ -1,13 +1,13 @@
-{% extends "partials/question.template" %}
+{% extends "questions/base.template" %}
 
 {% block directions %}
-Write your answer below.
+Fill in the blank below:  
 {% endblock %}
 
 {% block body %}
 {% if answer_key %}
 ```
-{{ question.answers[0].clean }}
+{{ this.answers[0].clean }}
 ```
 {% else %}
 ```

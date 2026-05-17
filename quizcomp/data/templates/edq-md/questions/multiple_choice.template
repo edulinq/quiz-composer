@@ -1,11 +1,11 @@
-{% extends "partials/question.template" %}
+{% extends "questions/base.template" %}
 
 {% block directions %}
 Choose one:  
 {% endblock %}
 
 {% block body %}
-{% for answer in question.answers %}
+{% for answer in this.answers %}
 {% if answer_key and answer.correct %}
 {{ answer.marker }}. {{ answer.text }} *(correct)*  
 {% else %}

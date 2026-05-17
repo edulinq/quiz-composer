@@ -1,3 +1,22 @@
+"""
+The most common way to render Quiz Composer quizzes is via templates.
+We use the [Jinja](https://jinja.palletsprojects.com) template system.
+
+# TEST
+The standard rendering context sent to most templates will always include:
+ - `this: typing.Any` -- The context object being rendered (e.g., a quiz, group, or question).
+ - `quiz: quizcomp.model.quiz.Quiz` -- The current quiz (often a variant) being rendered.
+ - `answer_key: bool` -- Whether this conversion if for an answer key.
+
+Core types (quiz, group, question) will additionally include:
+ - `id: str` -- An identifier specific to this.
+ - `number: int` -- The number that should be displayed for this object (if any), e.g., a question's number.
+ - `children_content: str` -- The rendered content from this' children (if any).
+
+# TEST
+ - `meta: typing.Dict[str, typing.Any]` -- A dictionary of metadata relevant to the context (e.g. for a question this would contain the question number).
+"""
+
 import math
 import os
 import random
@@ -20,8 +39,9 @@ import quizcomp.model.question
 import quizcomp.model.quiz
 
 TEMPLATE_FILENAME_QUIZ: str = 'quiz.template'
-TEMPLATE_FILENAME_QUESTION_SEP: str = 'question-separator.template'
+TEMPLATE_FILENAME_QUESTION_SEPARATOR: str = 'question-separator.template'
 TEMPLATE_FILENAME_GROUP: str = 'group.template'
+TEMPLATE_FILENAME_GROUP_SEPARATOR: str = 'group-separator.template'
 
 RIGHT_IDS: typing.List[str] = list(string.ascii_uppercase)
 LEFT_IDS: typing.List[str] = [str(i + 1) for i in range(len(RIGHT_IDS))]
@@ -39,6 +59,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     The base class for a converter that uses templates.
     """
 
+    # TEST - Check args.
     def __init__(self,
             format: str,
             template_dir: str,
@@ -133,11 +154,167 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> str:
         """ Convert an entire quiz (including variants). """
 
-        return self._convert_container(quiz, quizcomp.model.quiz.Quiz, 'quiz')
+        return self._convert_quiz(quiz)
 
     def convert_variant(self, variant: quizcomp.model.quiz.Variant, **kwargs: typing.Any) -> str:
-        return self._convert_container(variant, quizcomp.model.quiz.Variant, 'variant')
+        """ Convert a a standard quiz variant. """
 
+        return self._convert_quiz(variant)
+
+    def _convert_quiz(self, quiz: quizcomp.model.quiz.Quiz) -> str:
+        """ Convert a quiz (or variant). """
+
+        quiz_id = '0'
+        quiz_number = 1
+
+        children_content = self._convert_children(quiz, quiz, quiz_id, self._convert_group, self._convert_group_separator)
+
+        context = {
+            'this': quiz,
+            'quiz': quiz,
+            'answer_key': self.answer_key,
+            'id': quiz_id,
+            'number': quiz_number,
+            'children_content': children_content,
+        }
+
+        template = self.env.get_template(TEMPLATE_FILENAME_QUIZ)
+        return template.render(**context)
+
+    def _convert_children(self,
+            quiz: quizcomp.model.quiz.Quiz,
+            parent: quizcomp.model.base.CoreType,
+            parent_id: str,
+            convert_child_func: typing.Callable,
+            convert_child_separator_func: typing.Callable,
+            ) -> str:
+        """ Convert a list of children. """
+
+        last_child = None
+        last_child_id = None
+        lasr_child_number = None
+
+        next_child_number = 1
+
+        children_content = []
+        for (i, child) in enumerate(parent.children):
+            child_id = f"{parent_id}.{i}"
+
+            child_number = None
+            if (child.get_config(quizcomp.model.config.OPTION_SKIP_NUMBERING_KEY) is not True):
+                child_number = next_child_number
+                next_child_number += 1
+
+            # Add in a separator if we are between two children.
+            if (last_child is not None):
+                children_content.append(convert_child_separator_func(quiz, parent, last_child, last_child_id, last_child_number, child, child_id, child_number))
+
+            child_content = convert_child_func(quiz, child, child_id, child_number)
+            children_content.append(child_content)
+
+            last_child = child
+            last_child_id = child_id
+            last_child_number = child_number
+
+        return "\n".join(children_content)
+
+    def _convert_group(self,
+            quiz: quizcomp.model.quiz.Quiz,
+            group: quizcomp.model.group.Group, group_id: str, group_number: typing.Union[int, None],
+            ) -> str:
+        """ Convert a group. """
+
+        children_content = self._convert_children(quiz, group, group_id, self._convert_question, self._convert_question_separator)
+
+        context = {
+            'this': group,
+            'quiz': quiz,
+            'answer_key': self.answer_key,
+            'id': group_id,
+            'number': group_number,
+            'children_content': children_content,
+        }
+
+        template = self.env.get_template(TEMPLATE_FILENAME_GROUP)
+        return template.render(**context)
+
+    def _convert_group_separator(self,
+            quiz: quizcomp.model.quiz.Quiz,
+            parent: quizcomp.model.base.CoreType,
+            previous: quizcomp.model.base.CoreType, previous_id: str, previous_number: typing.Union[int, None],
+            next: quizcomp.model.base.CoreType, next_id: str, next_number: typing.Union[int, None],
+            ) -> str:
+        """ Create a group separator. """
+
+        return self._convert_separator(
+            TEMPLATE_FILENAME_GROUP_SEPARATOR,
+            quiz, parent,
+            previous, previous_id, previous_number,
+            next, next_id, next_number,
+        )
+
+    def _convert_question(self,
+            quiz: quizcomp.model.quiz.Quiz,
+            question: quizcomp.model.question.Question, question_id: str, question_number: typing.Union[int, None],
+            ) -> str:
+        """ Convert a question. """
+
+        context = {
+            'this': question,
+            'quiz': quiz,
+            'answer_key': self.answer_key,
+            'id': question_id,
+            'number': question_number,
+            'children_content': None,
+            'custom_header': question.get_config(quizcomp.model.config.OPTION_CUSTOM_HEADER),
+        }
+
+        template = self.env.get_template(f"questions/{question.question_type}.template")
+        return template.render(**context)
+
+    def _convert_question_separator(self,
+            quiz: quizcomp.model.quiz.Quiz,
+            parent: quizcomp.model.base.CoreType,
+            previous: quizcomp.model.base.CoreType, previous_id: str, previous_number: typing.Union[int, None],
+            next: quizcomp.model.base.CoreType, next_id: str, next_number: typing.Union[int, None],
+            ) -> str:
+        """ Create a question separator. """
+
+        return self._convert_separator(
+            TEMPLATE_FILENAME_QUESTION_SEPARATOR,
+            quiz, parent,
+            previous, previous_id, previous_number,
+            next, next_id, next_number,
+        )
+
+    def _convert_separator(self,
+            template_name: str,
+            quiz: quizcomp.model.quiz.Quiz,
+            parent: quizcomp.model.base.CoreType,
+            previous: quizcomp.model.base.CoreType, previous_id: str, previous_number: typing.Union[int, None],
+            next: quizcomp.model.base.CoreType, next_id: str, next_number: typing.Union[int, None],
+            ) -> str:
+        """ Create a separator. """
+
+        context = {
+            'this': parent,
+            'quiz': quiz,
+            'answer_key': self.answer_key,
+            'previous': previous,
+            'previous_id': previous_id,
+            'previous_number': previous_number,
+            'next': next,
+            'next_id': next_id,
+            'next_number': next_number,
+        }
+
+        template = self.env.get_template(template_name)
+        text = template.render(**context)
+
+        return text
+
+    # TEST
+    ''' TEST
     def _convert_container(self, container: quizcomp.model.quiz.Quiz, container_type: typing.Type, container_label: str) -> str:
         """ Convert a quiz or variant. """
 
@@ -146,7 +323,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         _, inner_text = self.create_groups(container)
 
-        inner_context = container.to_dict()
+        inner_context = container.to_pod()
         inner_context['total_points'] = container.get_available_points()
         inner_context['description_text'] = self._format_doc(container.description)
 
@@ -185,7 +362,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
                 item_id = self.id_delim.join([id_prefix, item_id])
 
             if (index != 0):
-                result.append(self.create_question_separator(container))
+                result.append(self.create_question_separatorarator(container))
 
             try:
                 question_number, text = item_creation_function(item_id, question_number, item, container)
@@ -203,7 +380,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             ) -> typing.Tuple[int, str]:
         """ Convert a single group. """
 
-        data = group.to_dict()
+        data = group.to_pod()
         data['id'] = group_index
 
         question_number, questions_text = self._create_item_collection(
@@ -235,7 +412,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         if (question_type not in self.answer_functions):
             raise ValueError(f"Unsupported question type: '{question_type}'.")
 
-        data = question.to_dict()
+        data = question.to_pod()
         data['prompt_text'] = self._format_doc(question.prompt)
         data['id'] = question_id
         data['number'] = question_number
@@ -285,7 +462,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return self._format_doc(document)
 
-    def create_question_separator(self, quiz: typing.Union[quizcomp.model.quiz.Quiz, quizcomp.model.group.Group]) -> str:
+    def create_question_separatorarator(self, quiz: typing.Union[quizcomp.model.quiz.Quiz, quizcomp.model.group.Group]) -> str:
         """ Create a question separator. """
 
         context = {
@@ -293,7 +470,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             'answer_key': self.answer_key,
         }
 
-        template = self.env.get_template(TEMPLATE_FILENAME_QUESTION_SEP)
+        template = self.env.get_template(TEMPLATE_FILENAME_QUESTION_SEPARATOR)
         text = template.render(**context)
 
         return text
@@ -654,3 +831,5 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         self.image_paths[image_id] = out_path
 
         return out_path
+
+    '''

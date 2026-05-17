@@ -1,4 +1,4 @@
-{% extends "partials/question.template" %}
+{% extends "questions/base.template" %}
 
 {% block directions %}
 Provide a numerical answer below:  
@@ -8,7 +8,7 @@ Provide a numerical answer below:
 
 {% if answer_key %}
 ```
-{{ question.answers.solution }}
+{{ this.answers.solution }}
 ```
 {% else %}
 ＿＿＿＿＿

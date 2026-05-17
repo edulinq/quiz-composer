@@ -1,13 +1,19 @@
-# {{ quiz.title }}
+# {{ this.name }}
 
-{{ quiz.course_title }} -- {{ quiz.term_title }}
+{% if (this.course_name is not none) and (this.term_name is not none) %}
+    {{ this.course_name }} -- {{ quiz.term_name }}
+{% elif (this.course_name is not none) %}
+    {{ this.course_name }}
+{% elif (this.term_name is not none) %}
+    { quiz.term_name }}
+{% endif %}
 
-{{ quiz.date }}
+{{ this.date.strftime("%Y-%m-%d") }}
 
-Total Points: {{ quiz.get_available_points }}
+Total Points: {{ quiz.get_available_points() }}
 
-{{ quiz.description_text }}
+{{ quiz.description.to_md() }}
 
 ---
 
-{{ inner_text }}
+{{ children_content }}

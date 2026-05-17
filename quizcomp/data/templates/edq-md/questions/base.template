@@ -1,0 +1,14 @@
+{% if custom_header is none %}
+**Question {{ number }}** ({{ this.get_available_points() }} Points)
+{% elif custom_header != '' %}
+{{ custom_header }}
+{% else %}
+{# No Header. #}
+{% endif %}
+
+{{ this.prompt.to_md() }}
+
+{% block directions %}
+{% endblock %}
+{% block body required %}
+{% endblock %}
