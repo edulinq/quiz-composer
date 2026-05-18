@@ -167,7 +167,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         quiz_id = '0'
         quiz_number = 1
 
-        children_content = self._convert_children(quiz, quiz, quiz_id, self._convert_group, self._convert_group_separator)
+        children_content, _ = self._convert_children(quiz, quiz, quiz_id, self._convert_group, self._convert_group_separator, 1)
 
         context = {
             'this': quiz,
@@ -187,60 +187,51 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             parent_id: str,
             convert_child_func: typing.Callable,
             convert_child_separator_func: typing.Callable,
-            ) -> str:
+            running_question_number: int,
+            ) -> typing.Tuple[str, int]:
         """ Convert a list of children. """
 
         last_child = None
         last_child_id = None
-        lasr_child_number = None
-
-        next_child_number = 1
+        last_child_index = None
 
         children_content = []
-        for (i, child) in enumerate(parent.children):
-            child_id = f"{parent_id}.{i}"
-
-            child_number = None
-            if (child.get_config(quizcomp.model.config.OPTION_SKIP_NUMBERING_KEY) is not True):
-                child_number = next_child_number
-                next_child_number += 1
+        for (child_index, child) in enumerate(parent.children):
+            child_id = f"{parent_id}.{child_index}"
 
             # Add in a separator if we are between two children.
             if (last_child is not None):
-                children_content.append(convert_child_separator_func(quiz, parent, last_child, last_child_id, last_child_number, child, child_id, child_number))
+                children_content.append(convert_child_separator_func(quiz, parent, last_child, last_child_id, last_child_index, child, child_id, child_index))
 
-            child_content = convert_child_func(quiz, child, child_id, child_number)
+            child_content, running_question_number = convert_child_func(quiz, child, child_id, child_index, running_question_number)
             children_content.append(child_content)
 
             last_child = child
             last_child_id = child_id
-            last_child_number = child_number
+            last_child_index = child_index
 
-            # TEST
-            if (i >= 10):
-                break
-
-        return "\n".join(children_content)
+        return "\n".join(children_content), running_question_number
 
     def _convert_group(self,
             quiz: quizcomp.model.quiz.Quiz,
-            group: quizcomp.model.group.Group, group_id: str, group_number: typing.Union[int, None],
-            ) -> str:
+            group: quizcomp.model.group.Group, group_id: str, child_index: typing.Union[int, None],
+            running_question_number: int,
+            ) -> typing.Tuple[str, int]:
         """ Convert a group. """
 
-        children_content = self._convert_children(quiz, group, group_id, self._convert_question, self._convert_question_separator)
+        children_content, running_question_number = self._convert_children(quiz, group, group_id, self._convert_question, self._convert_question_separator, running_question_number)
 
         context = {
             'this': group,
             'quiz': quiz,
             'answer_key': self.answer_key,
             'id': group_id,
-            'number': group_number,
+            'child_index': child_index,
             'children_content': children_content,
         }
 
         template = self.env.get_template(TEMPLATE_FILENAME_GROUP)
-        return template.render(**context)
+        return template.render(**context), running_question_number
 
     def _convert_group_separator(self,
             quiz: quizcomp.model.quiz.Quiz,
@@ -259,22 +250,29 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
     def _convert_question(self,
             quiz: quizcomp.model.quiz.Quiz,
-            question: quizcomp.model.question.Question, question_id: str, question_number: typing.Union[int, None],
-            ) -> str:
+            question: quizcomp.model.question.Question, question_id: str, child_index: typing.Union[int, None],
+            running_question_number: int,
+            ) -> typing.Tuple[str, int]:
         """ Convert a question. """
+
+        question_number = None
+        if (question.get_config(quizcomp.model.config.OPTION_SKIP_NUMBERING_KEY) is not True):
+            question_number = running_question_number
+            running_question_number += 1
 
         context = {
             'this': question,
             'quiz': quiz,
             'answer_key': self.answer_key,
             'id': question_id,
+            'child_index': child_index,
             'number': question_number,
             'children_content': None,
             'custom_header': question.get_config(quizcomp.model.config.OPTION_CUSTOM_HEADER),
         }
 
         template = self.env.get_template(f"questions/{question.question_type}.template")
-        return template.render(**context)
+        return template.render(**context), running_question_number
 
     def _convert_question_separator(self,
             quiz: quizcomp.model.quiz.Quiz,
