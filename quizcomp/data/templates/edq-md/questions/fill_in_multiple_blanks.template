@@ -5,11 +5,11 @@ For each part, fill in the associated blank:
 {% endblock %}
 
 {% block body %}
-    {% for (label, text_answers) in this.answers.parts.items() %}
-        {% if answer_key %}
+{% for (label, text_answers) in this.answers.parts.items() %}
+{% if answer_key %}
 {{ label }}:    `{{ text_answers.get_first_option_text().to_md() }}`  
-        {% else %}
+{% else %}
 {{ label }}: ＿＿＿＿＿  
-        {% endif %}
-    {% endfor %}
+{% endif %}
+{% endfor %}
 {% endblock %}

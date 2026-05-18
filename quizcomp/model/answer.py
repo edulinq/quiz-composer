@@ -9,7 +9,8 @@ import edq.util.serial
 import quizcomp.errors
 import quizcomp.model.feedback
 
-MAX_CHOICES: int = len(string.ascii_uppercase)
+DEFAULT_CHOICES: typing.List[str] = string.ascii_uppercase
+MAX_CHOICES: int = len(DEFAULT_CHOICES)
 
 class NumericAnswerType(enum.StrEnum):
     """ The types of numeric answers supported by the Quiz Composer. """
@@ -491,6 +492,11 @@ class ChoiceAnswers(QuestionAnswers):
             ) -> edq.util.serial.PODType:
         return [choice.to_pod() for choice in self.choices]
 
+    def get_choices_with_markers(self) -> typing.List[typing.Tuple[quizcomp.parser.document.ParsedDocument, Choice]]:
+        """ Get the choices for this answer along with markers for each (e.g., "A", "B", "C"). """
+
+        return [(quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[i]), choice) for (i, choice) in enumerate(self.choices)]
+
     @classmethod
     def from_pod(cls: typing.Type[MultiplePartTextAnswers],
             data: PODType,
@@ -642,6 +648,9 @@ class MatchingAnswers(QuestionAnswers):
     """ Answers for matching-type questions. """
 
     serialization_omit_empty = True
+    serialization_skip_fields = {
+        '_shuffle_seed',
+    }
 
     def __init__(self,
             pairs: typing.List[typing.Tuple[TextOption, TextOption]],
@@ -659,9 +668,18 @@ class MatchingAnswers(QuestionAnswers):
         self.distractors: typing.List[TextOption] = distractors
         """ Extra options to serve as a distraction. """
 
+        self._shuffle_seed: typing.Union[int, None] = None
+        """
+        A seed to use when shuffling the left and right sides.
+
+        This will be set in shuffle().
+        A None value indicates that no shuffling will occur.
+        """
+
     def shuffle(self, rng: random.Random) -> None:
         rng.shuffle(self.pairs)
         rng.shuffle(self.distractors)
+        self._shuffle_seed = rng.randint(0, 2**64)
 
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
@@ -670,6 +688,58 @@ class MatchingAnswers(QuestionAnswers):
             'matches': [[left.to_pod(), right.to_pod()] for (left, right) in self.pairs],
             'distractors': [value.to_pod() for value in self.distractors],
         }
+
+    def get_tabular_options(self) -> typing.List[typing.Tuple[typing.Union[TextOption, None], TextOption, TextOption, quizcomp.parser.document.ParsedDocument]]:
+        """
+        Get all the options laid out in a table: (left, correct answer marker, correct answer, right, choice marker).
+        The first marker maps the subquestion (left) to the correct answer.
+        The second marker serves as a label for each possible choice (right).
+        If there is no left option, it and its marker will be None.
+
+        If shuffle() was called on this object, then the left and right options will he shuffled before being put into the table.
+        """
+
+        lefts = []
+        rights = []
+
+        for (left, right) in self.pairs:
+            lefts.append(left)
+            rights.append(right)
+
+        for distractor in self.distractors:
+            rights.append(distractor)
+
+        # The ordered indexes to use in the options table.
+        # This may be shuffled.
+        left_indexes = list(range(len(lefts)))
+        right_indexes = list(range(len(rights)))
+
+        if (self._shuffle_seed is not None):
+            rng = random.Random(self._shuffle_seed)
+            rng.shuffle(left_indexes)
+            rng.shuffle(right_indexes)
+
+        options = []
+        for (i, right_index) in enumerate(right_indexes):
+            right = rights[right_index]
+            right_marker = quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[i])
+
+            left = None
+            left_marker = None
+            correct_answer = None
+            if (i < len(left_indexes)):
+                left_index = left_indexes[i]
+
+                # Find the correct marker index for this left by looking up the matching index in the right indexes.
+                matching_right_marker_index = right_indexes.index(left_index)
+
+                left = lefts[left_index]
+                left_marker = quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[matching_right_marker_index])
+                correct_answer = rights[left_index]
+
+            options.append((left, left_marker, correct_answer, right, right_marker))
+
+        return options
 
     @classmethod
     def from_pod(cls: typing.Type[MatchingAnswers],
@@ -738,6 +808,11 @@ class MatchingAnswers(QuestionAnswers):
 
             option = TextOption.from_pod_with_error(raw_distractor, serialization_options, label, base_dir)
             distractors.append(option)
+
+        if ((len(pairs) + len(distractors)) > MAX_CHOICES):
+            raise quizcomp.errors.QuestionValidationError(
+                f"Matching question has too many options. Found {(len(pairs) + len(distractors))}, while the max is {MAX_CHOICES}.",
+                base_dir = base_dir)
 
         return MatchingAnswers(pairs, distractors)
 

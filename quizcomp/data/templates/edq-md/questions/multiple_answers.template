@@ -5,11 +5,11 @@ Choose all that apply:
 {% endblock %}
 
 {% block body %}
-{% for answer in this.answers %}
-{% if answer_key and answer.correct %}
-{{ answer.marker }}. {{ answer.text }} *(correct)*  
+{% for (marker, choice) in this.answers.get_choices_with_markers() %}
+{% if (answer_key and choice.correct) %}
+{{ marker.to_md() }}. {{ choice.text.to_md() }} *(correct)*  
 {% else %}
-{{ answer.marker }}. {{ answer.text }}  
+{{ marker.to_md() }}. {{ choice.text.to_md() }}  
 {% endif %}
 {% endfor %}
 {% endblock %}

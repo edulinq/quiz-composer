@@ -7,19 +7,21 @@ Match each item on the left with a letter from the right.
 {% block body %}
 | Left | Right |
 |------|-------|
-{% for right in this.answers.rights %}
-{% if loop.index0 < this.answers.lefts|length %}
-| {{ this.answers.lefts[loop.index0].text }} | {{ right.label }}. {{ right.text }} |
+{% for (left, left_marker, correct, right, right_marker) in this.answers.get_tabular_options() %}
+{% if (left is not none) %}
+| {{ left.text.to_md() }} | {{ right_marker.to_md() }}. {{ right.text.to_md() }} |
 {% else %}
-| | {{ right.label }}. {{ right.text }} |
+| | {{ right_marker.to_md() }}. {{ right.text.to_md() }} |
 {% endif %}
 {% endfor %}
 
-{% for left in this.answers.lefts %}
+{% for (left, left_marker, correct, right, right_marker) in this.answers.get_tabular_options() %}
+{% if (left is not none) %}
 {% if answer_key %}
-- {{ left.text }}: *{{ left.solution }}*
+- {{ left.text.to_md() }}: *{{ left_marker.to_md() }}. {{ correct.text.to_md() }}*
 {% else %}
-- {{ left.text }}: ＿＿＿＿＿
+- {{ left.text.to_md() }}: ＿＿＿＿＿
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endblock %}

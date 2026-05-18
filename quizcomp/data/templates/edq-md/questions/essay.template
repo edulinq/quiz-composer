@@ -1,15 +1,15 @@
 {% extends "questions/base.template" %}
 
 {% block directions %}
-    Write your response below.
+Write your response below.
 {% endblock %}
 
 {% block body %}
-    {% if answer_key %}
+{% if answer_key %}
 ```
 {{ this.answers.get_first_option_text().to_md() }}
 ```
-    {% else %}
+{% else %}
 ```
 |
 |
@@ -22,5 +22,5 @@
 |
 |
 ```
-    {% endif %}
+{% endif %}
 {% endblock %}

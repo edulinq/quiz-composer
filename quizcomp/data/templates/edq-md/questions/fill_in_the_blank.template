@@ -7,7 +7,7 @@ Fill in the blank below:
 {% block body %}
 {% if answer_key %}
 ```
-{{ this.answers[0].clean }}
+{{ this.answers.get_first_option_text().to_md() }}
 ```
 {% else %}
 ```
