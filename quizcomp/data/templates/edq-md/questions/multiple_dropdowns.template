@@ -5,13 +5,13 @@ For each part, choose one:
 {% endblock %}
 
 {% block body %}
-{% for part in this.answers %}
-{{ part.label }}:  
-{% for choice in part.choices %}
-{% if answer_key and choice.correct %}
-{{ choice.marker }}. {{ choice.text }} *(correct)*  
+{% for (label, part) in this.answers.parts.items() %}
+{{ label }}:  
+{% for (marker, choice) in part.get_choices_with_markers() %}
+{% if (answer_key and choice.correct) %}
+{{ marker.to_md() }}. {{ choice.text.to_md() }} *(correct)*  
 {% else %}
-{{ choice.marker }}. {{ choice.text }}  
+{{ marker.to_md() }}. {{ choice.text.to_md() }}  
 {% endif %}
 {% endfor %}
 
