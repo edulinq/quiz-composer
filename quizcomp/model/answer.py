@@ -1,4 +1,6 @@
+import abc
 import enum
+import math
 import random
 import string
 import typing
@@ -99,7 +101,7 @@ class TextOption(edq.util.serial.PODConverter):
 
         return cls.from_pod(data, serialization_options)
 
-class NumericOption(edq.util.serial.PODConverter):
+class NumericOption(edq.util.serial.PODConverter, abc.ABC):
     """
     One possible numeric answer to a question.
     """
@@ -119,6 +121,10 @@ class NumericOption(edq.util.serial.PODConverter):
 
         self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
         """ Feedback specific to this choice. """
+
+    @abc.abstractmethod
+    def to_text(self) -> TextOption:
+        """ Get a textual representation of this option. """
 
     @classmethod
     def from_pod(cls: typing.Type[NumericOption],
@@ -221,6 +227,13 @@ class NumericOptionExact(NumericOption):
         self.margin: typing.Union[float, int] = margin
         """ The allowed margin or error for this answer. """
 
+    def to_text(self) -> TextOption:
+        text = str(self.value)
+        if (not math.isclose(self.margin, 0.0)):
+            text += f" ± {self.margin}"
+
+        return TextOption(quizcomp.parser.document.ParsedDocument.parse_text(text), feedback = self.feedback)
+
 class NumericOptionRange(NumericOption):
     """ A numeric option to represent a value within a range. """
 
@@ -236,6 +249,10 @@ class NumericOptionRange(NumericOption):
         self.max: typing.Union[float, int] = max
         """ The maximum allowed value. """
 
+    def to_text(self) -> TextOption:
+        text = f"[{self.min}, {self.max}]"
+        return TextOption(quizcomp.parser.document.ParsedDocument.parse_text(text), feedback = self.feedback)
+
 class NumericOptionPrecision(NumericOption):
     """ A numeric option to represent a value within a specified order of magnitudes. """
 
@@ -250,6 +267,13 @@ class NumericOptionPrecision(NumericOption):
 
         self.precision: int = precision
         """ The number of order of magnitudes allowed. """
+
+    def to_text(self) -> TextOption:
+        text = str(self.value)
+        if (self.precision != 1):
+            text += f" ({self.precision} decimal places)"
+
+        return TextOption(quizcomp.parser.document.ParsedDocument.parse_text(text), feedback = self.feedback)
 
 class Choice(TextOption):
     """

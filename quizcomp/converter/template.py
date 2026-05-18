@@ -217,7 +217,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             last_child_number = child_number
 
             # TEST
-            if (i >= 4):
+            if (i >= 7):
                 break
 
         return "\n".join(children_content)

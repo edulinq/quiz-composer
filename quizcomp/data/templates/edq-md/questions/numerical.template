@@ -8,7 +8,9 @@ Provide a numerical answer below:
 
 {% if answer_key %}
 ```
-{{ this.answers.solution }}
+{% for option in this.answers.options %}
+{{ option.to_text().text.to_md() }}
+{% endfor %}
 ```
 {% else %}
 ＿＿＿＿＿
