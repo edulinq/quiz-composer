@@ -610,8 +610,8 @@ class TFAnswers(ChoiceAnswers):
 
         if (isinstance(data, bool)):
             choices = [
-                Choice(TextOption.from_pod_with_error("True", serialization_options, 'true', base_dir), data),
-                Choice(TextOption.from_pod_with_error("False", serialization_options, 'false', base_dir), (not data)),
+                Choice(quizcomp.parser.document.ParsedDocument.parse_text("True"), data),
+                Choice(quizcomp.parser.document.ParsedDocument.parse_text("False"), (not data)),
             ]
             return TFAnswers(choices)
 

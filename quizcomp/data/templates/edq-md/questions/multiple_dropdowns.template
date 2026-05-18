@@ -14,6 +14,5 @@ For each part, choose one:
 {{ marker.to_md() }}. {{ choice.text.to_md() }}  
 {% endif %}
 {% endfor %}
-
 {% endfor %}
 {% endblock %}
