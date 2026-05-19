@@ -6,3 +6,894 @@
     ],
 }
 ---
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   All Basic Questions - A
+  </title>
+  <style>
+   :root {
+    --qg-color-accent: #4f6ef7;
+    --qg-color-accent-dark: #3b56e8;
+    --qg-color-accent-light: #eef2ff;
+    --qg-color-text: #1a1a2e;
+    --qg-color-text-secondary: #5a6a8a;
+    --qg-color-border: #e2e8f4;
+    --qg-color-bg-page: #f4f6fb;
+    --qg-color-bg-card: #ffffff;
+    --qg-color-bg-input: #f9fafb;
+    --qg-color-correct-bg: #dcfce7;
+    --qg-color-correct-border: #86efac;
+    --qg-color-correct-text: #166534;
+    --qg-color-white: #ffffff;
+    --qg-color-code-bg: #1e1e2e;
+    --qg-color-code-text: #cdd6f4;
+
+    --qg-font-size-small: 0.875rem;
+    --qg-font-size-medium: 1rem;
+    --qg-font-size-large: 1.75rem;
+
+    --qg-font-weight-normal: 400;
+    --qg-font-weight-semibold: 600;
+    --qg-font-weight-bold: 700;
+
+    --qg-max-width: 860px;
+
+    --qg-space-xsmall: 0.25rem;
+    --qg-space-small: 0.5rem;
+    --qg-space-medium: 0.75rem;
+    --qg-space-large: 1rem;
+    --qg-space-xlarge: 1.5rem;
+    --qg-space-xxlarge: 2rem;
+
+    --qg-radius-small: 4px;
+    --qg-radius-medium: 6px;
+    --qg-radius-large: 10px;
+
+    --qg-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --qg-shadow-hover: 0 4px 16px rgba(79, 110, 247, 0.1);
+    --qg-shadow-focus: 0 0 0 3px rgba(79, 110, 247, 0.15);
+    --qg-shadow-button-hover: 0 4px 12px rgba(79, 110, 247, 0.35);
+
+    --qg-transition-fast: 0.15s ease;
+}
+
+.qg-quiz *,
+.qg-quiz *::before,
+.qg-quiz *::after {
+    box-sizing: border-box;
+}
+
+.qg-quiz {
+    font-family: system-ui, sans-serif;
+    font-size: var(--qg-font-size-medium);
+    line-height: 1.6;
+    color: var(--qg-color-text);
+    background-color: var(--qg-color-bg-page);
+    min-height: 100vh;
+    padding: var(--qg-space-xxlarge) var(--qg-space-large);
+}
+
+.qg-quiz p {
+    margin: 0;
+    margin-bottom: var(--qg-space-small);
+}
+
+.qg-quiz-form {
+    max-width: var(--qg-max-width);
+    margin: 0 auto;
+}
+
+.qg-quiz-header {
+    background: var(--qg-color-bg-card);
+    border-radius: var(--qg-radius-large);
+    box-shadow: var(--qg-shadow);
+    padding: var(--qg-space-xxlarge);
+    margin-bottom: var(--qg-space-xlarge);
+    border-left: 4px solid var(--qg-color-accent);
+}
+
+.qg-quiz-header h1 {
+    margin: 0 0 var(--qg-space-small);
+    font-size: var(--qg-font-size-large);
+    font-weight: var(--qg-font-weight-bold);
+}
+
+.qg-quiz-header p {
+    margin: var(--qg-space-xsmall) 0;
+}
+
+.qg-quiz-header p:last-child {
+    margin-top: var(--qg-space-small);
+    font-weight: var(--qg-font-weight-semibold);
+}
+
+.qg-quiz-description {
+    background: var(--qg-color-accent-light);
+    border: 1px solid var(--qg-color-border);
+    border-radius: var(--qg-radius-large);
+    padding: var(--qg-space-large) var(--qg-space-xlarge);
+    margin-bottom: var(--qg-space-xlarge);
+}
+
+.qg-quiz-description:empty {
+    display: none;
+}
+
+.qg-quiz hr {
+    border: none;
+    border-top: 1px solid var(--qg-color-border);
+    margin: var(--qg-space-xlarge) 0;
+}
+
+.qg-quiz-question {
+    background: var(--qg-color-bg-card);
+    border-radius: var(--qg-radius-large);
+    box-shadow: var(--qg-shadow);
+    padding: var(--qg-space-xlarge);
+    margin-bottom: var(--qg-space-large);
+    border: 1px solid var(--qg-color-border);
+    transition: box-shadow var(--qg-transition-fast);
+}
+
+.qg-quiz-question:hover {
+    box-shadow: var(--qg-shadow-hover);
+}
+
+.qg-quiz-question-name {
+    font-weight: var(--qg-font-weight-bold);
+    color: var(--qg-color-accent);
+    margin-bottom: var(--qg-space-small);
+    padding-bottom: var(--qg-space-xsmall);
+    border-bottom: 1px solid var(--qg-color-border);
+}
+
+.qg-quiz-question-directions {
+    font-size: var(--qg-font-size-small);
+    font-style: italic;
+    color: var(--qg-color-text-secondary);
+    margin-bottom: var(--qg-space-medium);
+}
+
+.qg-quiz-question-body fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.qg-quiz-question-body fieldset > div {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--qg-space-small);
+    padding: var(--qg-space-small);
+    border-radius: var(--qg-radius-medium);
+    margin-bottom: var(--qg-space-xsmall);
+}
+
+.qg-quiz-question-body fieldset > div:hover {
+    background: var(--qg-color-bg-page);
+}
+
+.qg-quiz-question-body fieldset > div input {
+    margin-top: var(--qg-space-xsmall);
+    accent-color: var(--qg-color-accent);
+}
+
+.qg-quiz-question-body fieldset > div.qg-correct {
+    background: var(--qg-color-correct-bg);
+    border: 1px solid var(--qg-color-correct-border);
+}
+
+.qg-quiz-question-answer-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qg-space-medium);
+    margin-bottom: var(--qg-space-small);
+}
+
+.qg-quiz-question-answer-choices select,
+.qg-quiz-question-body input[type="text"],
+.qg-quiz-question-body textarea {
+    width: 100%;
+    padding: var(--qg-space-small);
+    border: 1px solid var(--qg-color-border);
+    border-radius: var(--qg-radius-medium);
+    background: var(--qg-color-bg-input);
+    transition: border-color var(--qg-transition-fast), box-shadow var(--qg-transition-fast);
+}
+
+.qg-quiz-question-answer-choices select:focus,
+.qg-quiz-question-body input:focus,
+.qg-quiz-question-body textarea:focus {
+    outline: none;
+    border-color: var(--qg-color-accent);
+    box-shadow: var(--qg-shadow-focus);
+    background: var(--qg-color-bg-card);
+}
+
+.qg-quiz code {
+    font-family: monospace;
+    font-size: var(--qg-font-size-small);
+    background: var(--qg-color-accent-light);
+    border: 1px solid var(--qg-color-border);
+    padding: var(--qg-space-xsmall) var(--qg-space-small);
+    border-radius: var(--qg-radius-small);
+}
+
+.qg-quiz pre {
+    background: var(--qg-color-code-bg);
+    color: var(--qg-color-code-text);
+    padding: var(--qg-space-large);
+    border-radius: var(--qg-radius-medium);
+    overflow-x: auto;
+}
+
+.qg-quiz input[type="submit"] {
+    padding: var(--qg-space-small) var(--qg-space-xlarge);
+    background: var(--qg-color-accent);
+    color: var(--qg-color-white);
+    font-weight: var(--qg-font-weight-semibold);
+    border: none;
+    border-radius: var(--qg-radius-medium);
+    cursor: pointer;
+    margin-top: var(--qg-space-large);
+    transition: background var(--qg-transition-fast),
+        box-shadow var(--qg-transition-fast),
+        transform var(--qg-transition-fast);
+}
+
+.qg-quiz input[type="submit"]:hover {
+    background: var(--qg-color-accent-dark);
+    box-shadow: var(--qg-shadow-button-hover);
+}
+
+.qg-quiz input[type="submit"]:active {
+    box-shadow: none;
+    transform: translateY(1px);
+}
+
+@media (max-width: 600px) {
+    .qg-quiz {
+        padding: var(--qg-space-large);
+    }
+
+    .qg-quiz-header,
+    .qg-quiz-question {
+        padding: var(--qg-space-large);
+    }
+
+    .qg-quiz-question-answer-choices {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .qg-quiz-question-answer-choices select {
+        width: 100%;
+    }
+}
+  </style>
+ </head>
+ <body>
+  <div class="qg-quiz">
+   <form class="qg-quiz-form">
+    <div class="qg-quiz-header">
+     <h1>
+      All Basic Questions - A
+     </h1>
+     <p>
+      2025-02-25
+     </p>
+     <p>
+      Total Points: 12.0
+     </p>
+    </div>
+    <div class="qg-quiz-description">
+     <div class="qg-root-block qg-block">
+      <p>
+       Collect the basic version of each question type.
+      </p>
+     </div>
+    </div>
+    <div class="qg-quiz-body">
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="1" data-points="0.0" data-type="essay">
+      <h2 class="qg-quiz-question-name">
+       Question 1
+       <span class="qg-quiz-question-points">
+        (0.0 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Essay: Basic
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       Place your answer within the textbox below.
+      </p>
+      <div class="qg-quiz-question-body">
+       <textarea id="answer-0.0.0" name="question-0.0.0"></textarea>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="2" data-points="1.0" data-type="fill_in_multiple_blanks">
+      <h2 class="qg-quiz-question-name">
+       Question 2
+       <span class="qg-quiz-question-points">
+        (1.0 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Fill in Multiple Blanks: Basic --
+         <placeholder>
+          A
+         </placeholder>
+         <placeholder>
+          B
+         </placeholder>
+         <placeholder>
+          C
+         </placeholder>
+         <placeholder>
+          D
+         </placeholder>
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       For each part, place your answer in the associated textbox.
+      </p>
+      <div class="qg-quiz-question-body">
+       <label for="answer-0.1.0.0">
+        A
+       </label>
+       <input id="answer-0.1.0.0" name="answer-0.1.0.0" type="text" value=""/>
+       <label for="answer-0.1.0.1">
+        B
+       </label>
+       <input id="answer-0.1.0.1" name="answer-0.1.0.1" type="text" value=""/>
+       <label for="answer-0.1.0.2">
+        C
+       </label>
+       <input id="answer-0.1.0.2" name="answer-0.1.0.2" type="text" value=""/>
+       <label for="answer-0.1.0.3">
+        D
+       </label>
+       <input id="answer-0.1.0.3" name="answer-0.1.0.3" type="text" value=""/>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="3" data-points="1.5" data-type="fill_in_the_blank">
+      <h2 class="qg-quiz-question-name">
+       Question 3
+       <span class="qg-quiz-question-points">
+        (1.5 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Short Answer / Fill in The Blank: Basic
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       Place your answer within the text area below.
+      </p>
+      <div class="qg-quiz-question-body">
+       <textarea id="answer-0.2.0" name="question-0.2.0"></textarea>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="4" data-points="2.0" data-type="multiple_answers">
+      <h2 class="qg-quiz-question-name">
+       Question 4
+       <span class="qg-quiz-question-points">
+        (2.0 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Multiple Answers: Basic
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       Click all boxes that corresponds to your answer.
+      </p>
+      <div class="qg-quiz-question-body">
+       <fieldset>
+        <div>
+         <input id="choice-0.3.0-0" name="question-choice-0.3.0-0" type="checkbox"/>
+         <label for="choice-0.3.0-0">
+          <div class="qg-root-block qg-block">
+           <p>
+            A
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.3.0-1" name="question-choice-0.3.0-1" type="checkbox"/>
+         <label for="choice-0.3.0-1">
+          <div class="qg-root-block qg-block">
+           <p>
+            B
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.3.0-2" name="question-choice-0.3.0-2" type="checkbox"/>
+         <label for="choice-0.3.0-2">
+          <div class="qg-root-block qg-block">
+           <p>
+            C
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.3.0-3" name="question-choice-0.3.0-3" type="checkbox"/>
+         <label for="choice-0.3.0-3">
+          <div class="qg-root-block qg-block">
+           <p>
+            D
+           </p>
+          </div>
+         </label>
+        </div>
+       </fieldset>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="5" data-points="2.25" data-type="matching">
+      <h2 class="qg-quiz-question-name">
+       Question 5
+       <span class="qg-quiz-question-points">
+        (2.25 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Matching: Basic
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       Select an answer from the dropdown the best matches each item.
+      </p>
+      <div class="qg-quiz-question-body">
+       <div class="qg-quiz-question-answer-choices">
+        <label for="0.4.0.left0">
+         <div class="qg-root-block qg-block">
+          <p>
+           A
+          </p>
+         </div>
+        </label>
+        <select id="0.4.0.left0" name="question-0.4.0">
+         <option value="0.4.0.left0.right0">
+          <div class="qg-root-block qg-block">
+           <p>
+            1
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left0.right1">
+          <div class="qg-root-block qg-block">
+           <p>
+            2
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left0.right2">
+          <div class="qg-root-block qg-block">
+           <p>
+            3
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left0.right3">
+          <div class="qg-root-block qg-block">
+           <p>
+            4
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left0.right4">
+          <div class="qg-root-block qg-block">
+           <p>
+            5
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left0.right5">
+          <div class="qg-root-block qg-block">
+           <p>
+            6
+           </p>
+          </div>
+         </option>
+        </select>
+       </div>
+       <div class="qg-quiz-question-answer-choices">
+        <label for="0.4.0.left1">
+         <div class="qg-root-block qg-block">
+          <p>
+           B
+          </p>
+         </div>
+        </label>
+        <select id="0.4.0.left1" name="question-0.4.0">
+         <option value="0.4.0.left1.right0">
+          <div class="qg-root-block qg-block qg-block">
+           <p>
+            1
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left1.right1">
+          <div class="qg-root-block qg-block qg-block">
+           <p>
+            2
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left1.right2">
+          <div class="qg-root-block qg-block qg-block">
+           <p>
+            3
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left1.right3">
+          <div class="qg-root-block qg-block qg-block">
+           <p>
+            4
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left1.right4">
+          <div class="qg-root-block qg-block qg-block">
+           <p>
+            5
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left1.right5">
+          <div class="qg-root-block qg-block qg-block">
+           <p>
+            6
+           </p>
+          </div>
+         </option>
+        </select>
+       </div>
+       <div class="qg-quiz-question-answer-choices">
+        <label for="0.4.0.left2">
+         <div class="qg-root-block qg-block">
+          <p>
+           C
+          </p>
+         </div>
+        </label>
+        <select id="0.4.0.left2" name="question-0.4.0">
+         <option value="0.4.0.left2.right0">
+          <div class="qg-root-block qg-block qg-block qg-block">
+           <p>
+            1
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left2.right1">
+          <div class="qg-root-block qg-block qg-block qg-block">
+           <p>
+            2
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left2.right2">
+          <div class="qg-root-block qg-block qg-block qg-block">
+           <p>
+            3
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left2.right3">
+          <div class="qg-root-block qg-block qg-block qg-block">
+           <p>
+            4
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left2.right4">
+          <div class="qg-root-block qg-block qg-block qg-block">
+           <p>
+            5
+           </p>
+          </div>
+         </option>
+         <option value="0.4.0.left2.right5">
+          <div class="qg-root-block qg-block qg-block qg-block">
+           <p>
+            6
+           </p>
+          </div>
+         </option>
+        </select>
+       </div>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="6" data-points="0.75" data-type="multiple_choice">
+      <h2 class="qg-quiz-question-name">
+       Question 6
+       <span class="qg-quiz-question-points">
+        (0.75 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Multiple Choice: Basic
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       Click the circle that corresponds to your answer.
+      </p>
+      <div class="qg-quiz-question-body">
+       <fieldset>
+        <div>
+         <input id="choice-0.5.0-0" name="question-choice-0.5.0-0" type="radio"/>
+         <label for="choice-0.5.0-0">
+          <div class="qg-root-block qg-block">
+           <p>
+            A
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.5.0-1" name="question-choice-0.5.0-1" type="radio"/>
+         <label for="choice-0.5.0-1">
+          <div class="qg-root-block qg-block">
+           <p>
+            B
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.5.0-2" name="question-choice-0.5.0-2" type="radio"/>
+         <label for="choice-0.5.0-2">
+          <div class="qg-root-block qg-block">
+           <p>
+            C
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.5.0-3" name="question-choice-0.5.0-3" type="radio"/>
+         <label for="choice-0.5.0-3">
+          <div class="qg-root-block qg-block">
+           <p>
+            D
+           </p>
+          </div>
+         </label>
+        </div>
+       </fieldset>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="7" data-points="1.5" data-type="multiple_dropdowns">
+      <h2 class="qg-quiz-question-name">
+       Question 7
+       <span class="qg-quiz-question-points">
+        (1.5 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Multiple Drop Downs: Basic
+         <placeholder>
+          part1
+         </placeholder>
+         and
+         <placeholder>
+          part2
+         </placeholder>
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       For each part, select an answer from the dropdown menu.
+      </p>
+      <div class="qg-quiz-question-body">
+       <div class="qg-quiz-question-answer-choices">
+        <label for="answer-0.6.0-0">
+         part1
+        </label>
+        <select id="answer-0.6.0-0" name="question-0.6.0">
+         <option value="answer-0.6.0-0.0">
+          <div class="qg-root-block qg-block">
+           <p>
+            a
+           </p>
+          </div>
+         </option>
+         <option value="answer-0.6.0-0.1">
+          <div class="qg-root-block qg-block">
+           <p>
+            b
+           </p>
+          </div>
+         </option>
+         <option value="answer-0.6.0-0.2">
+          <div class="qg-root-block qg-block">
+           <p>
+            c
+           </p>
+          </div>
+         </option>
+        </select>
+       </div>
+       <div class="qg-quiz-question-answer-choices">
+        <label for="answer-0.6.0-1">
+         part2
+        </label>
+        <select id="answer-0.6.0-1" name="question-0.6.0">
+         <option value="answer-0.6.0-1.0">
+          <div class="qg-root-block qg-block">
+           <p>
+            1
+           </p>
+          </div>
+         </option>
+         <option value="answer-0.6.0-1.1">
+          <div class="qg-root-block qg-block">
+           <p>
+            2
+           </p>
+          </div>
+         </option>
+         <option value="answer-0.6.0-1.2">
+          <div class="qg-root-block qg-block">
+           <p>
+            3
+           </p>
+          </div>
+         </option>
+        </select>
+       </div>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="8" data-points="1.0" data-type="numerical">
+      <h2 class="qg-quiz-question-name">
+       Question 8
+       <span class="qg-quiz-question-points">
+        (1.0 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Basic Number Question with All Answer Types
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       Place your answer within the textbox below.
+      </p>
+      <div class="qg-quiz-question-body">
+       <input id="answer-0.7.0" name="question-0.7.0" type="text" value=""/>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="9" data-points="1.0" data-type="short_answer">
+      <h2 class="qg-quiz-question-name">
+       Question 9
+       <span class="qg-quiz-question-points">
+        (1.0 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Short Answer: Basic
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       Place your answer within the textbox below.
+      </p>
+      <div class="qg-quiz-question-body">
+       <textarea id="answer-0.8.0" name="question-0.8.0"></textarea>
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="10" data-points="0.0" data-type="text_only">
+      <h2 class="qg-quiz-question-name">
+       Question 10
+       <span class="qg-quiz-question-points">
+        (0.0 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         Text-Only: Basic
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       <!-- Empty -->
+      </p>
+      <div class="qg-quiz-question-body">
+       <!-- Empty -->
+      </div>
+     </div>
+     <hr/>
+     <div class="qg-quiz-question" data-name="None" data-number="11" data-points="1.0" data-type="true_false">
+      <h2 class="qg-quiz-question-name">
+       Question 11
+       <span class="qg-quiz-question-points">
+        (1.0 Points)
+       </span>
+      </h2>
+      <div class="qg-quiz-question-prompt">
+       <div class="qg-root-block qg-block">
+        <p>
+         True/False: True
+        </p>
+       </div>
+      </div>
+      <p class="qg-quiz-question-directions">
+       Click the circle that corresponds to your answer.
+      </p>
+      <div class="qg-quiz-question-body">
+       <fieldset>
+        <div>
+         <input id="choice-0.10.0-0" name="question-choice-0.10.0-0" type="radio"/>
+         <label for="choice-0.10.0-0">
+          <div class="qg-root-block qg-block">
+           <p>
+            True
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.10.0-1" name="question-choice-0.10.0-1" type="radio"/>
+         <label for="choice-0.10.0-1">
+          <div class="qg-root-block qg-block">
+           <p>
+            False
+           </p>
+          </div>
+         </label>
+        </div>
+       </fieldset>
+      </div>
+     </div>
+     <hr/>
+     <input type="submit" value="Submit Quiz"/>
+    </div>
+   </form>
+  </div>
+ </body>
+</html>

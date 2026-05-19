@@ -668,6 +668,48 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
 
         return MultiplePartChoiceAnswers(parts)
 
+class MatchingAnswerRow:
+    """
+    A single "row" when writing out a matching problem as a table.
+    """
+
+    def __init__(self,
+            left: typing.Union[TextOption, None],
+            right: TextOption,
+            right_marker: quizcomp.parser.document.ParsedDocument,
+            correct_marker: typing.Union[quizcomp.parser.document.ParsedDocument, None],
+            correct_option: typing.Union[TextOption, None],
+            ) -> None:
+        self.left: typing.Union[TextOption, None] = left
+        """
+        The query part of the match that needs to find its partner.
+        This may be None if there are distractors.
+        """
+
+        self.right: TextOption = right
+        """
+        The target part of the match.
+        Note that this may NOT be the correct partner to `self.left`,
+        it is just the target that should appear on the same row.
+        """
+
+        self.right_marker: quizcomp.parser.document.ParsedDocument = right_marker
+        """
+        The marker that accompanies this target.
+        """
+
+        self.correct_marker: typing.Union[quizcomp.parser.document.ParsedDocument, None] = correct_marker
+        """
+        The marker for the correct partner to `self.left`.
+        Will be None if `self.left` is None.
+        """
+
+        self.correct_option: typing.Union[TextOption, None] = correct_option
+        """
+        The text for the correct partner to `self.left`.
+        Will be None if `self.left` is None.
+        """
+
 class MatchingAnswers(QuestionAnswers):
     """ Answers for matching-type questions. """
 
@@ -713,12 +755,9 @@ class MatchingAnswers(QuestionAnswers):
             'distractors': [value.to_pod() for value in self.distractors],
         }
 
-    def get_tabular_options(self) -> typing.List[typing.Tuple[typing.Union[TextOption, None], TextOption, TextOption, quizcomp.parser.document.ParsedDocument]]:
+    def get_tabular_options(self) -> typing.List[MatchingAnswerRow]:
         """
-        Get all the options laid out in a table: (left, correct answer marker, correct answer, right, choice marker).
-        The first marker maps the subquestion (left) to the correct answer.
-        The second marker serves as a label for each possible choice (right).
-        If there is no left option, it and its marker will be None.
+        Get all the matching options laid out in a table.
 
         If shuffle() was called on this object, then the left and right options will he shuffled before being put into the table.
         """
@@ -761,7 +800,7 @@ class MatchingAnswers(QuestionAnswers):
                 left_marker = quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[matching_right_marker_index])
                 correct_answer = rights[left_index]
 
-            options.append((left, left_marker, correct_answer, right, right_marker))
+            options.append(MatchingAnswerRow(left, right, right_marker, left_marker, correct_answer))
 
         return options
 
@@ -854,6 +893,17 @@ class NumericAnswers(QuestionAnswers):
 
     def shuffle(self, rng: random.Random) -> None:
         rng.shuffle(self.options)
+
+    def get_first_option_text(self) -> quizcomp.parser.document.ParsedDocument:
+        """
+        Get the text document for the first option.
+        If there is no option, return an empty document.
+        """
+
+        if (len(self.options) == 0):
+            return quizcomp.parser.document.ParsedDocument()
+
+        return self.options[0].to_text().text
 
     def to_pod(self,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,

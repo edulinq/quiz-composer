@@ -6,5 +6,5 @@
 
 {% block body %}
     {% set solution = this.answers.get_first_option_text().to_text() if answer_key else '' %}
-    <textarea id='answer-{{ this.id }}' name='question-{{ this.id }}'>{{ solution }}</textarea>
+    <textarea id='answer-{{ id }}' name='question-{{ id }}'>{{ solution }}</textarea>
 {% endblock %}

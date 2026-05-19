@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block body %}
-    {% for part in this.answers.values() %}
-        {% set id = 'answer-' ~ this.id ~ '.' ~ loop.index0 %}
-        {% set solution = part.solutions[0].clean if answer_key else '' %}
+    {% for (label, text_answers) in this.answers.parts.items() %}
+        {% set id = 'answer-' ~ id ~ '.' ~ loop.index0 %}
+        {% set solution = text_answers.get_first_option_text().to_text() if answer_key else '' %}
 
-        <label for='{{ id }}' >{{ part.label }}</label>
+        <label for='{{ id }}' >{{ label }}</label>
         <input type='text' name='{{ id }}' id='{{ id }}' value='{{ solution }}' />
     {% endfor %}
 {% endblock %}

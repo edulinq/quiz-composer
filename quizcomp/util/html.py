@@ -14,6 +14,6 @@ def clean(raw_html: str, pretty: bool = False) -> str:
     document = bs4.BeautifulSoup(raw_html, 'html.parser')
 
     if (pretty):
-        return document.prettify()
+        return document.prettify().strip()
 
-    return str(document)
+    return str(document).strip()

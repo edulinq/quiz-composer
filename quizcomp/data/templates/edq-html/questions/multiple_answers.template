@@ -6,12 +6,12 @@
 
 {% block body %}
     <fieldset>
-        {% for answer in this.answers %}
-            <div{% if answer_key and answer.correct %} class='qg-correct'{% endif %}>
-                {% set id = 'answer-' ~ this.id ~ '.' ~ loop.index0 %}
-                {% set checked = 'checked' if (answer_key and answer.correct) else '' %}
-                <input type='checkbox' id='{{ id }}' name='question-{{ this.id }}' {{ checked }} />
-                <label for='{{ id }}'>{{ answer.text }}</label>
+        {% for choice in this.answers.choices %}
+            <div{% if answer_key and choice.correct %} class='qg-correct'{% endif %}>
+                {% set id = 'choice-' ~ id ~ '-' ~ loop.index0 %}
+                {% set checked = 'checked' if (answer_key and choice.correct) else '' %}
+                <input type='checkbox' id='{{ id }}' name='question-{{ id }}' {{ checked }} />
+                <label for='{{ id }}'>{{ choice.text.to_html() }}</label>
             </div>
         {% endfor %}
     </fieldset>

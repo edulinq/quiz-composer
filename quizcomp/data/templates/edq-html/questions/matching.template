@@ -5,13 +5,17 @@
 {% endblock %}
 
 {% block body %}
-    {% for left in this.answers.lefts %}
+    {% for outter_row in this.answers.get_tabular_options() if (outter_row.left is not none) %}
+        {% set left_id = id ~ '.left' ~ loop.index0 %}
+
         <div class='qg-quiz-question-answer-choices'>
-            <label for='{{ left.id }}'>{{ left.text }}</label>
-            <select id='{{ left.id }}' name='question-{{ this.id }}'>
-                {% for right in this.answers.rights %}
-                    {% set selected = 'selected' if (answer_key and (left.solution_id == right.id)) else '' %}
-                    <option value='{{ right.id }}' {{ selected }} >{{ right.text }}</option>
+            <label for='{{ left_id }}'>{{ outter_row.left.text.to_html() }}</label>
+            <select id='{{ left_id }}' name='question-{{ id }}'>
+                {% for inner_row in this.answers.get_tabular_options() %}
+                    {% set right_id = left_id ~ '.right' ~ loop.index0 %}
+
+                    {% set selected = 'selected' if (answer_key and (outter_row.correct_marker == inner_row.right_marker)) else '' %}
+                    <option value='{{ right_id }}' {{ selected }} >{{ inner_row.right.text.to_html() }}</option>
                 {% endfor %}
             </select>
         </div>

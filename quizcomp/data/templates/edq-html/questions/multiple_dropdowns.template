@@ -5,17 +5,17 @@
 {% endblock %}
 
 {% block body %}
-    {% for part in this.answers %}
+    {% for (label, part) in this.answers.parts.items() %}
         <div class='qg-quiz-question-answer-choices'>
-            {% set part_id = 'answer-' ~ this.id ~ '.' ~ loop.index0 %}
+            {% set part_id = 'answer-' ~ id ~ '-' ~ loop.index0 %}
 
-            <label for='{{ part_id }}'>{{ part.label }}</label>
-            <select id='{{ part_id }}' name='question-{{ this.id }}'>
+            <label for='{{ part_id }}'>{{ label }}</label>
+            <select id='{{ part_id }}' name='question-{{ id }}'>
                 {% for choice in part.choices %}
                     {% set choice_id = part_id ~ '.' ~ loop.index0 %}
                     {% set selected = 'selected' if (answer_key and choice.correct) else '' %}
 
-                    <option value='{{ choice_id }}' {{ selected }} >{{ choice.text }}</option>
+                    <option value='{{ choice_id }}' {{ selected }} >{{ choice.text.to_html() }}</option>
                 {% endfor %}
             </select>
         </div>
