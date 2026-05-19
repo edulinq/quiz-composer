@@ -9,54 +9,63 @@
     "groups": [
         {
             "name": "essay-basic",
+            "points": 0,
             "questions": [
                 "../../../questions/good/essay-basic"
             ]
         },
         {
             "name": "fimb-basic",
+            "points": 1,
             "questions": [
                 "../../../questions/good/fimb-basic"
             ]
         },
         {
             "name": "fitb-basic",
+            "points": 1.5,
             "questions": [
                 "../../../questions/good/fitb-basic"
             ]
         },
         {
             "name": "ma-basic",
+            "points": 2,
             "questions": [
                 "../../../questions/good/ma-basic"
             ]
         },
         {
             "name": "matching-basic",
+            "points": 2.25,
             "questions": [
                 "../../../questions/good/matching-basic"
             ]
         },
         {
             "name": "mcq-basic",
+            "points": 0.75,
             "questions": [
                 "../../../questions/good/mcq-basic"
             ]
         },
         {
             "name": "mdd-basic",
+            "points": 1.5,
             "questions": [
                 "../../../questions/good/mdd-basic"
             ]
         },
         {
             "name": "numeric-basic",
+            "points": 1,
             "questions": [
                 "../../../questions/good/numeric-basic"
             ]
         },
         {
             "name": "sa-basic",
+            "points": 1,
             "questions": [
                 "../../../questions/good/sa-basic"
             ]
@@ -68,6 +77,7 @@
             ]
         },
         {
+            "points": 1,
             "name": "tf-true",
             "questions": [
                 "../../../questions/good/tf-true"

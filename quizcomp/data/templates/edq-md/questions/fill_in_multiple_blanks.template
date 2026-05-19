@@ -1,7 +1,8 @@
 {% extends "questions/base.template" %}
 
 {% block directions %}
-For each part, fill in the associated blank:  
+For each part, fill in the associated blank:
+
 {% endblock %}
 
 {% block body %}

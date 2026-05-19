@@ -7,3 +7,173 @@
     ],
 }
 ---
+# All Basic Questions - A
+
+
+2025-02-25
+
+Total Points: 12.0
+
+Collect the basic version of each question type.
+
+---
+
+---
+
+**Question 1** (0.0 Points)
+
+Essay: Basic
+
+Write your response below.
+
+```
+
+```
+
+
+---
+
+**Question 2** (1.0 Points)
+
+Fill in Multiple Blanks: Basic -- <placeholder>A</placeholder> <placeholder>B</placeholder> <placeholder>C</placeholder> <placeholder>D</placeholder>
+
+For each part, fill in the associated blank:
+
+A:    `1`  
+B:    `2`  
+C:    `3`  
+D:    `4`  
+
+
+---
+
+**Question 3** (1.5 Points)
+
+Short Answer / Fill in The Blank: Basic
+
+Fill in the blank below:
+
+```
+1
+```
+
+
+---
+
+**Question 4** (2.0 Points)
+
+Multiple Answers: Basic
+
+Choose all that apply:
+
+A. A *(correct)*  
+B. B *(correct)*  
+C. C  
+D. D  
+
+
+---
+
+**Question 5** (2.25 Points)
+
+Matching: Basic
+
+Match each item on the left with a letter from the right.
+
+| Left | Right |
+|------|-------|
+| A | A. 1 |
+| B | B. 2 |
+| C | C. 3 |
+| | D. 4 |
+| | E. 5 |
+| | F. 6 |
+
+A: *A. 1*  
+B: *B. 2*  
+C: *C. 3*  
+
+
+---
+
+**Question 6** (0.75 Points)
+
+Multiple Choice: Basic
+
+Choose one:
+
+A. A *(correct)*  
+B. B  
+C. C  
+D. D  
+
+
+---
+
+**Question 7** (1.5 Points)
+
+Multiple Drop Downs: Basic <placeholder>part1</placeholder> and <placeholder>part2</placeholder>
+
+For each part, choose one:
+
+part1:  
+A. a *(correct)*  
+B. b  
+C. c  
+
+part2:  
+A. 1 *(correct)*  
+B. 2  
+C. 3  
+
+
+
+---
+
+**Question 8** (1.0 Points)
+
+Basic Number Question with All Answer Types
+
+Provide a numerical answer below:
+
+
+```
+0.08
+0.08 ± 0.01
+[0.07, 0.09]
+0.08 (2 decimal places)
+```
+
+
+---
+
+**Question 9** (1.0 Points)
+
+Short Answer: Basic
+
+Write your answer below.
+
+```
+
+```
+
+
+---
+
+**Question 10** (0.0 Points)
+
+Text-Only: Basic
+
+
+
+---
+
+**Question 11** (1.0 Points)
+
+True/False: True
+
+Choose one:
+
+A. True *(correct)*  
+B. False  
+

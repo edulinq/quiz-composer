@@ -2,6 +2,7 @@
 
 {% block directions %}
 Match each item on the left with a letter from the right.
+
 {% endblock %}
 
 {% block body %}
@@ -18,9 +19,9 @@ Match each item on the left with a letter from the right.
 {% for (left, left_marker, correct, right, right_marker) in this.answers.get_tabular_options() %}
 {% if (left is not none) %}
 {% if answer_key %}
-- {{ left.text.to_md() }}: *{{ left_marker.to_md() }}. {{ correct.text.to_md() }}*
+{{ left.text.to_md() }}: *{{ left_marker.to_md() }}. {{ correct.text.to_md() }}*  
 {% else %}
-- {{ left.text.to_md() }}: ＿＿＿＿＿
+{{ left.text.to_md() }}: ＿＿＿＿＿  
 {% endif %}
 {% endif %}
 {% endfor %}

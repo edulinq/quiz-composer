@@ -1,7 +1,8 @@
 {% extends "questions/base.template" %}
 
 {% block directions %}
-For each part, choose one:  
+For each part, choose one:
+
 {% endblock %}
 
 {% block body %}
@@ -14,5 +15,6 @@ For each part, choose one:
 {{ marker.to_md() }}. {{ choice.text.to_md() }}  
 {% endif %}
 {% endfor %}
+
 {% endfor %}
 {% endblock %}
