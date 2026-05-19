@@ -2,7 +2,6 @@ import re
 import typing
 
 import edq.util.json
-import lxml.etree
 import markdown_it
 import markdown_it.token
 import mdit_py_plugins.container
@@ -13,6 +12,7 @@ import quizcomp.parser.renderer.html
 import quizcomp.parser.renderer.markdown
 import quizcomp.parser.renderer.tex
 import quizcomp.parser.renderer.text
+import quizcomp.util.html
 
 EXTRA_OPTIONS: typing.List[str] = [
     'table',
@@ -43,7 +43,7 @@ def canvas(
     renderer = quizcomp.parser.renderer.canvas.get_renderer(options)
     raw_html = renderer.render(tokens, options, env)
 
-    return clean_html(raw_html, pretty = pretty)
+    return quizcomp.util.html.clean(raw_html, pretty = pretty)
 
 def html(
         tokens: typing.List[markdown_it.token.Token],
@@ -60,7 +60,7 @@ def html(
     renderer = quizcomp.parser.renderer.html.get_renderer(options)
     raw_html = renderer.render(tokens, options, env)
 
-    return clean_html(raw_html, pretty = pretty)
+    return quizcomp.util.html.clean(raw_html, pretty = pretty)
 
 def md(
         tokens: typing.List[markdown_it.token.Token],
@@ -125,24 +125,6 @@ def render(
         raise ValueError(f"Could not find render function: 'quizcomp.parser.render.{format}'.")
 
     return str(render_function(tokens, env = env, **kwargs))
-
-# pylint: disable=c-extension-no-member
-def clean_html(raw_html: str, pretty: bool = False) -> str:
-    """
-    Clean up and standardize the HTML.
-    If |pretty|, then the output will be indented properly, and extra space will be stripped (which may mess with some inline spacing).
-    |pretty| should only be used when being read by a human for visual inspection.
-    """
-
-    raw_html = raw_html.strip()
-    if (len(raw_html) == 0):
-        return raw_html
-
-    parser = lxml.etree.XMLParser(remove_blank_text = True)
-    root = lxml.etree.fromstring(raw_html, parser)
-    content = lxml.etree.tostring(root, pretty_print = pretty, encoding = 'unicode')
-
-    return content.strip()
 
 def _get_parser() -> typing.Tuple[markdown_it.MarkdownIt, markdown_it.utils.OptionsDict]:
     """ Get the standard parser and options. """

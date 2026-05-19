@@ -7,8 +7,9 @@ import edq.util.json
 
 import quizcomp.constants
 import quizcomp.parser.common
-import quizcomp.parser.public
+import quizcomp.parser.document
 import quizcomp.testing.base
+import quizcomp.util.html
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 TESTDATA_DIR: str = os.path.join(THIS_DIR, 'testdata')
@@ -52,13 +53,13 @@ def _get_good_parse_test(
     """ Get a test method for a valid document. """
 
     def __method(self: TestParser) -> None:
-        document = quizcomp.parser.public.parse_text(text).document
+        document = quizcomp.parser.document.ParsedDocument.parse_text(text)
         result = document.to_format(doc_format, base_dir = base_dir, include_metadata = False, **context)
 
         if (doc_format == quizcomp.constants.FORMAT_JSON):
             result = edq.util.json.loads(result)
             expected: typing.Any = {
-                'type': 'document',
+                'text': text.strip(),
                 'ast': {
                     'type': 'root',
                 },
@@ -96,8 +97,8 @@ def _get_good_parse_test(
             if ((raw_expected != '') and ('qg-root-block' not in raw_expected)):
                 raw_expected = '<div class="qg-root-block qg-block">' + raw_expected + '</div>'
 
-            expected = quizcomp.parser.render.clean_html(raw_expected, pretty = options.get('pretty', True))
-            result = quizcomp.parser.render.clean_html(result, pretty = options.get('pretty', True))
+            expected = quizcomp.util.html.clean(raw_expected, pretty = options.get('pretty', True))
+            result = quizcomp.util.html.clean(result, pretty = options.get('pretty', True))
 
             expected, result = _apply_text_options(options, expected, result)
             self.assertEqual(expected, result)
@@ -131,7 +132,7 @@ def _get_bad_parse_test(text: str, base_dir: str, options: typing.Dict[str, typi
 
     def __method(self: TestParser) -> None:
         try:
-            quizcomp.parser.public.parse_text(text)
+            quizcomp.parser.document.ParsedDocument.parse_text(text)
         except Exception:
             # Expected.
             return

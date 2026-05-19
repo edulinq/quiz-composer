@@ -26,9 +26,8 @@ class BaseTest(edq.testing.unittest.BaseTest):
 
     @classmethod
     def setUpClass(cls) -> None:
-        # Disable KaTeX in Windows for testing.
-        if (sys.platform.startswith("win")):
-            quizcomp.parser.math._katex_available = False
+        # Disable KaTeX for testing.
+        quizcomp.parser.math._katex_available = False
 
     @classmethod
     def tearDownClass(cls) -> None:

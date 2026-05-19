@@ -4,7 +4,7 @@ import typing
 import edq.util.json
 
 import quizcomp.constants
-import quizcomp.parser.public
+import quizcomp.parser.document
 import quizcomp.testing.base
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -46,13 +46,13 @@ def _get_commonmark_test(text: str, format: str) -> typing.Callable:
     """ Get a test method. """
 
     def __method(self: TestCommonMark) -> None:
-        parsed_text = quizcomp.parser.public.parse_text(text)
+        parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(text)
 
         options = {
             # The examples use paths that we would try and encode.
             'force_raw_image_src': True,
         }
-        parsed_text.document.to_format(format, **options)
+        parsed_text.to_format(format, **options)
 
     return __method
 
