@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ quiz.title }}</title>
+        <title>{{ this.name }}</title>
 
         {% if css_content %}
         <style>
@@ -16,24 +16,33 @@
         <div class='qg-quiz'>
             <form class='qg-quiz-form'>
                 <div class='qg-quiz-header'>
-                    <h1>{{ quiz.title }}</h1>
-                    <p>{{ quiz.course_title }} &mdash; {{ quiz.term_title }}</p>
-                    <p>{{ quiz.date }}</p>
-                    <p>Total Points: {{ quiz.get_points }}</p>
+                    <h1>{{ this.name }}</h1>
+
+                    {% if (this.course_name is not none) and (this.term_name is not none) %}
+                        <p>{{ this.course_name }} &mdash; {{ this.term_name }}</p>
+                    {% elif (this.course_name is not none) %}
+                        <p>{{ this.course_name }}</p>
+                    {% elif (this.term_name is not none) %}
+                        <p>{{ this.term_name }}</p>
+                    {% endif %}
+
+                    {% if (this.date is not none) %}
+                        <p>{{ this.date.strftime("%Y-%m-%d") }}</p>
+                    {% endif %}
+
+                    <p>Total Points: {{ this.get_points() }}</p>
                 </div>
 
-                {% if quiz.description_text %}
                 <div class='qg-quiz-description'>
-                    {{ quiz.description_text }}
+                    {{ this.description.to_html() }}
                 </div>
-                {% endif %}
 
                 <div class='qg-quiz-body'>
-                    {{ inner_text }}
+                    {{ children_content }}
 
-                    <hr>
+                    <hr />
 
-                    <input type='submit' value='Submit Quiz' />
+                    <input type='submit' value='Submit Quiz'>
                 </div>
             </form>
         </div>

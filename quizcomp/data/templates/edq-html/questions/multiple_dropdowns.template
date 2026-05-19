@@ -1,16 +1,16 @@
-{% extends "partials/question.template" %}
+{% extends "questions/base.template" %}
 
 {% block directions %}
     For each part, select an answer from the dropdown menu.
 {% endblock %}
 
 {% block body %}
-    {% for part in question.answers %}
+    {% for part in this.answers %}
         <div class='qg-quiz-question-answer-choices'>
-            {% set part_id = 'answer-' ~ question.id ~ '.' ~ loop.index0 %}
+            {% set part_id = 'answer-' ~ this.id ~ '.' ~ loop.index0 %}
 
             <label for='{{ part_id }}'>{{ part.label }}</label>
-            <select id='{{ part_id }}' name='question-{{ question.id }}'>
+            <select id='{{ part_id }}' name='question-{{ this.id }}'>
                 {% for choice in part.choices %}
                     {% set choice_id = part_id ~ '.' ~ loop.index0 %}
                     {% set selected = 'selected' if (answer_key and choice.correct) else '' %}

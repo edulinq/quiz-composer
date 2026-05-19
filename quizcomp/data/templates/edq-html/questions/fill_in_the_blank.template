@@ -1,0 +1,10 @@
+{% extends "questions/base.template" %}
+
+{% block directions %}
+    Place your answer within the text area below.
+{% endblock %}
+
+{% block body %}
+    {% set solution = this.answers[0].clean if answer_key else '' %}
+    <textarea name='answer-{{ this.id }}' id='answer-{{ this.id }}'>{{ solution }}</textarea>
+{% endblock %}

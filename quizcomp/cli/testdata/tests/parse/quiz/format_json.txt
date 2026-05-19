@@ -7,10 +7,124 @@
 }
 ---
 {
+    "date": 1740463200000,
+    "description": "Collect the basic version of each question type.",
     "groups": [
         {
-            "name": "A",
+            "name": "essay-basic",
             "pick_count": 1,
+            "points": 0,
+            "questions": [
+                {
+                    "prompt": "Essay: Basic",
+                    "question_type": "essay"
+                }
+            ]
+        },
+        {
+            "name": "fimb-basic",
+            "pick_count": 1,
+            "points": 1,
+            "questions": [
+                {
+                    "answers": {
+                        "A": [
+                            "1"
+                        ],
+                        "B": [
+                            "2"
+                        ],
+                        "C": [
+                            "3"
+                        ],
+                        "D": [
+                            "4"
+                        ]
+                    },
+                    "prompt": "Fill in Multiple Blanks: Basic -- <placeholder>A</placeholder> <placeholder>B</placeholder> <placeholder>C</placeholder> <placeholder>D</placeholder>",
+                    "question_type": "fill_in_multiple_blanks"
+                }
+            ]
+        },
+        {
+            "name": "fitb-basic",
+            "pick_count": 1,
+            "points": 1.5,
+            "questions": [
+                {
+                    "answers": [
+                        "1"
+                    ],
+                    "prompt": "Short Answer \\/ Fill in The Blank: Basic",
+                    "question_type": "fill_in_the_blank"
+                }
+            ]
+        },
+        {
+            "name": "ma-basic",
+            "pick_count": 1,
+            "points": 2,
+            "questions": [
+                {
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "A"
+                        },
+                        {
+                            "correct": true,
+                            "text": "B"
+                        },
+                        {
+                            "correct": false,
+                            "text": "C"
+                        },
+                        {
+                            "correct": false,
+                            "text": "D"
+                        }
+                    ],
+                    "prompt": "Multiple Answers: Basic",
+                    "question_type": "multiple_answers"
+                }
+            ]
+        },
+        {
+            "name": "matching-basic",
+            "pick_count": 1,
+            "points": 2.25,
+            "questions": [
+                {
+                    "answers": {
+                        "distractors": [
+                            "4",
+                            "5",
+                            "6"
+                        ],
+                        "matches": [
+                            [
+                                "A",
+                                "1"
+                            ],
+                            [
+                                "B",
+                                "2"
+                            ],
+                            [
+                                "C",
+                                "3"
+                            ]
+                        ]
+                    },
+                    "prompt": "Matching: Basic",
+                    "question_type": "matching"
+                }
+            ]
+        },
+        {
+            "name": "mcq-basic",
+            "pick_count": 1,
+            "points": 0.75,
             "questions": [
                 {
                     "answers": [
@@ -35,9 +149,125 @@
                     "question_type": "multiple_choice"
                 }
             ]
+        },
+        {
+            "name": "mdd-basic",
+            "pick_count": 1,
+            "points": 1.5,
+            "questions": [
+                {
+                    "answers": {
+                        "part1": [
+                            {
+                                "correct": true,
+                                "text": "a"
+                            },
+                            {
+                                "correct": false,
+                                "text": "b"
+                            },
+                            {
+                                "correct": false,
+                                "text": "c"
+                            }
+                        ],
+                        "part2": [
+                            {
+                                "correct": true,
+                                "text": "1"
+                            },
+                            {
+                                "correct": false,
+                                "text": "2"
+                            },
+                            {
+                                "correct": false,
+                                "text": "3"
+                            }
+                        ]
+                    },
+                    "prompt": "Multiple Drop Downs: Basic <placeholder>part1</placeholder> and <placeholder>part2</placeholder>",
+                    "question_type": "multiple_dropdowns"
+                }
+            ]
+        },
+        {
+            "name": "numeric-basic",
+            "pick_count": 1,
+            "points": 1,
+            "questions": [
+                {
+                    "answers": [
+                        {
+                            "margin": 0.0,
+                            "type": "exact",
+                            "value": 0.08
+                        },
+                        {
+                            "margin": 0.01,
+                            "type": "exact",
+                            "value": 0.08
+                        },
+                        {
+                            "max": 0.09,
+                            "min": 0.07,
+                            "type": "range"
+                        },
+                        {
+                            "precision": 2,
+                            "type": "precision",
+                            "value": 0.08
+                        }
+                    ],
+                    "prompt": "Basic Number Question with All Answer Types",
+                    "question_type": "numerical"
+                }
+            ]
+        },
+        {
+            "name": "sa-basic",
+            "pick_count": 1,
+            "points": 1,
+            "questions": [
+                {
+                    "prompt": "Short Answer: Basic",
+                    "question_type": "short_answer"
+                }
+            ]
+        },
+        {
+            "name": "textonly-basic",
+            "pick_count": 1,
+            "questions": [
+                {
+                    "prompt": "Text\\-Only: Basic",
+                    "question_type": "text_only"
+                }
+            ]
+        },
+        {
+            "name": "tf-true",
+            "pick_count": 1,
+            "points": 1,
+            "questions": [
+                {
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "True"
+                        },
+                        {
+                            "correct": false,
+                            "text": "False"
+                        }
+                    ],
+                    "prompt": "True\\/False: True",
+                    "question_type": "true_false"
+                }
+            ]
         }
     ],
-    "name": "Simple Quiz - A",
-    "quiz_name": "Simple Quiz",
+    "name": "All Basic Questions - A",
+    "quiz_name": "All Basic Questions",
     "variant_id": "A"
 }

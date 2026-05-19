@@ -1,15 +1,15 @@
-{% extends "partials/question.template" %}
+{% extends "questions/base.template" %}
 
 {% block directions %}
     Select an answer from the dropdown the best matches each item.
 {% endblock %}
 
 {% block body %}
-    {% for left in question.answers.lefts %}
+    {% for left in this.answers.lefts %}
         <div class='qg-quiz-question-answer-choices'>
             <label for='{{ left.id }}'>{{ left.text }}</label>
-            <select id='{{ left.id }}' name='question-{{ question.id }}'>
-                {% for right in question.answers.rights %}
+            <select id='{{ left.id }}' name='question-{{ this.id }}'>
+                {% for right in this.answers.rights %}
                     {% set selected = 'selected' if (answer_key and (left.solution_id == right.id)) else '' %}
                     <option value='{{ right.id }}' {{ selected }} >{{ right.text }}</option>
                 {% endfor %}

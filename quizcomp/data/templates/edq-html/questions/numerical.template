@@ -1,0 +1,10 @@
+{% extends "questions/base.template" %}
+
+{% block directions %}
+    Place your answer within the textbox below.
+{% endblock %}
+
+{% block body %}
+    {% set solution = this.answers.solution if answer_key else '' %}
+    <input type='text' name='answer-{{ this.id }}' id='answer-{{ this.id }}' value='{{ solution }}' />
+{% endblock %}

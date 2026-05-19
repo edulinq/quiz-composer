@@ -1,18 +1,20 @@
 # {{ this.name }}
 
 {% if (this.course_name is not none) and (this.term_name is not none) %}
-    {{ this.course_name }} -- {{ quiz.term_name }}
+{{ this.course_name }} -- {{ this.term_name }}
 {% elif (this.course_name is not none) %}
-    {{ this.course_name }}
+{{ this.course_name }}
 {% elif (this.term_name is not none) %}
-    { quiz.term_name }}
+{ this.term_name }}
 {% endif %}
 
+{% if (this.date is not none) %}
 {{ this.date.strftime("%Y-%m-%d") }}
+{% endif %}
 
-Total Points: {{ quiz.get_points() }}
+Total Points: {{ this.get_points() }}
 
-{{ quiz.description.to_md() }}
+{{ this.description.to_md() }}
 
 ---
 
