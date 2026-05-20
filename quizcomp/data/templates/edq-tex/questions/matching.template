@@ -6,17 +6,19 @@
 
 <% block body %>
     \begin{tabular}{ >{\centering\arraybackslash}m{0.08\textwidth} m{0.17\textwidth} }
-        <% for left in this.answers.lefts %>
-            <% if answer_key %>
-                \smallAnswerBox[<< left.solution >>]{matching}{<< id >>}{<< left.id >>}{0} & << left.text >> \\
+        <% for row in this.answers.get_tabular_options() if (row.left is not none) %>
+            <% set left_id = id ~ '.left' ~ loop.index0 %>
+
+            <% if (answer_key) %>
+                \smallAnswerBox[<< row.correct_marker.to_text() >>]{matching}{<< id >>}{<< left_id >>}{0} & << row.left.text.to_tex() >> \\
             <% else %>
-                \smallAnswerBox{matching}{<< id >>}{<< left.id >>}{0} & << left.text >> \\
+                \smallAnswerBox{matching}{<< id >>}{<< left_id >>}{0} & << row.left.text.to_tex() >> \\
             <% endif %>
         <% endfor %>
     \end{tabular}
     \begin{tabular}{ >{\centering\arraybackslash}m{0.05\textwidth} m{0.60\textwidth} }
-        <% for right in this.answers.rights %>
-            << right.label >>. & << right.text >> \\[0.5cm]
+        <% for row in this.answers.get_tabular_options() %>
+            << row.right_marker.to_tex() >>. & << row.right.text.to_tex() >> \\[0.5cm]
         <% endfor %>
     \end{tabular}
 <% endblock %>

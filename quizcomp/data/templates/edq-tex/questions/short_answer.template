@@ -1,15 +1,15 @@
 <% extends "questions/base.template" %>
 
+<% set width = this.get_known_config('width') %>
+<% set height = this.get_known_config('height') %>
+<% set center = (not this.get_known_config('nocenter')) %>
+<% set solution = this.answers.get_first_option_text().to_tex() if answer_key else '' %>
+
 <% block directions_text %>
     Place your answer within the boxed region below.
 <% endblock %>
 
 <% block body %>
-    <% set solution = this.answers[0].clean if answer_key else '' %>
-    <% set height = this.hints.height if this.hints.height else '4em' %>
-    <% set width = this.hints.width if this.hints.width else 1.0 %>
-    <% set center = false if this.hints.nocenter else true %>
-
     <% if center %>
         \begin{center}
     <% endif %>

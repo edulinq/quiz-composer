@@ -1,14 +1,14 @@
 <% extends "questions/base.template" %>
 
+<% set width = this.get_known_config('width') %>
+<% set center = (not this.get_known_config('nocenter')) %>
+<% set solution = this.answers.get_first_option_text().to_tex() if answer_key else '' %>
+
 <% block directions_text %>
     Place your answer within the boxed region on the next page.
 <% endblock %>
 
 <% block body %>
-    <% set solution = this.answers.get_first_option_text().to_tex() if answer_key else '' %>
-    <% set width = this.get_known_config('width', 1.0) %>
-    <% set center = (not this.get_known_config('nocenter')) %>
-
     \end{minipage}
     \newpage
     \begin{minipage}{\textwidth}

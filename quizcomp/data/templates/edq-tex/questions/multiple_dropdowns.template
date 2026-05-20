@@ -1,46 +1,46 @@
 <% extends "questions/base.template" %>
 
+<% set inline = this.get_known_config('inline') %>
+<% set default_width = 0.15 if (inline) else 0.80 %>
+<% set width = this.get_known_config('width', default_width) %>
+<% set center = (not this.get_known_config('nocenter')) %>
+
 <% block directions_text %>
-    For each part (denoted by angle brackets), fill in the circle that corresponds to your answer.
+    For each part (denoted by angle brackets), fill in the circle that corresponds to your choice.
 <% endblock %>
 
 <% block body %>
-    <% set default_width = 0.15 if this.hints.inline else 0.80 %>
-    <% set width = this.hints.width if this.hints.width else default_width %>
-
-    <% set center = false if this.hints.nocenter else true %>
-
-    <% for part in this.answers %>
+    <% for (label, part) in this.answers.parts.items() %>
         <% set part_id = loop.index0 %>
         \end{minipage}
 
-        <% if not loop.first %>
+        <% if (not loop.first) %>
             \vspace{0.25cm}
         <% endif %>
 
         \begin{minipage}{\textwidth}
 
         \noindent
-        << part.label >>:
+        << label >>:
 
         <% if center %>
             \begin{center}
         <% endif %>
 
-        <% if this.hints.inline %>
-            <% for answer in part.choices %>
-                <% set fill = '[red]' if (answer_key and answer.correct) else '' %>
+        <% if (inline) %>
+            <% for choice in part.choices %>
+                <% set fill = '[red]' if (answer_key and choice.correct) else '' %>
                 \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{<< width >>\textwidth} }
                     \radio<< fill >>{multiple_dropdowns}{<< id >>}{<< id >>.<< part_id >>}{<< loop.index0 >>}
-                        & << answer.text >> \\
+                        & << choice.text >> \\
                 \end{tabular}
             <% endfor %>
         <% else %>
             \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{<< width >>\textwidth} }
-                <% for answer in part.choices %>
-                    <% set fill = '[red]' if (answer_key and answer.correct) else '' %>
+                <% for choice in part.choices %>
+                    <% set fill = '[red]' if (answer_key and choice.correct) else '' %>
                     \radio<< fill >>{multiple_dropdowns}{<< id >>}{<< id >>.<< part_id >>}{<< loop.index0 >>}
-                        & << answer.text >> \\
+                        & << choice.text >> \\
                 <% endfor %>
             \end{tabular}
         <% endif %>

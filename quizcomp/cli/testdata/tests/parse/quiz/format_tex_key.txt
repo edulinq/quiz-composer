@@ -2,7 +2,8 @@
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
         "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
-        "--format", "tex"
+        "--format", "tex",
+        "--key",
     ],
 }
 ---
@@ -177,11 +178,11 @@
 \vspace{0.5cm}
 
 \begin{tabular}{ m{2.0cm} m{5cm} }
-    Name: & \bigAnswerBox[]{4em}{0.80}{name}{name}{0}{0} \\
+    Name: & \bigAnswerBox[Answer Key]{4em}{0.80}{name}{name}{0}{0} \\
 \end{tabular}
 
 \begin{tabular}{ m{2.0cm} m{5cm} }
-    Student ID: & \bigAnswerBox[]{4em}{0.80}{id}{email}{0}{0} \\
+    Student ID: & \bigAnswerBox[Answer Key]{4em}{0.80}{id}{email}{0}{0} \\
 \end{tabular}
 
 \hrule
@@ -199,7 +200,7 @@ By signing below, I acknowledge that I have neither given nor received inappropr
 \vspace{0.25cm}
 
 \begin{tabular}{ m{2.0cm} m{5cm} }
-    Signature: & \bigAnswerBox[]{4em}{0.80}{signature}{signature}{0}{0} \\
+    Signature: & \bigAnswerBox[Answer Key]{4em}{0.80}{signature}{signature}{0}{0} \\
 \end{tabular}
 
 \vspace{0.25cm}
@@ -280,13 +281,13 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \begin{center}
 
             A: \\
-                \bigAnswerBox{4em}{0.95}{fill_in_multiple_blanks}{0.1.0}{0.1.0.0}{0} \\
+                \bigAnswerBox[1]{4em}{0.95}{fill_in_multiple_blanks}{0.1.0}{0.1.0.0}{0} \\
             B: \\
-                \bigAnswerBox{4em}{0.95}{fill_in_multiple_blanks}{0.1.0}{0.1.0.1}{0} \\
+                \bigAnswerBox[2]{4em}{0.95}{fill_in_multiple_blanks}{0.1.0}{0.1.0.1}{0} \\
             C: \\
-                \bigAnswerBox{4em}{0.95}{fill_in_multiple_blanks}{0.1.0}{0.1.0.2}{0} \\
+                \bigAnswerBox[3]{4em}{0.95}{fill_in_multiple_blanks}{0.1.0}{0.1.0.2}{0} \\
             D: \\
-                \bigAnswerBox{4em}{0.95}{fill_in_multiple_blanks}{0.1.0}{0.1.0.3}{0} \\
+                \bigAnswerBox[4]{4em}{0.95}{fill_in_multiple_blanks}{0.1.0}{0.1.0.3}{0} \\
 
         \end{center}
 \end{minipage}
@@ -318,7 +319,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
         \begin{center}
 
-    \bigAnswerBox[]{4em}{1.0}{fill_in_the_blank}{0.2.0}{0}{0}
+    \bigAnswerBox[1]{4em}{1.0}{fill_in_the_blank}{0.2.0}{0}{0}
 
         \end{center}
 \end{minipage}
@@ -351,9 +352,9 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \begin{center}
 
         \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{0.8\textwidth} }
-                \checkbox{multiple_answers}{0.3.0}{0.3.0.0}{0}
+                \checkbox[red]{multiple_answers}{0.3.0}{0.3.0.0}{0}
                     & A \\
-                \checkbox{multiple_answers}{0.3.0}{0.3.0.1}{0}
+                \checkbox[red]{multiple_answers}{0.3.0}{0.3.0.1}{0}
                     & B \\
                 \checkbox{multiple_answers}{0.3.0}{0.3.0.2}{0}
                     & C \\
@@ -391,11 +392,11 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
     \begin{tabular}{ >{\centering\arraybackslash}m{0.08\textwidth} m{0.17\textwidth} }
 
-                \smallAnswerBox{matching}{0.4.0}{0.4.0.left0}{0} & A \\
+                \smallAnswerBox[A]{matching}{0.4.0}{0.4.0.left0}{0} & A \\
 
-                \smallAnswerBox{matching}{0.4.0}{0.4.0.left1}{0} & B \\
+                \smallAnswerBox[B]{matching}{0.4.0}{0.4.0.left1}{0} & B \\
 
-                \smallAnswerBox{matching}{0.4.0}{0.4.0.left2}{0} & C \\
+                \smallAnswerBox[C]{matching}{0.4.0}{0.4.0.left2}{0} & C \\
     \end{tabular}
     \begin{tabular}{ >{\centering\arraybackslash}m{0.05\textwidth} m{0.60\textwidth} }
             A. & 1 \\[0.5cm]
@@ -435,7 +436,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \begin{center}
 
         \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{0.8\textwidth} }
-                \radio{multiple_choice}{0.5.0}{0}{0.5.0.0}
+                \radio[red]{multiple_choice}{0.5.0}{0}{0.5.0.0}
                     & A \\
                 \radio{multiple_choice}{0.5.0}{0}{0.5.0.1}
                     & B \\
@@ -484,7 +485,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
             \begin{center}
 
             \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{0.8\textwidth} }
-                    \radio{multiple_dropdowns}{0.6.0}{0.6.0.0}{0}
+                    \radio[red]{multiple_dropdowns}{0.6.0}{0.6.0.0}{0}
                         & a \\
                     \radio{multiple_dropdowns}{0.6.0}{0.6.0.0}{1}
                         & b \\
@@ -505,7 +506,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
             \begin{center}
 
             \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{0.8\textwidth} }
-                    \radio{multiple_dropdowns}{0.6.0}{0.6.0.1}{0}
+                    \radio[red]{multiple_dropdowns}{0.6.0}{0.6.0.1}{0}
                         & 1 \\
                     \radio{multiple_dropdowns}{0.6.0}{0.6.0.1}{1}
                         & 2 \\
@@ -543,7 +544,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
         \begin{center}
 
-    \bigAnswerBox[]{4em}{1.0}{numerical}{0.7.0}{0}{0}
+    \bigAnswerBox[008]{4em}{1.0}{numerical}{0.7.0}{0}{0}
 
         \end{center}
 \end{minipage}
@@ -632,7 +633,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \begin{center}
 
         \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{0.8\textwidth} }
-                \radio{true_false}{0.10.0}{0}{0.10.0.0}
+                \radio[red]{true_false}{0.10.0}{0}{0.10.0.0}
                     & True \\
                 \radio{true_false}{0.10.0}{0}{0.10.0.1}
                     & False \\
