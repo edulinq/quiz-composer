@@ -22,9 +22,19 @@
 \usepackage[
     pdftex,
     hidelinks,
-    pdftitle={<< quiz.course_title >> << quiz.term_title >> - << quiz.title >>},
+    <% if (this.course_name is not none) and (this.term_name is not none) %>
+        pdftitle={<< this.course_name >> << this.term_name >> - << this.name >>},
+    <% elif (this.course_name is not none) %>
+        pdftitle={<< this.course_name >> - << this.name >>},
+    <% elif (this.term_name is not none) %>
+        pdftitle={<< this.term_name >> - << this.name >>},
+    <% else %>
+        pdftitle={<< this.name >>},
+    <% endif %>
     pdfcreator={Quiz Composer},
-    pdfkeywords={Version: << quiz.version >>}
+    <% if (this.version is not none) %>
+        pdfkeywords={Version: << this.version >>}
+    <% endif %>
 ]{hyperref}
 
 % Remove paragraph indentation.
@@ -162,7 +172,15 @@
 
 \begin{document}
 
-\centerline{\Large << quiz.course_title >> \hfill << quiz.title >> \hfill << quiz.term_title >>}
+<% if (this.course_name is not none) and (this.term_name is not none) %>
+    \centerline{\Large << this.course_name >> \hfill << this.name >> \hfill << this.term_name >>}
+<% elif (this.course_name is not none) %>
+    \centerline{\Large << this.course_name >> \hfill << this.name >>}
+<% elif (this.term_name is not none) %>
+    \centerline{\Large << this.name >> \hfill << this.term_name >>}
+<% else %>
+    \centerline{\Large << this.name >>}
+<% endif %>
 \vspace{0.2cm}
 
 \hrule
@@ -181,9 +199,9 @@
 
 \vspace{1.0cm}
 
-\textbf{Total Points: << quiz.get_points >>}
+\textbf{Total Points: << this.get_points() >>}
 
-<< quiz.description_text >>
+<< this.description.to_tex() >>
 
 \vspace{1.0cm}
 
@@ -208,15 +226,21 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 % Set headers and footers.
 \pagestyle{fancy}
 \fancyhead{}
-\fancyhead[L]{<< quiz.course_title >>}
-\fancyhead[C]{<< quiz.title >>}
-\fancyhead[R]{<< quiz.term_title >>}
+<% if (this.course_name is not none) %>
+    \fancyhead[L]{<< this.course_name >>}
+<% endif %>
+\fancyhead[C]{<< this.name >>}
+<% if (this.term_name is not none) %>
+    \fancyhead[R]{<< this.term_name >>}
+<% endif %>
 \renewcommand{\headrulewidth}{0.1mm}
 \fancyfoot{}
 \fancyfoot[R]{\thepage}
-\fancyfoot[L]{Version: << quiz.version >>}
+<% if (this.version is not none) %>
+    \fancyfoot[L]{Version: << this.version >>}
+<% endif %>
 \renewcommand{\footrulewidth}{0.1mm}
 
-<< inner_text >>
+<< children_content >>
 
 \end{document}

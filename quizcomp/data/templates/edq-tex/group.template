@@ -1,5 +1,5 @@
-%%% BEGIN Group {<< group.id >> -- << group.name >>} %%%
+%%% BEGIN Group {<< id >> -- << this.name >>} %%%
 
-<< questions_text >>
+<< children_content >>
 
-%%% END Group {<< group.id >> -- << group.name >>} %%%
+%%% END Group {<< id >> -- << this.name >>} %%%

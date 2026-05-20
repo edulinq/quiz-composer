@@ -1,0 +1,40 @@
+<% if this.get_known_config('pagebreak_before') %>
+    \newpage
+<% endif %>
+
+%%% BEGIN Question {<< id >> -- << this.name >>} %%%
+
+\begin{minipage}{\textwidth}
+    \noindent
+    <% if (custom_header is not none) %>
+        << custom_header.to_tex() >>
+    <% elif ((number is not none) and (this.name is not none)) %>
+        \textbf{Question << number >>} [<< this.name >>] (<< this.get_points() >> Points)
+    <% elif (number is not none) %>
+        \textbf{Question << number >>} (<< this.get_points() >> Points)
+    <% else %>
+        % No Header.
+    <% endif %>
+    \vspace{0.25cm}
+
+    \noindent
+    << this.prompt.to_tex() >>
+
+    \vspace{0.25cm}
+
+    <% block directions %>
+        <% block directions_text %>
+        <% endblock %>
+
+        \vspace{0.25cm}
+    <% endblock %>
+
+    <% block body required %>
+    <% endblock %>
+\end{minipage}
+
+%%% END Question {<< id >> -- << this.name >>} %%%
+
+<% if this.get_known_config('pagebreak_after') %>
+    \newpage
+<% endif %>

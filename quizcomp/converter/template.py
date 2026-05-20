@@ -38,6 +38,7 @@ import quizcomp.parser.document
 import quizcomp.model.group
 import quizcomp.model.question
 import quizcomp.model.quiz
+import quizcomp.parser.document
 
 TEMPLATE_FILENAME_QUIZ: str = 'quiz.template'
 TEMPLATE_FILENAME_QUESTION_SEPARATOR: str = 'question-separator.template'
@@ -187,7 +188,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             last_child_index = child_index
 
             # TEST
-            if (child_index >= 12):
+            if (child_index >= 0):
                 break
 
         return "\n".join(children_content), running_question_number
@@ -240,6 +241,11 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_number = running_question_number
             running_question_number += 1
 
+        raw_custom_header = question.get_config(quizcomp.model.config.OPTION_CUSTOM_HEADER)
+        custom_header = None
+        if (raw_custom_header is not None):
+            custom_header = quizcomp.parser.document.ParsedDocument.parse_text(raw_custom_header)
+
         context = {
             'this': question,
             'quiz': quiz,
@@ -248,7 +254,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             'child_index': child_index,
             'number': question_number,
             'children_content': None,
-            'custom_header': question.get_config(quizcomp.model.config.OPTION_CUSTOM_HEADER),
+            'custom_header': custom_header,
         }
 
         template = self.env.get_template(f"questions/{question.question_type}.template")

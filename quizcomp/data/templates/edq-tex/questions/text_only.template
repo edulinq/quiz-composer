@@ -1,4 +1,4 @@
-<% extends "partials/question.template" %>
+<% extends "questions/base.template" %>
 
 <% block directions %>
 <% endblock %>

@@ -31,7 +31,8 @@ class TexTemplateConverter(quizcomp.converter.template.TemplateConverter):
             template_dir,
             cleanup_images = cleanup_images,
             parser_format_options = {
-                'image_path_callback': self._store_images,
+                # TEST
+                # 'image_path_callback': self._store_images,
             },
             jinja_options = JINJA_OPTIONS,
             **kwargs,

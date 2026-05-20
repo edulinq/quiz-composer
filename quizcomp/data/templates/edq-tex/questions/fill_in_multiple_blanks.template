@@ -1,0 +1,42 @@
+<% extends "questions/base.template" %>
+
+<% block directions_text %>
+    For each part (denoted by angle brackets), place your answer in the associated box.
+<% endblock %>
+
+<% block body %>
+    <% set height = this.hints.height if this.hints.height else '4em' %>
+
+    <% set default_width = 0.13 if this.hints.inline else 0.95 %>
+    <% set width = this.hints.width if this.hints.width else default_width %>
+
+    <% set center = false if this.hints.nocenter else true %>
+
+    <% if center %>
+        \begin{center}
+    <% endif %>
+
+    <% for part in this.answers.values() %>
+        <% if this.hints.inline %>
+            \begin{tabular}{ >{\centering\arraybackslash}m{0.05\textwidth} >{\centering\arraybackslash}m{<< width + 0.01 >>\textwidth} }
+                << part.label >>: &
+                <% if answer_key %>
+                    \bigAnswerBox[<< part.solutions[0].clean >>]{<< height >>}{<< width >>}{fill_in_multiple_blanks}{<< id >>}{<< id >>.<< loop.index0 >>}{0} \\
+                <% else %>
+                    \bigAnswerBox{<< height >>}{<< width >>}{fill_in_multiple_blanks}{<< id >>}{<< id >>.<< loop.index0 >>}{0} \\
+                <% endif %>
+            \end{tabular}
+        <% else %>
+            << part.label >>: \\
+            <% if answer_key %>
+                \bigAnswerBox[<< part.solutions[0].clean >>]{<< height >>}{<< width >>}{fill_in_multiple_blanks}{<< id >>}{<< id >>.<< loop.index0 >>}{0} \\
+            <% else %>
+                \bigAnswerBox{<< height >>}{<< width >>}{fill_in_multiple_blanks}{<< id >>}{<< id >>.<< loop.index0 >>}{0} \\
+            <% endif %>
+        <% endif %>
+    <% endfor %>
+
+    <% if center %>
+        \end{center}
+    <% endif %>
+<% endblock %>

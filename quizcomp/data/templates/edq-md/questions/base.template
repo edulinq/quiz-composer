@@ -1,7 +1,7 @@
 ---
 
 {% if (custom_header is not none) %}
-{{ custom_header }}
+{{ custom_header.to_md() }}
 {% elif (number is not none) %}
 **Question {{ number }}** ({{ this.get_display_points() }} Points)
 {% else %}

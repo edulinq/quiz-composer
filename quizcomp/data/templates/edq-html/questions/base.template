@@ -2,7 +2,7 @@
 
 <div class='qg-quiz-question{% if answer_key %} qg-answer-key{% endif %}' data-type='{{ this.question_type }}' data-number='{{ number }}' data-name='{{ this.name }}' data-points='{{ this.get_points() }}'>
     {% if custom_header is not none %}
-        <h2 class='qg-quiz-question-name'>{{ custom_header }}</h2>
+        <h2 class='qg-quiz-question-name'>{{ custom_header.to_html() }}</h2>
     {% elif (number is not none) %}
         <h2 class='qg-quiz-question-name'>Question {{ number }} <span class='qg-quiz-question-points'>({{ this.get_display_points() }} Points)</span></h2>
     {% else %}

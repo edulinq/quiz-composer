@@ -1,4 +1,4 @@
-<% extends "partials/question.template" %>
+<% extends "questions/base.template" %>
 
 <% block directions_text %>
     Fill in the each box on the left with a letter from the right.
@@ -6,16 +6,16 @@
 
 <% block body %>
     \begin{tabular}{ >{\centering\arraybackslash}m{0.08\textwidth} m{0.17\textwidth} }
-        <% for left in question.answers.lefts %>
+        <% for left in this.answers.lefts %>
             <% if answer_key %>
-                \smallAnswerBox[<< left.solution >>]{matching}{<< question.id >>}{<< left.id >>}{0} & << left.text >> \\
+                \smallAnswerBox[<< left.solution >>]{matching}{<< id >>}{<< left.id >>}{0} & << left.text >> \\
             <% else %>
-                \smallAnswerBox{matching}{<< question.id >>}{<< left.id >>}{0} & << left.text >> \\
+                \smallAnswerBox{matching}{<< id >>}{<< left.id >>}{0} & << left.text >> \\
             <% endif %>
         <% endfor %>
     \end{tabular}
     \begin{tabular}{ >{\centering\arraybackslash}m{0.05\textwidth} m{0.60\textwidth} }
-        <% for right in question.answers.rights %>
+        <% for right in this.answers.rights %>
             << right.label >>. & << right.text >> \\[0.5cm]
         <% endfor %>
     \end{tabular}

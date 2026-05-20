@@ -1,16 +1,16 @@
-<% extends "partials/question.template" %>
+<% extends "questions/base.template" %>
 
 <% block directions_text %>
     For each part (denoted by angle brackets), fill in the circle that corresponds to your answer.
 <% endblock %>
 
 <% block body %>
-    <% set default_width = 0.15 if question.hints.inline else 0.80 %>
-    <% set width = question.hints.width if question.hints.width else default_width %>
+    <% set default_width = 0.15 if this.hints.inline else 0.80 %>
+    <% set width = this.hints.width if this.hints.width else default_width %>
 
-    <% set center = false if question.hints.nocenter else true %>
+    <% set center = false if this.hints.nocenter else true %>
 
-    <% for part in question.answers %>
+    <% for part in this.answers %>
         <% set part_id = loop.index0 %>
         \end{minipage}
 
@@ -27,11 +27,11 @@
             \begin{center}
         <% endif %>
 
-        <% if question.hints.inline %>
+        <% if this.hints.inline %>
             <% for answer in part.choices %>
                 <% set fill = '[red]' if (answer_key and answer.correct) else '' %>
                 \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{<< width >>\textwidth} }
-                    \radio<< fill >>{multiple_dropdowns}{<< question.id >>}{<< question.id >>.<< part_id >>}{<< loop.index0 >>}
+                    \radio<< fill >>{multiple_dropdowns}{<< id >>}{<< id >>.<< part_id >>}{<< loop.index0 >>}
                         & << answer.text >> \\
                 \end{tabular}
             <% endfor %>
@@ -39,7 +39,7 @@
             \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{<< width >>\textwidth} }
                 <% for answer in part.choices %>
                     <% set fill = '[red]' if (answer_key and answer.correct) else '' %>
-                    \radio<< fill >>{multiple_dropdowns}{<< question.id >>}{<< question.id >>.<< part_id >>}{<< loop.index0 >>}
+                    \radio<< fill >>{multiple_dropdowns}{<< id >>}{<< id >>.<< part_id >>}{<< loop.index0 >>}
                         & << answer.text >> \\
                 <% endfor %>
             \end{tabular}

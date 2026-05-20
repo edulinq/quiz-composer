@@ -1,32 +1,32 @@
-<% extends "partials/question.template" %>
+<% extends "questions/base.template" %>
 
 <% block directions_text %>
     Fill in the circle that corresponds to your answer.
 <% endblock %>
 
 <% block body %>
-    <% set default_width = 0.15 if question.hints.inline else 0.80 %>
-    <% set width = question.hints.width if question.hints.width else default_width %>
+    <% set default_width = 0.15 if this.hints.inline else 0.80 %>
+    <% set width = this.hints.width if this.hints.width else default_width %>
 
-    <% set center = false if question.hints.nocenter else true %>
+    <% set center = false if this.hints.nocenter else true %>
 
     <% if center %>
         \begin{center}
     <% endif %>
 
-    <% if question.hints.inline %>
-        <% for answer in question.answers %>
+    <% if this.hints.inline %>
+        <% for answer in this.answers %>
             <% set fill = '[red]' if (answer_key and answer.correct) else '' %>
             \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{<< width >>\textwidth} }
-                \radio<< fill >>{true_false}{<< question.id >>}{0}{<< question.id >>.<< loop.index0 >>}
+                \radio<< fill >>{multiple_choice}{<< id >>}{0}{<< id >>.<< loop.index0 >>}
                     & << answer.text >> \\
             \end{tabular}
         <% endfor %>
     <% else %>
         \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{<< width >>\textwidth} }
-            <% for answer in question.answers %>
+            <% for answer in this.answers %>
                 <% set fill = '[red]' if (answer_key and answer.correct) else '' %>
-                \radio<< fill >>{true_false}{<< question.id >>}{0}{<< question.id >>.<< loop.index0 >>}
+                \radio<< fill >>{multiple_choice}{<< id >>}{0}{<< id >>.<< loop.index0 >>}
                     & << answer.text >> \\
             <% endfor %>
         \end{tabular}
