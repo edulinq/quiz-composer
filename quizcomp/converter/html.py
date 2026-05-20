@@ -6,7 +6,6 @@ import edq.util.dirent
 
 import quizcomp.constants
 import quizcomp.converter.template
-import quizcomp.parser.document
 import quizcomp.util.html
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -32,9 +31,6 @@ class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
             self.env.globals['css_content'] = ''
         else:
             self.env.globals['css_content'] = edq.util.dirent.read_file(css_path)
-
-    def clean_solution_content(self, document: quizcomp.parser.document.ParsedDocument) -> str:
-        return document.to_text()
 
     def finalize(self, text: str) -> str:
         return quizcomp.util.html.clean(text, pretty = True)
