@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <quiz identifier="quiz" xmlns="http://canvas.instructure.com/xsd/cccv1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 https://canvas.instructure.com/xsd/cccv1p0.xsd">
-    <title>{{ quiz.title }}</title>
-    <description>{{ quiz.description_text }}</description>
-    <shuffle_answers>{{ quiz.shuffle_answers | to_xml }}</shuffle_answers>
-    <scoring_policy>{{ quiz.canvas.scoring_policy | to_xml }}</scoring_policy>
-    <hide_results>{{ quiz.canvas.hide_results | to_xml }}</hide_results>
-    <quiz_type>{{ 'practice_quiz' if quiz.canvas.practice else 'assignment' }}</quiz_type>
+    <title>{{ quiz.name }}</title>
+    <description>{{ quiz.description.to_html() }}</description>
+    <shuffle_answers>{{ quiz.get_known_config('shuffle_answers') | to_xml }}</shuffle_answers>
+    <scoring_policy>{{ 'keep_latest' | to_xml }}</scoring_policy>
+    <hide_results>{{ none | to_xml }}</hide_results>
+    <quiz_type>{{ 'practice_quiz' }}</quiz_type>
     <points_possible>0.0</points_possible>
     <require_lockdown_browser>false</require_lockdown_browser>
     <require_lockdown_browser_for_results>false</require_lockdown_browser_for_results>
     <require_lockdown_browser_monitor>false</require_lockdown_browser_monitor>
     <lockdown_browser_monitor_data/>
-    <show_correct_answers>{{ quiz.canvas.show_correct_answers | to_xml }}</show_correct_answers>
+    <show_correct_answers>{{ True | to_xml }}</show_correct_answers>
     <anonymous_submissions>false</anonymous_submissions>
     <could_be_locked>false</could_be_locked>
     <time_limit>{{ quiz.time_limit_mins | default('30') | to_xml }}</time_limit>
     <disable_timer_autosubmission>false</disable_timer_autosubmission>
-    <allowed_attempts>{{ quiz.canvas.allowed_attempts | to_xml }}</allowed_attempts>
+    <allowed_attempts>{{ 1 | to_xml }}</allowed_attempts>
     <one_question_at_a_time>false</one_question_at_a_time>
     <cant_go_back>false</cant_go_back>
     <available>false</available>

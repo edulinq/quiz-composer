@@ -1,6 +1,6 @@
-{% macro field_ids(question_id, answers) %}
+{% macro field_ids(id, answers) %}
     {% for answer in answers %}
-        {% set id = 'af' ~ question_id ~ 'f' ~ loop.index0 %}
+        {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
         {% if not loop.last %}
                 {% set id = id ~ ',' %}
         {% endif %}
@@ -8,11 +8,11 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro body(question_id, answers, cardinality = 'Single') %}
+{% macro body(id, answers, cardinality = 'Single') %}
     <response_lid ident="response1" rcardinality="{{ cardinality }}">
         <render_choice>
             {% for answer in answers %}
-                {% set id = 'af' ~ question_id ~ 'f' ~ loop.index0 %}
+                {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
                 <response_label ident="{{ id }}">
                 <material>
                     <mattext texttype="text/html">{{ answer.text }}</mattext>
@@ -23,13 +23,13 @@
     </response_lid>
 {% endmacro %}
 
-{% macro scoring(question_id, answers) %}
+{% macro scoring(id, answers) %}
     <resprocessing>
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
         </outcomes>
         {% for answer in answers %}
-            {% set id = 'af' ~ question_id ~ 'f' ~ loop.index0 %}
+            {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
             <respcondition continue="Yes">
                 <conditionvar>
                     <varequal respident="response1">{{ id }}</varequal>
@@ -45,9 +45,9 @@
     </resprocessing>
 {% endmacro %}
 
-{% macro feedback(question_id, answers) %}
+{% macro feedback(id, answers) %}
     {% for answer in answers %}
-        {% set id = 'af' ~ question_id ~ 'f' ~ loop.index0 %}
+        {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
         {% if answer.feedback %}
             <itemfeedback ident="{{ id }}_fb">
                 <flow_mat>

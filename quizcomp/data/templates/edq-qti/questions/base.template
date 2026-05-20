@@ -1,28 +1,28 @@
-<item ident="ef{{ question.id }}" title="{{ question.name }}">
+<item ident="ef{{ id }}" title="{{ this.name }}">
     <itemmetadata>
         <qtimetadata>
             <qtimetadatafield>
                 <fieldlabel>question_type</fieldlabel>
-                <fieldentry>{{ question.mapped_question_type }}</fieldentry>
+                <fieldentry>{{ this.mapped_question_type }}</fieldentry>
             </qtimetadatafield>
             <qtimetadatafield>
                 <fieldlabel>points_possible</fieldlabel>
-                <fieldentry>{{ question.points }}</fieldentry>
+                <fieldentry>{{ this.points }}</fieldentry>
             </qtimetadatafield>
             <qtimetadatafield>
                 <fieldlabel>original_answer_ids</fieldlabel>
                 <fieldentry>{% block field_ids %}{% endblock %}</fieldentry>
             </qtimetadatafield>
             <qtimetadatafield>
-                <fieldlabel>assessment_question_identifierref</fieldlabel>
-                <fieldentry>ef{{ question.id }}</fieldentry>
+                <fieldlabel>assessment_identifierref</fieldlabel>
+                <fieldentry>ef{{ id }}</fieldentry>
             </qtimetadatafield>
         </qtimetadata>
     </itemmetadata>
     <presentation>
         <material>
             <mattext texttype="text/html">
-                {{ question.prompt_text }}
+                {{ this.prompt_text }}
             </mattext>
         </material>
         {% block body required %}{% endblock %}
@@ -46,34 +46,34 @@
         </resprocessing>
     {% endblock %}
     {% block feedback %}
-        {% if question.feedback.general %}
+        {% if this.feedback.general %}
             <itemfeedback ident="general_fb">
                 <flow_mat>
                     <material>
                         <mattext texttype="text/html">
-                            {{ question.feedback.general }}
+                            {{ this.feedback.general }}
                         </mattext>
                     </material>
                 </flow_mat>
             </itemfeedback>
         {% endif %}
-        {% if question.feedback.correct %}
+        {% if this.feedback.correct %}
             <itemfeedback ident="correct_fb">
                 <flow_mat>
                     <material>
                         <mattext texttype="text/html">
-                            {{ question.feedback.correct }}
+                            {{ this.feedback.correct }}
                         </mattext>
                     </material>
                 </flow_mat>
             </itemfeedback>
         {% endif %}
-        {% if question.feedback.incorrect %}
+        {% if this.feedback.incorrect %}
             <itemfeedback ident="general_incorrect_fb">
                 <flow_mat>
                     <material>
                         <mattext texttype="text/html">
-                            {{ question.feedback.incorrect }}
+                            {{ this.feedback.incorrect }}
                         </mattext>
                     </material>
                 </flow_mat>

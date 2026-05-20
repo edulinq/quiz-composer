@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
-    <assessment ident="quiz" title="{{ quiz.title }}">
+    <assessment ident="quiz" title="{{ this.name }}">
         <qtimetadata>
-            <qtimetadatafield>
-                <fieldlabel>qmd_timelimit</fieldlabel>
-                <fieldentry>{{ quiz.time_limit_mins | default('30') }}</fieldentry>
-            </qtimetadatafield>
+            {% if (this.time_limit_mins is not none) %}
+                <qtimetadatafield>
+                    <fieldlabel>qmd_timelimit</fieldlabel>
+                    <fieldentry>{{ this.time_limit_mins }}</fieldentry>
+                </qtimetadatafield>
+            {% endif %}
             <qtimetadatafield>
                 <fieldlabel>cc_maxattempts</fieldlabel>
                 <fieldentry>1</fieldentry>
             </qtimetadatafield>
         </qtimetadata>
         <section ident="root_section">
-        {{ inner_text }}
+        {{ children_content }}
         </section>
     </assessment>
 </questestinterop>

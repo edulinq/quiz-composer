@@ -1,9 +1,9 @@
-{% extends "partials/question.template" %}
+{% extends "questions/base.template" %}
 
 {% block field_ids %}
     {% set ids = [] %}
-    {% for part in question.answers %}
-        {% set part_id = 'af' ~ question.id ~ 'f' ~ loop.index0 %}
+    {% for part in this.answers %}
+        {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
         {% for choice in part.choices %}
             {% set choice_id = part_id ~ 'f' ~ loop.index0 %}
             {{ ids.append(choice_id) or '' }}
@@ -13,8 +13,8 @@
 {% endblock %}
 
 {% block body %}
-    {% for part in question.answers %}
-        {% set part_id = 'af' ~ question.id ~ 'f' ~ loop.index0 %}
+    {% for part in this.answers %}
+        {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
         {% set response_ref = 'response_' ~ part.raw_label %}
         <response_lid ident="{{ response_ref }}">
             <material>
@@ -39,8 +39,8 @@
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
         </outcomes>
-        {% for part in question.answers %}
-            {% set part_id = 'af' ~ question.id ~ 'f' ~ loop.index0 %}
+        {% for part in this.answers %}
+            {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
             {% set response_ref = 'response_' ~ part.raw_label %}
             {% for choice in part.choices %}
                 {% set choice_id = part_id ~ 'f' ~ loop.index0 %}
@@ -49,7 +49,7 @@
                         <varequal respident="{{ response_ref }}">{{ choice_id }}</varequal>
                     </conditionvar>
                     {% if choice.correct %}
-                        <setvar varname="SCORE" action="Add">{{ (100.0 / (question.answers | length)) | round(2) }}</setvar>
+                        <setvar varname="SCORE" action="Add">{{ (100.0 / (this.answers | length)) | round(2) }}</setvar>
                     {% endif %}
                     {% if choice.feedback %}
                         <displayfeedback feedbacktype="Response" linkrefid="{{ choice_id }}_fb"/>
@@ -61,8 +61,8 @@
 {% endblock %}
 
 {% block additional_feedback %}
-    {% for part in question.answers %}
-        {% set part_id = 'af' ~ question.id ~ 'f' ~ loop.index0 %}
+    {% for part in this.answers %}
+        {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
         {% for choice in part.choices %}
             {% set choice_id = part_id ~ 'f' ~ loop.index0 %}
             {% if choice.feedback %}

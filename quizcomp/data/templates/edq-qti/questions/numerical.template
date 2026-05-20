@@ -1,6 +1,6 @@
-{% extends "partials/question.template" %}
+{% extends "questions/base.template" %}
 
-{% import 'partials/answer_list.template' as answer_list %}
+{% import 'questions/answer_list.template' as answer_list %}
 
 {% block field_ids %}
     0
@@ -19,8 +19,8 @@
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
         </outcomes>
-        {% for answer in question.answers.raw_answers %}
-            {% set id = 'af' ~ question_id ~ 'f' ~ loop.index0 %}
+        {% for answer in this.answers.raw_answers %}
+            {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
             <respcondition continue="No">
                 <conditionvar>
                 {% if answer.type == 'exact' %}
@@ -55,5 +55,5 @@
 {% endblock %}
 
 {% block additional_feedback %}
-    {{ answer_list.feedback(question.id, question.answers) }}
+    {{ answer_list.feedback(id, this.answers) }}
 {% endblock %}

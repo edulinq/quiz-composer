@@ -1,11 +1,11 @@
-<section ident="group_{{ group.id }}" title="{{ group.name }}">
+<section ident="group_{{ id }}" title="{{ this.name }}">
     <selection_ordering>
         <selection>
-            <selection_number>{{ group.pick_count }}</selection_number>
+            <selection_number>{{ this.pick_count }}</selection_number>
             <selection_extension>
-                <points_per_item>{{ group.points }}</points_per_item>
+                <points_per_item>{{ this.get_points() }}</points_per_item>
             </selection_extension>
         </selection>
     </selection_ordering>
-    {{ questions_text }}
+    {{ children_content }}
 </section>

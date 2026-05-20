@@ -1,0 +1,79 @@
+{% extends "questions/base.template" %}
+
+{% block field_ids %}
+    {% set ids = [] %}
+    {% for (label, text_answers) in this.answers.parts.items() %}
+        {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
+        {% for option in text_answers.options %}
+            {% set option_id = part_id ~ 'f' ~ loop.index0 %}
+            {{ ids.append(option_id) or '' }}
+        {% endfor %}
+    {% endfor %}
+    {{- ids | join(',') -}}
+{% endblock %}
+
+{% block body %}
+    {% for (label, text_answers) in this.answers.parts.items() %}
+        {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
+        {% set response_ref = 'response_' ~ label %}
+        <response_lid ident="{{ response_ref }}">
+            <material>
+                <mattext>{{ label }}</mattext>
+            </material>
+            <render_choice>
+                {% for option in text_answers.options %}
+                    {% set option_id = part_id ~ 'f' ~ loop.index0 %}
+                    <response_label ident="{{ option_id }}">
+                        <material>
+                            <mattext texttype="text/plain">{{ option.text.to_html() }}</mattext>
+                        </material>
+                    </response_label>
+                {% endfor %}
+            </render_choice>
+        </response_lid>
+    {% endfor %}
+{% endblock %}
+
+{% block scoring %}
+    <resprocessing>
+        <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+        </outcomes>
+        {% for (label, text_answers) in this.answers.parts.items() %}
+            {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
+            {% set response_ref = 'response_' ~ label %}
+            {% for option in text_answers.options %}
+                {% set option_id = part_id ~ 'f' ~ loop.index0 %}
+                <respcondition continue="Yes">
+                    <conditionvar>
+                        <varequal respident="{{ response_ref }}">{{ option_id }}</varequal>
+                    </conditionvar>
+                    <setvar varname="SCORE" action="Add">{{ (100.0 / (this.answers.parts | length)) | round(2) }}</setvar>
+                </respcondition>
+                {% if (option.feedback) %}
+                    <displayfeedback feedbacktype="Response" linkrefid="{{ option_id }}_fb"/>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </resprocessing>
+{% endblock %}
+
+{% block additional_feedback %}
+    {% for (label, text_answers) in this.answers.parts.items() %}
+        {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
+        {% for option in text_answers.options %}
+            {% set option_id = part_id ~ 'f' ~ loop.index0 %}
+            {% if ((option.feedback) and (option.feedback.general)) %}
+                <itemfeedback ident="{{ option_id }}_fb">
+                    <flow_mat>
+                        <material>
+                            <mattext texttype="text/html">
+                                {{ option.feedback.general.to_html() }}
+                            </mattext>
+                        </material>
+                    </flow_mat>
+                </itemfeedback>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

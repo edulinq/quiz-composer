@@ -1,0 +1,19 @@
+{% extends "questions/base.template" %}
+
+{% import 'questions/answer_list.template' as answer_list %}
+
+{% block field_ids %}
+    {{ answer_list.field_ids(id, this.answers) }}
+{% endblock %}
+
+{% block body %}
+    {{ answer_list.body(id, this.answers) }}
+{% endblock %}
+
+{% block scoring %}
+    {{ answer_list.scoring(id, this.answers) }}
+{% endblock %}
+
+{% block additional_feedback %}
+    {{ answer_list.feedback(id, this.answers) }}
+{% endblock %}
