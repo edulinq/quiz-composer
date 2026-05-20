@@ -254,17 +254,43 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
 
         return value
 
-    def get_config(self, option: quizcomp.model.config.Option) -> typing.Union[edq.util.serial.POD, None]:
+    def get_config(self,
+            option: quizcomp.model.config.Option,
+            default_override: typing.Union[edq.util.serial.POD, None] = None,
+            ) -> typing.Union[edq.util.serial.POD, None]:
         """
-        Get a value for a known configuration option.
-        If the key does not exist (or the value is None), return the given default.
+        Get a value for a configuration option.
+        If the key does not exist (or the value is None), return the specified default.
+
+        Python callers should prefer this method, as mistakes can be caught by the type checker.
         """
 
         value = self._get_hierarchical_value(option.value_type, option.key)
         if (value is None):
+            if (default_override is not None):
+                return default_override
+
             return option.default_value
 
         return value
+
+    def get_known_config(self,
+            key: str,
+            default_override: typing.Union[edq.util.serial.POD, None] = None,
+            value_type: typing.Union[str, None] = None,
+            ) -> typing.Union[edq.util.serial.POD, None]:
+        """
+        Get a value for a known configuration option by key.
+        If the key does not exist (or the value is None), return the specified default.
+
+        Non-Python callers will find this method useful.
+        """
+
+        option = quizcomp.model.config.get_known_option(key, value_type = value_type)
+        if (option is None):
+            return default_override
+
+        return self.get_config(option, default_override = default_override)
 
     def _get_hierarchical_value(self, value_type: str, key: str,
             child: typing.Union['CoreType', None] = None,

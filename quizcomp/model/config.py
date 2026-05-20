@@ -1,3 +1,5 @@
+import typing
+
 import edq.util.serial
 
 class Option:
@@ -20,6 +22,29 @@ class Option:
 
         self.default_value = default_value
         """ The default value to use if the key is not present. """
+
+        if (self.value_type not in _known_options):
+            _known_options[self.value_type] = {}
+
+        _known_options[self.value_type][self.key] = self
+
+_known_options: typing.Dict[str, typing.Dict[str, Option]] = {}
+""" Keep track of all seen options, keyed by value type and then key. """
+
+def get_known_option(key: str, value_type: typing.Union[str, None] = None) -> typing.Union[Option, None]:
+    """
+    Get a known option (if it exists).
+    If no value type is provided, then search all types and return the first matching option.
+    """
+
+    if (value_type is not None):
+        return _known_options.get(value_type, {}).get(key, None)
+
+    for options in _known_options.values():
+        if (key in options):
+            return options[key]
+
+    return None
 
 OPTION_CUSTOM_HEADER: Option = Option('attributes', 'custom_header', None)
 """
@@ -57,4 +82,46 @@ OPTION_SKIP_NUMBERING_KEY: Option = Option('attributes', 'skip_numbering', False
 If numbering for questions should be skipped.
 
 Defaults to false.
+"""
+
+OPTION_HINT_HEIGHT: Option = Option('hints', 'height', '4em')
+"""
+The height to use for this object.
+
+Defaults to '4em'.
+"""
+
+OPTION_HINT_INLINE: Option = Option('hints', 'inline', False)
+"""
+If an object should try to render its content on the same line.
+
+Defaults to false.
+"""
+
+OPTION_HINT_NOCENTER: Option = Option('hints', 'nocenter', False)
+"""
+Do not try to center for this object.
+
+Defaults to false.
+"""
+
+OPTION_HINT_PAGEBREAK_AFTER: Option = Option('hints', 'pagebreak_after', False)
+"""
+If an object (usually a question) should insert a pagebreak after itself.
+
+Defaults to false.
+"""
+
+OPTION_HINT_PAGEBREAK_BEFORE: Option = Option('hints', 'pagebreak_before', False)
+"""
+If an object (usually a question) should insert a pagebreak before itself.
+
+Defaults to false.
+"""
+
+OPTION_HINT_WIDTH: Option = Option('hints', 'width', 1.0)
+"""
+The width to use for this object.
+
+Defaults to 1,0.
 """
