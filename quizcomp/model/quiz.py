@@ -338,7 +338,6 @@ class Variant(Quiz):
         group_data = DUMMY_GROUP_DATA.copy()
 
         group_data['questions'] = [question]
-        group_data['_skip_class_validations'] = [quizcomp.model.group.Group]
         quiz_data['groups'] = [quizcomp.model.group.Group(**group_data)]
 
         return Variant(**quiz_data)

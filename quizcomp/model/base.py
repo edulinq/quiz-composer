@@ -92,6 +92,8 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
         if (attributes is None):
             attributes = {}
 
+        attributes.update(kwargs)
+
         self.attributes: typing.Dict[str, edq.util.serial.POD] = attributes.copy()
         """
         General attributes for this object.
