@@ -522,10 +522,10 @@ class ChoiceAnswers(QuestionAnswers):
         return [(quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[i]), choice) for (i, choice) in enumerate(self.choices)]
 
     @classmethod
-    def from_pod(cls: typing.Type[MultiplePartTextAnswers],
+    def from_pod(cls: typing.Type[ChoiceAnswers],
             data: PODType,
             serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
-            ) -> MultiplePartTextAnswers:
+            ) -> ChoiceAnswers:
         if (serialization_options is None):
             serialization_options = {}
 

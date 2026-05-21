@@ -3,7 +3,7 @@
 {% import 'questions/answer_list.template' as answer_list %}
 
 {% block field_ids %}
-    {{ answer_list.field_ids(id, this.answers) }}
+    {{ answer_list.field_id_list(id, this.answers.options) }}
 {% endblock %}
 
 {% block body %}
@@ -19,15 +19,15 @@
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
         </outcomes>
-        {% for answer in this.answers %}
+        {% for option in this.answers.options %}
             {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
             <respcondition continue="Yes">
                 <conditionvar>
-                    <varequal respident="response1">{{ answer.raw_text }}</varequal>
+                    <varequal respident="response1">{{ option.text.to_html() }}</varequal>
                 </conditionvar>
                 <setvar varname="SCORE" action="Set">100</setvar>
             </respcondition>
-            {% if answer.feedback %}
+            {% if ((option.feedback is not none) and (options.feedback.general is not none)) %}
                 <displayfeedback feedbacktype="Response" linkrefid="{{ id }}_fb"/>
             {% endif %}
         {% endfor %}
@@ -35,5 +35,5 @@
 {% endblock %}
 
 {% block additional_feedback %}
-    {{ answer_list.feedback(id, this.answers) }}
+    {{ answer_list.options_feedback(id, this.answers.options) }}
 {% endblock %}

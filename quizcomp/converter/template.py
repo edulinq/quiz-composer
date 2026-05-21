@@ -188,7 +188,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             last_child_index = child_index
 
             # TEST
-            if (child_index >= 1):
+            if (child_index >= 2):
                 break
 
         return "\n".join(children_content), running_question_number

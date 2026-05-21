@@ -3,7 +3,7 @@
 {% import 'questions/answer_list.template' as answer_list %}
 
 {% block field_ids %}
-    {{ answer_list.field_ids(id, this.answers) }}
+    {{ answer_list.field_id_list(id, this.answers.choices) }}
 {% endblock %}
 
 {% block body %}
@@ -15,5 +15,5 @@
 {% endblock %}
 
 {% block additional_feedback %}
-    {{ answer_list.feedback(id, this.answers) }}
+    {{ answer_list.options_feedback(id, this.answers.choices) }}
 {% endblock %}

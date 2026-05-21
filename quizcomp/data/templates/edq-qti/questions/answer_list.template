@@ -1,21 +1,21 @@
-{% macro field_ids(id, answers) %}
-    {% for answer in answers %}
-        {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
+{% macro field_id_list(id, options) %}
+    {% for _ in options %}
+        {% set id = 'af' ~ question_id ~ 'f' ~ loop.index0 %}
         {% if not loop.last %}
-                {% set id = id ~ ',' %}
+            {% set id = id ~ ',' %}
         {% endif %}
         {{- id -}}
     {% endfor %}
 {% endmacro %}
 
-{% macro body(id, answers, cardinality = 'Single') %}
+{% macro body(id, options, cardinality = 'Single') %}
     <response_lid ident="response1" rcardinality="{{ cardinality }}">
         <render_choice>
-            {% for answer in answers %}
+            {% for option in options %}
                 {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
                 <response_label ident="{{ id }}">
                 <material>
-                    <mattext texttype="text/html">{{ answer.text }}</mattext>
+                    <mattext texttype="text/html">{{ option.text }}</mattext>
                 </material>
                 </response_label>
             {% endfor %}
@@ -23,21 +23,21 @@
     </response_lid>
 {% endmacro %}
 
-{% macro scoring(id, answers) %}
+{% macro scoring(id, options) %}
     <resprocessing>
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
         </outcomes>
-        {% for answer in answers %}
+        {% for option in options %}
             {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
             <respcondition continue="Yes">
                 <conditionvar>
                     <varequal respident="response1">{{ id }}</varequal>
                 </conditionvar>
-                {% if answer.correct %}
+                {% if option.correct %}
                     <setvar action="Set" varname="SCORE">100</setvar>
                 {% endif %}
-                {% if answer.feedback %}
+                {% if ((option.feedback is not none) and (options.feedback.general is not none)) %}
                     <displayfeedback feedbacktype="Response" linkrefid="{{ id }}_fb"/>
                 {% endif %}
             </respcondition>
@@ -45,15 +45,15 @@
     </resprocessing>
 {% endmacro %}
 
-{% macro feedback(id, answers) %}
-    {% for answer in answers %}
+{% macro options_feedback(id, options) %}
+    {% for option in options %}
         {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
-        {% if answer.feedback %}
+        {% if ((option.feedback is not none) and (options.feedback.general is not none)) %}
             <itemfeedback ident="{{ id }}_fb">
                 <flow_mat>
                     <material>
                         <mattext texttype="text/html">
-                            {{ answer.feedback }}
+                            {{ option.feedback.general.html() }}
                         </mattext>
                     </material>
                 </flow_mat>
