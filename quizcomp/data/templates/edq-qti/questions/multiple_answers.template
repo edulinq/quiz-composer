@@ -1,13 +1,13 @@
 {% extends "questions/base.template" %}
 
-{% import 'questions/answer_list.template' as answer_list %}
+{% import 'questions/utils.template' as utils %}
 
 {% block field_ids %}
-    {{ answer_list.field_id_list(id, this.answers.choices) }}
+    {{ utils.field_id_list(id, this.answers.choices) }}
 {% endblock %}
 
 {% block body %}
-    {{ answer_list.body(id, this.answers, cardinality = 'Multiple') }}
+    {{ utils.options_body(id, this.answers.choices, cardinality = 'Multiple') }}
 {% endblock %}
 
 {% block scoring %}
@@ -18,9 +18,9 @@
         <respcondition continue="No">
             <conditionvar>
                 <and>
-                    {% for answer in this.answers %}
+                    {% for choice in this.answers.choices %}
                         {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
-                        {% if answer.correct %}
+                        {% if (choice.correct) %}
                             <varequal respident="response1">{{ id }}</varequal>
                         {% else %}
                             <not>
@@ -36,5 +36,5 @@
 {% endblock %}
 
 {% block additional_feedback %}
-    {{ answer_list.options_feedback(id, this.answers.choices) }}
+    {{ utils.options_feedback(id, this.answers.choices) }}
 {% endblock %}

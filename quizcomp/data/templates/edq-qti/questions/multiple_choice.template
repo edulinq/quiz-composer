@@ -1,19 +1,19 @@
 {% extends "questions/base.template" %}
 
-{% import 'questions/answer_list.template' as answer_list %}
+{% import 'questions/utils.template' as utils %}
 
 {% block field_ids %}
-    {{ answer_list.field_id_list(id, this.answers.choices) }}
+    {{ utils.field_id_list(id, this.answers.choices) }}
 {% endblock %}
 
 {% block body %}
-    {{ answer_list.body(id, this.answers) }}
+    {{ utils.options_body(id, this.answers.choices) }}
 {% endblock %}
 
 {% block scoring %}
-    {{ answer_list.scoring(id, this.answers) }}
+    {{ utils.options_scoring(id, this.answers.choices) }}
 {% endblock %}
 
 {% block additional_feedback %}
-    {{ answer_list.options_feedback(id, this.answers.choices) }}
+    {{ utils.options_feedback(id, this.answers.choices) }}
 {% endblock %}

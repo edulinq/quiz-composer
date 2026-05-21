@@ -8,14 +8,14 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro body(id, options, cardinality = 'Single') %}
+{% macro options_body(id, options, cardinality = 'Single') %}
     <response_lid ident="response1" rcardinality="{{ cardinality }}">
         <render_choice>
             {% for option in options %}
                 {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
                 <response_label ident="{{ id }}">
                 <material>
-                    <mattext texttype="text/html">{{ option.text }}</mattext>
+                    <mattext texttype="text/html">{{ option.text.to_html() }}</mattext>
                 </material>
                 </response_label>
             {% endfor %}
@@ -23,7 +23,7 @@
     </response_lid>
 {% endmacro %}
 
-{% macro scoring(id, options) %}
+{% macro options_scoring(id, options) %}
     <resprocessing>
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
@@ -34,7 +34,7 @@
                 <conditionvar>
                     <varequal respident="response1">{{ id }}</varequal>
                 </conditionvar>
-                {% if option.correct %}
+                {% if (option.correct) %}
                     <setvar action="Set" varname="SCORE">100</setvar>
                 {% endif %}
                 {% if ((option.feedback is not none) and (options.feedback.general is not none)) %}

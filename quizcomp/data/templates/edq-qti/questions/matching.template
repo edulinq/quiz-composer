@@ -1,8 +1,8 @@
 {% extends "questions/base.template" %}
 
 {% block field_ids %}
-    {% for left in this.answers.lefts %}
-        {% set id = left.one_index %}
+    {% for row in this.answers.get_tabular_options() if (row.left is not none) %}
+        {% set id = loop.index %}
         {% if not loop.last %}
             {% set id = id ~ ',' %}
         {% endif %}
@@ -11,23 +11,23 @@
 {% endblock %}
 
 {% block body %}
-    {% for left in this.answers.lefts %}
-        <response_lid ident="response_{{ left.one_index }}">
+    {% for outter_row in this.answers.get_tabular_options() if (outter_row.left is not none) %}
+        <response_lid ident="response_{{ loop.index }}">
             <material>
                 {% if canvas %}
-                    <mattext texttype="text/plain">{{ left.raw_text }}</mattext>
+                    <mattext texttype="text/plain">{{ outter_row.left.text.to_text() }}</mattext>
                 {% else %}
-                    <mattext texttype="text/html">{{ left.text }}</mattext>
+                    <mattext texttype="text/html">{{ outter_row.left.text.to_html() }}</mattext>
                 {% endif %}
             </material>
             <render_choice>
-            {% for right in this.answers.rights %}
-                <response_label ident="{{ right.one_index }}">
+            {% for inner_row in this.answers.get_tabular_options() %}
+                <response_label ident="{{ inner_row.right_marker.to_text() }}">
                     <material>
                         {% if canvas %}
-                            <mattext>{{ right.raw_text }}</mattext>
+                            <mattext>{{ inner_row.right.text.to_text() }}</mattext>
                         {% else %}
-                            <mattext>{{ right.text }}</mattext>
+                            <mattext>{{ inner_row.right.text.to_html() }}</mattext>
                         {% endif %}
                     </material>
                 </response_label>
@@ -42,12 +42,12 @@
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
         </outcomes>
-        {% for left in this.answers.lefts %}
+        {% for row in this.answers.get_tabular_options() if (row.left is not none) %}
             <respcondition>
                 <conditionvar>
-                    <varequal respident="response_{{ left.one_index }}">{{ left.solution_one_index }}</varequal>
+                    <varequal respident="response_{{ loop.index }}">{{ row.correct_marker.to_text() }}</varequal>
                 </conditionvar>
-                <setvar varname="SCORE" action="Add">{{ (100.0 / (this.answers.lefts | length)) | round(2) }}</setvar>
+                <setvar varname="SCORE" action="Add">{{ (100.0 / (this.answers.pairs | length)) | round(2) }}</setvar>
             </respcondition>
         {% endfor %}
     </resprocessing>

@@ -1,6 +1,6 @@
 {% extends "questions/base.template" %}
 
-{% import 'questions/answer_list.template' as answer_list %}
+{% import 'questions/utils.template' as utils %}
 
 {% block field_ids %}
     0
@@ -55,5 +55,5 @@
 {% endblock %}
 
 {% block additional_feedback %}
-    {{ answer_list.options_feedback(id, this.answers.options) }}
+    {{ utils.options_feedback(id, this.answers.options) }}
 {% endblock %}
