@@ -1,11 +1,9 @@
 {% macro field_id_list(id, options) %}
+    {% set ids = [] %}
     {% for _ in options %}
-        {% set id = 'af' ~ question_id ~ 'f' ~ loop.index0 %}
-        {% if not loop.last %}
-            {% set id = id ~ ',' %}
-        {% endif %}
-        {{- id -}}
+        {{ ids.append('af' ~ question_id ~ 'f' ~ loop.index0) or '' }}
     {% endfor %}
+    {{- ids | join(',') -}}
 {% endmacro %}
 
 {% macro options_body(id, options, cardinality = 'Single') %}

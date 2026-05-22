@@ -19,28 +19,28 @@
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
         </outcomes>
-        {% for answer in this.answers.raw_answers %}
+        {% for option in this.answers.options %}
             {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
             <respcondition continue="No">
                 <conditionvar>
-                {% if answer.type == 'exact' %}
+                {% if (option.type == 'exact') %}
                     <or>
-                        <varequal respident="response1">{{ answer.value }}</varequal>
+                        <varequal respident="response1">{{ option.value }}</varequal>
                         <and>
-                            <vargte respident="response1">{{ answer.value - answer.margin }}</vargte>
-                            <varlte respident="response1">{{ answer.value + answer.margin }}</varlte>
+                            <vargte respident="response1">{{ option.value - option.margin }}</vargte>
+                            <varlte respident="response1">{{ option.value + option.margin }}</varlte>
                         </and>
                     </or>
-                {% elif answer.type == 'range' %}
-                    <vargte respident="response1">{{ answer.min }}</vargte>
-                    <varlte respident="response1">{{ answer.max }}</varlte>
-                {% elif answer.type == 'precision' %}
-                    {% set margin = (5 * (10 ** -(answer.precision))) %}
+                {% elif (option.type == 'range') %}
+                    <vargte respident="response1">{{ option.min }}</vargte>
+                    <varlte respident="response1">{{ option.max }}</varlte>
+                {% elif (option.type == 'precision') %}
+                    {% set margin = (5 * (10 ** -(option.precision))) %}
                     <or>
-                        <varequal respident="response1">{{ answer.value }}</varequal>
+                        <varequal respident="response1">{{ option.value }}</varequal>
                         <and>
-                            <vargte respident="response1">{{ answer.value - margin }}</vargte>
-                            <varlte respident="response1">{{ answer.value + margin }}</varlte>
+                            <vargte respident="response1">{{ option.value - margin }}</vargte>
+                            <varlte respident="response1">{{ option.value + margin }}</varlte>
                         </and>
                     </or>
                 {% endif %}

@@ -6,3 +6,1535 @@
     ],
 }
 ---
+<?xml version="1.0" encoding="UTF-8"?>
+<questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
+    <assessment ident="quiz" title="All Basic Questions - A">
+        <qtimetadata>
+            <qtimetadatafield>
+                <fieldlabel>
+                    cc_maxattempts
+                </fieldlabel>
+                <fieldentry>
+                    1
+                </fieldentry>
+            </qtimetadatafield>
+        </qtimetadata>
+        <section ident="root_section">
+            <section ident="group_0.0" title="essay-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                0
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.0.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.0.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_str ident="response1" rcardinality="Single">
+                            <render_fib>
+                                <response_label ident="answer1" rshuffle="No">
+                                </response_label>
+                            </render_fib>
+                        </response_str>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <other>
+                                </other>
+                            </conditionvar>
+                            <displayfeedback feedbacktype="Response" linkrefid="general_fb">
+                            </displayfeedback>
+                        </respcondition>
+                        <respcondition continue="No">
+                            <conditionvar>
+                                <other>
+                                </other>
+                            </conditionvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.1" title="fimb-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                1
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.1.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    af0.1.0f0f0,af0.1.0f1f0,af0.1.0f2f0,af0.1.0f3f0
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.1.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_lid ident="response_A">
+                            <material>
+                                <mattext>
+                                    A
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="af0.1.0f0f0">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    1
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                        <response_lid ident="response_B">
+                            <material>
+                                <mattext>
+                                    B
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="af0.1.0f1f0">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    2
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                        <response_lid ident="response_C">
+                            <material>
+                                <mattext>
+                                    C
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="af0.1.0f2f0">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    3
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                        <response_lid ident="response_D">
+                            <material>
+                                <mattext>
+                                    D
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="af0.1.0f3f0">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    4
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_A">
+                                    af0.1.0f0f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                25.0
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_B">
+                                    af0.1.0f1f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                25.0
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_C">
+                                    af0.1.0f2f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                25.0
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_D">
+                                    af0.1.0f3f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                25.0
+                            </setvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.2" title="fitb-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                1.5
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.2.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    aff0
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.2.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_str ident="response1" rcardinality="Single">
+                            <render_fib>
+                                <response_label ident="answer1" rshuffle="No">
+                                </response_label>
+                            </render_fib>
+                        </response_str>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    <div class="qg-root-block qg-block">
+                                        <p>
+                                            1
+                                        </p>
+                                    </div>
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.3" title="ma-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                2
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.3.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    aff0,aff1,aff2,aff3
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.3.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_lid ident="response1" rcardinality="Multiple">
+                            <render_choice>
+                                <response_label ident="af0.3.0f0">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    A
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.3.0f1">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    B
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.3.0f2">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    C
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.3.0f3">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    D
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="No">
+                            <conditionvar>
+                                <and>
+                                    <varequal respident="response1">
+                                        af0.3.0f0
+                                    </varequal>
+                                    <varequal respident="response1">
+                                        af0.3.0f1
+                                    </varequal>
+                                    <not>
+                                        <varequal respident="response1">
+                                            af0.3.0f2
+                                        </varequal>
+                                    </not>
+                                    <not>
+                                        <varequal respident="response1">
+                                            af0.3.0f3
+                                        </varequal>
+                                    </not>
+                                </and>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.4" title="matching-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                2.25
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.4.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    1,2,3
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.4.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_lid ident="response_1">
+                            <material>
+                                <mattext texttype="text/html">
+                                    <div class="qg-root-block qg-block">
+                                        <p>
+                                            A
+                                        </p>
+                                    </div>
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="A">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    1
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="B">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    2
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="C">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    3
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="D">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    4
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="E">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    5
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="F">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    6
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                        <response_lid ident="response_2">
+                            <material>
+                                <mattext texttype="text/html">
+                                    <div class="qg-root-block qg-block">
+                                        <p>
+                                            B
+                                        </p>
+                                    </div>
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="A">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block">
+                                                <p>
+                                                    1
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="B">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block">
+                                                <p>
+                                                    2
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="C">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block">
+                                                <p>
+                                                    3
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="D">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block">
+                                                <p>
+                                                    4
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="E">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block">
+                                                <p>
+                                                    5
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="F">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block">
+                                                <p>
+                                                    6
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                        <response_lid ident="response_3">
+                            <material>
+                                <mattext texttype="text/html">
+                                    <div class="qg-root-block qg-block">
+                                        <p>
+                                            C
+                                        </p>
+                                    </div>
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="A">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block qg-block">
+                                                <p>
+                                                    1
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="B">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block qg-block">
+                                                <p>
+                                                    2
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="C">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block qg-block">
+                                                <p>
+                                                    3
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="D">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block qg-block">
+                                                <p>
+                                                    4
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="E">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block qg-block">
+                                                <p>
+                                                    5
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="F">
+                                    <material>
+                                        <mattext>
+                                            <div class="qg-root-block qg-block qg-block qg-block">
+                                                <p>
+                                                    6
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition>
+                            <conditionvar>
+                                <varequal respident="response_1">
+                                    A
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                33.33
+                            </setvar>
+                        </respcondition>
+                        <respcondition>
+                            <conditionvar>
+                                <varequal respident="response_2">
+                                    B
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                33.33
+                            </setvar>
+                        </respcondition>
+                        <respcondition>
+                            <conditionvar>
+                                <varequal respident="response_3">
+                                    C
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                33.33
+                            </setvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.5" title="mcq-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                0.75
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.5.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    aff0,aff1,aff2,aff3
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.5.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_lid ident="response1" rcardinality="Single">
+                            <render_choice>
+                                <response_label ident="af0.5.0f0">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    A
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.5.0f1">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    B
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.5.0f2">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    C
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.5.0f3">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    D
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.5.0f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.5.0f1
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.5.0f2
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.5.0f3
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.6" title="mdd-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                1.5
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.6.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    af0.6.0f0f0,af0.6.0f0f1,af0.6.0f0f2,af0.6.0f1f0,af0.6.0f1f1,af0.6.0f1f2
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.6.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_lid ident="response_part1">
+                            <material>
+                                <mattext>
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="af0.6.0f0f0">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            a
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.6.0f0f1">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            b
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.6.0f0f2">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            c
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                        <response_lid ident="response_part2">
+                            <material>
+                                <mattext>
+                                </mattext>
+                            </material>
+                            <render_choice>
+                                <response_label ident="af0.6.0f1f0">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            1
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.6.0f1f1">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            2
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.6.0f1f2">
+                                    <material>
+                                        <mattext texttype="text/plain">
+                                            3
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_part1">
+                                    af0.6.0f0f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                50.0
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_part1">
+                                    af0.6.0f0f1
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_part1">
+                                    af0.6.0f0f2
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_part2">
+                                    af0.6.0f1f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Add" varname="SCORE">
+                                50.0
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_part2">
+                                    af0.6.0f1f1
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response_part2">
+                                    af0.6.0f1f2
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.7" title="numeric-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                1
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.7.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    0
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.7.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_str ident="response1" rcardinality="Single">
+                            <render_fib fibtype="Decimal">
+                                <response_label ident="answer1">
+                                </response_label>
+                            </render_fib>
+                        </response_str>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="No">
+                            <conditionvar>
+                                <or>
+                                    <varequal respident="response1">
+                                        0.08
+                                    </varequal>
+                                    <and>
+                                        <vargte respident="response1">
+                                            0.08
+                                        </vargte>
+                                        <varlte respident="response1">
+                                            0.08
+                                        </varlte>
+                                    </and>
+                                </or>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="No">
+                            <conditionvar>
+                                <or>
+                                    <varequal respident="response1">
+                                        0.08
+                                    </varequal>
+                                    <and>
+                                        <vargte respident="response1">
+                                            0.07
+                                        </vargte>
+                                        <varlte respident="response1">
+                                            0.09
+                                        </varlte>
+                                    </and>
+                                </or>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="No">
+                            <conditionvar>
+                                <vargte respident="response1">
+                                    0.07
+                                </vargte>
+                                <varlte respident="response1">
+                                    0.09
+                                </varlte>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="No">
+                            <conditionvar>
+                                <or>
+                                    <varequal respident="response1">
+                                        0.08
+                                    </varequal>
+                                    <and>
+                                        <vargte respident="response1">
+                                            0.03
+                                        </vargte>
+                                        <varlte respident="response1">
+                                            0.13
+                                        </varlte>
+                                    </and>
+                                </or>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.8" title="sa-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                1
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.8.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.8.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_str ident="response1" rcardinality="Single">
+                            <render_fib>
+                                <response_label ident="answer1" rshuffle="No">
+                                </response_label>
+                            </render_fib>
+                        </response_str>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <other>
+                                </other>
+                            </conditionvar>
+                            <displayfeedback feedbacktype="Response" linkrefid="general_fb">
+                            </displayfeedback>
+                        </respcondition>
+                        <respcondition continue="No">
+                            <conditionvar>
+                                <other>
+                                </other>
+                            </conditionvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+            <section ident="group_0.9" title="textonly-basic">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                0.0
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.9.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.9.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <!-- Empty -->
+                    </presentation>
+                    <!-- Empty -->
+                    <!-- Empty -->
+                </item>
+            </section>
+            <section ident="group_0.10" title="tf-true">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                1
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.10.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    aff0,aff1
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.10.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_lid ident="response1" rcardinality="Single">
+                            <render_choice>
+                                <response_label ident="af0.10.0f0">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    True
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.10.0f1">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    False
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.10.0f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.10.0f1
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+        </section>
+    </assessment>
+</questestinterop>
+

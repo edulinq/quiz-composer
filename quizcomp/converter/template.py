@@ -129,7 +129,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         return self.finalize(self._convert_quiz(quiz))
 
     def convert_variant(self, variant: quizcomp.model.quiz.variant, **kwargs: typing.any) -> str:
-        """ convert a a standard quiz variant. """
+        """ Convert a standard quiz variant. """
 
         return self.finalize(self._convert_quiz(variant))
 
@@ -186,10 +186,6 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             last_child = child
             last_child_id = child_id
             last_child_index = child_index
-
-            # TEST
-            if (child_index >= 5):
-                break
 
         return "\n".join(children_content), running_question_number
 

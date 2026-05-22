@@ -2,7 +2,7 @@
 
 {% block field_ids %}
     {% set ids = [] %}
-    {% for part in this.answers %}
+    {% for part in this.answers.parts.values() %}
         {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
         {% for choice in part.choices %}
             {% set choice_id = part_id ~ 'f' ~ loop.index0 %}
@@ -13,19 +13,19 @@
 {% endblock %}
 
 {% block body %}
-    {% for part in this.answers %}
+    {% for (label, part) in this.answers.parts.items() %}
         {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
-        {% set response_ref = 'response_' ~ part.raw_label %}
+        {% set response_ref = 'response_' ~ label %}
         <response_lid ident="{{ response_ref }}">
             <material>
-                <mattext>{{ part.raw_label }}</mattext>
+                <mattext>{{ part.label }}</mattext>
             </material>
             <render_choice>
                 {% for choice in part.choices %}
                     {% set choice_id = part_id ~ 'f' ~ loop.index0 %}
                     <response_label ident="{{ choice_id }}">
                         <material>
-                            <mattext texttype="text/plain">{{ choice.raw_text }}</mattext>
+                            <mattext texttype="text/plain">{{ choice.text.to_text() }}</mattext>
                         </material>
                     </response_label>
                 {% endfor %}
@@ -39,9 +39,9 @@
         <outcomes>
             <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
         </outcomes>
-        {% for part in this.answers %}
+        {% for(label, part) in this.answers.parts.items() %}
             {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
-            {% set response_ref = 'response_' ~ part.raw_label %}
+            {% set response_ref = 'response_' ~ label %}
             {% for choice in part.choices %}
                 {% set choice_id = part_id ~ 'f' ~ loop.index0 %}
                 <respcondition continue="Yes">
@@ -49,7 +49,7 @@
                         <varequal respident="{{ response_ref }}">{{ choice_id }}</varequal>
                     </conditionvar>
                     {% if choice.correct %}
-                        <setvar varname="SCORE" action="Add">{{ (100.0 / (this.answers | length)) | round(2) }}</setvar>
+                        <setvar varname="SCORE" action="Add">{{ (100.0 / (this.answers.parts | length)) | round(2) }}</setvar>
                     {% endif %}
                     {% if choice.feedback %}
                         <displayfeedback feedbacktype="Response" linkrefid="{{ choice_id }}_fb"/>
@@ -61,16 +61,16 @@
 {% endblock %}
 
 {% block additional_feedback %}
-    {% for part in this.answers %}
+    {% for part in this.answers.parts.values() %}
         {% set part_id = 'af' ~ id ~ 'f' ~ loop.index0 %}
         {% for choice in part.choices %}
             {% set choice_id = part_id ~ 'f' ~ loop.index0 %}
-            {% if choice.feedback %}
+            {% if ((choice.feedback is not none) and (choice.feedback.general is not none)) %}
                 <itemfeedback ident="{{ choice_id }}_fb">
                     <flow_mat>
                         <material>
                             <mattext texttype="text/html">
-                                {{ choice.feedback }}
+                                {{ choice.feedback.general.html() }}
                             </mattext>
                         </material>
                     </flow_mat>
