@@ -17,21 +17,6 @@ class TestQuizConverter(quizcomp.testing.base.BaseTest):
     Test converting quizzes.
     """
 
-    _quizzes_cache: typing.Dict[str, quizcomp.model.quiz.Quiz] = {}
-
-    def load_quiz(self, path: str) -> quizcomp.model.quiz.Quiz:
-        """ Load a quiz from either the cache or disk. """
-
-        path = os.path.abspath(path)
-
-        if (path in self._quizzes_cache):
-            return self._quizzes_cache[path]
-
-        quiz = quizcomp.model.quiz.Quiz.from_path(path)
-        self._quizzes_cache[path] = quiz
-
-        return quiz
-
     def _assert_exists_replace(self, container: typing.Dict[str, typing.Any], key: str, replacement: typing.Any) -> typing.Any:
         """
         Ensure a value exists (and is not None), and then replace it.
@@ -66,7 +51,7 @@ def _get_good_convert_test(path: str) -> typing.Callable:
 
         expected = edq.util.json.load_path(expected_path)
 
-        quiz = quizcomp.model.quiz.Quiz.from_path(path)
+        quiz = self.load_quiz(path)
         variant = quiz.create_variants()[0]  # pylint: disable=no-member
         raw_result = quizcomp.converter.convert.convert_variant(variant, format = quizcomp.constants.FORMAT_JSON_TEMPLATE)
 
@@ -106,7 +91,7 @@ def _get_bad_validate_test(path: str) -> typing.Callable:
 
     def __method(self: TestQuizConverter) -> None:
         try:
-            quizcomp.model.quiz.Quiz.from_path(path)
+            self.load_quiz(path)
         except Exception:
             # Expected.
             return

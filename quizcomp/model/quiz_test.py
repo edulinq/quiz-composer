@@ -17,21 +17,6 @@ class QuizTest(quizcomp.testing.base.BaseTest):
     Test base functionally of quizzes.
     """
 
-    _quizzes_cache: typing.Dict[str, quizcomp.model.quiz.Quiz] = {}
-
-    def load_quiz(self, path: str) -> quizcomp.model.quiz.Quiz:
-        """ Load a quiz from either the cache or disk. """
-
-        path = os.path.abspath(path)
-
-        if (path in self._quizzes_cache):
-            return self._quizzes_cache[path]
-
-        quiz = quizcomp.model.quiz.Quiz.from_path(path)
-        self._quizzes_cache[path] = quiz
-
-        return quiz
-
     def test_get_points_base(self) -> None:
         """ Test that quizzes have the correct number of total points. """
 
@@ -51,7 +36,7 @@ class QuizTest(quizcomp.testing.base.BaseTest):
             (path, expected) = test_case
 
             with self.subTest(msg = f"Case {i}: {path}"):
-                quiz = quizcomp.model.quiz.Quiz.from_path(path)
+                quiz = self.load_quiz(path)
                 variant = quiz.create_variant()  # pylint: disable=no-member
 
                 self.assertEqual(quiz.get_points(), expected, "quiz")  # pylint: disable=no-member
@@ -141,7 +126,7 @@ def _get_quiz_bad_test_method(path: str) -> typing.Callable:
 
     def __method(self: QuizTest) -> None:
         with self.assertRaises(quizcomp.errors.QuizValidationError):
-            quizcomp.model.quiz.Quiz.from_path(path)
+            self.load_quiz(path)
 
     return __method
 

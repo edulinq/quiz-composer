@@ -12,21 +12,6 @@ class TestQuestionConverter(quizcomp.testing.base.BaseTest):
     The content of the conversion is not tested, only that it successful and produces content.
     """
 
-    _questions_cache: typing.Dict[str, quizcomp.model.question.Question] = {}
-
-    def load_question(self, path: str) -> quizcomp.model.question.Question:
-        """ Load a question from either the cache or disk. """
-
-        path = os.path.abspath(path)
-
-        if (path in self._questions_cache):
-            return self._questions_cache[path]
-
-        question = quizcomp.model.question.Question.from_path(path)
-        self._questions_cache[path] = question
-
-        return question
-
 def _add_converter_tests() -> None:
     """ Add test cases for converting questions to all supported formats. """
 

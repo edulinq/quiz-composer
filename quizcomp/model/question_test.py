@@ -33,21 +33,6 @@ class QuestionsTest(quizcomp.testing.base.BaseTest):
     Test that questions in 'testsdata/questions/bad' do not parse.
     """
 
-    _questions_cache: typing.Dict[str, quizcomp.model.question.Question] = {}
-
-    def load_question(self, path: str) -> quizcomp.model.question.Question:
-        """ Load a question from either the cache or disk. """
-
-        path = os.path.abspath(path)
-
-        if (path in self._questions_cache):
-            return self._questions_cache[path]
-
-        question = quizcomp.model.question.Question.from_path(path)
-        self._questions_cache[path] = question
-
-        return question
-
 def _add_question_tests() -> None:
     """ Add test cases for parsing good and bad questions. """
 
@@ -153,7 +138,7 @@ def _get_question_bad_test_method(path: str) -> typing.Callable:
 
     def __method(self: QuestionsTest) -> None:
         with self.assertRaises(quizcomp.errors.QuestionValidationError):
-            quizcomp.model.question.Question.from_path(path)
+            self.load_question(path)
 
     return __method
 
