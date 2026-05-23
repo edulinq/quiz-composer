@@ -1,3 +1,4 @@
+# TEST
 import html
 import logging
 import os
@@ -17,22 +18,6 @@ import quizcomp.model.quiz
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
 
-QUESTION_TYPE_MAP: typing.Dict[quizcomp.model.constants.QuestionType, str] = {
-    # Direct Mappings
-    quizcomp.model.constants.QuestionType.ESSAY: 'essay_question',
-    quizcomp.model.constants.QuestionType.FIMB: 'fill_in_multiple_blanks_question',
-    quizcomp.model.constants.QuestionType.MATCHING: 'matching_question',
-    quizcomp.model.constants.QuestionType.MA: 'multiple_answers_question',
-    quizcomp.model.constants.QuestionType.MCQ: 'multiple_choice_question',
-    quizcomp.model.constants.QuestionType.MDD: 'multiple_dropdowns_question',
-    quizcomp.model.constants.QuestionType.NUMERICAL: 'numerical_question',
-    quizcomp.model.constants.QuestionType.TEXT_ONLY: 'text_only_question',
-    quizcomp.model.constants.QuestionType.TF: 'true_false_question',
-    # Indirect Mappings
-    quizcomp.model.constants.QuestionType.FITB: 'short_answer_question',
-    quizcomp.model.constants.QuestionType.SA: 'essay_question',
-}
-
 TEMPLATE_FILENAME_ASSESSMENT_META: str = 'qti_assessment_meta.template'
 TEMPLATE_FILENAME_MANIFEST: str = 'qti_imsmanifest.template'
 
@@ -42,9 +27,6 @@ OUT_FILENAME_QUIZ: str = 'quiz.xml'
 OUT_FILENAME_ASSESSMENT_META: str = 'assessment_meta.xml'
 OUT_FILENAME_MANIFEST: str = 'imsmanifest.xml'
 
-DEFAULT_ID_DELIM: str = '.'
-CANVAS_ID_DELIM: str = 'f'
-
 class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
     """
     A converter to convert a quiz to QTI using templates.
@@ -52,36 +34,17 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
     def __init__(self,
             template_dir: str = DEFAULT_TEMPLATE_DIR,
-            canvas: bool = False,
             **kwargs: typing.Any) -> None:
-        parser_format_options = {}
-        id_delim = DEFAULT_ID_DELIM
-
-        if (canvas):
-            parser_format_options = {
-                'image_path_callback': self._store_images,
-                'force_raw_image_src': True,
-            }
-            id_delim = CANVAS_ID_DELIM
-
         super().__init__(quizcomp.constants.FORMAT_HTML, template_dir,
-                parser_format_options = parser_format_options,
-                id_delim = id_delim,
                 jinja_filters = {
                     'to_xml': _to_xml,
                 },
-                jinja_globals = {
-                    'canvas': canvas,
-                },
                 **kwargs)
 
-        self.canvas = canvas
+    def finalize(self, text: str) -> str:
+        return _format_xml(text)
 
-    def convert_variant(self, variant: quizcomp.model.quiz.Variant, **kwargs: typing.Any) -> str:
-        # Parse and format the XML.
-        text = super().convert_variant(variant, **kwargs)
-        return self._format_xml(text)
-
+    ''' TEST
     def modify_question_context(self,
             context: typing.Dict[str, typing.Any],
             question: quizcomp.model.question.Question,
@@ -109,7 +72,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         path = os.path.join(quiz_dir, OUT_FILENAME_QUIZ)
         text = super().convert_quiz(quiz, **kwargs)
-        edq.util.dirent.write_file(path, self._format_xml(text))
+        edq.util.dirent.write_file(path, _format_xml(text))
 
         self._convert_assessment_meta(quiz, quiz_dir)
         self._convert_manifest(quiz, temp_dir)
@@ -124,13 +87,6 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         shutil.make_archive(os.path.splitext(temp_out_path)[0], 'zip', os.path.dirname(temp_dir), os.path.basename(temp_dir))
         edq.util.dirent.copy(temp_out_path, out_path)
-
-    def _format_xml(self, text: str) -> str:
-        """ Format/Prettify the XML. """
-
-        warnings.filterwarnings('ignore', category = bs4.builder.XMLParsedAsHTMLWarning)  # type: ignore[attr-defined]
-        document = bs4.BeautifulSoup(text, 'html.parser')
-        return document.prettify(formatter = bs4.formatter.HTMLFormatter(indent = 4))
 
     def _convert_assessment_meta(self, quiz: quizcomp.model.quiz.Quiz, out_dir: str) -> None:
         """ Write a quiz's metadata. """
@@ -152,7 +108,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         if (not self.canvas):
             # Canvas has some very strange and undocumented formatting requirements for the assessment meta file.
             # Do not format/pretty when working with Canvas.
-            text = self._format_xml(text)
+            text = _format_xml(text)
 
         path = os.path.join(out_dir, OUT_FILENAME_ASSESSMENT_META)
         edq.util.dirent.write_file(path, text)
@@ -177,7 +133,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
             })
 
         text = template.render(**data)
-        text = self._format_xml(text)
+        text = _format_xml(text)
 
         path = os.path.join(out_dir, OUT_FILENAME_MANIFEST)
         edq.util.dirent.write_file(path, text)
@@ -197,6 +153,14 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         filename = os.path.basename(path)
 
         return '/'.join(['$IMS-CC-FILEBASE$', quiz_name, OUT_DIR_IMAGES, filename])
+    '''
+
+def _format_xml(text: str) -> str:
+    """ Format/Prettify the XML. """
+
+    warnings.filterwarnings('ignore', category = bs4.builder.XMLParsedAsHTMLWarning)  # type: ignore[attr-defined]
+    document = bs4.BeautifulSoup(text, 'html.parser')
+    return document.prettify(formatter = bs4.formatter.HTMLFormatter(indent = 4))
 
 def _to_xml(item: typing.Union[None, bool, typing.Any]) -> str:
     """

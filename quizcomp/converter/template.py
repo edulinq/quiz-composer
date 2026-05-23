@@ -57,6 +57,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     """
 
     # TEST - Check args.
+    # TEST - All image-related things.
     def __init__(self,
             format: str,
             template_dir: str,
