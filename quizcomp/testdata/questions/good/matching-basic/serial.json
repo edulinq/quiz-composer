@@ -20,7 +20,6 @@
             ]
         ]
     },
-    "base_dir": ".",
     "prompt": "Matching: Basic",
     "question_type": "matching"
 }

@@ -4,7 +4,6 @@
         "2",
         "3"
     ],
-    "base_dir": ".",
     "prompt": "Short Answer \\/ Fill in The Blank: Multiple Values",
     "question_type": "fill_in_the_blank"
 }

@@ -29,7 +29,6 @@
             }
         ]
     },
-    "base_dir": ".",
     "prompt": "Multiple Drop Downs: Basic <placeholder>part1</placeholder> and <placeholder>part2</placeholder>",
     "question_type": "multiple_dropdowns"
 }

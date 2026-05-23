@@ -4,7 +4,6 @@
         "b",
         "c"
     ],
-    "base_dir": ".",
     "prompt": "Short Answer: String List",
     "question_type": "short_answer"
 }

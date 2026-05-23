@@ -20,7 +20,6 @@
             ]
         ]
     },
-    "base_dir": ".",
     "prompt": "Matching: Strip",
     "question_type": "matching"
 }

@@ -9,7 +9,6 @@
             "9^0"
         ]
     },
-    "base_dir": ".",
     "prompt": "Fill in Multiple Blanks: Special Characters -- <placeholder>A</placeholder>",
     "question_type": "fill_in_multiple_blanks"
 }

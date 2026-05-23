@@ -17,7 +17,9 @@
             "text": "D"
         }
     ],
-    "base_dir": ".",
+    "attributes": {
+        "shuffle_answers": false
+    },
     "prompt": "Shuffle Answers: False",
     "question_type": "multiple_choice"
 }

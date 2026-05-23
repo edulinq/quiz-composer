@@ -9,7 +9,6 @@
             "text": "b"
         }
     ],
-    "base_dir": ".",
     "prompt": "SA: Feedback List",
     "question_type": "short_answer"
 }

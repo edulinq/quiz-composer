@@ -5,7 +5,6 @@
             "text": "a"
         }
     ],
-    "base_dir": ".",
     "prompt": "Essay: Feedback",
     "question_type": "essay"
 }

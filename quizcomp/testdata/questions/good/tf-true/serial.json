@@ -9,7 +9,6 @@
             "text": "False"
         }
     ],
-    "base_dir": ".",
     "prompt": "True\\/False: True",
     "question_type": "true_false"
 }

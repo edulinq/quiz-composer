@@ -5,7 +5,6 @@
             "text": "a"
         }
     ],
-    "base_dir": ".",
     "prompt": "SA: Feedback",
     "question_type": "short_answer"
 }

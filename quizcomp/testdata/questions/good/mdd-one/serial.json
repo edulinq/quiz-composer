@@ -15,7 +15,6 @@
             }
         ]
     },
-    "base_dir": ".",
     "prompt": "Multiple Drop Downs: One <placeholder>part1</placeholder>",
     "question_type": "multiple_dropdowns"
 }

@@ -2,7 +2,6 @@
     "answers": [
         "test"
     ],
-    "base_dir": ".",
     "prompt": "Short Answer: String",
     "question_type": "short_answer"
 }

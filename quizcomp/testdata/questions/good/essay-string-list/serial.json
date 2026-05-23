@@ -4,7 +4,6 @@
         "b",
         "c"
     ],
-    "base_dir": ".",
     "prompt": "Essay: String List",
     "question_type": "essay"
 }

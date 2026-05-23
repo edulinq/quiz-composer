@@ -2,7 +2,6 @@
     "answers": [
         "test"
     ],
-    "base_dir": ".",
     "prompt": "Essay: String",
     "question_type": "essay"
 }

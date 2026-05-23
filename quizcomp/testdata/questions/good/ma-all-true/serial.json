@@ -17,7 +17,6 @@
             "text": "D"
         }
     ],
-    "base_dir": ".",
     "prompt": "Multiple Answers: All True",
     "question_type": "multiple_answers"
 }

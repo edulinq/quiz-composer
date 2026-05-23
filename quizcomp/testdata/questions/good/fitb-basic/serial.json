@@ -2,7 +2,6 @@
     "answers": [
         "1"
     ],
-    "base_dir": ".",
     "prompt": "Short Answer \\/ Fill in The Blank: Basic",
     "question_type": "fill_in_the_blank"
 }

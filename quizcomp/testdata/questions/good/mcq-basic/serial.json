@@ -5,7 +5,6 @@
         {"correct": false, "text": "C"},
         {"correct": false, "text": "D"}
     ],
-    "base_dir": ".",
     "prompt": "Multiple Choice: Basic",
     "question_type": "multiple_choice"
 }

@@ -11,7 +11,6 @@
             "text": "False"
         }
     ],
-    "base_dir": ".",
     "prompt": "True\\/False: Feedback",
     "question_type": "true_false"
 }

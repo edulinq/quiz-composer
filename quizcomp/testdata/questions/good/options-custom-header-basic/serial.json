@@ -20,7 +20,6 @@
     "attributes": {
         "custom_header": "Custom Name"
     },
-    "base_dir": ".",
     "prompt": "Custom Header",
     "question_type": "multiple_choice"
 }

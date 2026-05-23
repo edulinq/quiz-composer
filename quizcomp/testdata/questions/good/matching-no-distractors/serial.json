@@ -16,7 +16,6 @@
             ]
         ]
     },
-    "base_dir": ".",
     "prompt": "Matching: No Distractors",
     "question_type": "matching"
 }

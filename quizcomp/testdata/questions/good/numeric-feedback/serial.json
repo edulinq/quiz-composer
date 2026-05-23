@@ -27,7 +27,6 @@
             "value": 0.08
         }
     ],
-    "base_dir": ".",
     "prompt": "Numeric: Feedback",
     "question_type": "numerical"
 }

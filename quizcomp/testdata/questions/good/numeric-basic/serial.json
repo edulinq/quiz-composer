@@ -21,7 +21,6 @@
             "value": 0.08
         }
     ],
-    "base_dir": ".",
     "prompt": "Basic Number Question with All Answer Types",
     "question_type": "numerical"
 }

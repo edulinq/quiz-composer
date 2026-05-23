@@ -13,7 +13,6 @@
             "4"
         ]
     },
-    "base_dir": ".",
     "prompt": "Fill in Multiple Blanks: Basic -- <placeholder>A</placeholder> <placeholder>B</placeholder> <placeholder>C</placeholder> <placeholder>D</placeholder>",
     "question_type": "fill_in_multiple_blanks"
 }

@@ -17,7 +17,9 @@
             "text": "D"
         }
     ],
-    "base_dir": ".",
+    "attributes": {
+        "skip_numbering": true
+    },
     "prompt": "Skip Numbering: True",
     "question_type": "multiple_choice"
 }

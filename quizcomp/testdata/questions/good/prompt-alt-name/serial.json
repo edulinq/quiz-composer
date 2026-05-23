@@ -17,7 +17,9 @@
             "text": "D"
         }
     ],
-    "base_dir": ".",
+    "attributes": {
+        "prompt_path": "alt-prompt.md"
+    },
     "prompt": "Prompt: Alt Name",
     "question_type": "multiple_choice"
 }

@@ -17,7 +17,6 @@
             "text": "D"
         }
     ],
-    "base_dir": ".",
     "prompt": "Prompt: Image\n\n![tiny image](../../../images/tiny.png)",
     "question_type": "multiple_choice"
 }

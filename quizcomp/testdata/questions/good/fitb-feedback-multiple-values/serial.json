@@ -10,7 +10,6 @@
             "text": "3"
         }
     ],
-    "base_dir": ".",
     "prompt": "Short Answer \\/ Fill in The Blank: Feedback Multiple Values",
     "question_type": "fill_in_the_blank"
 }
