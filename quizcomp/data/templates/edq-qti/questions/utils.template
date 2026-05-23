@@ -35,7 +35,7 @@
                 {% if (option.correct) %}
                     <setvar action="Set" varname="SCORE">100</setvar>
                 {% endif %}
-                {% if ((option.feedback is not none) and (options.feedback.general is not none)) %}
+                {% if ((option.feedback is not none) and (option.feedback.general is not none)) %}
                     <displayfeedback feedbacktype="Response" linkrefid="{{ id }}_fb"/>
                 {% endif %}
             </respcondition>
@@ -46,12 +46,12 @@
 {% macro options_feedback(id, options) %}
     {% for option in options %}
         {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
-        {% if ((option.feedback is not none) and (options.feedback.general is not none)) %}
+        {% if ((option.feedback is not none) and (option.feedback.general is not none)) %}
             <itemfeedback ident="{{ id }}_fb">
                 <flow_mat>
                     <material>
                         <mattext texttype="text/html">
-                            {{ option.feedback.general.html() }}
+                            {{ option.feedback.general.to_html() }}
                         </mattext>
                     </material>
                 </flow_mat>

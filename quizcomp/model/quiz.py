@@ -21,7 +21,7 @@ import quizcomp.util.serial
 
 DUMMY_QUIZ_DATA: typing.Dict[str, typing.Any] = {
     'name': 'Dummy Title',
-    'description': 'Dummy description.',
+    'description': quizcomp.parser.document.ParsedDocument.parse_text('Dummy description.'),
     'course_name': 'Dummy Course',
     'term_name': 'Dummy Term',
     'version': '0.0.0',
@@ -29,9 +29,6 @@ DUMMY_QUIZ_DATA: typing.Dict[str, typing.Any] = {
 
 DUMMY_GROUP_DATA: typing.Dict[str, typing.Any] = {
     'name': 'Dummy Question',
-    'hints': {},
-    'hints_first': {},
-    'hints_last': {},
 }
 
 DEFAULT_VARIANT_IDS: typing.List[str] = list(string.ascii_uppercase)
@@ -244,7 +241,7 @@ class Quiz(quizcomp.model.base.CoreType):
         """
 
         if (seed is None):
-            seed = self._rng.randint(0, 2**64)
+            seed = random.randint(0, 2**64)
 
         rng = random.Random(seed)
 
@@ -329,15 +326,16 @@ class Variant(Quiz):
     '''
 
     @staticmethod
-    def get_dummy(question: quizcomp.question.base.Question) -> 'Variant':
+    def get_dummy(
+            question: quizcomp.question.base.Question,
+            seed: typing.Union[int, None] = None,
+            ) -> 'Variant':
         """
         Get a "dummy" variant that has no real information.
         """
 
-        quiz_data = DUMMY_QUIZ_DATA.copy()
-        group_data = DUMMY_GROUP_DATA.copy()
+        question = question.copy()
+        group = quizcomp.model.group.Group(children = [question], **DUMMY_GROUP_DATA.copy())
+        quiz = Quiz(children = [group], **DUMMY_QUIZ_DATA.copy())
 
-        group_data['questions'] = [question]
-        quiz_data['groups'] = [quizcomp.model.group.Group(**group_data)]
-
-        return Variant(**quiz_data)
+        return quiz.create_variants(count = 1, seed = seed)[0]
