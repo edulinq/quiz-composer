@@ -1,5 +1,3 @@
-# TEST - Need abc?
-import abc
 import os
 import typing
 
@@ -12,7 +10,7 @@ import quizcomp.model.config
 DEFAULT_AVAILABLE_POINTS: float = 0.0
 """ The default available points for an object. """
 
-class CoreType(edq.util.serial.DictConverter, abc.ABC):
+class CoreType(edq.util.serial.DictConverter):
     """
     The base class for concepts that are considered "core types" to the quiz composer.
     This includes things like quizzes, variants, groups, and questions.
@@ -25,9 +23,12 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
     serialization_skip_fields = [
         'base_dir',
         'parent',
+        'source_path',
     ]
 
     def __init__(self,
+            base_dir: typing.Union[str, None] = None,
+            source_path: typing.Union[str, None] = None,
             name: typing.Union[str, None] = None,
             parent: typing.Union[CoreType, None] = None,
             children: typing.Union[typing.List[CoreType], None] = None,
@@ -42,10 +43,18 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
             style: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            base_dir: str = '.',
             **kwargs: typing.Any) -> None:
-        self.base_dir: str = base_dir
+        if (base_dir is None):
+            base_dir = '.'
+
+        self.base_dir: str = os.path.abspath(base_dir)
         """ The base directory for any relative paths this object needs to resolve. """
+
+        if ((source_path is not None) and (not os.path.isabs(source_path))):
+            source_path = os.path.abspath(os.path.join(self.base_dir, source_path))
+
+        self.source_path: typing.Union[str, None] = source_path
+        """ If we are reading from a file, this attribute should be the absolute path to that file. """
 
         if ((name is not None) and (len(name) == 0)):
             name = None
@@ -76,7 +85,7 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
             child.parent = self
 
         if ((points is not None) and (points < 0)):
-            raise quizcomp.errors.QuizValidationError(f"Points must be either null/None or non-negative, found: {points}.", base_dir = base_dir)
+            raise quizcomp.errors.QuizValidationError(f"Points must be either null/None or non-negative, found: {points}.", context = self)
 
         self.points: typing.Union[float, None] = points
         """
@@ -352,11 +361,11 @@ class CoreType(edq.util.serial.DictConverter, abc.ABC):
 
     def to_path(self,
             path: str,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> None:
-        if (serialization_options is None):
-            serialization_options = {}
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
 
-        serialization_options.setdefault('json', {}).setdefault('indent', 4)
+        context.json_options.setdefault('indent', 4)
 
-        super().to_path(path, serialization_options)
+        super().to_path(path, context)

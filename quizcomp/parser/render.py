@@ -151,7 +151,7 @@ def _clean_text(content: str) -> str:
     return content
 
 # Returns (transformed text, tokens).
-def _parse_text(raw_text: str, base_dir: str) -> typing.Tuple[str, typing.List[markdown_it.token.Token]]:
+def _parse_text(raw_text: str) -> typing.Tuple[str, typing.List[markdown_it.token.Token]]:
     """ Parse the text and returned the cleaned text and resulting parsed document. """
 
     clean_text = _clean_text(raw_text)

@@ -4,6 +4,7 @@ import typing
 
 import edq.util.dirent
 import edq.util.json
+import edq.util.serial
 import markdown_it.token
 
 import quizcomp.constants
@@ -17,11 +18,8 @@ class ParsedDocument(edq.util.serial.PODSerializer):
     def __init__(self,
             text: typing.Union[str, None] = None,
             tokens: typing.Union[typing.List[markdown_it.token.Token], None] = None,
-            base_dir: typing.Union[str, None] = None,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> None:
-        if (base_dir is None):
-            base_dir = '.'
-
         if (text is None):
             text = ''
 
@@ -32,7 +30,7 @@ class ParsedDocument(edq.util.serial.PODSerializer):
             raise ValueError(f"Cannot create a document that contains tokens, but not text: {tokens}.")
 
         if ((len(text) > 0) and (len(tokens) == 0)):
-            text, tokens = quizcomp.parser.render._parse_text(text, base_dir)
+            text, tokens = quizcomp.parser.render._parse_text(text)
 
         self.text: str = text
         """ The cleaned text that was parsed to create this document. """
@@ -40,16 +38,11 @@ class ParsedDocument(edq.util.serial.PODSerializer):
         self._tokens: typing.List[markdown_it.token.Token] = tokens
         """ The tokens that were parsed from the starting text. """
 
-        # TEST - Remove
-        self._context: typing.Dict[str, str] = {
-            quizcomp.parser.common.BASE_DIR_KEY: base_dir,
-        }
-        """ Context information for this document. """
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
 
-    def set_context_value(self, key: str, value: typing.Any) -> None:
-        """ Set a context value for this document. """
-
-        self._context[key] = value
+        self.context: edq.util.serial.SerializationContext = context
+        """ The context the text was parsed in. """
 
     def to_canvas(self, **kwargs: typing.Any) -> str:
         """ Render this document to Canvas-specific HTML. """
@@ -88,7 +81,12 @@ class ParsedDocument(edq.util.serial.PODSerializer):
     def _render(self, format: str, **kwargs: typing.Any) -> str:
         """ Render this document to the specified format. """
 
-        context = quizcomp.parser.common.prep_context(self._context, options = kwargs)
+        base_context = {
+            # TEST - Do we need this key? Make a container class?
+            quizcomp.parser.common.BASE_DIR_KEY: self.context.base_dir,
+        }
+
+        context = quizcomp.parser.common.prep_context(base_context, options = kwargs)
         env = {quizcomp.parser.common.CONTEXT_ENV_KEY: context}
         return quizcomp.parser.render.render(format, self._tokens, env = env, **kwargs)
 
@@ -148,7 +146,7 @@ class ParsedDocument(edq.util.serial.PODSerializer):
         return self.text
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> str:
         return self.text
 
@@ -165,7 +163,10 @@ class ParsedDocument(edq.util.serial.PODSerializer):
         return hash(self.text)
 
     @classmethod
-    def parse_text(cls, text: typing.Union[str, 'ParsedDocument'], base_dir: typing.Union[str, None] = None) -> 'ParsedDocument':
+    def parse_text(cls,
+            text: typing.Union[str, 'ParsedDocument'],
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            ) -> 'ParsedDocument':
         """
         Parse some text into a document.
         If the text is already a document, that same document will be returned.
@@ -174,33 +175,42 @@ class ParsedDocument(edq.util.serial.PODSerializer):
         if (isinstance(text, ParsedDocument)):
             return text
 
-        if (base_dir is None):
-            base_dir = '.'
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
 
-        text, tokens = quizcomp.parser.render._parse_text(text, base_dir)
-        return quizcomp.parser.document.ParsedDocument(text, tokens, base_dir = base_dir)
+        text, tokens = quizcomp.parser.render._parse_text(text)
+        return quizcomp.parser.document.ParsedDocument(text, tokens, context)
 
     @classmethod
-    def parse_file(cls, raw_path: str, base_dir: typing.Union[str, None] = None) -> 'ParsedDocument':
+    def parse_file(cls,
+            raw_path: str,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            ) -> 'ParsedDocument':
         """
         Parse a text file into a document.
 
-        If no base dir is provided, the dir of the provided path is used.
+        If a context is provided,
+        a copy will be made with the base dir and source path updated.
         """
 
-        if (base_dir is None):
-            base_dir = os.path.dirname(os.path.abspath(raw_path))
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+        else:
+            context = context.copy()
+
+        if (context.base_dir is None):
+            context.base_dir = os.path.dirname(os.path.abspath(raw_path))
 
         # Prepend the base dir if the path is not absolute.
         if (not os.path.isabs(raw_path)):
-            raw_path = os.path.join(base_dir, raw_path)
+            raw_path = os.path.join(context.base_dir, raw_path)
 
-        path = os.path.abspath(raw_path)
+        context.source_path = os.path.abspath(raw_path)
+        context.base_dir = os.path.dirname(context.source_path)
 
-        if (not os.path.isfile(path)):
+        if (not os.path.isfile(context.source_path)):
             raise ValueError(f"Path to parse ('{raw_path}') does not exist or is not a file.")
 
-        text = edq.util.dirent.read_file(path)
-        base_dir = os.path.dirname(path)
+        text = edq.util.dirent.read_file(context.source_path)
 
-        return cls.parse_text(text, base_dir = base_dir)
+        return cls.parse_text(text, context)

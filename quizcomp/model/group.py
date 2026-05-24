@@ -31,7 +31,7 @@ class Group(quizcomp.model.base.CoreType):
         super().__init__(children = children, **kwargs)
 
         if (pick_count < 0):
-            raise quizcomp.common.QuizValidationError(f"Pick count must be non-negative, found: {pick_count}.", base_dir = base_dir)
+            raise quizcomp.common.QuizValidationError(f"Pick count must be non-negative, found: {pick_count}.", context = context)
 
         self.pick_count: int = pick_count
         """ The number of questions to choose from this group. """
@@ -105,36 +105,31 @@ class Group(quizcomp.model.base.CoreType):
         return questions
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
-        data = super().to_pod(serialization_options)
+        data = super().to_pod(context)
         data['questions'] = data.pop('children', data.get('questions', None))
         return data
 
     @classmethod
     def from_pod(cls,
             data: edq.util.serial.PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> 'Group':
         # Expand any question paths that be directories.
-        cls._expand_questions(data, serialization_options)
-        return super().from_pod(data, serialization_options)
+        cls._expand_questions(data, context)
+        return super().from_pod(data, context)
 
     @classmethod
     def _expand_questions(cls,
             data: typing.Dict[str, edq.util.serial.PODType],
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> None:
         """
         Expand the 'questions' field.
         This allows questions to be provided as a path.
         If that path is a dir, then recursivley load all questions found in that dir.
         """
-
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', '.')
 
         new_questions = []
         raw_questions = data.pop('questions', data.get('children', []))
@@ -146,7 +141,7 @@ class Group(quizcomp.model.base.CoreType):
 
             path = str(raw_question)
             if (not os.path.isabs(path)):
-                path = os.path.join(base_dir, path)
+                path = os.path.join(context.base_dir, path)
 
             path = os.path.abspath(path)
 

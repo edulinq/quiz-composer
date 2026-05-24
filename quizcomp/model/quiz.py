@@ -86,18 +86,18 @@ class Quiz(quizcomp.model.base.CoreType):
     @classmethod
     def prep_init_data(cls,
             data: typing.Dict[str, typing.Any],
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> typing.Dict[str, typing.Any]:
-        data = super().prep_init_data(data, serialization_options)
+        data = super().prep_init_data(data, context)
 
-        data['description'] = cls._collect_description(data, serialization_options)
+        data['description'] = cls._collect_description(data, context)
 
         return data
 
     @classmethod
     def _collect_description(cls,
             data: typing.Dict[str, typing.Any],
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> quizcomp.parser.document.ParsedDocument:
         """
         Collect the description from one of several possible locations.
@@ -112,34 +112,28 @@ class Quiz(quizcomp.model.base.CoreType):
         Will return an empty description if none of these are present.
         """
 
-        if (serialization_options is None):
-            serialization_options = {}
-
-        quiz_path = serialization_options.get('path', None)
-        base_dir = serialization_options.get('base_dir', '.')
-        default_description_path = None
-
         # If we have a quiz path, use that to resolve paths.
-        if (quiz_path is not None):
-            quiz_path = os.path.abspath(quiz_path)
-            base_dir = os.path.dirname(quiz_path)
-            default_description_path = os.path.splitext(quiz_path)[0] + '.md'
+        default_description_path = None
+        if (context.source_path is not None):
+            context.source_path = os.path.abspath(context.source_path)
+            context.base_dir = os.path.dirname(context.source_path)
+            default_description_path = os.path.splitext(context.source_path)[0] + '.md'
 
         # Check the `description` field.
         text = data.get('description', None)
         if (text is not None):
-            return quizcomp.parser.document.ParsedDocument.parse_text(text, base_dir = base_dir)
+            return quizcomp.parser.document.ParsedDocument.parse_text(text, context)
 
         # Check for an explicitly provided path.
         description_path = data.get('description_path', None)
         if (description_path is not None):
             if (not os.path.isabs(description_path)):
-                description_path = os.path.join(base_dir, description_path)
+                description_path = os.path.join(context.base_dir, description_path)
 
             description_path = os.path.abspath(description_path)
 
             if (not os.path.isfile(description_path)):
-                raise quizcomp.errors.QuestionValidationError(f"Could not find a description at the provided path: '{data['description_path']}' (Absolute Path: '{description_path}').", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"Could not find a description at the provided path: '{data['description_path']}' (Absolute Path: '{description_path}').", context = context)
 
             return quizcomp.parser.document.ParsedDocument.parse_file(description_path)
 
@@ -161,21 +155,21 @@ class Quiz(quizcomp.model.base.CoreType):
         self.answers.shuffle(rng)
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
-        data = super().to_pod(serialization_options)
+        data = super().to_pod(context)
         data['groups'] = data.pop('children', data.get('groups', None))
         return data
 
     @classmethod
     def from_pod(cls,
             data: edq.util.serial.PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> 'Quiz':
         data['children'] = data.pop('groups', data.get('children', None))
-        return super().from_pod(data, serialization_options)
+        return super().from_pod(data, context)
 
-    # TEST
+    # TEST - Do some of these checks?
     ''' TEST
     def _validate(self, **kwargs: typing.Any) -> None:
         """ Check if this quiz is valid, will raise if the group is not valid. """
@@ -249,10 +243,10 @@ class Quiz(quizcomp.model.base.CoreType):
             identifiers = DEFAULT_VARIANT_IDS
 
         if (count < 0):
-            raise quizcomp.common.QuizValidationError(f"Variant count must be non-negative, found: {count}.", base_dir = self.base_dir)
+            raise quizcomp.common.QuizValidationError(f"Variant count must be non-negative, found: {count}.", context = self)
 
         if (count > len(identifiers)):
-            raise quizcomp.common.QuizValidationError(f"Not enough variant identifiers supplied. Got {len(identifiers)} identifiers and {count} requested variants. Given identifiers: {identifiers}.", base_dir = base_dir)
+            raise quizcomp.common.QuizValidationError(f"Not enough variant identifiers supplied. Got {len(identifiers)} identifiers and {count} requested variants. Given identifiers: {identifiers}.", context = self)
 
         logging.debug("Creating %d variants with seed %d.", count, seed)
 

@@ -48,20 +48,20 @@ class Feedback(edq.util.serial.PODConverter):
         return self.is_empty()
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
         if (self.is_empty()):
             return None
 
         if ((self.correct is None) and (self.incorrect is None)):
-            return self.general.to_pod()
+            return self.general.to_pod(context)
 
-        return super().to_pod(serialization_options)
+        return super().to_pod(context)
 
     @classmethod
     def from_raw_data(cls,
             raw_data: typing.Any,
-            base_dir: typing.Union[str, None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> 'Feedback':
         """ Parse out feedback from one of several allowed forms. """
 
@@ -69,7 +69,7 @@ class Feedback(edq.util.serial.PODConverter):
             return Feedback()
 
         if (isinstance(raw_data, str)):
-            parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_data, base_dir = base_dir)
+            parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_data, context)
             return Feedback(general = parsed_text)
 
         quizcomp.errors.check_type(raw_data, dict, "'feedback'")
@@ -84,7 +84,7 @@ class Feedback(edq.util.serial.PODConverter):
         if (len(bad_keys) > 0):
             raise quizcomp.errors.QuestionValidationError(
                     f"Unknown keys in feedback ({bad_keys}). Allowed keys: {allowed_keys}.",
-                    base_dir = base_dir)
+                    context = edq.util.serial.SerializationContext)
 
         for (key, value) in data.items():
             if (value is None):
@@ -96,6 +96,6 @@ class Feedback(edq.util.serial.PODConverter):
             if (len(value) == 0):
                 continue
 
-            result[key] = quizcomp.parser.document.ParsedDocument.parse_text(value, base_dir = base_dir)
+            result[key] = quizcomp.parser.document.ParsedDocument.parse_text(value, context)
 
         return Feedback(**result)

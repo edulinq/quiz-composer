@@ -43,63 +43,53 @@ class TextOption(edq.util.serial.PODConverter):
         """ Feedback specific to this choice. """
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
         if (self.feedback is None):
-            return self.text.to_pod()
+            return self.text.to_pod(context)
 
         return {
-            'text': self.text.to_pod(),
-            'feedback': self.feedback.to_pod(),
+            'text': self.text.to_pod(context),
+            'feedback': self.feedback.to_pod(context),
         }
 
     @classmethod
     def from_pod(cls: typing.Type[TextOption],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> TextOption:
-        if (serialization_options is None):
-            serialization_options = {}
-
-        label = serialization_options.get('label', '')
-        base_dir = serialization_options.get('base_dir', None)
+        label = context.extra.get('label', '')
 
         if (isinstance(data, str)):
-            parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(data, base_dir = base_dir)
+            parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(data, context)
             return TextOption(parsed_text, None)
 
         if (not isinstance(data, dict)):
             raise quizcomp.errors.QuestionValidationError(
                 f"{label} has text in an unknown format (not a string or dict): '{data}' (type: {type(data)}.",
-                base_dir = base_dir)
+                context = context)
 
         raw_text = data.get('text', None)
         if (raw_text is None):
-            raise quizcomp.errors.QuestionValidationError(f"{label} has no 'text' field set.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError(f"{label} has no 'text' field set.", context = context)
 
-        parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_text, base_dir = base_dir)
-        feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), base_dir = base_dir)
+        parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_text, context)
+        feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), context)
 
         return TextOption(parsed_text, feedback)
 
     @classmethod
     def from_pod_with_error(cls: typing.Type[TextOption],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None],
+            context: edq.util.serial.SerializationContext,
             label: str,
-            base_dir: typing.Union[str, None],
             ) -> TextOption:
         """ Wrap from_pod() with some error information. """
 
-        if (serialization_options is None):
-            serialization_options = {}
-        else:
-            serialization_options = serialization_options.copy()
+        context = context.copy()
+        context.extra['label'] = label
 
-        serialization_options['label'] = label
-        serialization_options['base_dir'] = base_dir
-
-        return cls.from_pod(data, serialization_options)
+        return cls.from_pod(data, context)
 
 class NumericOption(edq.util.serial.PODConverter, abc.ABC):
     """
@@ -129,88 +119,78 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
     @classmethod
     def from_pod(cls: typing.Type[NumericOption],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> NumericOption:
-        if (serialization_options is None):
-            serialization_options = {}
+        label = context.extra.get('label', '')
 
-        label = serialization_options.get('label', '')
-        base_dir = serialization_options.get('base_dir', None)
-
-        quizcomp.errors.check_type(data, dict, label, base_dir = base_dir)
+        quizcomp.errors.check_type(data, dict, label, context = context)
 
         answer_type = data.get('type', None)
         if (not edq.util.enum.has_value(NumericAnswerType, answer_type)):
-            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", context = context)
 
-        feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), base_dir = base_dir)
+        feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), context = context)
 
         if (answer_type == NumericAnswerType.EXACT):
             value = data.get('value', None)
             if (value is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", context = context)
 
             if (not isinstance(value, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'value' that is not an int or float, found '{type(value)}'.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'value' that is not an int or float, found '{type(value)}'.", context = context)
 
             margin = data.get('margin', 0.0)
             if (not isinstance(margin, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'margin' that is not an int or float, found '{type(margin)}'.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'margin' that is not an int or float, found '{type(margin)}'.", context = context)
 
             return NumericOptionExact(value, margin, feedback = feedback)
         elif (answer_type == NumericAnswerType.RANGE):
             min = data.get('min', None)
             if (min is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'min' key.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'min' key.", context = context)
 
             if (not isinstance(min, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'min' that is not an int or float, found '{type(min)}'.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'min' that is not an int or float, found '{type(min)}'.", context = context)
 
             max = data.get('max', None)
             if (max is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'max' key.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'max' key.", context = context)
 
             if (not isinstance(max, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'max' that is not an int or float, found '{type(max)}'.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'max' that is not an int or float, found '{type(max)}'.", context = context)
 
             return NumericOptionRange(min, max, feedback = feedback)
         elif (answer_type == NumericAnswerType.PRECISION):
             value = data.get('value', None)
             if (value is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", context = context)
 
             if (not isinstance(value, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'value' that is not an int or float, found '{type(value)}'.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'value' that is not an int or float, found '{type(value)}'.", context = context)
 
             precision = data.get('precision', None)
             if (precision is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'precision' key.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'precision' key.", context = context)
 
             if (not isinstance(precision, int)):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'precision' that is not an int, found '{type(precision)}'.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'precision' that is not an int, found '{type(precision)}'.", context = context)
 
             return NumericOptionPrecision(value, precision, feedback = feedback)
         else:
-            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", context = context)
 
     @classmethod
     def from_pod_with_error(cls: typing.Type[NumericOption],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None],
+            context: edq.util.serial.SerializationContext,
             label: str,
-            base_dir: typing.Union[str, None],
             ) -> NumericOption:
         """ Wrap from_pod() with some error information. """
 
-        if (serialization_options is None):
-            serialization_options = {}
-        else:
-            serialization_options = serialization_options.copy()
+        context = context.copy()
+        context.extra['label'] = label
 
-        serialization_options['label'] = label
-        serialization_options['base_dir'] = base_dir
-
-        return cls.from_pod(data, serialization_options)
+        return cls.from_pod(data, context)
 
 class NumericOptionExact(NumericOption):
     """ A numeric option to represent an exact value (within a margin). """
@@ -294,15 +274,15 @@ class Choice(TextOption):
         """ Whether this choice is a correct answer. """
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
         data = {
-            'text': self.text.to_pod(),
+            'text': self.text.to_pod(context),
             'correct': self.correct,
         }
 
         if (self.feedback is not None):
-            data['feedback'] = self.feedback.to_pod()
+            data['feedback'] = self.feedback.to_pod(context)
 
         return data
 
@@ -318,7 +298,7 @@ class QuestionAnswers(edq.util.serial.PODConverter):
     @classmethod
     def from_pod(cls: typing.Type[QuestionAnswers],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> QuestionAnswers:
         """
         Create an answers object for a specific question type from some serialized data
@@ -329,49 +309,45 @@ class QuestionAnswers(edq.util.serial.PODConverter):
         This function will not return a generic QuestionAnswers, but a subclass of QuestionAnswers.
         """
 
-        if (serialization_options is None):
-            serialization_options = {}
-
-        raw_question_type = serialization_options.get('question_type', None)
-        base_dir = serialization_options.get('base_dir', None)
+        raw_question_type = context.extra.get('question_type', None)
 
         if (raw_question_type is None):
-            raise quizcomp.errors.QuestionValidationError("Could not parse question answers because of lack of question type.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError("Could not parse question answers because of lack of question type.", context = context)
 
         question_type = quizcomp.model.constants.QuestionType(raw_question_type)
 
         if (question_type == quizcomp.model.constants.QuestionType.ESSAY):
-            return TextAnswers.from_pod(data, serialization_options)
+            return TextAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.FIMB):
-            return MultiplePartTextAnswers.from_pod(data, serialization_options)
+            return MultiplePartTextAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.FITB):
-            return TextAnswers.from_pod(data, serialization_options)
+            return TextAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.MA):
-            serialization_options = serialization_options.copy()
-            serialization_options['min_correct'] = 0
-            return ChoiceAnswers.from_pod(data, serialization_options)
+            context = context.copy()
+            context.extra['min_correct'] = 0
+            return ChoiceAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.MATCHING):
-            return MatchingAnswers.from_pod(data, serialization_options)
+            return MatchingAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.MCQ):
-            serialization_options = serialization_options.copy()
-            serialization_options['min_correct'] = 1
-            serialization_options['max_correct'] = 1
-            return ChoiceAnswers.from_pod(data, serialization_options)
+            context = context.copy()
+            context.extra['min_correct'] = 1
+            context.extra['max_correct'] = 1
+            return ChoiceAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.MDD):
-            serialization_options = serialization_options.copy()
-            serialization_options['min_correct'] = 1
-            serialization_options['max_correct'] = 1
-            return MultiplePartChoiceAnswers.from_pod(data, serialization_options)
+            context = context.copy()
+            context.extra['min_correct'] = 1
+            context.extra['max_correct'] = 1
+            return MultiplePartChoiceAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.NUMERICAL):
-            return NumericAnswers.from_pod(data, serialization_options)
+            return NumericAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.SA):
-            return TextAnswers.from_pod(data, serialization_options)
+            return TextAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.TEXT_ONLY):
-            return TextAnswers.from_pod(data, serialization_options)
+            return TextAnswers.from_pod(data, context)
         elif (question_type == quizcomp.model.constants.QuestionType.TF):
-            return TFAnswers.from_pod(data, serialization_options)
+            return TFAnswers.from_pod(data, context)
         else:
-            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", context = context)
 
 class TextAnswers(QuestionAnswers):
     """
@@ -398,9 +374,9 @@ class TextAnswers(QuestionAnswers):
         rng.shuffle(self.options)
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
-        return [option.to_pod() for option in self.options]
+        return [option.to_pod(context) for option in self.options]
 
     def _serialization_is_empty(self) -> bool:
         """ A special method for the serialization library to check. """
@@ -421,24 +397,19 @@ class TextAnswers(QuestionAnswers):
     @classmethod
     def from_pod(cls: typing.Type[TextAnswers],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> TextAnswers:
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', None)
-
         if (data is None):
             return TextAnswers()
 
         if (isinstance(data, str)):
-            parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(data, base_dir = base_dir)
+            parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(data, context)
             return TextAnswers([TextOption(parsed_text, None)])
 
         if (isinstance(data, dict)):
             data = [data]
 
-        quizcomp.errors.check_type(data, list, "'answers'", base_dir = base_dir)
+        quizcomp.errors.check_type(data, list, "'answers'", context = context)
 
         if (len(data) == 0):
             return TextAnswers()
@@ -447,7 +418,7 @@ class TextAnswers(QuestionAnswers):
         for (i, raw_option) in enumerate(data):
             label = f"Choice at index {i}"
 
-            option = TextOption.from_pod_with_error(raw_option, serialization_options, label, base_dir)
+            option = TextOption.from_pod_with_error(raw_option, context, label)
             options.append(option)
 
         return TextAnswers(options)
@@ -471,28 +442,23 @@ class MultiplePartTextAnswers(QuestionAnswers):
             part.shuffle(rng)
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
-        return {key: value.to_pod() for (key, value) in self.parts.items()}
+        return {key: value.to_pod(context) for (key, value) in self.parts.items()}
 
     @classmethod
     def from_pod(cls: typing.Type[MultiplePartTextAnswers],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', None)
-
-        quizcomp.errors.check_type(data, dict, "'answers'", base_dir = base_dir)
+        quizcomp.errors.check_type(data, dict, "'answers'", context = context)
 
         parts = {}
         for (key, raw_options) in data.items():
             # Try to parse the key, even though we are not storing it right now.
-            quizcomp.parser.document.ParsedDocument.parse_text(key, base_dir = base_dir)
+            quizcomp.parser.document.ParsedDocument.parse_text(key, context)
 
-            parts[key] = TextAnswers.from_pod(raw_options, serialization_options)
+            parts[key] = TextAnswers.from_pod(raw_options, context)
 
         return MultiplePartTextAnswers(parts)
 
@@ -512,9 +478,9 @@ class ChoiceAnswers(QuestionAnswers):
         rng.shuffle(self.choices)
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
-        return [choice.to_pod() for choice in self.choices]
+        return [choice.to_pod(context) for choice in self.choices]
 
     def get_choices_with_markers(self) -> typing.List[typing.Tuple[quizcomp.parser.document.ParsedDocument, Choice]]:
         """ Get the choices for this answer along with markers for each (e.g., "A", "B", "C"). """
@@ -524,23 +490,19 @@ class ChoiceAnswers(QuestionAnswers):
     @classmethod
     def from_pod(cls: typing.Type[ChoiceAnswers],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> ChoiceAnswers:
-        if (serialization_options is None):
-            serialization_options = {}
+        min_correct = context.extra.get('min_correct', 0)
+        max_correct = context.extra.get('max_correct', MAX_CHOICES)
+        min_incorrect = context.extra.get('min_incorrect', 0)
+        max_incorrect = context.extra.get('max_incorrect', MAX_CHOICES)
 
-        base_dir = serialization_options.get('base_dir', None)
-        min_correct = serialization_options.get('min_correct', 0)
-        max_correct = serialization_options.get('max_correct', MAX_CHOICES)
-        min_incorrect = serialization_options.get('min_incorrect', 0)
-        max_incorrect = serialization_options.get('max_incorrect', MAX_CHOICES)
-
-        quizcomp.errors.check_type(data, list, "'answers'", base_dir = base_dir)
+        quizcomp.errors.check_type(data, list, "'answers'", context = context)
 
         raw_choices: typing.List[typing.Any] = typing.cast(list, data)
 
         if (len(raw_choices) == 0):
-            raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", context = context)
 
         num_correct = 0
         num_incorrect = 0
@@ -550,11 +512,11 @@ class ChoiceAnswers(QuestionAnswers):
         for (i, raw_choice) in enumerate(raw_choices):
             label = f"Choice at index {i}"
 
-            quizcomp.errors.check_type(raw_choice, dict, label, base_dir = base_dir)
+            quizcomp.errors.check_type(raw_choice, dict, label, context = context)
 
             raw_correct = raw_choice.get('correct', None)
             if (raw_correct is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has no 'correct' field set.", base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError(f"{label} has no 'correct' field set.", context = context)
 
             correct = edq.util.parse.soft_boolean(raw_correct)
             if (correct is None):
@@ -565,28 +527,28 @@ class ChoiceAnswers(QuestionAnswers):
             else:
                 num_incorrect += 1
 
-            option = TextOption.from_pod_with_error(raw_choice, serialization_options, label, base_dir)
+            option = TextOption.from_pod_with_error(raw_choice, context, label)
             choices.append(Choice(option.text, correct, option.feedback))
 
         if (num_correct < min_correct):
             raise quizcomp.errors.QuestionValidationError(("Did not find enough correct choices."
                 + f" Expected at least {min_correct}, found {num_correct}."),
-                base_dir = base_dir)
+                context = context)
 
         if (num_correct > max_correct):
             raise quizcomp.errors.QuestionValidationError(("Found too many correct choices."
                 + f" Expected at most {max_correct}, found {num_correct}."),
-                base_dir = base_dir)
+                context = context)
 
         if (num_incorrect < min_incorrect):
             raise quizcomp.errors.QuestionValidationError(("Did not find enough incorrect choices."
                 + f" Expected at least {min_incorrect}, found {num_incorrect}."),
-                base_dir = base_dir)
+                context = context)
 
         if (num_incorrect > max_incorrect):
             raise quizcomp.errors.QuestionValidationError(("Found too many incorrect choices."
                 + f" Expected at most {max_incorrect}, found {num_incorrect}."),
-                base_dir = base_dir)
+                context = context)
 
         return ChoiceAnswers(choices)
 
@@ -601,13 +563,8 @@ class TFAnswers(ChoiceAnswers):
     @classmethod
     def from_pod(cls: typing.Type[TFAnswers],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) ->  TFAnswers:
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', None)
-
         if (isinstance(data, bool)):
             choices = [
                 Choice(quizcomp.parser.document.ParsedDocument.parse_text("True"), data),
@@ -615,12 +572,12 @@ class TFAnswers(ChoiceAnswers):
             ]
             return TFAnswers(choices)
 
-        serialization_options['min_correct'] = 1
-        serialization_options['max_correct'] = 1
-        serialization_options['min_incorrect'] = 1
-        serialization_options['max_incorrect'] = 1
+        context.extra['min_correct'] = 1
+        context.extra['max_correct'] = 1
+        context.extra['min_incorrect'] = 1
+        context.extra['max_incorrect'] = 1
 
-        answers = ChoiceAnswers.from_pod(data, serialization_options)
+        answers = ChoiceAnswers.from_pod(data, context)
 
         return TFAnswers(answers.choices)
 
@@ -643,28 +600,23 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
             part.shuffle(rng)
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
-        return {key: value.to_pod() for (key, value) in self.parts.items()}
+        return {key: value.to_pod(context) for (key, value) in self.parts.items()}
 
     @classmethod
     def from_pod(cls: typing.Type[MultiplePartTextAnswers],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', None)
-
-        quizcomp.errors.check_type(data, dict, "'answers'", base_dir = base_dir)
+        quizcomp.errors.check_type(data, dict, "'answers'", context = context)
 
         parts = {}
         for (key, raw_options) in data.items():
             # Try to parse the key, even though we are not storing it right now.
-            quizcomp.parser.document.ParsedDocument.parse_text(key, base_dir = base_dir)
+            quizcomp.parser.document.ParsedDocument.parse_text(key, context)
 
-            parts[key] = ChoiceAnswers.from_pod(raw_options, serialization_options)
+            parts[key] = ChoiceAnswers.from_pod(raw_options, context)
 
         return MultiplePartChoiceAnswers(parts)
 
@@ -748,11 +700,11 @@ class MatchingAnswers(QuestionAnswers):
         self._shuffle_seed = rng.randint(0, 2**64)
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
         return {
-            'matches': [[left.to_pod(), right.to_pod()] for (left, right) in self.pairs],
-            'distractors': [value.to_pod() for value in self.distractors],
+            'matches': [[left.to_pod(context), right.to_pod(context)] for (left, right) in self.pairs],
+            'distractors': [value.to_pod(context) for value in self.distractors],
         }
 
     def get_tabular_options(self) -> typing.List[MatchingAnswerRow]:
@@ -807,23 +759,18 @@ class MatchingAnswers(QuestionAnswers):
     @classmethod
     def from_pod(cls: typing.Type[MatchingAnswers],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> MatchingAnswers:
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', None)
-
-        quizcomp.errors.check_type(data, dict, "'answers'", base_dir = base_dir)
+        quizcomp.errors.check_type(data, dict, "'answers'", context = context)
 
         raw_matches = data.get('matches', None)
         if (raw_matches is None):
-            raise quizcomp.errors.QuestionValidationError("The 'matches' key was not provided for a matching-type question.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError("The 'matches' key was not provided for a matching-type question.", context = context)
 
-        quizcomp.errors.check_type(raw_matches, list, "'matches'", base_dir = base_dir)
+        quizcomp.errors.check_type(raw_matches, list, "'matches'", context = context)
 
         if (len(raw_matches) == 0):
-            raise quizcomp.errors.QuestionValidationError("At least one matching pair must be specified for matching questions.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError("At least one matching pair must be specified for matching questions.", context = context)
 
         pairs = []
         for (i, raw_match) in enumerate(raw_matches):
@@ -833,49 +780,49 @@ class MatchingAnswers(QuestionAnswers):
                 if (len(raw_match) != 2):
                     raise quizcomp.errors.QuestionValidationError(
                         f"{label} has an unexpected size. Expecting two items (left and right) found {len(raw_match)}.",
-                        base_dir = base_dir)
+                        context = context)
 
-                left_option = TextOption.from_pod_with_error(raw_match[0], serialization_options, label + ' (left)', base_dir)
-                right_option = TextOption.from_pod_with_error(raw_match[1], serialization_options, label + ' (right)', base_dir)
+                left_option = TextOption.from_pod_with_error(raw_match[0], context, label + ' (left)')
+                right_option = TextOption.from_pod_with_error(raw_match[1], context, label + ' (right)')
 
                 pairs.append((left_option, right_option))
             elif (isinstance(raw_match, dict)):
                 if ('left' not in raw_match):
                     raise quizcomp.errors.QuestionValidationError(
                         f"{label} does not have a 'left' key.",
-                        base_dir = base_dir)
+                        context = context)
 
                 if ('right' not in raw_match):
                     raise quizcomp.errors.QuestionValidationError(
                         f"{label} does not have a 'right' key.",
-                        base_dir = base_dir)
+                        context = context)
 
-                left_option = TextOption.from_pod_with_error(raw_match['left'], serialization_options, label + ' (left)', base_dir)
-                right_option = TextOption.from_pod_with_error(raw_match['right'], serialization_options, label + ' (right)', base_dir)
+                left_option = TextOption.from_pod_with_error(raw_match['left'], context, label + ' (left)')
+                right_option = TextOption.from_pod_with_error(raw_match['right'], context, label + ' (right)')
 
                 pairs.append((left_option, right_option))
             else:
                 raise quizcomp.errors.QuestionValidationError(
                     f"{label} has an unknown format (not a list or dict): '{raw_match}' (type: {type(raw_match)}.",
-                    base_dir = base_dir)
+                    context = context)
 
         raw_distractors = data.get('distractors', None)
         if (raw_distractors is None):
             raw_distractors = []
 
-        quizcomp.errors.check_type(raw_distractors, list, "'distractors'", base_dir = base_dir)
+        quizcomp.errors.check_type(raw_distractors, list, "'distractors'", context = context)
 
         distractors = []
         for (i, raw_distractor) in enumerate(raw_distractors):
             label = f"Match distractor at index {i}"
 
-            option = TextOption.from_pod_with_error(raw_distractor, serialization_options, label, base_dir)
+            option = TextOption.from_pod_with_error(raw_distractor, context, label)
             distractors.append(option)
 
         if ((len(pairs) + len(distractors)) > MAX_CHOICES):
             raise quizcomp.errors.QuestionValidationError(
                 f"Matching question has too many options. Found {(len(pairs) + len(distractors))}, while the max is {MAX_CHOICES}.",
-                base_dir = base_dir)
+                context = context)
 
         return MatchingAnswers(pairs, distractors)
 
@@ -906,32 +853,27 @@ class NumericAnswers(QuestionAnswers):
         return self.options[0].to_text().text
 
     def to_pod(self,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> edq.util.serial.PODType:
-        return [option.to_pod() for option in self.options]
+        return [option.to_pod(context) for option in self.options]
 
     @classmethod
     def from_pod(cls: typing.Type[MultiplePartTextAnswers],
             data: PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', None)
-
-        quizcomp.errors.check_type(data, list, "'answers'", base_dir = base_dir)
+        quizcomp.errors.check_type(data, list, "'answers'", context = context)
 
         raw_options: typing.List[typing.Any] = typing.cast(list, data)
 
         if (len(raw_options) == 0):
-            raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", context = context)
 
         options = []
         for (i, raw_option) in enumerate(raw_options):
             label = f"Option at index {i}"
 
-            option = NumericOption.from_pod_with_error(raw_option, serialization_options, label, base_dir)
+            option = NumericOption.from_pod_with_error(raw_option, context, label)
             options.append(option)
 
         return NumericAnswers(options)

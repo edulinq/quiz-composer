@@ -59,15 +59,10 @@ class Question(quizcomp.model.base.CoreType):
     @classmethod
     def from_pod(cls,
             data: edq.util.serial.PODType,
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> 'Question':
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', '.')
-
         if (isinstance(data, dict)):
-            return super().from_pod(data, serialization_options)
+            return super().from_pod(data, context)
 
         if (not isinstance(data, str)):
             raise quizcomp.errors.QuizValidationError(f"Cannot createquestion object from '{type(data)}' type, need dict or str (path).")
@@ -75,54 +70,50 @@ class Question(quizcomp.model.base.CoreType):
         # If a question is being loaded from a string, it is probably a path.
         path = str(data)
         if (not os.path.isabs(path)):
-            path = os.path.join(base_dir, path)
+            path = os.path.join(context.base_dir, path)
 
         path = os.path.abspath(path)
 
-        return cls.from_path(path, serialization_options)
+        return cls.from_path(path, context)
 
     @classmethod
     def prep_init_data(cls,
             data: typing.Dict[str, typing.Any],
-            serialization_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
+            context: edq.util.serial.SerializationContext,
             ) -> typing.Dict[str, typing.Any]:
-        if (serialization_options is None):
-            serialization_options = {}
-
-        base_dir = serialization_options.get('base_dir', None)
-
         raw_question_type = data.get('question_type', None)
         if (raw_question_type is None):
-            raise quizcomp.errors.QuestionValidationError("Question data does not include 'question_type'.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError("Question data does not include 'question_type'.", context = context)
 
         question_type = quizcomp.model.constants.QuestionType(raw_question_type)
-        serialization_options['question_type'] = question_type
+        context.extra['question_type'] = question_type
 
         raw_feedback = data.pop('feedback', None)
 
-        data = super().prep_init_data(data, serialization_options)
+        data = super().prep_init_data(data, context)
 
-        data['prompt'] = cls._collect_prompt(data.get('prompt', None), data.get('prompt_path', None), base_dir)
-        data['feedback'] = quizcomp.model.feedback.Feedback.from_raw_data(raw_feedback, base_dir = base_dir)
+        data['prompt'] = cls._collect_prompt(data.get('prompt', None), data.get('prompt_path', None), context)
+        data['feedback'] = quizcomp.model.feedback.Feedback.from_raw_data(raw_feedback, context)
 
-        cls._validate_init_data(data, serialization_options)
+        cls._validate_init_data(data, context)
 
         return data
 
     @classmethod
-    def _validate_init_data(cls, data: typing.Dict[str, typing.Any], serialization_options: typing.Dict[str, typing.Any]) -> None:
+    def _validate_init_data(cls,
+            data: typing.Dict[str, typing.Any],
+            context: edq.util.serial.SerializationContext,
+            ) -> None:
         """ Validate the data to be sent to __init__() right before construction. """
-
-        base_dir = serialization_options.get('base_dir', None)
 
         question_type = data.get('question_type', None)
         if (not edq.util.enum.has_value(quizcomp.model.constants.QuestionType, question_type)):
-            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{question_type}'.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{question_type}'.", context = context)
 
         answers = data.get('answers', None)
         if (answers is None):
             if (question_type not in EMPTY_ANSWER_QUESTION_TYPES):
-                raise quizcomp.errors.QuestionValidationError('No answers to question provided.', base_dir = base_dir)
+                raise quizcomp.errors.QuestionValidationError('No answers to question provided.', context = context)
 
             data['answers'] = quizcomp.model.answer.TextAnswers()
 
@@ -137,17 +128,17 @@ class Question(quizcomp.model.base.CoreType):
                 raise quizcomp.errors.QuestionValidationError(
                         (f"Mismatch between the placeholders found in the question prompt ({output_prompt_placeholders})"
                             + f" and answers config ({output_answers_placeholders})."),
-                        base_dir = base_dir)
+                        context = context)
         elif (len(prompt_placeholders) != 0):
             raise quizcomp.errors.QuestionValidationError(
                     f"Found placeholders in the prompt for questions that do not use placeholders: '{question_type}'.",
-                    base_dir = base_dir)
+                    context = context)
 
     @classmethod
     def _collect_prompt(cls,
-            text: typing.Union[quizcomp.parser.document.ParsedDocument:, str, None] = None,
-            path: typing.Union[str, None] = None,
-            base_dir: typing.Union[str, None] = None,
+            text: typing.Union[quizcomp.parser.document.ParsedDocument:, str, None],
+            path: typing.Union[str, None],
+            context: edq.util.serial.SerializationContext,
             ) -> quizcomp.parser.document.ParsedDocument:
         """
         Collect the prompt from one of several possible locations.
@@ -164,24 +155,21 @@ class Question(quizcomp.model.base.CoreType):
         if (text is None):
             text = ''
 
-        if (base_dir is None):
-            base_dir = '.'
-
         if (isinstance(text, quizcomp.parser.document.ParsedDocument)):
             return text
 
         text = text.strip()
         if (len(text) != 0):
-            return quizcomp.parser.document.ParsedDocument.parse_text(text, base_dir = base_dir)
+            return quizcomp.parser.document.ParsedDocument.parse_text(text, context)
 
         if (path is not None):
-            return quizcomp.parser.document.ParsedDocument.parse_file(path, base_dir = base_dir)
+            return quizcomp.parser.document.ParsedDocument.parse_file(path, context)
 
-        path = os.path.abspath(os.path.join(base_dir, DEFAULT_PROMPT_FILENAME))
+        path = os.path.abspath(os.path.join(context.base_dir, DEFAULT_PROMPT_FILENAME))
         if (not os.path.isfile(path)):
-            raise quizcomp.errors.QuestionValidationError("Could not find any non-empty prompt.", base_dir = base_dir)
+            raise quizcomp.errors.QuestionValidationError("Could not find any non-empty prompt.", context = context)
 
-        return quizcomp.parser.document.ParsedDocument.parse_file(path, base_dir = base_dir)
+        return quizcomp.parser.document.ParsedDocument.parse_file(path, context)
 
     def shuffle(self, rng: random.Random) -> None:
         """
