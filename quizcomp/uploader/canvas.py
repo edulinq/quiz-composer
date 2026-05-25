@@ -47,45 +47,18 @@ QUESTION_FEEDBACK_MAPPING: typing.Dict[str, str] = {
     'incorrect': 'incorrect_comments_html',
 }
 
-class InstanceInfo:
-    """ Info on how to connect to a Canvas instance. """
-
-    def __init__(self, base_url: str, course_id: str, token: str, testing: bool = False) -> None:
-        self.base_url: str = base_url
-        """ URL for the target Canvas server. """
-
-        self.course_id: str = course_id
-        """ ID of the target Canvas course. """
-
-        self.token: str = token
-        """ Canvas authentication token. """
-
-        self.context: typing.Dict[str, typing.Any] = {}
-        """ Context information. """
-
-        self.testing: bool = testing
-        """ Indicates that this is an instance used in testing and should not try to be used for a real server. """
-
-    def base_headers(self) -> typing.Dict[str, str]:
-        """ Get standard Canvas headers. """
-
-        return {
-            "Authorization": f"Bearer {self.token}",
-            "Accept": "application/json+canvas-string-ids",
-        }
-
 class CanvasUploader:
     """
     Upload quizes to Canvas.
     """
 
-    def __init__(self, instance: InstanceInfo, force: bool = False, **kwargs: typing.Any) -> None:
+    def __init__(self, instance: quizcomp.uploader.instance.CanvasInstanceInfo, force: bool = False, **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
         if (instance is None):
             raise ValueError("Canvas instance information cannot be None.")
 
-        self.instance: InstanceInfo = instance
+        self.instance: quizcomp.uploader.instance.CanvasInstanceInfo = instance
         """ The Canvas instance to connect to. """
 
         self.force = force
@@ -96,7 +69,7 @@ class CanvasUploader:
 
         upload_quiz(quiz, self.instance, force = self.force)
 
-def upload_quiz(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo, force: bool = False) -> bool:
+def upload_quiz(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo, force: bool = False) -> bool:
     """
     Upload a quiz to Canvas.
     Data may be written into the instance context.
@@ -118,7 +91,7 @@ def upload_quiz(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo, force: bool = 
 
     return True
 
-def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo) -> typing.Dict[str, str]:
+def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> typing.Dict[str, str]:
     """
     Upload a file to Canvas.
     Canvas requires that images (and other files) be uploaded to their side (instead of embedded),
@@ -150,7 +123,7 @@ def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo) -> typ
     return file_ids
     '''
 
-def get_matching_quiz_ids(title: str, instance: InstanceInfo) -> typing.List[str]:
+def get_matching_quiz_ids(title: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> typing.List[str]:
     """ Get Canvas IDs for any quizzes that match the given title. """
 
     response = requests.request(
@@ -166,7 +139,7 @@ def get_matching_quiz_ids(title: str, instance: InstanceInfo) -> typing.List[str
 
     return ids
 
-def delete_quiz(quiz_id: str, instance: InstanceInfo) -> None:
+def delete_quiz(quiz_id: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Delete a quiz on Canvas. """
 
     response = requests.request(
@@ -175,7 +148,7 @@ def delete_quiz(quiz_id: str, instance: InstanceInfo) -> None:
         headers = instance.base_headers())
     response.raise_for_status()
 
-def fetch_assignment_group(name: str, instance: InstanceInfo) -> typing.Union[str, None]:
+def fetch_assignment_group(name: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> typing.Union[str, None]:
     """ Get the assignment group ID (if any) that has an assignment (e.g., quiz) that matches the given name. """
 
     if (name is None):
@@ -193,7 +166,7 @@ def fetch_assignment_group(name: str, instance: InstanceInfo) -> typing.Union[st
 
     return None
 
-def create_quiz(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo) -> None:
+def create_quiz(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Create a quiz (with all questions) on Canvas. """
 
     file_ids = upload_canvas_files(quiz, instance)
@@ -233,7 +206,7 @@ def create_quiz(quiz: quizcomp.quiz.Quiz, instance: InstanceInfo) -> None:
     for question_group in quiz.groups:
         create_question_group(quiz_id, question_group, instance)
 
-def create_question_group(quiz_id: str, group: quizcomp.group.Group, instance: InstanceInfo) -> None:
+def create_question_group(quiz_id: str, group: quizcomp.group.Group, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Create a question group for the given quiz. """
 
     data = {
@@ -254,7 +227,7 @@ def create_question_group(quiz_id: str, group: quizcomp.group.Group, instance: I
     for (i, question) in enumerate(group.questions):
         create_question(quiz_id, group_id, question, i, instance)
 
-def create_question(quiz_id: str, group_id: int, question: quizcomp.question.base.Question, index: int, instance: InstanceInfo) -> None:
+def create_question(quiz_id: str, group_id: int, question: quizcomp.question.base.Question, index: int, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Create a question within the given quiz/group. """
 
     data = _create_question_json(group_id, question, index, instance)
@@ -270,7 +243,7 @@ def _create_question_json(
         group_id: int,
         question: quizcomp.question.base.Question,
         index: int,
-        instance: InstanceInfo,
+        instance: quizcomp.uploader.instance.CanvasInstanceInfo,
         ) -> typing.Dict[str, typing.Any]:
     """ Create a dict that represent a question for a Canvas API request. """
 
@@ -306,7 +279,7 @@ def _create_question_json(
 
     return data
 
-def _serialize_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: InstanceInfo) -> None:
+def _serialize_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Convert a question's answers to Canvas JSON. """
 
     # In Canvas, short answer questions also get mapped to the essay Canvas type.
@@ -341,7 +314,7 @@ def _serialize_answer_list(
         # TEST
         # answers: typing.List[quizcomp.model.text.ParsedTextChoice],
         answers: typing.List[typing.Any],
-        instance: InstanceInfo,
+        instance: quizcomp.uploader.instance.CanvasInstanceInfo,
         start_index: int = 0,
         blank_id: typing.Union[str, None] = None,
         use_text: bool = False,
@@ -358,7 +331,7 @@ def _serialize_answer(
         # answer: quizcomp.model.text.ParsedTextChoice,
         answer: typing.Any,
         index: int,
-        instance: InstanceInfo,
+        instance: quizcomp.uploader.instance.CanvasInstanceInfo,
         blank_id: typing.Union[str, None] = None,
         use_text: bool = False,
         ) -> None:
@@ -384,7 +357,7 @@ def _serialize_answer(
         feedback_html = answer.feedback.document.to_canvas(canvas_instance = instance, pretty = False)
         data[f"question[answers][{index}][answer_comment_html]"] = feedback_html
 
-def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: InstanceInfo) -> None:
+def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Concert the answers for a matching-type question to Canvas API data. """
 
     for i in range(len(question.answers['matches'])):
@@ -406,7 +379,7 @@ def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: qu
         ]
         data["question[matching_answer_incorrect_matches]"] = "\n".join(distractors)
 
-def _serialize_fimb_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: InstanceInfo) -> None:
+def _serialize_fimb_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Concert the answers for a FIMB-type question to Canvas API data. """
 
     index = 0
@@ -432,7 +405,7 @@ def _serialize_numeric_answers(
         # TEST
         # answers: typing.List[quizcomp.model.text.NumericChoice],
         answers: typing.List[typing.Any],
-        instance: InstanceInfo,
+        instance: quizcomp.uploader.instance.CanvasInstanceInfo,
         ) -> None:
     """ Concert the answers for a numeric-type question to Canvas API data. """
 
@@ -459,7 +432,7 @@ def _serialize_numeric_answers(
             feedback_text = answer.feedback.document.to_canvas(canvas_instance = instance, pretty = False)
             data[f"question[answers][{i}][answer_comment_html]"] = feedback_text
 
-def upload_file(path: str, canvas_path: str, instance: InstanceInfo) -> str:
+def upload_file(path: str, canvas_path: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> str:
     """ Upload a file to Canvas and fetch its ID. """
 
     parent_id = ensure_folder(os.path.dirname(canvas_path), instance)
@@ -472,7 +445,7 @@ def _init_file_upload(
         path: str,
         canvas_path: str,
         parent_id: str,
-        instance: InstanceInfo,
+        instance: quizcomp.uploader.instance.CanvasInstanceInfo,
         ) -> typing.Tuple[str, typing.Dict[str, typing.Any]]:
     """ Prepare to upload a file to Canvas. """
 
@@ -533,7 +506,7 @@ def _upload_file_contents(path: str, upload_url: str, upload_params: typing.Dict
 
     return str(file_id)
 
-def ensure_folder(canvas_path: str, instance: InstanceInfo) -> str:
+def ensure_folder(canvas_path: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> str:
     """ Ensure that a Canvas folder exists and fetch its ID. """
 
     folder_id = get_folder(canvas_path, instance)
@@ -547,7 +520,7 @@ def ensure_folder(canvas_path: str, instance: InstanceInfo) -> str:
 
     return folder_id
 
-def get_folder(canvas_path: str, instance: InstanceInfo) -> typing.Union[str, None]:
+def get_folder(canvas_path: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> typing.Union[str, None]:
     """ Get a Canvas folder ID (if it exists). """
 
     # The canvas path should be absolute.
@@ -563,7 +536,7 @@ def get_folder(canvas_path: str, instance: InstanceInfo) -> typing.Union[str, No
 
     return str(response.json()[-1]['id'])
 
-def create_folder(canvas_path: str, instance: InstanceInfo) -> str:
+def create_folder(canvas_path: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> str:
     """ Create a folder in Canvas. """
 
     name = os.path.basename(canvas_path)
@@ -585,7 +558,7 @@ def create_folder(canvas_path: str, instance: InstanceInfo) -> str:
 
     return str(response.json()['id'])
 
-def hide_folder(canvas_path: str, instance: InstanceInfo) -> None:
+def hide_folder(canvas_path: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Ensure that a Canvas folder (specified by path) is hidden. """
 
     folder_id = get_folder(canvas_path, instance)
@@ -594,7 +567,7 @@ def hide_folder(canvas_path: str, instance: InstanceInfo) -> None:
 
     hide_folder_id(folder_id, instance)
 
-def hide_folder_id(folder_id: str, instance: InstanceInfo) -> None:
+def hide_folder_id(folder_id: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Ensure that a Canvas folder (specified by ID) is hidden. """
 
     data = {

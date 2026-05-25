@@ -105,7 +105,7 @@ class Group(quizcomp.model.base.CoreType):
         return questions
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         data = super().to_pod(context)
         data['questions'] = data.pop('children', data.get('questions', None))

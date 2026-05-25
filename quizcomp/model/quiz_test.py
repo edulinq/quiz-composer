@@ -91,10 +91,10 @@ def _get_quiz_reparse_test_method(path: str) -> typing.Callable:
 
     def __method(self: QuizTest) -> None:
         quiz = self.load_quiz(path)
-        quiz_data = quiz.to_pod(edq.util.serial.SerializationContext())
+        quiz_data = quiz.to_pod()
 
         new_quiz = quizcomp.model.quiz.Quiz.from_pod(copy.deepcopy(quiz_data))
-        new_quiz_data = new_quiz.to_pod(edq.util.serial.SerializationContext())
+        new_quiz_data = new_quiz.to_pod()
 
         self.assertJSONDictEqual(quiz_data, new_quiz_data)
 
@@ -105,7 +105,7 @@ def _get_quiz_serial_test_method(path: str, serial_path: str) -> typing.Callable
 
     def __method(self: QuizTest) -> None:
         quiz = self.load_quiz(path)
-        actual_data = quiz.to_pod(edq.util.serial.SerializationContext())
+        actual_data = quiz.to_pod()
 
         expected_data = edq.util.json.load_path(serial_path)
 

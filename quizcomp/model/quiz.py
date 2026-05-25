@@ -155,7 +155,7 @@ class Quiz(quizcomp.model.base.CoreType):
         self.answers.shuffle(rng)
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         data = super().to_pod(context)
         data['groups'] = data.pop('children', data.get('groups', None))

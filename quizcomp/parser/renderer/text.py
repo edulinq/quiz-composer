@@ -18,14 +18,12 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
 
     __output__ = quizcomp.constants.FORMAT_TEXT
 
-    def clean_final(self, text: str, context: typing.Dict[str, typing.Any]) -> str:
-        allow_all_characters = context.get(quizcomp.parser.common.CONTEXT_KEY_TEXT_ALLOW_ALL_CHARACTERS, False)
-
+    def clean_final(self, text: str, context: quizcomp.parser.common.RenderContext) -> str:
         # Clean up whitespace.
         text = re.sub(r'\s+', ' ', text).strip()
 
         # Remove bad disallowed characters.
-        if (not allow_all_characters):
+        if (not context.text_allow_all_characters):
             text = re.sub(DISALLOWED_CHARACTERS, '', text)
 
             # Clean up whitespace once more.
@@ -33,88 +31,88 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
 
         return text
 
-    def _text(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _text(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return _clean_text(node.text)
 
-    def _softbreak(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _softbreak(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return "\n"
 
-    def _hardbreak(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _hardbreak(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return "\n\n"
 
-    def _em(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _em(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''.join([self._render_node(child, context) for child in node.children])
 
-    def _strong(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _strong(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''.join([self._render_node(child, context) for child in node.children])
 
-    def _fence(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _fence(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return self._handle_special_text(node, context)
 
-    def _code_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _code_block(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return self._handle_special_text(node, context)
 
-    def _code_inline(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _code_inline(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return self._handle_special_text(node, context)
 
-    def _math_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _math_block(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return self._handle_special_text(node, context)
 
-    def _math_inline(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _math_inline(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return self._handle_special_text(node, context)
 
-    def _image(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _image(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _link(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _link(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _placeholder(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _placeholder(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return _clean_text(node.text)
 
-    def _table(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _table(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _thead(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _thead(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _tbody(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _tbody(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _tr(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _tr(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _th(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _th(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _td(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _td(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _bullet_list(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _bullet_list(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _ordered_list(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _ordered_list(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _list_item(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _list_item(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _hr(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _hr(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''
 
-    def _heading(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _heading(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''.join([self._render_node(child, context) for child in node.children])
 
-    def _blockquote(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _blockquote(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         return ''.join([self._render_node(child, context) for child in node.children])
 
-    def _handle_special_text(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _handle_special_text(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """
         Special text is usually not allowed,
-        but can be enabled with quizcomp.parser.common.CONTEXT_KEY_TEXT_ALLOW_SPECIAL_TEXT.
+        but can be enabled with quizcomp.parser.common.RenderContext.text_allow_special_text.
         """
 
-        if (context.get(quizcomp.parser.common.CONTEXT_KEY_TEXT_ALLOW_SPECIAL_TEXT, False)):
+        if (context.text_allow_special_text):
             return node.text.strip()
 
         return ''

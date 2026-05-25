@@ -9,6 +9,7 @@ import sys
 import quizcomp.cli.parser
 import quizcomp.quiz
 import quizcomp.uploader.canvas
+import quizcomp.uploader.instance
 
 DEFAULT_BASE_URL: str = 'https://canvas.ucsc.edu'
 
@@ -22,7 +23,7 @@ def run_cli(args: argparse.Namespace) -> int:
         raise ValueError(f"Provided path '{args.path}' is not a file.")
 
     quiz = quizcomp.quiz.Quiz.from_path(args.path)
-    canvas_instance = quizcomp.uploader.canvas.InstanceInfo(args.base_url, args.course_id, args.token)
+    canvas_instance = quizcomp.uploader.instance.CanvasInstanceInfo(args.base_url, args.course_id, args.token)
 
     uploader = quizcomp.uploader.canvas.CanvasUploader(canvas_instance, force = args.force)
     uploader.upload_quiz(quiz)

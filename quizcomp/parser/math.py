@@ -20,7 +20,8 @@ def render(
         ) -> str:
     """ Render the given token in the specified format. """
 
-    context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
+    context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
+
     text = tokens[token_index].content
 
     if (format == quizcomp.constants.FORMAT_HTML):
@@ -34,7 +35,7 @@ def render(
     else:
         raise ValueError(f"Unknown format '{format}'.")
 
-def _render_tex(text: str, inline: bool, context: typing.Dict[str, typing.Any]) -> str:
+def _render_tex(text: str, inline: bool, context: quizcomp.parser.common.RenderContext) -> str:
     """ Render the given token content as TeX. """
 
     text = text.replace('$', r'\$')
@@ -45,7 +46,7 @@ def _render_tex(text: str, inline: bool, context: typing.Dict[str, typing.Any]) 
 
     return f"$$\n{text}\n$$"
 
-def _render_html(text: str, inline: bool, context: typing.Dict[str, typing.Any]) -> str:
+def _render_html(text: str, inline: bool, context: quizcomp.parser.common.RenderContext) -> str:
     """ Render the given token content as HTML. """
 
     global _katex_available  # pylint: disable=global-statement
@@ -69,7 +70,7 @@ def _render_html(text: str, inline: bool, context: typing.Dict[str, typing.Any])
 
     return f"<{element} {attributes}>{content}</{element}>"
 
-def _render_md(text: str, inline: bool, context: typing.Dict[str, typing.Any]) -> str:
+def _render_md(text: str, inline: bool, context: quizcomp.parser.common.RenderContext) -> str:
     """ Render the given token content as Markdown. """
 
     if (inline):

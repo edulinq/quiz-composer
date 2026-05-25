@@ -38,14 +38,13 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
         # Canvas requires files to be uploaded instead of embedded.
         # Those files should have already been uploaded and available.
 
-        context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
+        context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
 
         force_raw_image_src = True
         process_token: typing.Union[quizcomp.parser.renderer.html.ProcessImageTokenFunction, None] = _process_image_token
 
         # If there is no canvas instance, we are probably just parsing and not uploading.
-        canvas_instance = context.get('canvas_instance', None)
-        if ((canvas_instance is None) or canvas_instance.testing):
+        if ((context.canvas_instance is None) or context.canvas_instance.testing):
             force_raw_image_src = False
             process_token = None
 
@@ -53,21 +52,24 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
                 force_raw_image_src = force_raw_image_src,
                 process_token = process_token)
 
-def _process_image_token(token: markdown_it.token.Token, context: typing.Dict[str, typing.Any], path: str) -> markdown_it.token.Token:
+def _process_image_token(
+        token: markdown_it.token.Token,
+        context: quizcomp.parser.common.RenderContext,
+        path: str,
+        ) -> markdown_it.token.Token:
     """
     Process an image token for Canvas usage.
     This will rewrite the image's src/link.
     """
 
-    canvas_instance = context.get('canvas_instance', None)
-    if (canvas_instance is None):
+    if (context.canvas_instance is None):
         raise ValueError('Could not get canvas context.')
 
-    file_id = canvas_instance.context.get('file_ids', {}).get(path)
+    file_id = context.canvas_instance.context.get('file_ids', {}).get(path)
     if (file_id is None):
         raise ValueError(f"Could not get canvas context file id of image '{path}'.")
 
-    token.attrSet('src', f"{canvas_instance.base_url}/courses/{canvas_instance.course_id}/files/{file_id}/preview")
+    token.attrSet('src', f"{context.canvas_instance.base_url}/courses/{context.canvas_instance.course_id}/files/{file_id}/preview")
     return token
 
 def get_renderer(options: markdown_it.utils.OptionsDict) -> QuizComposerRendererCanvas:

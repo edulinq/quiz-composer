@@ -1,4 +1,5 @@
 import argparse
+import typing
 
 import markdown_it
 import mdformat.plugins
@@ -7,24 +8,24 @@ import mdformat.renderer
 import quizcomp.parser.common
 import quizcomp.parser.math
 
-def math_inline(node: mdformat.renderer.RenderTreeNode, context: mdformat.renderer.RenderContext) -> str:
+def math_inline(node: mdformat.renderer.RenderTreeNode, md_context: mdformat.renderer.RenderContext) -> str:
     """ Render inline math. """
 
-    qg_context = context.env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
-    return quizcomp.parser.math._render_md(node.content, True, qg_context)
+    context = typing.cast(quizcomp.parser.common.RenderContext, md_context.env[quizcomp.parser.common.ENV_KEY_CONTEXT])
+    return quizcomp.parser.math._render_md(node.content, True, context)
 
-def math_block(node: mdformat.renderer.RenderTreeNode, context: mdformat.renderer.RenderContext) -> str:
+def math_block(node: mdformat.renderer.RenderTreeNode, md_context: mdformat.renderer.RenderContext) -> str:
     """ Render a math block. """
 
-    qg_context = context.env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
-    return quizcomp.parser.math._render_md(node.content, False, qg_context)
+    context = typing.cast(quizcomp.parser.common.RenderContext, md_context.env[quizcomp.parser.common.ENV_KEY_CONTEXT])
+    return quizcomp.parser.math._render_md(node.content, False, context)
 
-def placeholder(node: mdformat.renderer.RenderTreeNode, context: mdformat.renderer.RenderContext) -> str:
+def placeholder(node: mdformat.renderer.RenderTreeNode, md_context: mdformat.renderer.RenderContext) -> str:
     """ Render an answer placeholder. """
 
     return f"<placeholder>{node.content}</placeholder>"
 
-def container_block(node: mdformat.renderer.RenderTreeNode, context: mdformat.renderer.RenderContext) -> str:
+def container_block(node: mdformat.renderer.RenderTreeNode, md_context: mdformat.renderer.RenderContext) -> str:
     """ Render a container block. """
 
     # We can ignore blocks when outputting markdown (since it is non-standard).
@@ -34,7 +35,7 @@ def container_block(node: mdformat.renderer.RenderTreeNode, context: mdformat.re
 
     parts = []
     for child in node.children:
-        parts.append(child.render(context))
+        parts.append(child.render(md_context))
 
     return "\n\n".join(parts)
 

@@ -18,21 +18,21 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
             ) -> str:
         """ Render tokens to text. """
 
-        context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
+        context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
 
         # Work with an AST instead of tokens.
         ast = quizcomp.parser.ast.build(tokens)
 
         return self._render_node(ast, context)
 
-    def clean_final(self, text: str, context: typing.Dict[str, typing.Any]) -> str:
+    def clean_final(self, text: str, context: quizcomp.parser.common.RenderContext) -> str:
         """
         Last chance for cleaning before leaving the renderer.
         """
 
         return text.strip()
 
-    def _render_node(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _render_node(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """
         Route rendering to the method '_render_<type>(self, node, context)', e.g.: '_image'.
         """
@@ -44,61 +44,61 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
 
         return str(method(node, context))
 
-    def _root(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _root(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'root' token. """
 
         content = "\n\n".join([self._render_node(child, context) for child in node.children])
         content = self.clean_final(content, context)
         return content
 
-    def _container_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _container_block(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'container_block' token. """
 
         # Pull any style attatched to this block and put it in a copy of the context.
-        context, _, _ = quizcomp.parser.common.handle_block_style(node.attributes, context)
+        context, _ = quizcomp.parser.common.handle_block_style(node.attributes, context)
         return "\n\n".join([self._render_node(child, context) for child in node.children])
 
-    def _paragraph(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _paragraph(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'paragraph' token. """
 
         return "\n".join([self._render_node(child, context) for child in node.children])
 
-    def _inline(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _inline(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'inline' token. """
 
         return ''.join([self._render_node(child, context) for child in node.children])
 
-    def _text(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _text(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'text' token. """
 
         raise NotImplementedError()
 
-    def _softbreak(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _softbreak(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'softbreak' token. """
 
         raise NotImplementedError()
 
-    def _hardbreak(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _hardbreak(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'hardbreak' token. """
 
         raise NotImplementedError()
 
-    def _em(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _em(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'em' token. """
 
         raise NotImplementedError()
 
-    def _strong(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _strong(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'strong' token. """
 
         raise NotImplementedError()
 
-    def _fence(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _fence(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'fence' token. """
 
         raise NotImplementedError()
 
-    def _code_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _code_block(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """
         Render the 'code_block' token.
 
@@ -108,92 +108,92 @@ class QuizComposerRendererBase(markdown_it.renderer.RendererProtocol):
 
         raise NotImplementedError()
 
-    def _code_inline(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _code_inline(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'code_inline' token. """
 
         raise NotImplementedError()
 
-    def _math_block(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _math_block(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'math_block' token. """
 
         raise NotImplementedError()
 
-    def _math_inline(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _math_inline(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'math_inline' token. """
 
         raise NotImplementedError()
 
-    def _image(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _image(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'image' token. """
 
         raise NotImplementedError()
 
-    def _link(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _link(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'link' token. """
 
         raise NotImplementedError()
 
-    def _placeholder(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _placeholder(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'placeholder' token. """
 
         raise NotImplementedError()
 
-    def _table(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _table(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'table' token. """
 
         raise NotImplementedError()
 
-    def _thead(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _thead(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'thead' token. """
 
         raise NotImplementedError()
 
-    def _tbody(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _tbody(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'tbody' token. """
 
         raise NotImplementedError()
 
-    def _tr(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _tr(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'tr' token. """
 
         raise NotImplementedError()
 
-    def _th(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _th(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'th' token. """
 
         raise NotImplementedError()
 
-    def _td(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _td(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'td' token. """
 
         raise NotImplementedError()
 
-    def _bullet_list(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _bullet_list(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'bullet_list' token. """
 
         raise NotImplementedError()
 
-    def _ordered_list(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _ordered_list(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'ordered_list' token. """
 
         raise NotImplementedError()
 
-    def _list_item(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _list_item(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'list_item' token. """
 
         raise NotImplementedError()
 
-    def _hr(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _hr(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'hr' token. """
 
         raise NotImplementedError()
 
-    def _heading(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _heading(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'heading' token. """
 
         raise NotImplementedError()
 
-    def _blockquote(self, node: quizcomp.parser.ast.ASTNode, context: typing.Dict[str, typing.Any]) -> str:
+    def _blockquote(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         """ Render the 'blockquote' token. """
 
         raise NotImplementedError()

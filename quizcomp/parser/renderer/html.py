@@ -21,7 +21,7 @@ class ProcessImageTokenFunction(typing.Protocol):
     A function that is called when rendering an image to process the token before HTML rendering.
     """
 
-    def __call__(self, token: markdown_it.token.Token, context: typing.Dict[str, typing.Any], path: str) -> markdown_it.token.Token:
+    def __call__(self, token: markdown_it.token.Token, context: quizcomp.parser.common.RenderContext, path: str) -> markdown_it.token.Token:
         """ Process the image token before rendering. """
 
 # pylint: disable=abstract-method
@@ -45,23 +45,31 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
 
         # Do custom rendering and then pass onto super.
 
-        context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
-        style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
+        context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
 
-        base_dir = context.get(quizcomp.parser.common.BASE_DIR_KEY, '.')
-        callback = context.get(quizcomp.parser.common.CONTEXT_KEY_IMAGE_CALLBACK, None)
+        # TEST
+        # callback = context.get(quizcomp.parser.common.CONTEXT_KEY_IMAGE_CALLBACK, None)
+        callback = None
+
+        # TEST
+        import sys
+        print('---', file = sys.stderr)
+        print(vars(context), file = sys.stderr)
+        print('---', file = sys.stderr)
 
         # Set width.
-        width_float = quizcomp.parser.style.get_image_width(style)
+        width_float = quizcomp.parser.style.get_image_width(context.style)
         tokens[token_index].attrSet('width', f"{(width_float * 100.0):0.2f}%")
 
         original_src = str(tokens[token_index].attrGet('src'))
-        src = quizcomp.parser.image.handle_callback(callback, original_src, base_dir)
-        path = os.path.realpath(os.path.join(base_dir, src))
+        src = quizcomp.parser.image.handle_callback(callback, original_src, context.base_dir)
+        path = os.path.realpath(os.path.join(context.base_dir, src))
         tokens[token_index].attrSet('src', src)
 
         # Check the env to see if we need to force raw images.
-        force_raw_image_src = force_raw_image_src or context.get(quizcomp.parser.common.CONTEXT_KEY_FORCE_RAW_IMAGE_SRC, False)
+        # TEST
+        # force_raw_image_src = force_raw_image_src or context.get(quizcomp.parser.common.CONTEXT_KEY_FORCE_RAW_IMAGE_SRC, False)
+        force_raw_image_src = bool(force_raw_image_src)
 
         if (force_raw_image_src or re.match(r'^http(s)?://', src) or src.startswith('data:image')):
             # Do not further modify the src if we are explicitly directed not to
@@ -91,20 +99,20 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
             ) -> str:
         """ Render the opening of a block. """
 
-        context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
+        context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
 
         # Add on a specific class.
         tokens[token_index].attrJoin('class', 'qg-block')
 
         # Pull any style attached to this block and put it in a copy of the context.
-        context, full_style, block_style = quizcomp.parser.common.handle_block_style(tokens[token_index].meta, context)
-        env[quizcomp.parser.common.CONTEXT_ENV_KEY] = context
+        context, block_style = quizcomp.parser.common.handle_block_style(tokens[token_index].meta, context)
+        env[quizcomp.parser.common.ENV_KEY_CONTEXT] = context
 
         # Attach style based on if we are the root block.
         # If root use all style, otherwise just use the style for this block.
         active_style = block_style
         if (tokens[token_index].meta.get(quizcomp.parser.common.TOKEN_META_KEY_ROOT, False)):
-            active_style = full_style
+            active_style = context.style
 
         style_string = quizcomp.parser.style.compute_html_style_string(active_style)
         if (style_string != ''):
@@ -152,15 +160,17 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         """ Render the opening of a table. """
 
         token = tokens[token_index]
-        context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
-        style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
+        context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
 
         table_style = [
             'border-collapse: collapse',
         ]
 
         has_border = quizcomp.parser.style.get_boolean_style_key(
-                style, quizcomp.parser.style.KEY_TABLE_BORDER_TABLE, quizcomp.parser.style.DEFAULT_TABLE_BORDER_TABLE)
+            context.style,
+            quizcomp.parser.style.KEY_TABLE_BORDER_TABLE,
+            quizcomp.parser.style.DEFAULT_TABLE_BORDER_TABLE,
+        )
 
         if (has_border):
             table_style.append(f"border: {HTML_BORDER_SPEC}")
@@ -168,7 +178,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
             table_style.append('border-style: hidden')
 
         # HTML tables require extra encouragement to align.
-        text_align = quizcomp.parser.style.get_alignment(style, quizcomp.parser.style.KEY_TEXT_ALIGN)
+        text_align = quizcomp.parser.style.get_alignment(context.style, quizcomp.parser.style.KEY_TEXT_ALIGN)
         if (text_align is not None):
             table_style.append(f"text-align: {text_align}")
 
@@ -185,11 +195,14 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         """ Render the opening of a table header. """
 
         token = tokens[token_index]
-        context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
-        style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
+
+        context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
 
         has_head = quizcomp.parser.style.get_boolean_style_key(
-                style, quizcomp.parser.style.KEY_TABLE_HEAD_RULE, quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE)
+            context.style,
+            quizcomp.parser.style.KEY_TABLE_HEAD_RULE,
+            quizcomp.parser.style.DEFAULT_TABLE_HEAD_RULE,
+        )
 
         if (has_head):
             _join_html_style(token, [f"border-bottom: {HTML_BORDER_SPEC}"])
@@ -205,14 +218,17 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         """ Render the opening of a th. """
 
         token = tokens[token_index]
-        context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
-        style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
-        self._cell_html(token, style)
+        context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
+
+        self._cell_html(token, context.style)
 
         weight = 'normal'
         use_bold = quizcomp.parser.style.get_boolean_style_key(
-                style, quizcomp.parser.style.KEY_TABLE_HEAD_BOLD, quizcomp.parser.style.DEFAULT_TABLE_HEAD_BOLD)
+            context.style,
+            quizcomp.parser.style.KEY_TABLE_HEAD_BOLD,
+            quizcomp.parser.style.DEFAULT_TABLE_HEAD_BOLD,
+        )
 
         if (use_bold):
             weight = 'bold'
@@ -230,10 +246,10 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         """ Render the opening of a td. """
 
         token = tokens[token_index]
-        context = env.get(quizcomp.parser.common.CONTEXT_ENV_KEY, {})
-        style = context.get(quizcomp.parser.common.CONTEXT_KEY_STYLE, {})
 
-        self._cell_html(token, style)
+        context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
+
+        self._cell_html(token, context.style)
 
         return super().renderToken(tokens, token_index, options, env)
 

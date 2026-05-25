@@ -48,7 +48,7 @@ class Feedback(edq.util.serial.PODConverter):
         return self.is_empty()
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         if (self.is_empty()):
             return None

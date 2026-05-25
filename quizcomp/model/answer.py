@@ -43,7 +43,7 @@ class TextOption(edq.util.serial.PODConverter):
         """ Feedback specific to this choice. """
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         if (self.feedback is None):
             return self.text.to_pod(context)
@@ -274,7 +274,7 @@ class Choice(TextOption):
         """ Whether this choice is a correct answer. """
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         data = {
             'text': self.text.to_pod(context),
@@ -374,7 +374,7 @@ class TextAnswers(QuestionAnswers):
         rng.shuffle(self.options)
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         return [option.to_pod(context) for option in self.options]
 
@@ -442,7 +442,7 @@ class MultiplePartTextAnswers(QuestionAnswers):
             part.shuffle(rng)
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         return {key: value.to_pod(context) for (key, value) in self.parts.items()}
 
@@ -478,7 +478,7 @@ class ChoiceAnswers(QuestionAnswers):
         rng.shuffle(self.choices)
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         return [choice.to_pod(context) for choice in self.choices]
 
@@ -600,7 +600,7 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
             part.shuffle(rng)
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         return {key: value.to_pod(context) for (key, value) in self.parts.items()}
 
@@ -700,7 +700,7 @@ class MatchingAnswers(QuestionAnswers):
         self._shuffle_seed = rng.randint(0, 2**64)
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         return {
             'matches': [[left.to_pod(context), right.to_pod(context)] for (left, right) in self.pairs],
@@ -853,7 +853,7 @@ class NumericAnswers(QuestionAnswers):
         return self.options[0].to_text().text
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
         return [option.to_pod(context) for option in self.options]
 

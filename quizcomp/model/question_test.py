@@ -3,12 +3,12 @@ import os
 import typing
 
 import edq.util.json
-import edq.util.serial
 
 import quizcomp.constants
 import quizcomp.errors
 import quizcomp.model.question
 import quizcomp.uploader.canvas
+import quizcomp.uploader.instance
 import quizcomp.testing.base
 
 CANVAS_FILENAME: str = 'canvas.json'
@@ -17,7 +17,7 @@ SERIAL_FILENAME: str = 'serial.json'
 CANVAS_TEST_GROUP_ID: int = 0
 CANVAS_TEST_INDEX: int = 0
 
-_test_canvas_instance: quizcomp.uploader.canvas.InstanceInfo = quizcomp.uploader.canvas.InstanceInfo(
+_test_canvas_instance: quizcomp.uploader.instance.CanvasInstanceInfo = quizcomp.uploader.instance.CanvasInstanceInfo(
     base_url = 'http://127.0.0.1:3030',
     course_id = '123',
     token = 'abc123',
@@ -91,10 +91,10 @@ def _get_question_reparse_test_method(path: str) -> typing.Callable:
 
     def __method(self: QuestionsTest) -> None:
         question = self.load_question(path)
-        question_data = question.to_pod(edq.util.serial.SerializationContext())
+        question_data = question.to_pod()
 
         new_question = quizcomp.model.question.Question.from_pod(question_data.copy())
-        new_question_data = new_question.to_pod(edq.util.serial.SerializationContext())
+        new_question_data = new_question.to_pod()
 
         self.assertJSONDictEqual(question_data, new_question_data)
 
@@ -118,7 +118,7 @@ def _get_question_serial_test_method(path: str, serial_path: str) -> typing.Call
 
     def __method(self: QuestionsTest) -> None:
         question = self.load_question(path)
-        actual_data = question.to_pod(edq.util.serial.SerializationContext())
+        actual_data = question.to_pod()
 
         expected_data = edq.util.json.load_path(serial_path)
 

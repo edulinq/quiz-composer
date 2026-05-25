@@ -81,13 +81,13 @@ class ParsedDocument(edq.util.serial.PODSerializer):
     def _render(self, format: str, **kwargs: typing.Any) -> str:
         """ Render this document to the specified format. """
 
-        base_context = {
-            # TEST - Do we need this key? Make a container class?
-            quizcomp.parser.common.BASE_DIR_KEY: self.context.base_dir,
+        env = {
+            quizcomp.parser.common.ENV_KEY_CONTEXT: quizcomp.parser.common.RenderContext(
+                base_dir = self.context.base_dir,
+                source_path = self.context.source_path,
+            ),
         }
 
-        context = quizcomp.parser.common.prep_context(base_context, options = kwargs)
-        env = {quizcomp.parser.common.CONTEXT_ENV_KEY: context}
         return quizcomp.parser.render.render(format, self._tokens, env = env, **kwargs)
 
     def collect_placeholders(self) -> typing.Set[str]:
@@ -146,7 +146,7 @@ class ParsedDocument(edq.util.serial.PODSerializer):
         return self.text
 
     def to_pod(self,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> str:
         return self.text
 
