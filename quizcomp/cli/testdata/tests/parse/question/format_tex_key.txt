@@ -2,7 +2,8 @@
     "cli": "quizcomp.cli.parse.question",
     "arguments": [
         "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
-        "--format", "tex"
+        "--format", "tex",
+        "--key",
     ],
 }
 ---
@@ -178,11 +179,11 @@
 \vspace{0.5cm}
 
 \begin{tabular}{ m{2.0cm} m{5cm} }
-    Name: & \bigAnswerBox[]{4em}{0.80}{name}{name}{0}{0} \\
+    Name: & \bigAnswerBox[Answer Key]{4em}{0.80}{name}{name}{0}{0} \\
 \end{tabular}
 
 \begin{tabular}{ m{2.0cm} m{5cm} }
-    Student ID: & \bigAnswerBox[]{4em}{0.80}{id}{email}{0}{0} \\
+    Student ID: & \bigAnswerBox[Answer Key]{4em}{0.80}{id}{email}{0}{0} \\
 \end{tabular}
 
 \hrule
@@ -200,7 +201,7 @@ By signing below, I acknowledge that I have neither given nor received inappropr
 \vspace{0.25cm}
 
 \begin{tabular}{ m{2.0cm} m{5cm} }
-    Signature: & \bigAnswerBox[]{4em}{0.80}{signature}{signature}{0}{0} \\
+    Signature: & \bigAnswerBox[Answer Key]{4em}{0.80}{signature}{signature}{0}{0} \\
 \end{tabular}
 
 \vspace{0.25cm}
@@ -247,7 +248,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \begin{center}
 
         \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{0.8\textwidth} }
-                \radio{multiple_choice}{0.0.0}{0}{0.0.0.0}
+                \radio[red]{multiple_choice}{0.0.0}{0}{0.0.0.0}
                     & A \\
                 \radio{multiple_choice}{0.0.0}{0}{0.0.0.1}
                     & B \\

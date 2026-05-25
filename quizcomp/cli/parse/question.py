@@ -9,18 +9,18 @@ import sys
 import quizcomp.cli.parser
 import quizcomp.converter.convert
 import quizcomp.constants
-import quizcomp.question.base
+import quizcomp.model.question
 
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
 
     if (not os.path.exists(args.path)):
-        raise ValueError(f"Provided path '{args.path}' does not exist.")
+        raise ValueError(f"Provided question path '{args.path}' does not exist.")
 
     if (not os.path.isfile(args.path)):
-        raise ValueError(f"Provided path '{args.path}' is not a file.")
+        raise ValueError(f"Provided question path '{args.path}' is not a file.")
 
-    question = quizcomp.question.base.Question.from_path(args.path)
+    question = quizcomp.model.question.Question.from_path(args.path)
     content = quizcomp.converter.convert.convert_question(question, format = args.format,
             constructor_args = {'answer_key': args.answer_key})
 

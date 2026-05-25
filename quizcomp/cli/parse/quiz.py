@@ -16,10 +16,10 @@ def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
 
     if (not os.path.exists(args.path)):
-        raise ValueError(f"Provided path '{args.path}' does not exist.")
+        raise ValueError(f"Provided quiz path '{args.path}' does not exist.")
 
     if (not os.path.isfile(args.path)):
-        raise ValueError(f"Provided path '{args.path}' is not a file.")
+        raise ValueError(f"Provided quiz path '{args.path}' is not a file.")
 
     seed = args.seed
     if (seed is None):

@@ -2,7 +2,8 @@
     "cli": "quizcomp.cli.parse.question",
     "arguments": [
         "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
-        "--format", "html"
+        "--format", "html",
+        "--key",
     ],
 }
 ---
@@ -291,7 +292,7 @@
      </p>
     </div>
     <div class="qg-quiz-description">
-     <div class="qg-root-block qg-block">
+     <div class="qg-root-block qg-block qg-block">
       <p>
        Dummy description.
       </p>
@@ -299,7 +300,7 @@
     </div>
     <div class="qg-quiz-body">
      <hr/>
-     <div class="qg-quiz-question" data-name="None" data-number="1" data-points="0.0" data-type="multiple_choice">
+     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="1" data-points="0.0" data-type="multiple_choice">
       <h2 class="qg-quiz-question-name">
        Question 1
        <span class="qg-quiz-question-points">
@@ -318,8 +319,8 @@
       </p>
       <div class="qg-quiz-question-body">
        <fieldset>
-        <div>
-         <input id="choice-0.0.0-0" name="question-choice-0.0.0-0" type="radio"/>
+        <div class="qg-correct">
+         <input checked="" id="choice-0.0.0-0" name="question-choice-0.0.0-0" type="radio"/>
          <label for="choice-0.0.0-0">
           <div class="qg-root-block qg-block">
            <p>

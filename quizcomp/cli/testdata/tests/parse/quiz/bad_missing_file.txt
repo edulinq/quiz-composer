@@ -6,4 +6,4 @@
     "error": true
 }
 ---
-builtins.ValueError: Provided path 'ZZZ.json' does not exist.
+builtins.ValueError: Provided quiz path 'ZZZ.json' does not exist.

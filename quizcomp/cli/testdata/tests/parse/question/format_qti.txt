@@ -4,6 +4,129 @@
         "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
         "--format", "qti"
     ],
-    "stdout_assertion_func": "edq.testing.asserts.has_content_100"
 }
 ---
+<?xml version="1.0" encoding="UTF-8"?>
+<questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
+    <assessment ident="quiz" title="Dummy Title - A">
+        <qtimetadata>
+            <qtimetadatafield>
+                <fieldlabel>
+                    cc_maxattempts
+                </fieldlabel>
+                <fieldentry>
+                    1
+                </fieldentry>
+            </qtimetadatafield>
+        </qtimetadata>
+        <section ident="root_section">
+            <section ident="group_0.0" title="Dummy Question">
+                <selection_ordering>
+                    <selection>
+                        <selection_number>
+                            1
+                        </selection_number>
+                        <selection_extension>
+                            <points_per_item>
+                                0.0
+                            </points_per_item>
+                        </selection_extension>
+                    </selection>
+                </selection_ordering>
+                <item ident="ef0.0.0" title="None">
+                    <itemmetadata>
+                        <qtimetadata>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    question_type
+                                </fieldlabel>
+                                <fieldentry>
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    points_possible
+                                </fieldlabel>
+                                <fieldentry>
+                                    None
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    original_answer_ids
+                                </fieldlabel>
+                                <fieldentry>
+                                    aff0,aff1
+                                </fieldentry>
+                            </qtimetadatafield>
+                            <qtimetadatafield>
+                                <fieldlabel>
+                                    assessment_identifierref
+                                </fieldlabel>
+                                <fieldentry>
+                                    ef0.0.0
+                                </fieldentry>
+                            </qtimetadatafield>
+                        </qtimetadata>
+                    </itemmetadata>
+                    <presentation>
+                        <material>
+                            <mattext texttype="text/html">
+                            </mattext>
+                        </material>
+                        <response_lid ident="response1" rcardinality="Single">
+                            <render_choice>
+                                <response_label ident="af0.0.0f0">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    A
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.0.0f1">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    B
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                            </render_choice>
+                        </response_lid>
+                    </presentation>
+                    <resprocessing>
+                        <outcomes>
+                            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal">
+                            </decvar>
+                        </outcomes>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.0.0f0
+                                </varequal>
+                            </conditionvar>
+                            <setvar action="Set" varname="SCORE">
+                                100
+                            </setvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.0.0f1
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                    </resprocessing>
+                </item>
+            </section>
+        </section>
+    </assessment>
+</questestinterop>
+

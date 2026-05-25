@@ -1,6 +1,36 @@
 {
     "cli": "quizcomp.cli.parse.question",
     "arguments": ["__DATA_DIR__(simple-quiz/questions/mcq/question.json)"],
-    "stdout_assertion_func": "edq.testing.asserts.has_content_100"
 }
 ---
+{
+    "course_name": "Dummy Course",
+    "description": "Dummy description.",
+    "groups": [
+        {
+            "name": "Dummy Question",
+            "pick_count": 1,
+            "questions": [
+                {
+                    "answers": [
+                        {
+                            "correct": true,
+                            "text": "A"
+                        },
+                        {
+                            "correct": false,
+                            "text": "B"
+                        }
+                    ],
+                    "prompt": "Multiple Choice",
+                    "question_type": "multiple_choice"
+                }
+            ]
+        }
+    ],
+    "name": "Dummy Title - A",
+    "quiz_name": "Dummy Title",
+    "term_name": "Dummy Term",
+    "variant_id": "A",
+    "version": "0.0.0, Variant: A"
+}
