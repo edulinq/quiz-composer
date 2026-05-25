@@ -48,6 +48,9 @@ class Quiz(quizcomp.model.base.CoreType):
             time_limit_mins: typing.Union[int, None] = None,
             version: typing.Union[str, None] = None,
             **kwargs: typing.Any) -> None:
+        # Remove aliases before super construction.
+        kwargs.pop('groups', None)
+
         super().__init__(children = children, **kwargs)
 
         self.course_name: typing.Union[str, None] = course_name

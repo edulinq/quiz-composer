@@ -28,6 +28,9 @@ class Group(quizcomp.model.base.CoreType):
             children: typing.Union[typing.List[quizcomp.model.question.Question], None] = None,
             pick_count: int = DEFAULT_PICK_COUNT,
             **kwargs: typing.Any) -> None:
+        # Remove aliases before super construction.
+        kwargs.pop('questions', None)
+
         super().__init__(children = children, **kwargs)
 
         if (pick_count < 0):

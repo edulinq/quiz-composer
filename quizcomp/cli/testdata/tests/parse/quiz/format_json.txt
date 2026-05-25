@@ -7,6 +7,9 @@
 }
 ---
 {
+    "attributes": {
+        "shuffle_answers": false
+    },
     "date": 1740463200000,
     "description": "Collect the basic version of each question type.",
     "groups": [
