@@ -67,9 +67,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         tokens[token_index].attrSet('src', src)
 
         # Check the env to see if we need to force raw images.
-        # TEST
-        # force_raw_image_src = force_raw_image_src or context.get(quizcomp.parser.common.CONTEXT_KEY_FORCE_RAW_IMAGE_SRC, False)
-        force_raw_image_src = bool(force_raw_image_src)
+        force_raw_image_src = (force_raw_image_src or context.force_raw_image_src)
 
         if (force_raw_image_src or re.match(r'^http(s)?://', src) or src.startswith('data:image')):
             # Do not further modify the src if we are explicitly directed not to

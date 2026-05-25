@@ -78,14 +78,23 @@ class ParsedDocument(edq.util.serial.PODSerializer):
 
         return self._render(quizcomp.constants.FORMAT_HTML, **kwargs)
 
-    def _render(self, format: str, **kwargs: typing.Any) -> str:
+    def _render(self,
+            format: str,
+            context: typing.Union[quizcomp.parser.common.RenderContext, None] = None,
+            **kwargs: typing.Any) -> str:
         """ Render this document to the specified format. """
 
+        if (context is None):
+            context = quizcomp.parser.common.RenderContext(**kwargs)
+
+            if (kwargs.get('base_dir', None) is None):
+                context.base_dir = self.context.base_dir
+
+            if (context.source_path is None):
+                context.source_path = self.context.source_path
+
         env = {
-            quizcomp.parser.common.ENV_KEY_CONTEXT: quizcomp.parser.common.RenderContext(
-                base_dir = self.context.base_dir,
-                source_path = self.context.source_path,
-            ),
+            quizcomp.parser.common.ENV_KEY_CONTEXT: context,
         }
 
         return quizcomp.parser.render.render(format, self._tokens, env = env, **kwargs)

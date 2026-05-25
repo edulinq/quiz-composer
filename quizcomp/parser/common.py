@@ -25,13 +25,17 @@ class RenderContext:
     """ A simple struct for carrying around the context for rendering. """
 
     def __init__(self,
-            base_dir: str,
+            base_dir: typing.Union[str, None] = None,
             source_path: typing.Union[str, None] = None,
             style: typing.Union[typing.Dict[str, typing.Any], None] = None,
             text_allow_all_characters: bool = False,
             text_allow_special_text: bool = False,
+            force_raw_image_src: bool = False,
             canvas_instance: typing.Union[quizcomp.uploader.instance.CanvasInstanceInfo, None] = None,
-            ) -> None:
+            **kwargs: typing.Any) -> None:
+        if (base_dir is None):
+            base_dir = '.'
+
         self.base_dir: str = base_dir
         """ A base directory to resolve any relative paths. """
 
@@ -50,7 +54,11 @@ class RenderContext:
         self.text_allow_special_text: bool = text_allow_special_text
         """ Allow "special text" when when rendering as `text`. """
 
+        self.force_raw_image_src: bool = force_raw_image_src
+        """ Do not do any processing on an image's source. """
+
         self.canvas_instance: typing.Union[quizcomp.uploader.instance.CanvasInstanceInfo, None] = canvas_instance
+        """ A Canvas instance to use. """
 
     def copy(self) -> 'RenderContext':
         """ Get a deep copy. """

@@ -36,25 +36,26 @@ def _add_good_parse_questions() -> None:
             name = test_case['name']
             text = test_case['text']
 
+            context = quizcomp.parser.common.RenderContext(**test_case.get('context', {}))
+            context.base_dir = base_dir
+
             for (doc_format, expected) in test_case['formats'].items():
                 test_name = _make_name('good_parse', path, name, doc_format)
                 options = test_case.get('options', {}).get(doc_format, {})
-                context = test_case.get('context', {})
-                setattr(TestParser, test_name, _get_good_parse_test(text, doc_format, expected, base_dir, options, context))
+                setattr(TestParser, test_name, _get_good_parse_test(text, doc_format, expected, options, context))
 
 def _get_good_parse_test(
         text: str,
         doc_format: str,
         base_expected: typing.Union[str, typing.List[typing.Dict[str, typing.Any]], typing.Dict[str, typing.Any]],
-        base_dir: str,
         options: typing.Dict[str, typing.Any],
-        context: typing.Dict[str, typing.Any],
+        context: quizcomp.parser.common.RenderContext,
         ) -> typing.Callable:
     """ Get a test method for a valid document. """
 
     def __method(self: TestParser) -> None:
         document = quizcomp.parser.document.ParsedDocument.parse_text(text)
-        result = document.to_format(doc_format, base_dir = base_dir, include_metadata = False, **context)
+        result = document.to_format(doc_format, context = context)
 
         if (doc_format == quizcomp.constants.FORMAT_JSON):
             result = edq.util.json.loads(result)
@@ -124,15 +125,22 @@ def _add_bad_parse_questions() -> None:
             text = test_case['text']
             options = test_case.get('options', {})
 
-            test_name = _make_name('bad_parse', path, name)
-            setattr(TestParser, test_name, _get_bad_parse_test(text, base_dir, options))
+            context = quizcomp.parser.common.RenderContext(**test_case.get('context', {}))
+            context.base_dir = base_dir
 
-def _get_bad_parse_test(text: str, base_dir: str, options: typing.Dict[str, typing.Any]) -> typing.Callable:
+            test_name = _make_name('bad_parse', path, name)
+            setattr(TestParser, test_name, _get_bad_parse_test(text, options, context))
+
+def _get_bad_parse_test(
+        text: str,
+        options: typing.Dict[str, typing.Any],
+        context: quizcomp.parser.common.RenderContext,
+        ) -> typing.Callable:
     """ Get a test method for an invalid document. """
 
     def __method(self: TestParser) -> None:
         try:
-            quizcomp.parser.document.ParsedDocument.parse_text(text)
+            quizcomp.parser.document.ParsedDocument.parse_text(text, context)
         except Exception:
             # Expected.
             return

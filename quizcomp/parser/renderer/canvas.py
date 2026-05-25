@@ -48,9 +48,11 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
             force_raw_image_src = False
             process_token = None
 
-        return super().image(tokens, token_index, options, env,
-                force_raw_image_src = force_raw_image_src,
-                process_token = process_token)
+        return super().image(
+            tokens, token_index, options, env,
+            force_raw_image_src = force_raw_image_src,
+            process_token = process_token,
+        )
 
 def _process_image_token(
         token: markdown_it.token.Token,
