@@ -1,3 +1,4 @@
+import copy
 import os
 import typing
 
@@ -369,3 +370,6 @@ class CoreType(edq.util.serial.DictConverter):
         context.json_options.setdefault('indent', 4)
 
         super().to_path(path, context)
+
+    def copy(self, context: typing.Union[SerializationContext, None] = None) -> 'CoreType':
+        return copy.deepcopy(self)

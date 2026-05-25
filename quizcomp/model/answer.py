@@ -567,8 +567,8 @@ class TFAnswers(ChoiceAnswers):
             ) ->  TFAnswers:
         if (isinstance(data, bool)):
             choices = [
-                Choice(quizcomp.parser.document.ParsedDocument.parse_text("True"), data),
-                Choice(quizcomp.parser.document.ParsedDocument.parse_text("False"), (not data)),
+                Choice(quizcomp.parser.document.ParsedDocument.parse_text("True", context), data),
+                Choice(quizcomp.parser.document.ParsedDocument.parse_text("False", context), (not data)),
             ]
             return TFAnswers(choices)
 

@@ -27,7 +27,7 @@
                 </conditionvar>
                 <setvar varname="SCORE" action="Set">100</setvar>
             </respcondition>
-            {% if ((option.feedback is not none) and (options.feedback.general is not none)) %}
+            {% if ((option.feedback is not none) and (option.feedback.general is not none)) %}
                 <displayfeedback feedbacktype="Response" linkrefid="{{ id }}_fb"/>
             {% endif %}
         {% endfor %}

@@ -51,7 +51,7 @@
                     {% if choice.correct %}
                         <setvar varname="SCORE" action="Add">{{ (100.0 / (this.answers.parts | length)) | round(2) }}</setvar>
                     {% endif %}
-                    {% if choice.feedback %}
+                    {% if ((choice.feedback is not none) and (choice.feedback.general is not none)) %}
                         <displayfeedback feedbacktype="Response" linkrefid="{{ choice_id }}_fb"/>
                     {% endif %}
                 </respcondition>
@@ -70,7 +70,7 @@
                     <flow_mat>
                         <material>
                             <mattext texttype="text/html">
-                                {{ choice.feedback.general.html() }}
+                                {{ choice.feedback.general.to_html() }}
                             </mattext>
                         </material>
                     </flow_mat>
