@@ -1,32 +1,33 @@
 import argparse
-import datetime
 import logging
 import os
 import random
-import string  # TEST
 import traceback
 import typing
 
 import edq.util.dirent
 import edq.util.json
+import edq.util.time
 
 import quizcomp.converter.tex
 import quizcomp.external.latex
-import quizcomp.question.base
-import quizcomp.quiz
+import quizcomp.model.question
+import quizcomp.model.quiz
+
+_logger = logging.getLogger(__name__)
 
 OPTIONS_FILENAME: str = 'options.json'
 
 def make_with_args(
         args: argparse.Namespace,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.model.quiz.Quiz, typing.List[quizcomp.model.quiz.Variant], typing.Dict[str, typing.Any]]:
     """
     Use a standard args object from set_cli_args() to make a PDF quiz.
     """
 
-    if ((args.variants < 1) or (args.variants >= len(string.ascii_uppercase))):
-        raise ValueError(f"Number of variants must be in [1, {len(string.ascii_uppercase)}), found {args.variants}.")
+    if ((args.variants < 1) or (args.variants >= quizcomp.model.quiz.DEFAULT_MAX_VARIANTS)):
+        raise ValueError(f"Number of variants must be in [1, {quizcomp.model.quiz.DEFAULT_MAX_VARIANTS}), found {args.variants}.")
 
     return make_with_path(args.path, base_out_dir = args.out_dir, seed = args.seed, num_variants = args.variants,
             skip_key = args.skip_key, skip_tex = args.skip_tex, skip_pdf = args.skip_pdf,
@@ -35,7 +36,7 @@ def make_with_args(
 def make_with_path(
         quiz_path: str,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.model.quiz.Quiz, typing.List[quizcomp.model.quiz.Variant], typing.Dict[str, typing.Any]]:
     """ Make a PDF given the path to a quiz JSON. """
 
     if (not os.path.exists(quiz_path)):
@@ -44,19 +45,19 @@ def make_with_path(
     if (not os.path.isfile(quiz_path)):
         raise ValueError(f"Provided path '{quiz_path}' is not a file.")
 
-    quiz = quizcomp.quiz.Quiz.from_path(quiz_path)
+    quiz = quizcomp.model.quiz.Quiz.from_path(quiz_path)
     return make(quiz, quiz_path = quiz_path, **kwargs)
 
 def make_from_question_with_args(
         args: argparse.Namespace,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.model.quiz.Quiz, typing.List[quizcomp.model.quiz.Variant], typing.Dict[str, typing.Any]]:
     """
     Use a standard args object to make a PDF from a single question.
     """
 
-    if ((args.variants < 1) or (args.variants >= len(string.ascii_uppercase))):
-        raise ValueError(f"Number of variants must be in [1, {len(string.ascii_uppercase)}), found {args.variants}.")
+    if ((args.variants < 1) or (args.variants >= quizcomp.model.quiz.DEFAULT_MAX_VARIANTS)):
+        raise ValueError(f"Number of variants must be in [1, {quizcomp.model.quiz.DEFAULT_MAX_VARIANTS}), found {args.variants}.")
 
     return make_from_question_with_path(args.path,
             base_out_dir = args.out_dir, seed = args.seed, num_variants = args.variants,
@@ -66,7 +67,7 @@ def make_from_question_with_args(
 def make_from_question_with_path(
         question_path: str,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.model.quiz.Quiz, typing.List[quizcomp.model.quiz.Variant], typing.Dict[str, typing.Any]]:
     """ Make a PDF given the path to a question JSON. """
 
     if (not os.path.exists(question_path)):
@@ -75,20 +76,20 @@ def make_from_question_with_path(
     if (not os.path.isfile(question_path)):
         raise ValueError(f"Provided path '{question_path}' is not a file.")
 
-    question = quizcomp.question.base.Question.from_path(question_path)
+    question = quizcomp.model.question.Question.from_path(question_path)
     return make_from_question(question, **kwargs)
 
 def make_from_question(
-        question: quizcomp.question.base.Question,
+        question: quizcomp.model.question.Question,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.model.quiz.Quiz, typing.List[quizcomp.model.quiz.Variant], typing.Dict[str, typing.Any]]:
     """ Make a PDF given a question. """
 
-    quiz = quizcomp.quiz.Variant.get_dummy(question)
+    quiz = quizcomp.model.quiz.Variant.get_dummy(question)
     return make(quiz, **kwargs)
 
 def make(
-        quiz: quizcomp.quiz.Quiz,
+        quiz: quizcomp.model.quiz.Quiz,
         quiz_path: typing.Union[str, None] = None,
         base_out_dir: typing.Union[str, None] = None,
         seed: typing.Union[int, None] = None,
@@ -98,27 +99,30 @@ def make(
         skip_tex: bool = False,
         skip_pdf: bool = False,
         **kwargs: typing.Any,
-        ) -> typing.Tuple[quizcomp.quiz.Quiz, typing.List[quizcomp.quiz.Variant], typing.Dict[str, typing.Any]]:
+        ) -> typing.Tuple[quizcomp.model.quiz.Quiz, typing.List[quizcomp.model.quiz.Variant], typing.Dict[str, typing.Any]]:
     """ Make a PDF given a quiz. """
 
     if (base_out_dir is None):
         base_out_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
 
-    out_dir = os.path.join(base_out_dir, quiz.title)
+    out_dir = os.path.join(base_out_dir, quiz.name)
     os.makedirs(out_dir, exist_ok = True)
 
-    logging.info("Writing TeX/PDF quiz ('%s') to '%s'.", quiz.title, out_dir)
+    _logger.info("Writing TeX/PDF quiz ('%s') to '%s'.", quiz.name, out_dir)
 
     if (seed is None):
         seed = random.randint(0, 2**64)
 
+    now = edq.util.time.Timestamp.now()
+
     options = {
-        'create_time': datetime.datetime.now().isoformat(),
+        'create_timestamp': now,
+        'create_time': now.pretty(),
         'seed': seed,
         'out_dir': out_dir,
         'quiz': {
             'path': quiz_path,
-            'title': quiz.title,
+            'name': quiz.name,
             'version': quiz.version,
         },
     }
@@ -126,40 +130,40 @@ def make(
     # Options for each variant.
     variant_options = []
 
-    logging.debug("Using seed %d.", seed)
+    _logger.debug("Using seed %d.", seed)
     rng = random.Random(seed)
 
     variants = quiz.create_variants(count = num_variants, seed = seed)
 
-    for variant in variants:
-        out_path = os.path.join(out_dir, f"{variant.title}.json")
+    for (i, variant) in enumerate(variants):
+        out_path = os.path.join(out_dir, f"{variant.name}.json")
         variant.to_path(out_path)
 
         make_pdf(variant, out_dir = out_dir, is_key = False, skip_tex = skip_tex, skip_pdf = skip_pdf)
 
-        title = variant.title
+        name = variant.name
 
-        # Always create an answer key.
         has_key = False
         if (not skip_key):
             try:
-                variant.title = f"{title} -- Answer Key"
+                variant.name = f"{name} -- Answer Key"
                 make_pdf(variant, out_dir = out_dir, is_key = True, skip_tex = skip_tex, skip_pdf = skip_pdf)
                 has_key = True
             except Exception:
-                logging.warning("Failed to generate answer key for '%s'.", title)
-                logging.debug(traceback.format_exc())
+                _logger.warning("Failed to generate answer key for '%s'.", name)
+                _logger.debug(traceback.format_exc())
             finally:
-                variant.title = title
+                variant.name = name
 
         variant_options.append({
             'id': variant.variant_id,
-            'title': title,
-            'seed': variant_seed,
+            'name': name,
+            'variant_index': i,
+            'seed': seed,
             'has_key': has_key,
         })
 
-        logging.info("Completed variant: '%s'.", title)
+        _logger.info("Completed variant: '%s'.", name)
 
     options['variants'] = variant_options
 
@@ -170,7 +174,7 @@ def make(
     return (quiz, variants, options)
 
 def make_pdf(
-        variant: quizcomp.quiz.Variant,
+        variant: quizcomp.model.quiz.Variant,
         out_dir: typing.Union[str, None] = None,
         is_key: bool = False,
         skip_tex: bool = False,
@@ -181,14 +185,18 @@ def make_pdf(
     if (out_dir is None):
         out_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
 
-    image_relative_root = os.path.join('images', variant.title)
+    image_relative_root = os.path.join('images', variant.name)
     image_dir = os.path.join(out_dir, image_relative_root)
 
-    out_path = os.path.join(out_dir, f"{variant.title}.tex")
+    out_path = os.path.join(out_dir, f"{variant.name}.tex")
 
     if (not skip_tex):
-        converter = quizcomp.converter.tex.TexTemplateConverter(answer_key = is_key,
-                image_base_dir = image_dir, image_relative_root = image_relative_root, cleanup_images = True)
+        converter = quizcomp.converter.tex.TexTemplateConverter(
+            answer_key = is_key,
+            image_base_dir = image_dir,
+            image_relative_root = image_relative_root,
+            cleanup_images = True,
+        )
         content = converter.convert_variant(variant)
 
         edq.util.dirent.write_file(out_path, content)

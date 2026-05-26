@@ -240,11 +240,15 @@ class Quiz(quizcomp.model.base.CoreType):
             seed: typing.Union[int, None] = None,
             identifiers: typing.Union[typing.List[str], None] = None,
             all_questions: bool = False,
+            include_solo_identifier: bool = False,
             ) -> typing.List['Variant']:
         """
         Create a collection of variants based on this quiz.
         These variants will share the same question pool,
         which is influenced by the `pick_with_replacement` config option.
+
+        Setting `include_solo_identifier` to true will include an identifier (e.g., " - A")
+        in the name of variants when only one variant is created.
         """
 
         if (seed is None):
@@ -264,12 +268,19 @@ class Quiz(quizcomp.model.base.CoreType):
         logging.debug("Creating %d variants with seed %d.", count, seed)
 
         used_question_indexes = [set() for _ in self.children]
-        variants = [self._create_variant(identifiers[i], rng, used_question_indexes, all_questions) for i in range(count)]
+        variants = []
+
+        for i in range(count):
+            variant_id: typing.Union[str, None] = None
+            if ((count > 1) or (include_solo_identifier)):
+                variant_id = identifiers[i]
+
+            variants.append(self._create_variant(variant_id, rng, used_question_indexes, all_questions))
 
         return variants
 
     def _create_variant(self,
-            identifier: str,
+            variant_id: typing.Union[str, None],
             rng: random.Random,
             used_question_indexes: typing.List[typing.Set[int]],
             all_questions: bool,
@@ -287,13 +298,17 @@ class Quiz(quizcomp.model.base.CoreType):
 
         data = vars(self).copy()
 
-        data['variant_id'] = identifier
+        data['name'] = self.name
+        if (variant_id is not None):
+            data['name'] += f" - {variant_id}"
+
+        data['variant_id'] = variant_id
         data['quiz_name'] = self.name
-        data['name'] = f"{self.name} - {identifier}"
         data['groups'] = new_groups
 
-        if (self.version is not None):
-            data['version'] = f"{self.version}, Variant: {identifier}"
+        data['version'] = self.version
+        if ((self.version is not None) and (variant_id is not None)):
+            data['version'] = f"{self.version}, Variant: {variant_id}"
 
         return Variant(**data)
 
