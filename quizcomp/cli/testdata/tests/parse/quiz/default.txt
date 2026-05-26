@@ -36,7 +36,6 @@
             ]
         }
     ],
-    "name": "Simple Quiz - A",
-    "quiz_name": "Simple Quiz",
-    "variant_id": "A"
+    "name": "Simple Quiz",
+    "quiz_name": "Simple Quiz"
 }

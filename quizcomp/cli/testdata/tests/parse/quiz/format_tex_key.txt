@@ -31,7 +31,7 @@
 \usepackage[
     pdftex,
     hidelinks,
-        pdftitle={All Basic Questions - A},
+        pdftitle={All Basic Questions},
     pdfcreator={Quiz Composer},
 ]{hyperref}
 
@@ -170,7 +170,7 @@
 
 \begin{document}
 
-    \centerline{\Large All Basic Questions - A}
+    \centerline{\Large All Basic Questions}
 \vspace{0.2cm}
 
 \hrule
@@ -216,7 +216,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 % Set headers and footers.
 \pagestyle{fancy}
 \fancyhead{}
-\fancyhead[C]{All Basic Questions - A}
+\fancyhead[C]{All Basic Questions}
 \renewcommand{\headrulewidth}{0.1mm}
 \fancyfoot{}
 \fancyfoot[R]{\thepage}

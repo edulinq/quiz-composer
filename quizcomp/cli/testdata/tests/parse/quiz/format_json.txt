@@ -270,7 +270,6 @@
             ]
         }
     ],
-    "name": "All Basic Questions - A",
-    "quiz_name": "All Basic Questions",
-    "variant_id": "A"
+    "name": "All Basic Questions",
+    "quiz_name": "All Basic Questions"
 }

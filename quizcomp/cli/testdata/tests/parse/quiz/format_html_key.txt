@@ -13,7 +13,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <title>
-   All Basic Questions - A
+   All Basic Questions
   </title>
   <style>
    :root {
@@ -282,7 +282,7 @@
    <form class="qg-quiz-form">
     <div class="qg-quiz-header">
      <h1>
-      All Basic Questions - A
+      All Basic Questions
      </h1>
      <p>
       2025-02-25

@@ -6,7 +6,7 @@
     ],
 }
 ---
-# All Basic Questions - A
+# All Basic Questions
 
 
 2025-02-25
