@@ -1,3 +1,3 @@
 """
-The `quizcomp.cli.pdf` package contains tools for interacting PDF files.
+The `quizcomp.cli.pdf` package contains tools for creating PDF files.
 """
