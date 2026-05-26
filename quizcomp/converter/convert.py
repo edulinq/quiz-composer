@@ -19,11 +19,6 @@ SUPPORTED_FORMATS: typing.List[str] = [
     quizcomp.constants.FORMAT_QTI,
 ]
 
-# Formats for testing only.
-TEST_SUPPORTED_FORMAT: typing.List[str] = [
-    quizcomp.constants.FORMAT_JSON_TEMPLATE,
-]
-
 def get_converter_class(format: str = quizcomp.constants.FORMAT_JSON) -> typing.Type[quizcomp.converter.converter.Converter]:
     """ Get the converter class for the specified format. """
 
@@ -39,8 +34,6 @@ def get_converter_class(format: str = quizcomp.constants.FORMAT_JSON) -> typing.
         return quizcomp.converter.tex.TexTemplateConverter
     elif (format == quizcomp.constants.FORMAT_QTI):
         return quizcomp.converter.qti.QTITemplateConverter
-    elif (format == quizcomp.constants.FORMAT_JSON_TEMPLATE):
-        return quizcomp.converter.json.JSONTemplateConverter
     else:
         raise ValueError(f"No known converter for format '{format}'.")
 

@@ -19,9 +19,6 @@ FORMAT_TEX: str = 'tex'
 FORMAT_TEXT: str = 'text'
 FORMAT_QTI: str = 'qti'
 
-# A special format mainly for testing.
-FORMAT_JSON_TEMPLATE: str = 'json_template'
-
 # Output formats.
 DOC_FORMATS: typing.List[str] = [FORMAT_CANVAS, FORMAT_HTML, FORMAT_JSON, FORMAT_TEX, FORMAT_QTI]
 
