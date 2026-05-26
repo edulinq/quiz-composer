@@ -8,7 +8,6 @@ import sys
 
 import quizcomp.cli.parser
 import quizcomp.converter.qti
-import quizcomp.pdf
 import quizcomp.quiz
 
 def run_cli(args: argparse.Namespace) -> int:

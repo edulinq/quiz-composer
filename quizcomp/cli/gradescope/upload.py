@@ -11,13 +11,13 @@ import edq.util.dirent
 import edq.util.json
 
 import quizcomp.cli.parser
-import quizcomp.pdf
 import quizcomp.uploader.gradescope
+import quizcomp.util.pdf
 
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
 
-    quiz, variants, options = quizcomp.pdf.make_with_args(args, write_options = False)
+    quiz, variants, options = quizcomp.util.pdf.make_with_args(args, write_options = False)
     out_dir = options['out_dir']
 
     options['gradescope'] = {
@@ -43,7 +43,7 @@ def run_cli(args: argparse.Namespace) -> int:
         uploader.create_assignment_group(quiz.title, ids)
         logging.info("Created GradeScope Assignment Group: '%s'.", quiz.title)
 
-    path = os.path.join(out_dir, quizcomp.pdf.OPTIONS_FILENAME)
+    path = os.path.join(out_dir, quizcomp.util.pdf.OPTIONS_FILENAME)
     edq.util.json.dump_path(options, path, indent = 4)
 
     return 0
@@ -61,7 +61,7 @@ def _get_parser() -> argparse.ArgumentParser:
         include_latex = True,
     )
 
-    quizcomp.pdf.modify_parser(parser)
+    quizcomp.util.pdf.modify_parser(parser)
 
     parser.add_argument('--rubric', dest = 'rubric',
         action = 'store_true', default = False,

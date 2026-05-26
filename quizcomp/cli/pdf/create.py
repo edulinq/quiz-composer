@@ -6,12 +6,12 @@ import argparse
 import sys
 
 import quizcomp.cli.parser
-import quizcomp.pdf
+import quizcomp.util.pdf
 
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
 
-    quizcomp.pdf.make_with_args(args)
+    quizcomp.util.pdf.make_with_args(args)
     return 0
 
 def main() -> int:
@@ -26,7 +26,7 @@ def _get_parser() -> argparse.ArgumentParser:
         include_latex = True,
     )
 
-    quizcomp.pdf.modify_parser(parser)
+    quizcomp.util.pdf.modify_parser(parser)
 
     return parser
 
