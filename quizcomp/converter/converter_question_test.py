@@ -32,8 +32,11 @@ def _get_template_test(path: str, format_name: str, is_key: bool) -> typing.Call
         constructor_args = {'answer_key': is_key}
 
         question = self.load_question(path)
-        content = quizcomp.converter.convert.convert_question(question, format = format_name,
-                constructor_args = constructor_args)
+        content = quizcomp.converter.convert.convert_question(
+            question,
+            format = format_name,
+            constructor_args = constructor_args,
+        )
 
         self.assertTrue(len(content) > 10)
 
