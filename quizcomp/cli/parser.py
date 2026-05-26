@@ -9,8 +9,8 @@ import typing
 import edq.core.argparser
 
 import quizcomp
-import quizcomp.katex
-import quizcomp.latex
+import quizcomp.external.katex
+import quizcomp.external.latex
 
 CONFIG_FILENAME: str = 'edq-quiz-composer.json'
 
@@ -35,10 +35,10 @@ def get_parser(description: str,
     )
 
     if (include_katex):
-        parser.register_callbacks('katex', quizcomp.katex.set_cli_args, quizcomp.katex.init_from_args)
+        parser.register_callbacks('katex', quizcomp.external.katex.set_cli_args, quizcomp.external.katex.init_from_args)
 
     if (include_latex):
-        parser.register_callbacks('latex', quizcomp.latex.set_cli_args, quizcomp.latex.init_from_args)
+        parser.register_callbacks('latex', quizcomp.external.latex.set_cli_args, quizcomp.external.latex.init_from_args)
 
     return typing.cast(argparse.ArgumentParser, parser)
 

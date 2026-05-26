@@ -5,7 +5,7 @@ import markdown_it
 import markdown_it.token
 
 import quizcomp.constants
-import quizcomp.katex
+import quizcomp.external.katex
 import quizcomp.parser.common
 
 _katex_available: typing.Union[bool, None] = None  # pylint: disable=invalid-name
@@ -52,13 +52,13 @@ def _render_html(text: str, inline: bool, context: quizcomp.parser.common.Render
     global _katex_available  # pylint: disable=global-statement
 
     if (_katex_available is None):
-        _katex_available = quizcomp.katex.is_available()
+        _katex_available = quizcomp.external.katex.is_available()
 
     if (inline):
         text = text.strip()
 
     if (_katex_available):
-        content = quizcomp.katex.to_html(text)
+        content = quizcomp.external.katex.to_html(text)
     else:
         text = html.escape(text)
         content = f"<code>{text}</code>"

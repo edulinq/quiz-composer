@@ -11,7 +11,7 @@ import edq.util.dirent
 import edq.util.json
 
 import quizcomp.converter.tex
-import quizcomp.latex
+import quizcomp.external.latex
 import quizcomp.question.base
 import quizcomp.quiz
 
@@ -194,7 +194,7 @@ def make_pdf(
         edq.util.dirent.write_file(out_path, content)
 
     if (not skip_pdf):
-        quizcomp.latex.compile(out_path)
+        quizcomp.external.latex.compile(out_path)
 
     return out_dir
 
