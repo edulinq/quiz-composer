@@ -36,8 +36,8 @@
             ]
         }
     ],
-    "name": "Dummy Title",
-    "quiz_name": "Dummy Title",
+    "name": "Dummy Name",
+    "quiz_name": "Dummy Name",
     "term_name": "Dummy Term",
     "version": "0.0.0"
 }

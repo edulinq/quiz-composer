@@ -17,7 +17,7 @@ def run_cli(args: argparse.Namespace) -> int:
 
     print(f"Found {len(quizzes)} quizzes.")
     for (path, quiz) in quizzes:
-        print(f"    {path} ({quiz.title})")
+        print(f"    {path} ({quiz.name})")
 
     print(f"Found {len(questions)} question.")
     for (path, question) in questions:

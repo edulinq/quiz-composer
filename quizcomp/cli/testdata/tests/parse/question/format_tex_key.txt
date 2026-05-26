@@ -31,7 +31,7 @@
 \usepackage[
     pdftex,
     hidelinks,
-        pdftitle={Dummy Course Dummy Term - Dummy Title},
+        pdftitle={Dummy Course Dummy Term - Dummy Name},
     pdfcreator={Quiz Composer},
         pdfkeywords={Version: 0.0.0}
 ]{hyperref}
@@ -171,7 +171,7 @@
 
 \begin{document}
 
-    \centerline{\Large Dummy Course \hfill Dummy Title \hfill Dummy Term}
+    \centerline{\Large Dummy Course \hfill Dummy Name \hfill Dummy Term}
 \vspace{0.2cm}
 
 \hrule
@@ -218,7 +218,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 \pagestyle{fancy}
 \fancyhead{}
     \fancyhead[L]{Dummy Course}
-\fancyhead[C]{Dummy Title}
+\fancyhead[C]{Dummy Name}
     \fancyhead[R]{Dummy Term}
 \renewcommand{\headrulewidth}{0.1mm}
 \fancyfoot{}

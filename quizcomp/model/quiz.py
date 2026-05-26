@@ -20,7 +20,7 @@ import quizcomp.question.base
 import quizcomp.util.serial
 
 DUMMY_QUIZ_DATA: typing.Dict[str, typing.Any] = {
-    'name': 'Dummy Title',
+    'name': 'Dummy Name',
     'description': quizcomp.parser.document.ParsedDocument.parse_text('Dummy description.'),
     'course_name': 'Dummy Course',
     'term_name': 'Dummy Term',
@@ -188,7 +188,7 @@ class Quiz(quizcomp.model.base.CoreType):
         """ Check if this quiz is valid, will raise if the group is not valid. """
 
         if ((self.name is None) or (self.name == "")):
-            raise quizcomp.errors.QuizValidationError("Title cannot be empty.")
+            raise quizcomp.errors.QuizValidationError("Name cannot be empty.")
 
         if ((self._raw_description is None) or (self._raw_description == "")):
             raise quizcomp.errors.QuizValidationError("Description cannot be empty.")

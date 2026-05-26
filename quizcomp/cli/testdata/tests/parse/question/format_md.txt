@@ -6,7 +6,7 @@
     ],
 }
 ---
-# Dummy Title
+# Dummy Name
 
 Dummy Course -- Dummy Term
 

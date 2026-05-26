@@ -148,7 +148,7 @@ class GradeScopeUploader:
         # {NAME_BOX_ID: box, ID_BOX_ID: box, SIGNATURE_BOX_ID: box}
         special_boxes: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
 
-        path = os.path.join(base_dir, f"{variant.title}.pos")
+        path = os.path.join(base_dir, f"{variant.name}.pos")
         if (not os.path.exists(path)):
             raise ValueError(f"Could not find path for quiz bounding boxes: '{path}'.")
 
@@ -334,7 +334,7 @@ class GradeScopeUploader:
             ) -> typing.Tuple[str, bool]:
         """ Upload a variant. """
 
-        path = os.path.join(base_dir, f"{variant.title}.pdf")
+        path = os.path.join(base_dir, f"{variant.name}.pdf")
         if (not os.path.exists(path)):
             raise ValueError(f"Could not find path for quiz pdf: '{path}'.")
 
@@ -348,7 +348,7 @@ class GradeScopeUploader:
         assignment_id = self.get_assignment_id(session, variant)
         if (assignment_id is not None):
             if (not self.force):
-                logging.info("Assignment '%s' (%s) already exists. Skipping upload.", variant.title, assignment_id)
+                logging.info("Assignment '%s' (%s) already exists. Skipping upload.", variant.name, assignment_id)
                 return assignment_id, False
 
             self.delete_assignment(session, assignment_id)
@@ -445,7 +445,7 @@ class GradeScopeUploader:
             id = str(row['id']).strip().removeprefix('assignment_')
             name = row['title'].strip()
 
-            if (name == variant.title):
+            if (name == variant.name):
                 return id
 
         return None
@@ -473,14 +473,14 @@ class GradeScopeUploader:
 
         data = {
             'authenticity_token': token,
-            'assignment[title]': variant.title,
+            'assignment[title]': variant.name,
             'assignment[submissions_anonymized]': 0,
             'assignment[student_submission]': "false",
             'assignment[when_to_create_rubric]': 'while_grading',
             'assignment[scoring_type]': 'negative',
         }
 
-        path = os.path.join(base_dir, f"{variant.title}.pdf")
+        path = os.path.join(base_dir, f"{variant.name}.pdf")
         files = {
             'template_pdf': (
                 os.path.basename(path),
@@ -493,7 +493,7 @@ class GradeScopeUploader:
         response.raise_for_status()
 
         if (len(response.history) == 0):
-            raise ValueError(f"Failed to create assignment. Is the name ('{variant.title}') unique?")
+            raise ValueError(f"Failed to create assignment. Is the name ('{variant.name}') unique?")
 
         match = re.search(r'/assignments/(\d+)/outline/edit', response.history[0].text)
         if (match is None):

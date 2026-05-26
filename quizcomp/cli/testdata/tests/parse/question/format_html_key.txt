@@ -13,7 +13,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <title>
-   Dummy Title
+   Dummy Name
   </title>
   <style>
    :root {
@@ -282,7 +282,7 @@
    <form class="qg-quiz-form">
     <div class="qg-quiz-header">
      <h1>
-      Dummy Title
+      Dummy Name
      </h1>
      <p>
       Dummy Course — Dummy Term

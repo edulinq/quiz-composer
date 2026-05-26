@@ -78,13 +78,13 @@ def upload_quiz(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.C
     if (not isinstance(quiz, quizcomp.quiz.Quiz)):
         raise ValueError(f"Canvas quiz uploader requires a quizcomp.quiz.Quiz type, found {type(quiz)}.")
 
-    existing_ids = get_matching_quiz_ids(quiz.title, instance)
+    existing_ids = get_matching_quiz_ids(quiz.name, instance)
     if ((len(existing_ids) > 0) and (not force)):
-        logging.info("Found a quiz with a matching name '%s', skipping upload.", quiz.title)
+        logging.info("Found a quiz with a matching name '%s', skipping upload.", quiz.name)
         return False
 
     for existing_id in existing_ids:
-        logging.debug("Deleting existing quiz '%s' (%s).", quiz.title, existing_id)
+        logging.debug("Deleting existing quiz '%s' (%s).", quiz.name, existing_id)
         delete_quiz(existing_id, instance)
 
     create_quiz(quiz, instance)
@@ -113,7 +113,7 @@ def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.in
         canvas_path = '/'.join([
             CANVAS_QUIZCOMP_BASEDIR,
             CANVAS_QUIZCOMP_QUIZ_DIRNAME,
-            quiz.title,
+            quiz.name,
             edq.util.hash.sha256_hex(path) + os.path.splitext(path)[-1]
         ])
 
@@ -181,7 +181,7 @@ def create_quiz(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.C
     description = quiz.description.document.to_canvas(canvas_instance = instance, pretty = False)
 
     data = {
-        'quiz[title]': quiz.title,
+        'quiz[title]': quiz.name,
         'quiz[description]': f"<p>{description}</p><br /><hr /><p>Version: {quiz.version}</p>",
         'quiz[quiz_type]': quiz_type,
         'quiz[published]': quiz.canvas['published'],

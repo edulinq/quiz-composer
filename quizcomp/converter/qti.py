@@ -56,12 +56,12 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         """ Convert an entire quiz (including variants) to QTI. """
 
         if (out_path is None):
-            out_path = f'{quiz.title}.qti.zip'
+            out_path = f'{quiz.name}.qti.zip'
 
         temp_base_dir = edq.util.dirent.get_temp_dir(prefix = 'quizcomp-qti-')
 
         temp_out_path = os.path.join(temp_base_dir, 'out.zip')
-        temp_dir = os.path.join(temp_base_dir, quiz.title)
+        temp_dir = os.path.join(temp_base_dir, quiz.name)
 
         quiz_dir = os.path.join(temp_dir, OUT_DIR_QUIZ)
         os.makedirs(quiz_dir, exist_ok = True)
@@ -128,7 +128,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
                 'type': 'image',
                 'id': os.path.splitext(os.path.basename(new_path))[0],
                 'raw_path': new_path,
-                'path': '/'.join([quiz.title, OUT_DIR_IMAGES, os.path.basename(new_path)]),
+                'path': '/'.join([quiz.name, OUT_DIR_IMAGES, os.path.basename(new_path)]),
                 'filename': os.path.basename(new_path),
             })
 

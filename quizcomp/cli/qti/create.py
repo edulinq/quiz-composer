@@ -21,7 +21,7 @@ def run_cli(args: argparse.Namespace) -> int:
 
     quiz = quizcomp.quiz.Quiz.from_path(args.path)
 
-    out_path = quizcomp.cli.parser.resolve_out_arg(args.out, f'{quiz.title}.qti.zip')  # pylint: disable=no-member
+    out_path = quizcomp.cli.parser.resolve_out_arg(args.out, f'{quiz.name}.qti.zip')  # pylint: disable=no-member
 
     converter = quizcomp.converter.qti.QTITemplateConverter(canvas = args.canvas)
     converter.convert_quiz(quiz, out_path = out_path)
@@ -42,7 +42,7 @@ def _get_parser() -> argparse.ArgumentParser:
         action = 'store_true', default = False,
         help = 'Create the QTI with Canvas-specific tweaks (default: %(default)s).')
 
-    quizcomp.cli.parser.add_out_arg(parser, '<title>.qti.zip')
+    quizcomp.cli.parser.add_out_arg(parser, '<name>.qti.zip')
 
     parser.add_argument('path', metavar = 'PATH',
         type = str,

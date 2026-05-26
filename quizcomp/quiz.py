@@ -16,7 +16,7 @@ import quizcomp.question.base
 import quizcomp.util.serial
 
 DUMMY_QUIZ_DATA: typing.Dict[str, typing.Any] = {
-    'title': 'Dummy Title',
+    'title': 'Dummy Name',
     'description': 'Dummy description.',
     'course_title': 'Dummy Course',
     'term_title': 'Dummy Term',
@@ -133,7 +133,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         """ Check if this quiz is valid, will raise if the group is not valid. """
 
         if ((self.title is None) or (self.title == "")):
-            raise quizcomp.errors.QuizValidationError("Title cannot be empty.")
+            raise quizcomp.errors.QuizValidationError("Name cannot be empty.")
 
         if ((self._raw_description is None) or (self._raw_description == "")):
             raise quizcomp.errors.QuizValidationError("Description cannot be empty.")
