@@ -1,5 +1,7 @@
 import typing
 
+import edq.util.json
+
 # TEST - Improve error output when a context is present.
 
 # TEST - Accept context or core type? Or just serialization context? Or both?
@@ -20,13 +22,27 @@ class QuizValidationError(ValueError):
             context: typing.Union[ContextObject, None] = None,
             base_dir: typing.Union[str, None] = None,
             **kwargs: typing.Any) -> None:
-        super().__init__(message)
-
         self.context: typing.Union[ContextObject, None] = context
         """ The context that this error occurred within. """
 
         self.base_dir: typing.Union[str, None] = base_dir
         """ Context for where the error came from. """
+
+        extra_info = {}
+
+        if ((self.context is not None) and (self.context.base_dir is not None)):
+            extra_info['base_dir'] = self.context.base_dir
+
+        if ((self.context is not None) and (self.context.source_path is not None)):
+            extra_info['source_path'] = self.context.source_path
+
+        if (self.base_dir is not None):
+            extra_info['base_dir'] = self.base_dir
+
+        if (len(extra_info) > 0):
+            message = f"{message} (Additional Context: {edq.util.json.dumps(extra_info)})"
+
+        super().__init__(message)
 
 class QuestionValidationError(QuizValidationError):
     """ An error that comes up when validating a question. """

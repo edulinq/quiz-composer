@@ -1,7 +1,7 @@
 import random
 import typing
 
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.model.constants
 import quizcomp.question.base
@@ -20,7 +20,7 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.model.c
 
     def _validate_matches(self) -> None:
         if ('matches' not in self.answers):
-            raise quizcomp.common.QuestionValidationError(
+            raise quizcomp.errors.QuestionValidationError(
                     "Matching 'answers' value is missing the 'matches' field.",
                     ids = self.ids)
 
@@ -30,7 +30,7 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.model.c
         for (i, match) in enumerate(matches):
             if (isinstance(match, list)):
                 if (len(match) != 2):
-                    raise quizcomp.common.QuestionValidationError(
+                    raise quizcomp.errors.QuestionValidationError(
                             f"Expected exactly two items for a match list, found {len(match)} items at element {i}.",
                             ids = self.ids)
 
@@ -42,7 +42,7 @@ class Matching(quizcomp.question.base.Question, question_type = quizcomp.model.c
             keys = ['left', 'right']
             for key in keys:
                 if (key not in match):
-                    raise quizcomp.common.QuestionValidationError(
+                    raise quizcomp.errors.QuestionValidationError(
                             f"Missing key '{key}' for for match item {i}.",
                             ids = self.ids)
 

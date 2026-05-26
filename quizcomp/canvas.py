@@ -1,7 +1,7 @@
 import logging
 import typing
 
-import quizcomp.common
+import quizcomp.errors
 
 DEFAULT_CANVAS_OPTIONS: typing.Dict[str, typing.Any] = {
     'practice': True,
@@ -34,7 +34,7 @@ def validate_options(old_options: typing.Dict[str, typing.Any]) -> typing.Dict[s
 
         if (key in ALLOWED_VALUES):
             if (value not in ALLOWED_VALUES[key]):
-                raise quizcomp.common.QuizValidationError(
+                raise quizcomp.errors.QuizValidationError(
                         f"Canvas option '{key}' has value '{value}' not in allowed values: {ALLOWED_VALUES[key]}.")
 
         if (key == 'allowed_attempts'):
@@ -46,14 +46,14 @@ def _validate_allowed_attempts(allowed_attempts: typing.Any) -> int:
     """ Validate and fetch the number of allowed attempts. """
 
     if (not isinstance(allowed_attempts, (str, int))):
-        raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")
+        raise quizcomp.errors.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")
 
     try:
         int_allowed_attempts = int(allowed_attempts)
     except:
-        raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")  # pylint: disable=raise-missing-from
+        raise quizcomp.errors.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(allowed_attempts)}'.")  # pylint: disable=raise-missing-from
 
     if ((int_allowed_attempts < -1) or (int_allowed_attempts == 0)):
-        raise quizcomp.common.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(int_allowed_attempts)}'.")
+        raise quizcomp.errors.QuizValidationError(f"Allowed attempts must be a positive int (or -1), found '{str(int_allowed_attempts)}'.")
 
     return int_allowed_attempts

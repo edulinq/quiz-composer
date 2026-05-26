@@ -1,6 +1,6 @@
 import typing
 
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.model.constants
 import quizcomp.question.base
@@ -19,6 +19,6 @@ class TextOnly(quizcomp.question.base.Question, question_type = quizcomp.model.c
             self.answers = None
             return
 
-        raise quizcomp.common.QuestionValidationError(
+        raise quizcomp.errors.QuestionValidationError(
                 f"'answers' key must be missing, None/null, or empty, found: '{self.answers}''.",
                 ids = self.ids)

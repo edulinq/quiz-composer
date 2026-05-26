@@ -4,7 +4,7 @@ import os
 import random
 import typing
 
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.question.base
 import quizcomp.util.serial
@@ -82,16 +82,16 @@ class Group(quizcomp.util.serial.JSONSerializer):
             ids = ids.copy()
             ids[name] = self.name
 
-            raise quizcomp.common.QuizValidationError('Error while validating group.', ids = ids) from ex
+            raise quizcomp.errors.QuizValidationError('Error while validating group.', ids = ids) from ex
 
     def _validate(self, **kwargs: typing.Any) -> None:
         """ Check if this group is valid, will raise if the group is not valid. """
 
         if ((self.name is None) or (self.name == "")):
-            raise quizcomp.common.QuizValidationError("Name cannot be empty.")
+            raise quizcomp.errors.QuizValidationError("Name cannot be empty.")
 
         if (self.pick_count < 0):
-            raise quizcomp.common.QuizValidationError("Pick count cannot be negative.")
+            raise quizcomp.errors.QuizValidationError("Pick count cannot be negative.")
 
         if (self.hints is None):
             self.hints = {}
@@ -103,10 +103,10 @@ class Group(quizcomp.util.serial.JSONSerializer):
             self.hints_last = {}
 
         if (not isinstance(self.questions, list)):
-            raise quizcomp.common.QuizValidationError(f"Questions must be a non-empty list, found: {self.questions}.")
+            raise quizcomp.errors.QuizValidationError(f"Questions must be a non-empty list, found: {self.questions}.")
 
         if (len(self.questions) == 0):
-            raise quizcomp.common.QuizValidationError("Questions must be non-empty.")
+            raise quizcomp.errors.QuizValidationError("Questions must be non-empty.")
 
         for question in self.questions:
             question.inherit_from_group(self.to_dict())
@@ -213,7 +213,7 @@ def _parse_questions(path: str) -> typing.List[quizcomp.question.base.Question]:
     """ Recursively parse questions from a path. """
 
     if (not os.path.exists(path)):
-        raise quizcomp.common.QuizValidationError(f"Question path does not exist: '{path}'.")
+        raise quizcomp.errors.QuizValidationError(f"Question path does not exist: '{path}'.")
 
     if (os.path.isfile(path)):
         return [quizcomp.question.base.Question.from_path(path)]

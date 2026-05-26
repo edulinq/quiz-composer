@@ -1,7 +1,7 @@
 import random
 import typing
 
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.model.constants
 import quizcomp.parser.public
@@ -17,7 +17,7 @@ class MDD(quizcomp.question.base.Question, question_type = quizcomp.model.consta
         self._check_type(self.answers, dict, "'answers' key")
 
         if (len(self.answers) == 0):
-            raise quizcomp.common.QuestionValidationError("No answers provided, at least one answer required.", ids = self.ids)
+            raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", ids = self.ids)
 
         for (key, answers) in list(self.answers.items()):
             # If this was already in the full MDD format, then we need to pull out the values.

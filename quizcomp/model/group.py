@@ -6,7 +6,7 @@ import typing
 
 import edq.util.serial
 
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.model.base
 import quizcomp.model.config
@@ -34,7 +34,7 @@ class Group(quizcomp.model.base.CoreType):
         super().__init__(children = children, **kwargs)
 
         if (pick_count < 0):
-            raise quizcomp.common.QuizValidationError(f"Pick count must be non-negative, found: {pick_count}.", context = context)
+            raise quizcomp.errors.QuizValidationError(f"Pick count must be non-negative, found: {pick_count}.", context = context)
 
         self.pick_count: int = pick_count
         """ The number of questions to choose from this group. """

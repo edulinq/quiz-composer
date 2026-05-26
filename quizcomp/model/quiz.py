@@ -10,7 +10,7 @@ import edq.util.git
 import edq.util.time
 
 import quizcomp.canvas
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.errors
 import quizcomp.model.base
@@ -33,6 +33,8 @@ DUMMY_GROUP_DATA: typing.Dict[str, typing.Any] = {
 
 DEFAULT_VARIANT_IDS: typing.List[str] = list(string.ascii_uppercase)
 """ Default IDs for quiz variants. """
+
+DEFAULT_MAX_VARIANTS: int = len(DEFAULT_VARIANT_IDS)
 
 class Quiz(quizcomp.model.base.CoreType):
     """
@@ -85,6 +87,14 @@ class Quiz(quizcomp.model.base.CoreType):
         self._rng: random.Random = random.Random(self.seed)
         """ The RNG used for this quiz. """
         '''
+
+        self._validate()
+
+    def _validate(self) -> None:
+        """ Check if this quiz is valid. """
+
+        if (self.name is None):
+            raise quizcomp.errors.QuizValidationError("Quiz name cannot be empty.", context = self)
 
     @classmethod
     def prep_init_data(cls,
@@ -178,10 +188,10 @@ class Quiz(quizcomp.model.base.CoreType):
         """ Check if this quiz is valid, will raise if the group is not valid. """
 
         if ((self.name is None) or (self.name == "")):
-            raise quizcomp.common.QuizValidationError("Title cannot be empty.")
+            raise quizcomp.errors.QuizValidationError("Title cannot be empty.")
 
         if ((self._raw_description is None) or (self._raw_description == "")):
-            raise quizcomp.common.QuizValidationError("Description cannot be empty.")
+            raise quizcomp.errors.QuizValidationError("Description cannot be empty.")
 
         self.description = quizcomp.parser.document.ParsedDocument.parse_text(self._raw_description, base_dir = self.base_dir)
 
@@ -199,7 +209,7 @@ class Quiz(quizcomp.model.base.CoreType):
         elif (isinstance(self.date, str)):
             self.date = datetime.date.fromisoformat(self.date)
         else:
-            raise quizcomp.common.QuizValidationError(f"Date should be a string or datetime.date, found '{str(type(self.date))}'.")
+            raise quizcomp.errors.QuizValidationError(f"Date should be a string or datetime.date, found '{str(type(self.date))}'.")
 
         for key in kwargs:
             logging.warning("Unknown quiz option: '%s'.", key)
@@ -211,15 +221,15 @@ class Quiz(quizcomp.model.base.CoreType):
             return
 
         if (not isinstance(self.time_limit_mins, (str, int))):
-            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
+            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
 
         try:
             self.time_limit_mins = int(self.time_limit_mins)
         except:
-            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")  # pylint: disable=raise-missing-from
+            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")  # pylint: disable=raise-missing-from
 
         if (self.time_limit_mins < 0):
-            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
+            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
 
         if (self.time_limit_mins == 0):
             self.time_limit_mins = None
@@ -246,10 +256,10 @@ class Quiz(quizcomp.model.base.CoreType):
             identifiers = DEFAULT_VARIANT_IDS
 
         if (count < 0):
-            raise quizcomp.common.QuizValidationError(f"Variant count must be non-negative, found: {count}.", context = self)
+            raise quizcomp.errors.QuizValidationError(f"Variant count must be non-negative, found: {count}.", context = self)
 
         if (count > len(identifiers)):
-            raise quizcomp.common.QuizValidationError(f"Not enough variant identifiers supplied. Got {len(identifiers)} identifiers and {count} requested variants. Given identifiers: {identifiers}.", context = self)
+            raise quizcomp.errors.QuizValidationError(f"Not enough variant identifiers supplied. Got {len(identifiers)} identifiers and {count} requested variants. Given identifiers: {identifiers}.", context = self)
 
         logging.debug("Creating %d variants with seed %d.", count, seed)
 
@@ -318,7 +328,7 @@ class Variant(Quiz):
         # Ensure that each group has the correct number of questions.
         for (i, group) in enumerate(self.groups):
             if (len(group.questions) != group.pick_count):
-                raise quizcomp.common.QuizValidationError(
+                raise quizcomp.errors.QuizValidationError(
                         f"Group at index {i} ('{group.name}') has {len(group.questions)} questions, expecting exactly {group.pick_count}.")
     '''
 

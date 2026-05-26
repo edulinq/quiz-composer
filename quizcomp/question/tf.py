@@ -1,7 +1,7 @@
 import random
 import typing
 
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.model.constants
 import quizcomp.question.base
@@ -22,14 +22,14 @@ class TF(quizcomp.question.base.Question, question_type = quizcomp.model.constan
         elif (isinstance(self.answers, list)):
             pass
         else:
-            raise quizcomp.common.QuestionValidationError(
+            raise quizcomp.errors.QuestionValidationError(
                     f"'answers' value must be a boolean, found '{self.answers}' ({type(self.answers)}).",
                     ids = self.ids)
 
         self._validate_self_answer_list()
 
         if (len(self.answers) != 2):
-            raise quizcomp.common.QuestionValidationError(
+            raise quizcomp.errors.QuestionValidationError(
                     f"Expecting exactly two answers, found {len(self.answers)}.",
                     ids = self.ids)
 
@@ -37,7 +37,7 @@ class TF(quizcomp.question.base.Question, question_type = quizcomp.model.constan
 
         expected = ['False', 'True']
         if (labels != expected):
-            raise quizcomp.common.QuestionValidationError(
+            raise quizcomp.errors.QuestionValidationError(
                     f"T/F labels (text) not as expected. Expected: '{expected}', Actual: '{labels}'.",
                     ids = self.ids)
 

@@ -1,6 +1,6 @@
 import typing
 
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.model.constants
 import quizcomp.model.text
@@ -21,7 +21,7 @@ class Numerical(quizcomp.question.base.Question, question_type = quizcomp.model.
             self._check_type(answer, dict, label)
 
             if ('type' not in answer):
-                raise quizcomp.common.QuestionValidationError(f"Missing key ('type') for {label}.", ids = self.ids)
+                raise quizcomp.errors.QuestionValidationError(f"Missing key ('type') for {label}.", ids = self.ids)
 
             if (answer['type'] == quizcomp.constants.NUMERICAL_ANSWER_TYPE_EXACT):
                 required_keys = ['value']
@@ -33,11 +33,11 @@ class Numerical(quizcomp.question.base.Question, question_type = quizcomp.model.
             elif (answer['type'] == quizcomp.constants.NUMERICAL_ANSWER_TYPE_PRECISION):
                 required_keys = ['value', 'precision']
             else:
-                raise quizcomp.common.QuestionValidationError(f"Unknown numerical answer type: '{answer['type']}'.", ids = self.ids)
+                raise quizcomp.errors.QuestionValidationError(f"Unknown numerical answer type: '{answer['type']}'.", ids = self.ids)
 
             for key in required_keys:
                 if (key not in answer):
-                    raise quizcomp.common.QuestionValidationError(f"Missing required key '{key}' for numerical answer type '{answer['type']}'.",
+                    raise quizcomp.errors.QuestionValidationError(f"Missing required key '{key}' for numerical answer type '{answer['type']}'.",
                             ids = self.ids)
 
             feedback = self._validate_feedback_item(answer.get('feedback', None), label)

@@ -44,12 +44,19 @@ class CoreType(edq.util.serial.DictConverter):
             style: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            context: typing.Union[SerializationContext, None] = None,
             **kwargs: typing.Any) -> None:
         if (base_dir is None):
-            base_dir = '.'
+            if (context is not None):
+                base_dir = context.base_dir
+            else:
+                base_dir = '.'
 
         self.base_dir: str = os.path.abspath(base_dir)
         """ The base directory for any relative paths this object needs to resolve. """
+
+        if ((source_path is None) and (context is not None)):
+            source_path = context.source_path
 
         if ((source_path is not None) and (not os.path.isabs(source_path))):
             source_path = os.path.abspath(os.path.join(self.base_dir, source_path))

@@ -4,7 +4,7 @@ import typing
 
 import edq.util.dirent
 
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.question.base
 import quizcomp.quiz
@@ -32,16 +32,16 @@ class Project(quizcomp.util.serial.JSONSerializer):
         try:
             self.validate(cls = Project, **kwargs)
         except Exception as ex:
-            raise quizcomp.common.QuizValidationError(f"Error while validating project '{self.name}' ('{self._base_dir}').") from ex
+            raise quizcomp.errors.QuizValidationError(f"Error while validating project '{self.name}' ('{self._base_dir}').") from ex
 
     def _validate(self, **kwargs: typing.Any) -> None:
         """ Check if this project is valid. """
 
         if ((self._base_dir is None) or (self._base_dir == "")):
-            raise quizcomp.common.QuizValidationError("Base directory cannot be empty.")
+            raise quizcomp.errors.QuizValidationError("Base directory cannot be empty.")
 
         if (not os.path.isdir(self._base_dir)):
-            raise quizcomp.common.QuizValidationError(f"Base directory '{self._base_dir}' does not exist or is not a directory.")
+            raise quizcomp.errors.QuizValidationError(f"Base directory '{self._base_dir}' does not exist or is not a directory.")
 
     def find_resources(self) -> typing.Tuple[typing.List[str], typing.List[str]]:
         """

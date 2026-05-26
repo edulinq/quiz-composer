@@ -8,7 +8,7 @@ import typing
 import edq.util.dirent
 import edq.util.json
 
-import quizcomp.common
+import quizcomp.errors
 
 POD = typing.Union[bool, float, int, str, typing.List['POD'], typing.Dict[str, 'POD']]  # pylint: disable=invalid-name
 """ A "Plain Old Data" type that can be easily represented (e.g. in JSON). """
@@ -132,12 +132,12 @@ class JSONSerializer(PODSerializer):
         }
 
         if (not os.path.isfile(path)):
-            raise quizcomp.common.QuizValidationError('Path does not exist or is not a file.', ids = ids)
+            raise quizcomp.errors.QuizValidationError('Path does not exist or is not a file.', ids = ids)
 
         try:
             data = edq.util.json.load_path(path)
         except Exception as ex:
-            raise quizcomp.common.QuizValidationError('Failed to read JSON file (invalid JSON?).', ids = ids) from ex
+            raise quizcomp.errors.QuizValidationError('Failed to read JSON file (invalid JSON?).', ids = ids) from ex
 
         base_dir = os.path.dirname(os.path.abspath(path))
         if (('base_dir' not in data) and add_base_dir):

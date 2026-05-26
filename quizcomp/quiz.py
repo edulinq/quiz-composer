@@ -8,7 +8,7 @@ import edq.util.dirent
 import edq.util.git
 
 import quizcomp.canvas
-import quizcomp.common
+import quizcomp.errors
 import quizcomp.constants
 import quizcomp.group
 import quizcomp.parser.document
@@ -127,16 +127,16 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             ids = ids.copy()
             ids['title'] = self.title
 
-            raise quizcomp.common.QuizValidationError('Error while validating quiz.', ids = ids) from ex
+            raise quizcomp.errors.QuizValidationError('Error while validating quiz.', ids = ids) from ex
 
     def _validate(self, **kwargs: typing.Any) -> None:
         """ Check if this quiz is valid, will raise if the group is not valid. """
 
         if ((self.title is None) or (self.title == "")):
-            raise quizcomp.common.QuizValidationError("Title cannot be empty.")
+            raise quizcomp.errors.QuizValidationError("Title cannot be empty.")
 
         if ((self._raw_description is None) or (self._raw_description == "")):
-            raise quizcomp.common.QuizValidationError("Description cannot be empty.")
+            raise quizcomp.errors.QuizValidationError("Description cannot be empty.")
 
         self.description = quizcomp.parser.document.ParsedDocument.parse_text(self._raw_description, base_dir = self.base_dir)
 
@@ -154,7 +154,7 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
         elif (isinstance(self.date, str)):
             self.date = datetime.date.fromisoformat(self.date)
         else:
-            raise quizcomp.common.QuizValidationError(f"Date should be a string or datetime.date, found '{str(type(self.date))}'.")
+            raise quizcomp.errors.QuizValidationError(f"Date should be a string or datetime.date, found '{str(type(self.date))}'.")
 
         for key in kwargs:
             logging.warning("Unknown quiz option: '%s'.", key)
@@ -166,15 +166,15 @@ class Quiz(quizcomp.util.serial.JSONSerializer):
             return
 
         if (not isinstance(self.time_limit_mins, (str, int))):
-            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
+            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
 
         try:
             self.time_limit_mins = int(self.time_limit_mins)
         except:
-            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")  # pylint: disable=raise-missing-from
+            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")  # pylint: disable=raise-missing-from
 
         if (self.time_limit_mins < 0):
-            raise quizcomp.common.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
+            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
 
         if (self.time_limit_mins == 0):
             self.time_limit_mins = None
@@ -337,7 +337,7 @@ class Variant(Quiz):
         # Ensure that each group has the correct number of questions.
         for (i, group) in enumerate(self.groups):
             if (len(group.questions) != group.pick_count):
-                raise quizcomp.common.QuizValidationError(
+                raise quizcomp.errors.QuizValidationError(
                         f"Group at index {i} ('{group.name}') has {len(group.questions)} questions, expecting exactly {group.pick_count}.")
 
     @staticmethod
