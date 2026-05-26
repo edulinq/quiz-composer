@@ -1,14 +1,14 @@
 {
     "cli": "quizcomp.cli.parse.question",
     "arguments": [
-        "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
+        "__DATA_DIR__(../../../testdata/questions/good/mcq-basic/question.json)",
         "--format", "qti"
     ],
 }
 ---
 <?xml version="1.0" encoding="UTF-8"?>
 <questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
-    <assessment ident="quiz" title="Dummy Title - A">
+    <assessment ident="quiz" title="Dummy Title">
         <qtimetadata>
             <qtimetadatafield>
                 <fieldlabel>
@@ -56,7 +56,7 @@
                                     original_answer_ids
                                 </fieldlabel>
                                 <fieldentry>
-                                    aff0,aff1
+                                    aff0,aff1,aff2,aff3
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -98,6 +98,28 @@
                                         </mattext>
                                     </material>
                                 </response_label>
+                                <response_label ident="af0.0.0f2">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    C
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
+                                <response_label ident="af0.0.0f3">
+                                    <material>
+                                        <mattext texttype="text/html">
+                                            <div class="qg-root-block qg-block">
+                                                <p>
+                                                    D
+                                                </p>
+                                            </div>
+                                        </mattext>
+                                    </material>
+                                </response_label>
                             </render_choice>
                         </response_lid>
                     </presentation>
@@ -120,6 +142,20 @@
                             <conditionvar>
                                 <varequal respident="response1">
                                     af0.0.0f1
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.0.0f2
+                                </varequal>
+                            </conditionvar>
+                        </respcondition>
+                        <respcondition continue="Yes">
+                            <conditionvar>
+                                <varequal respident="response1">
+                                    af0.0.0f3
                                 </varequal>
                             </conditionvar>
                         </respcondition>

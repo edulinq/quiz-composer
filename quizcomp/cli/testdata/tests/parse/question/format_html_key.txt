@@ -1,7 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.question",
     "arguments": [
-        "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
+        "__DATA_DIR__(../../../testdata/questions/good/mcq-basic/question.json)",
         "--format", "html",
         "--key",
     ],
@@ -13,7 +13,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <title>
-   Dummy Title - A
+   Dummy Title
   </title>
   <style>
    :root {
@@ -282,7 +282,7 @@
    <form class="qg-quiz-form">
     <div class="qg-quiz-header">
      <h1>
-      Dummy Title - A
+      Dummy Title
      </h1>
      <p>
       Dummy Course — Dummy Term
@@ -310,7 +310,7 @@
       <div class="qg-quiz-question-prompt">
        <div class="qg-root-block qg-block">
         <p>
-         Multiple Choice
+         Multiple Choice: Basic
         </p>
        </div>
       </div>
@@ -335,6 +335,26 @@
           <div class="qg-root-block qg-block">
            <p>
             B
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.0.0-2" name="question-choice-0.0.0-2" type="radio"/>
+         <label for="choice-0.0.0-2">
+          <div class="qg-root-block qg-block">
+           <p>
+            C
+           </p>
+          </div>
+         </label>
+        </div>
+        <div>
+         <input id="choice-0.0.0-3" name="question-choice-0.0.0-3" type="radio"/>
+         <label for="choice-0.0.0-3">
+          <div class="qg-root-block qg-block">
+           <p>
+            D
            </p>
           </div>
          </label>

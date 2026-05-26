@@ -1,7 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.question",
     "arguments": [
-        "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
+        "__DATA_DIR__(../../../testdata/questions/good/mcq-basic/question.json)",
         "--format", "json"
     ],
 }
@@ -23,17 +23,24 @@
                         {
                             "correct": false,
                             "text": "B"
+                        },
+                        {
+                            "correct": false,
+                            "text": "C"
+                        },
+                        {
+                            "correct": false,
+                            "text": "D"
                         }
                     ],
-                    "prompt": "Multiple Choice",
+                    "prompt": "Multiple Choice: Basic",
                     "question_type": "multiple_choice"
                 }
             ]
         }
     ],
-    "name": "Dummy Title - A",
+    "name": "Dummy Title",
     "quiz_name": "Dummy Title",
     "term_name": "Dummy Term",
-    "variant_id": "A",
-    "version": "0.0.0, Variant: A"
+    "version": "0.0.0"
 }

@@ -1,7 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.question",
     "arguments": [
-        "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
+        "__DATA_DIR__(../../../testdata/questions/good/mcq-basic/question.json)",
         "--format", "tex",
         "--key",
     ],
@@ -31,9 +31,9 @@
 \usepackage[
     pdftex,
     hidelinks,
-        pdftitle={Dummy Course Dummy Term - Dummy Title - A},
+        pdftitle={Dummy Course Dummy Term - Dummy Title},
     pdfcreator={Quiz Composer},
-        pdfkeywords={Version: 0.0.0, Variant: A}
+        pdfkeywords={Version: 0.0.0}
 ]{hyperref}
 
 % Remove paragraph indentation.
@@ -171,7 +171,7 @@
 
 \begin{document}
 
-    \centerline{\Large Dummy Course \hfill Dummy Title - A \hfill Dummy Term}
+    \centerline{\Large Dummy Course \hfill Dummy Title \hfill Dummy Term}
 \vspace{0.2cm}
 
 \hrule
@@ -218,12 +218,12 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 \pagestyle{fancy}
 \fancyhead{}
     \fancyhead[L]{Dummy Course}
-\fancyhead[C]{Dummy Title - A}
+\fancyhead[C]{Dummy Title}
     \fancyhead[R]{Dummy Term}
 \renewcommand{\headrulewidth}{0.1mm}
 \fancyfoot{}
 \fancyfoot[R]{\thepage}
-    \fancyfoot[L]{Version: 0.0.0, Variant: A}
+    \fancyfoot[L]{Version: 0.0.0}
 \renewcommand{\footrulewidth}{0.1mm}
 
 %%% BEGIN Group {0.0 -- Dummy Question} %%%
@@ -237,7 +237,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
     \vspace{0.25cm}
 
     \noindent
-    Multiple Choice
+    Multiple Choice: Basic
 
     \vspace{0.25cm}
 
@@ -252,6 +252,10 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
                     & A \\
                 \radio{multiple_choice}{0.0.0}{0}{0.0.0.1}
                     & B \\
+                \radio{multiple_choice}{0.0.0}{0}{0.0.0.2}
+                    & C \\
+                \radio{multiple_choice}{0.0.0}{0}{0.0.0.3}
+                    & D \\
         \end{tabular}
 
         \end{center}

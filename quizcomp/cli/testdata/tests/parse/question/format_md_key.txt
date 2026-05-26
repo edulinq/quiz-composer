@@ -1,13 +1,13 @@
 {
     "cli": "quizcomp.cli.parse.question",
     "arguments": [
-        "__DATA_DIR__(simple-quiz/questions/mcq/question.json)",
+        "__DATA_DIR__(../../../testdata/questions/good/mcq-basic/question.json)",
         "--format", "md",
         "--key",
     ],
 }
 ---
-# Dummy Title - A
+# Dummy Title
 
 Dummy Course -- Dummy Term
 
@@ -22,10 +22,12 @@ Dummy description.
 
 **Question 1** (0.0 Points)
 
-Multiple Choice
+Multiple Choice: Basic
 
 Choose one:
 
 A. A *(correct)*  
 B. B  
+C. C  
+D. D  
 
