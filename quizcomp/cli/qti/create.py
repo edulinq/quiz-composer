@@ -8,7 +8,7 @@ import sys
 
 import quizcomp.cli.parser
 import quizcomp.converter.qti
-import quizcomp.quiz
+import quizcomp.model.quiz
 
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
@@ -19,7 +19,7 @@ def run_cli(args: argparse.Namespace) -> int:
     if (not os.path.isfile(args.path)):
         raise ValueError(f"Provided path '{args.path}' is not a file.")
 
-    quiz = quizcomp.quiz.Quiz.from_path(args.path)
+    quiz = quizcomp.model.quiz.Quiz.from_path(args.path)
 
     out_path = quizcomp.cli.parser.resolve_out_arg(args.out, f'{quiz.name}.qti.zip')  # pylint: disable=no-member
 

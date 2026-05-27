@@ -3,7 +3,7 @@
         <qtimetadata>
             <qtimetadatafield>
                 <fieldlabel>question_type</fieldlabel>
-                <fieldentry>{{ this.mapped_question_type }}</fieldentry>
+                <fieldentry>{{ question_type_map[this.question_type] }}</fieldentry>
             </qtimetadatafield>
             <qtimetadatafield>
                 <fieldlabel>points_possible</fieldlabel>

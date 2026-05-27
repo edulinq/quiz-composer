@@ -27,6 +27,23 @@ OUT_FILENAME_QUIZ: str = 'quiz.xml'
 OUT_FILENAME_ASSESSMENT_META: str = 'assessment_meta.xml'
 OUT_FILENAME_MANIFEST: str = 'imsmanifest.xml'
 
+QUESTION_TYPE_MAP: typing.Dict[str, str] = {
+    # Direct Mappings
+    quizcomp.model.constants.QuestionType.ESSAY: 'essay_question',
+    quizcomp.model.constants.QuestionType.FIMB: 'fill_in_multiple_blanks_question',
+    quizcomp.model.constants.QuestionType.MATCHING: 'matching_question',
+    quizcomp.model.constants.QuestionType.MA: 'multiple_answers_question',
+    quizcomp.model.constants.QuestionType.MCQ: 'multiple_choice_question',
+    quizcomp.model.constants.QuestionType.MDD: 'multiple_dropdowns_question',
+    quizcomp.model.constants.QuestionType.NUMERICAL: 'numerical_question',
+    quizcomp.model.constants.QuestionType.TEXT_ONLY: 'text_only_question',
+    quizcomp.model.constants.QuestionType.TF: 'true_false_question',
+    # Indirect Mappings
+    quizcomp.model.constants.QuestionType.FITB: 'short_answer_question',
+    quizcomp.model.constants.QuestionType.SA: 'essay_question',
+}
+""" QTI-specific question types. """
+
 class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
     """
     A converter to convert a quiz to QTI using templates.
@@ -39,19 +56,17 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
                 jinja_filters = {
                     'to_xml': _to_xml,
                 },
+                jinja_globals = {
+                    'question_type_map': QUESTION_TYPE_MAP,
+                },
                 **kwargs)
 
     def finalize(self, quiz: quizcomp.model.quiz.Quiz, text: str) -> str:
         return _format_xml(text)
 
-    ''' TEST
-    def modify_question_context(self,
-            context: typing.Dict[str, typing.Any],
-            question: quizcomp.model.question.Question,
-            variant: quizcomp.model.quiz.Variant) -> typing.Dict[str, typing.Any]:
-        context['question']['mapped_question_type'] = QUESTION_TYPE_MAP[question.question_type]
-        return context
+    # def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> str:
 
+    ''' TEST
     def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, out_path: typing.Union[str, None] = None, **kwargs: typing.Any) -> str:
         """ Convert an entire quiz (including variants) to QTI. """
 
