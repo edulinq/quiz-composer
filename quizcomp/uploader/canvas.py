@@ -9,12 +9,12 @@ import edq.util.hash
 import requests
 
 import quizcomp.constants
-import quizcomp.group
 import quizcomp.model.base
 import quizcomp.model.config
 import quizcomp.model.constants
-import quizcomp.question.base
-import quizcomp.quiz
+import quizcomp.model.group
+import quizcomp.model.question
+import quizcomp.model.quiz
 
 # TODO(eriq): This code assumes there will never be more than a page of items returned.
 PAGE_SIZE: int = 75
@@ -64,19 +64,19 @@ class CanvasUploader:
         self.force = force
         """ Whether to remove existing quizzes while uploading. """
 
-    def upload_quiz(self, quiz: quizcomp.quiz.Quiz, **kwargs: typing.Any) -> None:
+    def upload_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> None:
         """ Upload a quiz to Canvas. """
 
         upload_quiz(quiz, self.instance, force = self.force)
 
-def upload_quiz(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo, force: bool = False) -> bool:
+def upload_quiz(quiz: quizcomp.model.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo, force: bool = False) -> bool:
     """
     Upload a quiz to Canvas.
     Data may be written into the instance context.
     """
 
-    if (not isinstance(quiz, quizcomp.quiz.Quiz)):
-        raise ValueError(f"Canvas quiz uploader requires a quizcomp.quiz.Quiz type, found {type(quiz)}.")
+    if (not isinstance(quiz, quizcomp.model.quiz.Quiz)):
+        raise ValueError(f"Canvas quiz uploader requires a quizcomp.model.quiz.Quiz type, found {type(quiz)}.")
 
     existing_ids = get_matching_quiz_ids(quiz.name, instance)
     if ((len(existing_ids) > 0) and (not force)):
@@ -91,7 +91,7 @@ def upload_quiz(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.C
 
     return True
 
-def upload_canvas_files(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> typing.Dict[str, str]:
+def upload_canvas_files(quiz: quizcomp.model.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> typing.Dict[str, str]:
     """
     Upload a file to Canvas.
     Canvas requires that images (and other files) be uploaded to their side (instead of embedded),
@@ -166,7 +166,7 @@ def fetch_assignment_group(name: str, instance: quizcomp.uploader.instance.Canva
 
     return None
 
-def create_quiz(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
+def create_quiz(quiz: quizcomp.model.quiz.Quiz, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Create a quiz (with all questions) on Canvas. """
 
     file_ids = upload_canvas_files(quiz, instance)
@@ -206,7 +206,7 @@ def create_quiz(quiz: quizcomp.quiz.Quiz, instance: quizcomp.uploader.instance.C
     for question_group in quiz.groups:
         create_question_group(quiz_id, question_group, instance)
 
-def create_question_group(quiz_id: str, group: quizcomp.group.Group, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
+def create_question_group(quiz_id: str, group: quizcomp.model.group.Group, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Create a question group for the given quiz. """
 
     data = {
@@ -227,7 +227,7 @@ def create_question_group(quiz_id: str, group: quizcomp.group.Group, instance: q
     for (i, question) in enumerate(group.questions):
         create_question(quiz_id, group_id, question, i, instance)
 
-def create_question(quiz_id: str, group_id: int, question: quizcomp.question.base.Question, index: int, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
+def create_question(quiz_id: str, group_id: int, question: quizcomp.model.question.Question, index: int, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Create a question within the given quiz/group. """
 
     data = _create_question_json(group_id, question, index, instance)
@@ -241,7 +241,7 @@ def create_question(quiz_id: str, group_id: int, question: quizcomp.question.bas
 
 def _create_question_json(
         group_id: int,
-        question: quizcomp.question.base.Question,
+        question: quizcomp.model.question.Question,
         index: int,
         instance: quizcomp.uploader.instance.CanvasInstanceInfo,
         ) -> typing.Dict[str, typing.Any]:
@@ -279,7 +279,7 @@ def _create_question_json(
 
     return data
 
-def _serialize_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
+def _serialize_answers(data: typing.Dict[str, typing.Any], question: quizcomp.model.question.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Convert a question's answers to Canvas JSON. """
 
     # In Canvas, short answer questions also get mapped to the essay Canvas type.
@@ -357,7 +357,7 @@ def _serialize_answer(
         feedback_html = answer.feedback.document.to_canvas(canvas_instance = instance, pretty = False)
         data[f"question[answers][{index}][answer_comment_html]"] = feedback_html
 
-def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
+def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: quizcomp.model.question.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Concert the answers for a matching-type question to Canvas API data. """
 
     for i in range(len(question.answers['matches'])):
@@ -379,7 +379,7 @@ def _serialize_matching_answers(data: typing.Dict[str, typing.Any], question: qu
         ]
         data["question[matching_answer_incorrect_matches]"] = "\n".join(distractors)
 
-def _serialize_fimb_answers(data: typing.Dict[str, typing.Any], question: quizcomp.question.base.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
+def _serialize_fimb_answers(data: typing.Dict[str, typing.Any], question: quizcomp.model.question.Question, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> None:
     """ Concert the answers for a FIMB-type question to Canvas API data. """
 
     index = 0

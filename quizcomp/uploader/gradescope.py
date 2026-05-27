@@ -10,7 +10,7 @@ import requests
 
 import quizcomp.constants
 import quizcomp.model.constants
-import quizcomp.quiz
+import quizcomp.model.quiz
 
 URL_BASE: str = 'https://www.gradescope.com'
 URL_HOMEPAGE = URL_BASE
@@ -94,7 +94,7 @@ class GradeScopeUploader:
         """ Whether to save the HTTP exchanges to disk. """
 
     def upload_quiz(self,
-            variant: quizcomp.quiz.Variant,
+            variant: quizcomp.model.quiz.Variant,
             base_dir: typing.Union[str, None] = None,
             **kwargs: typing.Any,
             ) -> typing.Tuple[str, bool]:
@@ -105,8 +105,8 @@ class GradeScopeUploader:
         If supplied, the base_dir will be left alone when finished.
         """
 
-        if (not isinstance(variant, quizcomp.quiz.Variant)):
-            raise ValueError(f"GradeScope quiz uploader requires a quizcomp.quiz.Variant type, found {type(variant)}.")
+        if (not isinstance(variant, quizcomp.model.quiz.Variant)):
+            raise ValueError(f"GradeScope quiz uploader requires a quizcomp.model.quiz.Variant type, found {type(variant)}.")
 
         if (base_dir is None):
             base_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp-gradescope-')
@@ -138,7 +138,7 @@ class GradeScopeUploader:
         response.raise_for_status()
 
     def get_bounding_boxes(self,
-            variant: quizcomp.quiz.Variant,
+            variant: quizcomp.model.quiz.Variant,
             base_dir: str,
             ) -> typing.Tuple[typing.Dict[str, typing.Dict[str, typing.Any]], typing.Dict[str, typing.Dict[str, typing.Any]]]:
         """ Get bounding boxes for answers. """
@@ -264,7 +264,7 @@ class GradeScopeUploader:
         return (x1, y1), (x2, y2)
 
     def create_outline(self,
-            variant: quizcomp.quiz.Variant,
+            variant: quizcomp.model.quiz.Variant,
             bounding_boxes: typing.Dict[str, typing.Dict[str, typing.Any]],
             special_boxes: typing.Dict[str, typing.Dict[str, typing.Any]],
             ) -> typing.Dict[str, typing.Any]:
@@ -327,7 +327,7 @@ class GradeScopeUploader:
         return outline
 
     def upload(self,
-            variant: quizcomp.quiz.Variant,
+            variant: quizcomp.model.quiz.Variant,
             base_dir: str,
             bounding_boxes: typing.Dict[str, typing.Dict[str, typing.Any]],
             special_boxes: typing.Dict[str, typing.Dict[str, typing.Any]],
@@ -422,7 +422,7 @@ class GradeScopeUploader:
 
         return str(meta_tag[0].get('content'))
 
-    def get_assignment_id(self, session: requests.Session, variant: quizcomp.quiz.Variant) -> typing.Union[str, None]:
+    def get_assignment_id(self, session: requests.Session, variant: quizcomp.model.quiz.Variant) -> typing.Union[str, None]:
         """ Get an assignment ID for the given variant, or None if there is no matching variant. """
 
         url = URL_ASSIGNMENTS % (self.course_id)
@@ -465,7 +465,7 @@ class GradeScopeUploader:
         response = session.post(delete_url, data = data)
         response.raise_for_status()
 
-    def create_assignment(self, session: requests.Session, variant: quizcomp.quiz.Variant, base_dir: str) -> str:
+    def create_assignment(self, session: requests.Session, variant: quizcomp.model.quiz.Variant, base_dir: str) -> str:
         """ Create an assignment in GradeScope and get its ID. """
 
         form_url = URL_NEW_ASSIGNMENT_FORM % (self.course_id)
@@ -520,7 +520,7 @@ class GradeScopeUploader:
         )
         response.raise_for_status()
 
-    def create_rubric(self, session: requests.Session, assignment_id: str, variant: quizcomp.quiz.Variant) -> None:
+    def create_rubric(self, session: requests.Session, assignment_id: str, variant: quizcomp.model.quiz.Variant) -> None:
         """ Create rubric items for a quiz. """
 
         questions_ids, csrf_token = self.fetch_question_ids(session, assignment_id)
