@@ -53,6 +53,16 @@ class TextOption(edq.util.serial.PODConverter):
             'feedback': self.feedback.to_pod(context),
         }
 
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        """ Collect all documents in this object. """
+
+        documents = [self.text]
+
+        if (self.feedback is not None):
+            documents += self.feedback.collect_documents()
+
+        return documents
+
     @classmethod
     def from_pod(cls: typing.Type[TextOption],
             data: PODType,
@@ -295,6 +305,11 @@ class QuestionAnswers(edq.util.serial.PODConverter):
     def shuffle(self, rng: random.Random) -> None:
         """ Shuffle the choices/options (if applicable). """
 
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        """ Collect all documents in this object. """
+
+        return []
+
     @classmethod
     def from_pod(cls: typing.Type[QuestionAnswers],
             data: PODType,
@@ -373,6 +388,14 @@ class TextAnswers(QuestionAnswers):
     def shuffle(self, rng: random.Random) -> None:
         rng.shuffle(self.options)
 
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        documents = []
+
+        for option in self.options:
+            documents += option.collect_documents()
+
+        return documents
+
     def to_pod(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
@@ -441,6 +464,14 @@ class MultiplePartTextAnswers(QuestionAnswers):
         for part in self.parts.values():
             part.shuffle(rng)
 
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        documents = []
+
+        for part in self.parts.values():
+            documents += part.collect_documents()
+
+        return documents
+
     def to_pod(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
@@ -476,6 +507,14 @@ class ChoiceAnswers(QuestionAnswers):
 
     def shuffle(self, rng: random.Random) -> None:
         rng.shuffle(self.choices)
+
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        documents = []
+
+        for choice in self.choices:
+            documents += choice.collect_documents()
+
+        return documents
 
     def to_pod(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
@@ -599,6 +638,14 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
         for part in self.parts.values():
             part.shuffle(rng)
 
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        documents = []
+
+        for part in self.parts.values():
+            documents += part.collect_documents()
+
+        return documents
+
     def to_pod(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
@@ -698,6 +745,18 @@ class MatchingAnswers(QuestionAnswers):
         rng.shuffle(self.pairs)
         rng.shuffle(self.distractors)
         self._shuffle_seed = rng.randint(0, 2**64)
+
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        documents = []
+
+        for (left, right) in self.pairs:
+            documents += left.collect_documents()
+            documents += right.collect_documents()
+
+        for distractor in self.distractors:
+            documents += distractor.collect_documents()
+
+        return documents
 
     def to_pod(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,

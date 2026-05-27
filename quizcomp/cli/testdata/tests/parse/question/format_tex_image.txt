@@ -1,0 +1,271 @@
+{
+    "cli": "quizcomp.cli.parse.question",
+    "arguments": [
+        "__DATA_DIR__(../../../testdata/questions/good/prompt-image/question.json)",
+        "--format", "tex"
+    ],
+}
+---
+\documentclass{report}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{epsfig}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{upquote}
+\usepackage{xparse}
+\usepackage{zref-abspage}
+\usepackage{zref-savepos}
+\usepackage{zref-user}
+
+% PDF metadata.
+\usepackage[
+    pdftex,
+    hidelinks,
+        pdftitle={Dummy Course Dummy Term - Dummy Name},
+    pdfcreator={Quiz Composer},
+        pdfkeywords={Version: 0.0.0}
+]{hyperref}
+
+% Remove paragraph indentation.
+\setlength{\parindent}{0pt}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\usetikzlibrary{calc}
+
+% Make a checkbox for multiple choice questions and record the bounding boxes to the positions file.
+% Args: {text}[type identifier][question id][part id][answer id]
+\newcommand{\radio}[5][none]{%
+    \begin{tikzpicture}[color=black, line width=0.4mm]
+        \fill[transparent] (0mm,0mm)
+            node {\zsavepos{#3-#4-#5-ll}}
+            rectangle (6mm,6mm)
+            node {\zsavepos{#3-#4-#5-ur}};
+        \draw [fill=#1] (3mm,3mm)
+            circle (2.5mm);
+    \end{tikzpicture} %
+    \write\positionOutput{%
+        #3,#4,#5,%
+        #2,%
+        \arabic{abspage},%
+        \zposx{#3-#4-#5-ll}sp,\zposy{#3-#4-#5-ll}sp,%
+        \zposx{#3-#4-#5-ur}sp,\zposy{#3-#4-#5-ur}sp,%
+        \the\paperwidth,\the\paperheight,%
+        bottom-left%
+    } \relax %
+}
+
+% Make a checkbox and record the bounding boxes to the positions file.
+% Args: {fill color}[type identifier][question id][part id][answer id]
+\newcommand{\checkbox}[5][none]{%
+    \begin{tikzpicture}[color=black, line width=0.4mm]
+        \fill[transparent] (0mm,0mm)
+            node {\zsavepos{#3-#4-#5-ll}}
+            rectangle (6mm,6mm)
+            node {\zsavepos{#3-#4-#5-ur}};
+        \draw [fill=#1] (0.5mm,0.5mm)
+            rectangle (5.5mm,5.5mm);
+    \end{tikzpicture} %
+    \write\positionOutput{%
+        #3,#4,#5,%
+        #2,%
+        \arabic{abspage},%
+        \zposx{#3-#4-#5-ll}sp,\zposy{#3-#4-#5-ll}sp,%
+        \zposx{#3-#4-#5-ur}sp,\zposy{#3-#4-#5-ur}sp,%
+        \the\paperwidth,\the\paperheight,%
+        bottom-left%
+    } \relax %
+}
+
+% Make a general large answer box and record the bounding boxes to the positions file.
+% Args: {text}[height][length modifier (modifies \textwidth)][type identifier][question id][part id][answer id]
+\NewDocumentCommand{\bigAnswerBox} { O{} m m m m m m }{%
+    \begin{tikzpicture}[color=black, line width=0.4mm]
+        \fill[transparent] (0mm, 0mm)
+            node {\zsavepos{#5-#6-#7-ll}}
+            rectangle (#3 \textwidth, #2)
+            node {\zsavepos{#5-#6-#7-ur}};
+        \draw (0.5mm,0.5mm)
+            rectangle (#3 \textwidth - 0.5mm, #2 - 0.5mm)
+            node[midway, red] {#1};
+    \end{tikzpicture} %
+    \write\positionOutput{%
+        #5,#6,#7,%
+        #4,%
+        \arabic{abspage},%
+        \zposx{#5-#6-#7-ll}sp,\zposy{#5-#6-#7-ll}sp,%
+        \zposx{#5-#6-#7-ur}sp,\zposy{#5-#6-#7-ur}sp,%
+        \the\paperwidth,\the\paperheight,%
+        bottom-left%
+    } \relax %
+}
+
+% Make a general answer box and record the bounding boxes to the positions file.
+% Args: {text}[type identifier][question id][part id][answer id]
+\NewDocumentCommand{\smallAnswerBox} { O{} m m m m }{%
+    \begin{tikzpicture}[color=black, line width=0.4mm]
+        \fill[transparent] (0cm, 0cm)
+            node {\zsavepos{#3-#4-#5-ll}}
+            rectangle (1cm, 1cm)
+            node {\zsavepos{#3-#4-#5-ur}};
+        \draw (0.5mm,0.5mm)
+            rectangle (0.95cm, 0.95cm)
+            node[midway, red] {#1};
+    \end{tikzpicture} %
+    \write\positionOutput{%
+        #3,#4,#5,%
+        #2,%
+        \arabic{abspage},%
+        \zposx{#3-#4-#5-ll}sp,\zposy{#3-#4-#5-ll}sp,%
+        \zposx{#3-#4-#5-ur}sp,\zposy{#3-#4-#5-ur}sp,%
+        \the\paperwidth,\the\paperheight,%
+        bottom-left%
+    } \relax %
+}
+
+\newdimen\remainingheight
+\newcommand*{\calcremainingheight}{%
+    \ifdim\pagegoal=\maxdimen
+        \remainingheight\dimexpr\textheight-0.4pt\relax
+    \else
+        \remainingheight\dimexpr\pagegoal-\pagetotal-\lineskip-0.4pt\relax
+    \fi
+}
+
+% Write positions to <job>.pos .
+\newwrite\positionOutput
+\openout\positionOutput=\jobname.pos\relax
+
+% Code display settings.
+\lstset{
+    basicstyle=\ttfamily\small,
+    columns=fixed,
+    fontadjust=true,
+    basewidth=0.5em,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    breaklines=true,
+    breakatwhitespace=false,
+}
+
+% Clear headers and footers for the first page.
+\pagestyle{fancy}
+\fancyhead{}
+\renewcommand{\headrulewidth}{0mm}
+\fancyfoot{}
+\renewcommand{\footrulewidth}{0mm}
+
+\begin{document}
+
+    \centerline{\Large Dummy Course \hfill Dummy Name \hfill Dummy Term}
+\vspace{0.2cm}
+
+\hrule
+
+\vspace{0.5cm}
+
+\begin{tabular}{ m{2.0cm} m{5cm} }
+    Name: & \bigAnswerBox[]{4em}{0.80}{name}{name}{0}{0} \\
+\end{tabular}
+
+\begin{tabular}{ m{2.0cm} m{5cm} }
+    Student ID: & \bigAnswerBox[]{4em}{0.80}{id}{email}{0}{0} \\
+\end{tabular}
+
+\hrule
+
+\vspace{1.0cm}
+
+\textbf{Total Points: 0.0}
+
+Dummy description.
+
+\vspace{1.0cm}
+
+By signing below, I acknowledge that I have neither given nor received inappropriate help on this exam, and have abided by the letter and spirit of the University of California, Santa Cruz Code of Academic Integrity while taking this exam.
+
+\vspace{0.25cm}
+
+\begin{tabular}{ m{2.0cm} m{5cm} }
+    Signature: & \bigAnswerBox[]{4em}{0.80}{signature}{signature}{0}{0} \\
+\end{tabular}
+
+\vspace{0.25cm}
+
+Fill in the box below if you believe your exam may require manual grading,
+e.g., you crossed out answers or needed space outside a designated answer box. \\
+\begin{tabular}{ m{10mm} l }
+    \checkbox{manual_grading}{manual_grading}{0}{0} & My exam may require manual grading. \\
+\end{tabular}
+
+\newpage
+
+% Set headers and footers.
+\pagestyle{fancy}
+\fancyhead{}
+    \fancyhead[L]{Dummy Course}
+\fancyhead[C]{Dummy Name}
+    \fancyhead[R]{Dummy Term}
+\renewcommand{\headrulewidth}{0.1mm}
+\fancyfoot{}
+\fancyfoot[R]{\thepage}
+    \fancyfoot[L]{Version: 0.0.0}
+\renewcommand{\footrulewidth}{0.1mm}
+
+%%% BEGIN Group {0.0 -- Dummy Question} %%%
+
+
+%%% BEGIN Question {0.0.0 -- None} %%%
+
+\begin{minipage}{\textwidth}
+    \noindent
+        \textbf{Question 1} (0.0 Points)
+    \vspace{0.25cm}
+
+    \noindent
+    Prompt: Image
+
+\includegraphics[width=1.00\textwidth]{images/tiny.png}
+
+    \vspace{0.25cm}
+
+    Fill in the circle that corresponds to your answer.
+
+        \vspace{0.25cm}
+
+        \begin{center}
+
+        \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{0.8\textwidth} }
+                \radio{multiple_choice}{0.0.0}{0}{0.0.0.0}
+                    & A \\
+                \radio{multiple_choice}{0.0.0}{0}{0.0.0.1}
+                    & B \\
+                \radio{multiple_choice}{0.0.0}{0}{0.0.0.2}
+                    & C \\
+                \radio{multiple_choice}{0.0.0}{0}{0.0.0.3}
+                    & D \\
+        \end{tabular}
+
+        \end{center}
+\end{minipage}
+
+%%% END Question {0.0.0 -- None} %%%
+
+
+
+%%% END Group {0.0 -- Dummy Question} %%%
+
+\end{document}

@@ -7,6 +7,7 @@ import os
 import typing
 
 import edq.core.argparser
+import edq.util.dirent
 
 import quizcomp
 import quizcomp.external.katex
@@ -77,8 +78,8 @@ def resolve_out_arg(raw_path: str, default_filename: str) -> str:
     elif (os.path.isdir(path)):
         return os.path.join(path, default_filename)
     elif (raw_path.endswith(os.sep)):
-        os.makedirs(path, exist_ok = True)
+        edq.util.dirent.mkdir(path)
         return os.path.join(path, default_filename)
     else:
-        os.makedirs(os.path.dirname(path), exist_ok = True)
+        edq.util.dirent.mkdir(os.path.dirname(path))
         return path

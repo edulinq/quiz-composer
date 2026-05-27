@@ -104,26 +104,31 @@ class ParsedDocument(edq.util.serial.PODSerializer):
         Fetch all the answer placeholders in this document.
         """
 
-        return set(self._collect_placeholders_helper(self._tokens))
+        tokens = self._collect_tokens(self._tokens, 'placeholder')
+        return {token.content for token in tokens}
 
-    def _collect_placeholders_helper(self, tokens: typing.Union[typing.List[markdown_it.token.Token], None]) -> typing.List[str]:
-        """ Collect the placeholder in a sequence of tokens. """
+    def collect_images(self) -> typing.List[markdown_it.token.Token]:
+        """
+        Fetch all the image tokens in this document.
+        """
+
+        return self._collect_tokens(self._tokens, 'image')
+
+    def _collect_tokens(self, tokens: typing.Union[typing.List[markdown_it.token.Token], None], token_type: str) -> typing.List[markdown_it.token.Token]:
+        """ Recursively collect tokens of the given type. """
+
+        contents: typing.List[markdown_it.token.Token] = []
 
         if ((tokens is None) or (len(tokens) == 0)):
-            return []
-
-        placeholders: typing.List[str] = []
-
-        if ((tokens is None) or (len(tokens) == 0)):
-            return placeholders
+            return contents
 
         for token in tokens:
-            if (token.type == 'placeholder'):
-                placeholders.append(token.content)
+            if (token.type == token_type):
+                contents.append(token)
 
-            placeholders += self._collect_placeholders_helper(token.children)
+            contents += self._collect_tokens(token.children, token_type)
 
-        return placeholders
+        return contents
 
     def is_empty(self) -> bool:
         """ Check if this document contains any content (tokens). """

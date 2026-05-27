@@ -2,7 +2,9 @@
 The most common way to render Quiz Composer quizzes is via templates.
 We use the [Jinja](https://jinja.palletsprojects.com) template system.
 
-# TEST
+This comment describes the general information passed in the Jinja context for each object.
+See the source code for full information.
+
 The standard rendering context sent to most templates will always include:
  - `this: typing.Any` -- The context object being rendered (e.g., a quiz, group, or question).
  - `quiz: quizcomp.model.quiz.Quiz` -- The current quiz (often a variant) being rendered.
@@ -10,31 +12,26 @@ The standard rendering context sent to most templates will always include:
 
 Core types (quiz, group, question) will additionally include:
  - `id: str` -- An identifier specific to this.
- - `number: int` -- The number that should be displayed for this object (if any), e.g., a question's number.
  - `children_content: str` -- The rendered content from this' children (if any).
 
-# TEST
- - `meta: typing.Dict[str, typing.Any]` -- A dictionary of metadata relevant to the context (e.g. for a question this would contain the question number).
+ Questions will also have:
+ - `custom_header: typing.Union[str, None]` -- An optional custom header to use for this question.
+ - `number: int` -- The number that should be displayed for this object (if any), e.g., a question's number.
 """
 
-# TEST
-import math
 import os
-import random
 import re
-import string
 import typing
+import urllib.parse
 
 import edq.net.request
 import edq.util.dirent
 import jinja2
 
-import quizcomp.constants
 import quizcomp.converter.converter
+import quizcomp.errors
 import quizcomp.model.base
 import quizcomp.model.config
-import quizcomp.model.constants
-import quizcomp.parser.document
 import quizcomp.model.group
 import quizcomp.model.question
 import quizcomp.model.quiz
@@ -51,13 +48,13 @@ DEFAULT_JINJA_OPTIONS: typing.Dict[str, typing.Any] = {
     'autoescape': jinja2.select_autoescape(),
 }
 
+MAX_IMAGE_RENAMES: int = 1000
+
 class TemplateConverter(quizcomp.converter.converter.Converter):
     """
     The base class for a converter that uses templates.
     """
 
-    # TEST - Check args.
-    # TEST - All image-related things.
     def __init__(self,
             format: str,
             template_dir: str,
@@ -65,8 +62,6 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             jinja_filters: typing.Union[typing.Dict[str, typing.Any], None] = None,
             jinja_globals: typing.Union[typing.Dict[str, typing.Any], None] = None,
             image_base_dir: typing.Union[str, None] = None,
-            image_relative_root: typing.Union[str, None] = None,
-            cleanup_images: bool = True,
             **kwargs: typing.Any) -> None:
         super().__init__(**kwargs)
 
@@ -79,25 +74,13 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         self.template_dir: str = template_dir
         """ The directory containing the templates to use. """
 
-        # TEST
         self.image_base_dir: typing.Union[str, None] = image_base_dir
         """
         The location images are to be stored.
         Some converters will need to store image paths.
-        Using the _store_images() callback will put the images here.
+
+        If set to None, then no images will be stored (even if their source strings get rewritten).
         """
-
-        # TEST
-        self.image_paths: typing.Dict[str, str] = {}
-        """ This will hold: {<abs_path or link>: <new path (based on image_base_dir)>, ...} """
-
-        # TEST
-        self.image_relative_root: typing.Union[str, None] = image_relative_root
-        """ If not None, override the default image output path with os.join(image_relative_root, filename). """
-
-        # TEST
-        self.cleanup_images: bool = cleanup_images
-        """ Remove any temp image directories. """
 
         if (jinja_options is None):
             jinja_options = {}
@@ -127,20 +110,25 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> str:
         """ Convert an entire quiz (including variants). """
 
-        return self.finalize(self._convert_quiz(quiz))
+        return self._convert_quiz(quiz)
 
     def convert_variant(self, variant: quizcomp.model.quiz.variant, **kwargs: typing.any) -> str:
         """ Convert a standard quiz variant. """
 
-        return self.finalize(self._convert_quiz(variant))
+        return self._convert_quiz(variant)
 
-    def finalize(self, text: str) -> str:
+    def prepare(self, quiz: quizcomp.model.quiz.Quiz) -> None:
+        """ A first chance for children to prepare for converting the given quiz. """
+
+    def finalize(self, quiz: quizcomp.model.quiz.Quiz, text: str) -> str:
         """ A final chance for children to modify the output. """
 
         return text
 
     def _convert_quiz(self, quiz: quizcomp.model.quiz.Quiz) -> str:
         """ Convert a quiz (or variant). """
+
+        self.prepare(quiz)
 
         quiz_id = '0'
         quiz_number = 1
@@ -152,12 +140,13 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             'quiz': quiz,
             'answer_key': self.answer_key,
             'id': quiz_id,
-            'number': quiz_number,
             'children_content': children_content,
         }
 
         template = self.env.get_template(TEMPLATE_FILENAME_QUIZ)
-        return template.render(**context)
+        output = template.render(**context)
+
+        return self.finalize(quiz, output)
 
     def _convert_children(self,
             quiz: quizcomp.model.quiz.Quiz,
@@ -298,37 +287,101 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return text
 
-    # TEST
-    ''' TEST
-    def _store_images(self, link: str, base_dir: str) -> str:
-        """ Store images for this quiz. """
+    def _store_images(self, quiz: quizcomp.model.quiz.Quiz) -> None:
+        """
+        Prepare images for conversions.
+        Replace the source in image tokens.
+        Write images to a common directory.
+        """
 
-        if (self.image_base_dir is None):
-            self.image_base_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp-images-', rm = self.cleanup_images)
+        seen_sources = {}
 
-        os.makedirs(self.image_base_dir, exist_ok = True)
+        for document in quiz.collect_all_documents():
+            image_tokens = document.collect_images()
+            if (len(image_tokens) == 0):
+                continue
 
-        if (re.match(r'^http(s)?://', link)):
-            image_path = edq.util.dirent.get_temp_path(prefix = 'quizcomp-image-dl-')
-            image_id = link
+            for image_token in image_tokens:
+                original_source = image_token.attrGet('original_src')
+                if (original_source is None):
+                    original_source = image_token.attrGet('src')
 
-            response, _ = edq.net.request.make_get(link)
-            edq.util.dirent.write_file_bytes(image_path, response.content)
+                if ((original_source is None) or len(str(original_source)) == 0):
+                    _logger.warning("Could not locate image source for '%s'.", image_token.content)
+
+                if (original_source in seen_sources):
+                    new_source = seen_sources[original_source]
+                else:
+                    new_source = self._handle_image(quiz, original_source, document.context.base_dir)
+                    seen_sources[original_source] = new_source
+
+                image_token.attrSet('original_src', original_source)
+                image_token.attrSet('src', new_source)
+
+    def _handle_image(self, quiz: quizcomp.model.quiz.Quiz, source: str, document_base_dir: str) -> str:
+        """
+        Handle an image that will be stored and return the new source for the image.
+
+        By default, "handling" and image entails:
+         - fetching an image (if it is not available locally),
+         - copying it to the image directory (if an image directory exists),
+         - and returning the new relative source path for the image.
+        """
+
+        is_http = re.match(r'^http(s)?://', source)
+        if (is_http):
+            url_path = urllib.parse.urlsplit(path).path
+            filename = url_path.split('/')[-1]
         else:
-            image_path = os.path.join(base_dir, link)
-            image_id = image_path
+            filename = os.path.basename(source)
 
-        ext = os.path.splitext(image_path)[-1]
-        filename = f"{len(self.image_paths):03d}{ext}"
-        out_path = os.path.join(self.image_base_dir, filename)
+        # If there is no image base dir to store images into, then just return with the newly formed source.
+        if (self.image_base_dir is None):
+            return self._form_image_source(filename)
 
-        edq.util.dirent.copy(image_path, out_path)
+        (basename, ext) = os.path.split(filename)
+        path = os.path.join(self.image_base_dir, filename)
 
-        if (self.image_relative_root is not None):
-            out_path = os.path.join(self.image_relative_root, filename)
+        count = 0
+        while (os.path.exists(path)):
+            filename = f"{basename}_{count:03d}{ext}"
+            path = os.path.join(image_base_dir, filename)
+            count += 1
 
-        self.image_paths[image_id] = out_path
+            if (count >= MAX_IMAGE_RENAMES):
+                raise quizcomp.errors.QuizValidationError(f"Cannot create unique filename for image: '{source}'.", context = quiz)
 
-        return out_path
+        new_source = self._form_image_source(filename)
 
-    '''
+        if (is_http):
+            response, _ = edq.net.request.make_get(source)
+            edq.util.dirent.write_file_bytes(path, response.content)
+        else:
+            if (not os.path.isabs(source)):
+                source = os.path.join(document_base_dir, source)
+
+            source = os.path.abspath(source)
+            edq.util.dirent.copy(source, path)
+
+        return new_source
+
+    def _form_image_source(self, filename: str) -> str:
+        """ Create the image source string that will go inside stored image tokens using the base filename. """
+
+        return os.path.join('images', filename)
+
+    def _restore_image_sources(self, quiz: quizcomp.model.quiz.Quiz) -> None:
+        """ Replace any modified image sources with their original source. """
+
+        for document in quiz.collect_all_documents():
+            image_tokens = document.collect_images()
+            if (len(image_tokens) == 0):
+                continue
+
+            for image_token in image_tokens:
+                original_source = image_token.attrGet('original_src')
+                if (original_source is None):
+                    continue
+
+                image_token.attrSet('src', original_source)
+                image_token.attrSet('original_src', None)

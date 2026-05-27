@@ -37,6 +37,22 @@ class Feedback(edq.util.serial.PODConverter):
         self.incorrect: typing.Union[quizcomp.parser.document.ParsedDocument, None] = incorrect
         """ Feedback to be shown if the action/choice/answer was incorrect. """
 
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        """ Collect all documents in this object. """
+
+        documents = []
+
+        if (self.general is not None):
+            documents.append(self.general)
+
+        if (self.correct is not None):
+            documents.append(self.correct)
+
+        if (self.incorrect is not None):
+            documents.append(self.incorrect)
+
+        return documents
+
     def is_empty(self) -> bool:
         """ Check if this feedback item contains any actual feedback. """
 

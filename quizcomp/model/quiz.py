@@ -96,6 +96,9 @@ class Quiz(quizcomp.model.base.CoreType):
         if (self.name is None):
             raise quizcomp.errors.QuizValidationError("Quiz name cannot be empty.", context = self)
 
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        return [self.description]
+
     @classmethod
     def prep_init_data(cls,
             data: typing.Dict[str, typing.Any],

@@ -106,7 +106,7 @@ def make(
         base_out_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
 
     out_dir = os.path.join(base_out_dir, quiz.name)
-    os.makedirs(out_dir, exist_ok = True)
+    edq.util.dirent.mkdir(out_dir)
 
     _logger.info("Writing TeX/PDF quiz ('%s') to '%s'.", quiz.name, out_dir)
 
@@ -185,8 +185,12 @@ def make_pdf(
     if (out_dir is None):
         out_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
 
-    image_relative_root = os.path.join('images', variant.name)
-    image_dir = os.path.join(out_dir, image_relative_root)
+    if (variant.variant_id is not None):
+        out_dir = os.path.join(out_dir, f"Variant - {variant.variant_id}")
+
+    edq.util.dirent.mkdir(out_dir)
+
+    image_dir = os.path.join(out_dir, 'images')
 
     out_path = os.path.join(out_dir, f"{variant.name}.tex")
 
@@ -194,7 +198,6 @@ def make_pdf(
         converter = quizcomp.converter.tex.TexTemplateConverter(
             answer_key = is_key,
             image_base_dir = image_dir,
-            image_relative_root = image_relative_root,
             cleanup_images = True,
         )
         content = converter.convert_variant(variant)

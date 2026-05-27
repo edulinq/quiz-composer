@@ -7,6 +7,7 @@ import edq.util.serial
 
 import quizcomp.errors
 import quizcomp.model.config
+import quizcomp.parser.document
 
 DEFAULT_AVAILABLE_POINTS: float = 0.0
 """ The default available points for an object. """
@@ -180,6 +181,23 @@ class CoreType(edq.util.serial.DictConverter):
             return default
 
         return self.name
+
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        """
+        Collect documents for this object only (does not include any children).
+        Use collect_all_documents() if you want child documents as well.
+        """
+
+        return []
+
+    def collect_all_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        """ Collect all documents for this object and all children. """
+
+        documents = self.collect_documents()
+        for child in self.children:
+            documents += child.collect_all_documents()
+
+        return documents
 
     def get_points(self, check_children: bool = True) -> float:
         """

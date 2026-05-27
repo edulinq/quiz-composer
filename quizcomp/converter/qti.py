@@ -41,7 +41,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
                 },
                 **kwargs)
 
-    def finalize(self, text: str) -> str:
+    def finalize(self, quiz: quizcomp.model.quiz.Quiz, text: str) -> str:
         return _format_xml(text)
 
     ''' TEST
@@ -64,7 +64,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         temp_dir = os.path.join(temp_base_dir, quiz.name)
 
         quiz_dir = os.path.join(temp_dir, OUT_DIR_QUIZ)
-        os.makedirs(quiz_dir, exist_ok = True)
+        edq.util.dirent.mkdir(quiz_dir)
 
         if (self.canvas):
             self.image_base_dir = os.path.join(temp_dir, OUT_DIR_IMAGES)

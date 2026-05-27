@@ -24,7 +24,7 @@ def _add_converter_tests() -> None:
 
         for format_name in quizcomp.converter.convert.SUPPORTED_FORMATS:
             for is_key in [True, False]:
-                test_name = f"test_converter_quiz__{base_test_name}__{format_name}__key_{is_key}"
+                test_name = f"test_converter_quiz__{base_test_name}__{format_name}__key_{str(is_key).lower()}"
                 setattr(TestQuizConverter, test_name, _get_template_test(path, format_name, is_key))
 
 def _get_template_test(path: str, format_name: str, is_key: bool) -> typing.Callable:

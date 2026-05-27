@@ -56,6 +56,15 @@ class Question(quizcomp.model.base.CoreType):
         self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
         """ Object-level feedback. """
 
+    def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
+        documents = [self.prompt]
+        documents += self.answers.collect_documents()
+
+        if (self.feedback is not None):
+            documents += self.feedback.collect_documents()
+
+        return documents
+
     @classmethod
     def from_pod(cls,
             data: edq.util.serial.PODType,
