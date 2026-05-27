@@ -1,13 +1,5 @@
 import typing
 
-TYPE_PROJECT: str = 'project'
-TYPE_QUIZ: str = 'quiz'
-TYPE_QUESTION: str = 'question'
-TYPE_VARIANT: str = 'variant'
-
-JSON_OBJECT_TYPES: typing.List[str] = [TYPE_PROJECT, TYPE_QUIZ, TYPE_QUESTION, TYPE_VARIANT]
-
-PROJECT_FILENAME: str = 'project.json'
 QUIZ_FILENAME: str = 'quiz.json'
 QUESTION_FILENAME: str = 'question.json'
 
