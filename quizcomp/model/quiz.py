@@ -15,8 +15,8 @@ import quizcomp.constants
 import quizcomp.errors
 import quizcomp.model.base
 import quizcomp.model.group
+import quizcomp.model.question
 import quizcomp.parser.document
-import quizcomp.question.base
 import quizcomp.util.serial
 
 DUMMY_QUIZ_DATA: typing.Dict[str, typing.Any] = {
@@ -352,7 +352,7 @@ class Variant(Quiz):
 
     @staticmethod
     def get_dummy(
-            question: quizcomp.question.base.Question,
+            question: quizcomp.model.question.Question,
             seed: typing.Union[int, None] = None,
             ) -> 'Variant':
         """

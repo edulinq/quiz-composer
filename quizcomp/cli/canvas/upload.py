@@ -7,7 +7,7 @@ import os
 import sys
 
 import quizcomp.cli.parser
-import quizcomp.quiz
+import quizcomp.model.quiz
 import quizcomp.uploader.canvas
 import quizcomp.uploader.instance
 
@@ -22,7 +22,7 @@ def run_cli(args: argparse.Namespace) -> int:
     if (not os.path.isfile(args.path)):
         raise ValueError(f"Provided path '{args.path}' is not a file.")
 
-    quiz = quizcomp.quiz.Quiz.from_path(args.path)
+    quiz = quizcomp.model.quiz.Quiz.from_path(args.path)
     canvas_instance = quizcomp.uploader.instance.CanvasInstanceInfo(args.base_url, args.course_id, args.token)
 
     uploader = quizcomp.uploader.canvas.CanvasUploader(canvas_instance, force = args.force)

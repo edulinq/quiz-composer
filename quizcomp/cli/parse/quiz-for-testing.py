@@ -13,7 +13,7 @@ import sys
 
 import quizcomp.cli.parser
 import quizcomp.converter.convert
-import quizcomp.quiz
+import quizcomp.model.quiz
 
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
@@ -34,7 +34,7 @@ def run_cli(args: argparse.Namespace) -> int:
 
     print(f"Parsing quiz: '{args.path}'.")
 
-    quiz = quizcomp.quiz.Quiz.from_path(args.path, flatten_groups = args.flatten_groups)
+    quiz = quizcomp.model.quiz.Quiz.from_path(args.path, flatten_groups = args.flatten_groups)
     variant = quiz.create_variants(all_questions = args.flatten_groups, seed = seed)[0]  # pylint: disable=no-member
 
     for quiz_format in args.formats:

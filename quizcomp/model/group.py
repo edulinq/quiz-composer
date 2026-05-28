@@ -10,7 +10,7 @@ import quizcomp.errors
 import quizcomp.constants
 import quizcomp.model.base
 import quizcomp.model.config
-import quizcomp.question.base
+import quizcomp.model.question
 import quizcomp.util.serial
 
 DEFAULT_PICK_COUNT: int = 1
@@ -48,7 +48,7 @@ class Group(quizcomp.model.base.CoreType):
             all_questions: bool,
             used_question_indexes: typing.Set[int],
             rng: random.Random,
-            ) -> typing.List[quizcomp.question.base.Question]:
+            ) -> typing.List[quizcomp.model.question.Question]:
         """
         Get a list of questions to use for an instantiated variant of this group.
         The returned questions will be copies of the original and shuffled (if set in config).
@@ -76,7 +76,7 @@ class Group(quizcomp.model.base.CoreType):
             count: int,
             used_question_indexes: typing.Set[int],
             rng: random.Random,
-            ) -> typing.List[quizcomp.question.base.Question]:
+            ) -> typing.List[quizcomp.model.question.Question]:
         """ Internally, choose a list of questions to use for an instantiated variant of this group. """
 
         indexes = list(range(len(self.children)))
