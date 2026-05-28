@@ -41,6 +41,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    essay_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -123,6 +124,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    fill_in_multiple_blanks_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -306,6 +308,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    short_answer_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -389,6 +392,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    multiple_answers_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -525,6 +529,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    matching_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -855,6 +860,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    multiple_choice_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -997,6 +1003,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    multiple_dropdowns_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -1166,6 +1173,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    numerical_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -1308,6 +1316,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    essay_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -1390,6 +1399,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    text_only_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
@@ -1449,6 +1459,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    true_false_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>

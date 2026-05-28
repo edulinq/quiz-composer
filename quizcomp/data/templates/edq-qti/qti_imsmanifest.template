@@ -9,13 +9,15 @@
                     <imsmd:string>{{ quiz.name }}</imsmd:string>
                 </imsmd:title>
             </imsmd:general>
-            <imsmd:lifeCycle>
-                <imsmd:contribute>
-                    <imsmd:date>
-                        <imsmd:dateTime>{{ quiz.date.strftime("%Y-%m-%d") }}</imsmd:dateTime>
-                    </imsmd:date>
-                </imsmd:contribute>
-            </imsmd:lifeCycle>
+            {% if (quiz.date is not none) %}
+                <imsmd:lifeCycle>
+                    <imsmd:contribute>
+                        <imsmd:date>
+                            <imsmd:dateTime>{{ quiz.date.strftime("%Y-%m-%d") }}</imsmd:dateTime>
+                        </imsmd:date>
+                    </imsmd:contribute>
+                </imsmd:lifeCycle>
+            {% endif %}
         </imsmd:lom>
     </metadata>
     <organizations/>

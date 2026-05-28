@@ -50,6 +50,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
     """
 
     def __init__(self,
+            out_path: typing.Union[str, None] = None,
             template_dir: str = DEFAULT_TEMPLATE_DIR,
             **kwargs: typing.Any) -> None:
         super().__init__(quizcomp.constants.FORMAT_HTML, template_dir,
@@ -61,69 +62,57 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
                 },
                 **kwargs)
 
+        self.out_path: typing.Union[str, None] = out_path
+        """ The path to write the quiz conversion output file to. """
+
     def finalize(self, quiz: quizcomp.model.quiz.Quiz, text: str) -> str:
+        self._restore_image_sources(quiz)
+
         return _format_xml(text)
 
-    # def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> str:
-
-    ''' TEST
-    def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, out_path: typing.Union[str, None] = None, **kwargs: typing.Any) -> str:
-        """ Convert an entire quiz (including variants) to QTI. """
-
-        if (out_path is None):
+    def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> str:
+        if (self.out_path is None):
             out_path = f'{quiz.name}.qti.zip'
+        else:
+            out_path = self.out_path
+
+        out_path = os.path.abspath(out_path)
 
         temp_base_dir = edq.util.dirent.get_temp_dir(prefix = 'quizcomp-qti-')
 
-        temp_out_path = os.path.join(temp_base_dir, 'out.zip')
         temp_dir = os.path.join(temp_base_dir, quiz.name)
+
+        images_dir = os.path.join(temp_dir, OUT_DIR_IMAGES)
+        edq.util.dirent.mkdir(images_dir)
+        self.image_base_dir = images_dir
+        self._store_images(quiz)
 
         quiz_dir = os.path.join(temp_dir, OUT_DIR_QUIZ)
         edq.util.dirent.mkdir(quiz_dir)
 
-        if (self.canvas):
-            self.image_base_dir = os.path.join(temp_dir, OUT_DIR_IMAGES)
-            os.makedirs(self.image_base_dir)
-
-        path = os.path.join(quiz_dir, OUT_FILENAME_QUIZ)
+        quiz_xml_path = os.path.join(quiz_dir, OUT_FILENAME_QUIZ)
         text = super().convert_quiz(quiz, **kwargs)
-        edq.util.dirent.write_file(path, _format_xml(text))
+        edq.util.dirent.write_file(quiz_xml_path, text)
 
         self._convert_assessment_meta(quiz, quiz_dir)
         self._convert_manifest(quiz, temp_dir)
 
-        self._create_zip(quiz, temp_out_path, out_path, temp_dir)
+        shutil.make_archive(os.path.splitext(out_path)[0], 'zip', temp_base_dir, quiz.name)
 
         logging.info("Created QTI quiz at '%s'.", out_path)
-        return path
-
-    def _create_zip(self, quiz: quizcomp.model.quiz.Quiz, temp_out_path: str, out_path: str, temp_dir: str) -> None:
-        """ Zip up the pending QTI. """
-
-        shutil.make_archive(os.path.splitext(temp_out_path)[0], 'zip', os.path.dirname(temp_dir), os.path.basename(temp_dir))
-        edq.util.dirent.copy(temp_out_path, out_path)
+        return out_path
 
     def _convert_assessment_meta(self, quiz: quizcomp.model.quiz.Quiz, out_dir: str) -> None:
         """ Write a quiz's metadata. """
 
         template = self.env.get_template(TEMPLATE_FILENAME_ASSESSMENT_META)
 
-        quiz_context = quiz.to_dict()
+        context = {
+            'quiz': quiz,
+        }
 
-        description_text = quiz.description.document.to_format(self.format)
-        description_text = f"<p>{description_text}</p><br /><hr /><p>Version: {quiz.version}</p>"
-
-        if (self.canvas):
-            description_text = html.escape(description_text)
-
-        quiz_context['description_text'] = description_text
-
-        text = template.render(quiz = quiz_context)
-
-        if (not self.canvas):
-            # Canvas has some very strange and undocumented formatting requirements for the assessment meta file.
-            # Do not format/pretty when working with Canvas.
-            text = _format_xml(text)
+        text = template.render(**context)
+        text = _format_xml(text)
 
         path = os.path.join(out_dir, OUT_FILENAME_ASSESSMENT_META)
         edq.util.dirent.write_file(path, text)
@@ -133,26 +122,27 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         template = self.env.get_template(TEMPLATE_FILENAME_MANIFEST)
 
-        data: typing.Dict[str, typing.Any] = {
-            'quiz': quiz.to_dict(),
-            'files': [],
-        }
-
-        for new_path in self.image_paths.values():
-            data['files'].append({
+        files = []
+        for filename in os.listdir(self.image_base_dir):
+            files.append({
                 'type': 'image',
-                'id': os.path.splitext(os.path.basename(new_path))[0],
-                'raw_path': new_path,
-                'path': '/'.join([quiz.name, OUT_DIR_IMAGES, os.path.basename(new_path)]),
-                'filename': os.path.basename(new_path),
+                'id': os.path.splitext(filename)[0],
+                'path': '/'.join([quiz.name, OUT_DIR_IMAGES, filename]),
+                'filename': filename,
             })
 
-        text = template.render(**data)
+        context: typing.Dict[str, typing.Any] = {
+            'quiz': quiz,
+            'files': files,
+        }
+
+        text = template.render(**context)
         text = _format_xml(text)
 
         path = os.path.join(out_dir, OUT_FILENAME_MANIFEST)
         edq.util.dirent.write_file(path, text)
 
+    ''' TEST
     def _store_images(self, link: str, base_dir: str) -> str:
         """
         Override the final path that is returned to instead point to the Canvas path.

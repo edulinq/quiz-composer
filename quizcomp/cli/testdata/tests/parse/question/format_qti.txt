@@ -41,6 +41,7 @@
                                     question_type
                                 </fieldlabel>
                                 <fieldentry>
+                                    multiple_choice_question
                                 </fieldentry>
                             </qtimetadatafield>
                             <qtimetadatafield>
