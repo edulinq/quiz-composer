@@ -238,6 +238,21 @@ class Quiz(quizcomp.model.base.CoreType):
             self.time_limit_mins = None
     '''
 
+    def create_variant(self,
+            seed: typing.Union[int, None] = None,
+            identifiers: typing.Union[typing.List[str], None] = None,
+            all_questions: bool = False,
+            include_solo_identifier: bool = False,
+            ) -> Variant:
+        """ A convenience call to create_variants(). """
+
+        return self.create_variants(
+            count = 1,
+            seed = seed,
+            identifiers = identifiers,
+            all_questions = all_questions, include_solo_identifier = include_solo_identifier,
+        )[0]
+
     def create_variants(self,
             count: int = 1,
             seed: typing.Union[int, None] = None,
@@ -363,4 +378,4 @@ class Variant(Quiz):
         group = quizcomp.model.group.Group(children = [question], **DUMMY_GROUP_DATA.copy())
         quiz = Quiz(children = [group], **DUMMY_QUIZ_DATA.copy())
 
-        return quiz.create_variants(count = 1, seed = seed)[0]
+        return quiz.create_variant(seed = seed)

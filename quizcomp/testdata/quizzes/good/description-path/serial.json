@@ -1,4 +1,7 @@
 {
+    "attributes": {
+        "description_path": "my_description.md"
+    },
     "description": "Description\n\nThis is a quiz description that lives in a **file**!",
     "groups": [
         {

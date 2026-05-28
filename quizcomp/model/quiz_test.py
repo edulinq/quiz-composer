@@ -4,6 +4,7 @@ import os
 import typing
 
 import edq.util.json
+import edq.util.serial
 
 import quizcomp.constants
 import quizcomp.errors
@@ -23,12 +24,12 @@ class QuizTest(quizcomp.testing.base.BaseTest):
         # [(path, expected total), ...]
         test_cases = [
             (
-                os.path.join(quizcomp.testing.base.GOOD_QUIZZES_DIR, 'single-question', 'quiz.json'),
-                10,
+                os.path.join(quizcomp.testing.base.GOOD_QUIZZES_DIR, 'simple', 'quiz.json'),
+                0.0,
             ),
             (
                 os.path.join(quizcomp.testing.base.GOOD_QUIZZES_DIR, 'all-basic-questions', 'quiz.json'),
-                110,
+                12.0,
             ),
         ]
 
@@ -37,7 +38,7 @@ class QuizTest(quizcomp.testing.base.BaseTest):
 
             with self.subTest(msg = f"Case {i}: {path}"):
                 quiz = self.load_quiz(path)
-                variant = quiz.create_variant()  # pylint: disable=no-member
+                variant = quiz.create_variants()[0]
 
                 self.assertEqual(quiz.get_points(), expected, "quiz")  # pylint: disable=no-member
                 self.assertEqual(variant.get_points(), expected, "variant")
@@ -93,7 +94,7 @@ def _get_quiz_reparse_test_method(path: str) -> typing.Callable:
         quiz = self.load_quiz(path)
         quiz_data = quiz.to_pod()
 
-        new_quiz = quizcomp.model.quiz.Quiz.from_pod(copy.deepcopy(quiz_data))
+        new_quiz = quizcomp.model.quiz.Quiz.from_pod(copy.deepcopy(quiz_data), edq.util.serial.SerializationContext())
         new_quiz_data = new_quiz.to_pod()
 
         self.assertJSONDictEqual(quiz_data, new_quiz_data)

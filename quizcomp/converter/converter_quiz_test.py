@@ -34,7 +34,7 @@ def _get_template_test(path: str, format_name: str, is_key: bool) -> typing.Call
         constructor_args = {'answer_key': is_key}
 
         quiz = self.load_quiz(path)
-        variant = quiz.create_variants(all_questions = True, seed = SEED)[0]
+        variant = quiz.create_variant(all_questions = True, seed = SEED)
         content = quizcomp.converter.convert.convert_variant(
             variant,
             format = format_name,
