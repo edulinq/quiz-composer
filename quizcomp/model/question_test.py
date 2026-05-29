@@ -8,29 +8,16 @@ import edq.util.serial
 import quizcomp.constants
 import quizcomp.errors
 import quizcomp.model.question
-import quizcomp.uploader.canvas
 import quizcomp.uploader.instance
 import quizcomp.testing.base
 
-CANVAS_FILENAME: str = 'canvas.json'
 SERIAL_FILENAME: str = 'serial.json'
-
-CANVAS_TEST_GROUP_ID: int = 0
-CANVAS_TEST_INDEX: int = 0
-
-_test_canvas_instance: quizcomp.uploader.instance.CanvasInstanceInfo = quizcomp.uploader.instance.CanvasInstanceInfo(
-    base_url = 'http://127.0.0.1:3030',
-    course_id = '123',
-    token = 'abc123',
-    testing = True,
-)
 
 class QuestionsTest(quizcomp.testing.base.BaseTest):
     """
     Test parsing/generating all questions in the 'testsdata/questions/good' directory.
     A 'question.json' indicates a question that should be parsed.
-    A 'canvas.json' in the same directory indicates that the question
-    should also be checked for it's Canvas format.
+    A 'serial.json' indicates a serialization test should be parsed.
 
     Test that questions in 'testsdata/questions/bad' do not parse.
     """
@@ -65,14 +52,6 @@ def _add_good_question_test(path: str) -> None:
     test_name = 'test_question_reparse_' + base_test_name
     setattr(QuestionsTest, test_name, _get_question_reparse_test_method(path))
 
-    # TEST
-    ''' TEST
-    canvas_path = os.path.join(os.path.dirname(path), CANVAS_FILENAME)
-    if (os.path.exists(canvas_path)):
-        test_name = 'test_question_canvas_' + base_test_name
-        setattr(QuestionsTest, test_name, _get_question_canvas_test_method(path, canvas_path))
-    '''
-
     serial_path = os.path.join(os.path.dirname(path), SERIAL_FILENAME)
     if (os.path.exists(serial_path)):
         test_name = 'test_question_serial_' + base_test_name
@@ -98,19 +77,6 @@ def _get_question_reparse_test_method(path: str) -> typing.Callable:
         new_question_data = new_question.to_pod()
 
         self.assertJSONDictEqual(question_data, new_question_data)
-
-    return __method
-
-def _get_question_canvas_test_method(path: str, canvas_path: str) -> typing.Callable:
-    """ Get a test for representing a question in a Canvas API format. """
-
-    def __method(self: QuestionsTest) -> None:
-        question = self.load_question(path)
-        canvas_info = quizcomp.uploader.canvas._create_question_json(CANVAS_TEST_GROUP_ID, question, CANVAS_TEST_INDEX, _test_canvas_instance)
-
-        expected_canvas_info = edq.util.json.load_path(canvas_path)
-
-        self.assertJSONDictEqual(expected_canvas_info, canvas_info)
 
     return __method
 

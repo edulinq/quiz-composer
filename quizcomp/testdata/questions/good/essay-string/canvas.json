@@ -1,8 +1,0 @@
-{
-    "question[question_type]": "essay_question",
-    "question[question_name]": "",
-    "question[quiz_group_id]": 0,
-    "question[points_possible]": 1,
-    "question[position]": 0,
-    "question[question_text]": "<div class=\"qg-root-block qg-block\"><p>Essay: String</p></div>"
-}
