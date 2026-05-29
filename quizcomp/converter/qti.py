@@ -26,7 +26,7 @@ OUT_FILENAME_QUIZ: str = 'quiz.xml'
 OUT_FILENAME_ASSESSMENT_META: str = 'assessment_meta.xml'
 OUT_FILENAME_MANIFEST: str = 'imsmanifest.xml'
 
-QUESTION_TYPE_MAP: typing.Dict[str, str] = {
+QUESTION_TYPE_MAP: typing.Dict[quizcomp.model.constants.QuestionType, str] = {
     # Direct Mappings
     quizcomp.model.constants.QuestionType.ESSAY: 'essay_question',
     quizcomp.model.constants.QuestionType.FIMB: 'fill_in_multiple_blanks_question',

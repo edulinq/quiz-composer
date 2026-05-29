@@ -1,6 +1,6 @@
 import enum
 
-class QuestionType(enum.StrEnum):
+class QuestionType(enum.Enum):
     """ The types of questions supported by the Quiz Composer. """
 
     ESSAY = 'essay'

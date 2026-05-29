@@ -254,7 +254,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             'custom_header': custom_header,
         }
 
-        template = self.env.get_template(f"questions/{question.question_type}.template")
+        template = self.env.get_template(f"questions/{question.question_type.value}.template")
         return template.render(**context), running_question_number
 
     def _convert_question_separator(self,

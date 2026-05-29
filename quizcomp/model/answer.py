@@ -15,7 +15,7 @@ import quizcomp.model.feedback
 DEFAULT_CHOICES: typing.List[str] = list(string.ascii_uppercase)
 MAX_CHOICES: int = len(DEFAULT_CHOICES)
 
-class NumericAnswerType(enum.StrEnum):
+class NumericAnswerType(enum.Enum):
     """ The types of numeric answers supported by the Quiz Composer. """
 
     EXACT = 'exact'
@@ -136,9 +136,11 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
         quizcomp.errors.check_type(data, dict, label, context = context)
 
-        answer_type = data.get('type', None)
-        if (not edq.util.enum.has_value(NumericAnswerType, answer_type)):
-            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", context = context)
+        raw_answer_type = data.get('type', None)
+        if (not edq.util.enum.has_value(NumericAnswerType, raw_answer_type)):
+            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{raw_answer_type}'.", context = context)
+
+        answer_type = NumericAnswerType(raw_answer_type)
 
         feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), context = context)
 

@@ -38,19 +38,19 @@ SPECIAL_QUESTION_TYPES: typing.List[str] = [
 ]
 
 EXTEND_BOX_QUESTION_TYPES: typing.List[str] = [
-    quizcomp.model.constants.QuestionType.MA,
-    quizcomp.model.constants.QuestionType.MCQ,
-    quizcomp.model.constants.QuestionType.MDD,
-    quizcomp.model.constants.QuestionType.TF,
+    quizcomp.model.constants.QuestionType.MA.value,
+    quizcomp.model.constants.QuestionType.MCQ.value,
+    quizcomp.model.constants.QuestionType.MDD.value,
+    quizcomp.model.constants.QuestionType.TF.value,
 ]
 
 STANDARD_BOX_QUESTION_TYPES: typing.List[str] = [
-    quizcomp.model.constants.QuestionType.ESSAY,
-    quizcomp.model.constants.QuestionType.FIMB,
-    quizcomp.model.constants.QuestionType.FITB,
-    quizcomp.model.constants.QuestionType.MATCHING,
-    quizcomp.model.constants.QuestionType.NUMERICAL,
-    quizcomp.model.constants.QuestionType.SA,
+    quizcomp.model.constants.QuestionType.ESSAY.value,
+    quizcomp.model.constants.QuestionType.FIMB.value,
+    quizcomp.model.constants.QuestionType.FITB.value,
+    quizcomp.model.constants.QuestionType.MATCHING.value,
+    quizcomp.model.constants.QuestionType.NUMERICAL.value,
+    quizcomp.model.constants.QuestionType.SA.value,
 ]
 
 BOX_TYPES: typing.List[str] = EXTEND_BOX_QUESTION_TYPES + STANDARD_BOX_QUESTION_TYPES + SPECIAL_QUESTION_TYPES
@@ -164,7 +164,7 @@ class GradeScopeUploader:
 
                 # "ll" == "lower-left"
                 # "ur" == "upper-right"
-                (question_id, part_id, _, question_type, raw_page_number, ll_x, ll_y, ur_x, ur_y, page_width, page_height, origin) = parts
+                (question_id, part_id, _, raw_question_type, raw_page_number, ll_x, ll_y, ur_x, ur_y, page_width, page_height, origin) = parts
 
                 if (origin != 'bottom-left'):
                     raise ValueError(f"Unknown bounding box origin: '{origin}'.")
@@ -172,25 +172,25 @@ class GradeScopeUploader:
                 # Note that the position file and GradeScope use 1-indexed pages.
                 page_number = int(raw_page_number)
 
-                if (question_type not in BOX_TYPES):
-                    raise ValueError(f"Unknown content type: '{question_type}'.")
+                if (raw_question_type not in BOX_TYPES):
+                    raise ValueError(f"Unknown content type: '{raw_question_type}'.")
 
                 extend_box_right = False
-                if (question_type in EXTEND_BOX_QUESTION_TYPES):
+                if (raw_question_type in EXTEND_BOX_QUESTION_TYPES):
                     extend_box_right = True
 
                     # There is a special case for inline MA questions.
-                    if (question_type == quizcomp.model.constants.QuestionType.MA):
+                    if (raw_question_type == quizcomp.model.constants.QuestionType.MA):
                         extend_box_right = False
 
                 (x1, y1), (x2, y2) = self._compute_box(ll_x, ll_y, ur_x, ur_y, page_width, page_height, extend_box_right = extend_box_right)
 
-                if (question_type in SPECIAL_QUESTION_TYPES):
+                if (raw_question_type in SPECIAL_QUESTION_TYPES):
                     # These boxes are special.
-                    if (question_type in special_boxes):
-                        raise ValueError(f"Multiple {question_type} bounding boxes found.")
+                    if (raw_question_type in special_boxes):
+                        raise ValueError(f"Multiple {raw_question_type} bounding boxes found.")
 
-                    special_boxes[question_type] = {
+                    special_boxes[raw_question_type] = {
                         'page_number': page_number,
                         'x1': x1,
                         'y1': y1,

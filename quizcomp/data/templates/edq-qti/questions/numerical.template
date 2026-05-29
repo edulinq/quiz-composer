@@ -23,7 +23,7 @@
             {% set id = 'af' ~ id ~ 'f' ~ loop.index0 %}
             <respcondition continue="No">
                 <conditionvar>
-                {% if (option.type == 'exact') %}
+                {% if (option.type.value == 'exact') %}
                     <or>
                         <varequal respident="response1">{{ option.value }}</varequal>
                         <and>
@@ -31,10 +31,10 @@
                             <varlte respident="response1">{{ option.value + option.margin }}</varlte>
                         </and>
                     </or>
-                {% elif (option.type == 'range') %}
+                {% elif (option.type.value == 'range') %}
                     <vargte respident="response1">{{ option.min }}</vargte>
                     <varlte respident="response1">{{ option.max }}</varlte>
-                {% elif (option.type == 'precision') %}
+                {% elif (option.type.value == 'precision') %}
                     {% set margin = (5 * (10 ** -(option.precision))) %}
                     <or>
                         <varequal respident="response1">{{ option.value }}</varequal>
