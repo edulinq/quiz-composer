@@ -30,9 +30,9 @@ import edq.util.dirent
 import jinja2
 
 import quizcomp.converter.converter
-import quizcomp.errors
 import quizcomp.model.base
 import quizcomp.model.config
+import quizcomp.model.errors
 import quizcomp.model.group
 import quizcomp.model.question
 import quizcomp.model.quiz
@@ -362,7 +362,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             count += 1
 
             if (count >= MAX_IMAGE_RENAMES):
-                raise quizcomp.errors.QuizValidationError(f"Cannot create unique filename for image: '{source}'.", context = quiz)
+                raise quizcomp.model.errors.QuizValidationError(f"Cannot create unique filename for image: '{source}'.", context = quiz)
 
         new_source = self._form_image_source(filename, quiz)
 

@@ -5,11 +5,11 @@ import typing
 import edq.util.enum
 import edq.util.serial
 
-import quizcomp.errors
 import quizcomp.model.answer
 import quizcomp.model.base
 import quizcomp.model.config
 import quizcomp.model.constants
+import quizcomp.model.errors
 import quizcomp.model.feedback
 import quizcomp.parser.document
 
@@ -72,7 +72,7 @@ class Question(quizcomp.model.base.CoreType):
             return super().from_pod(data, context)
 
         if (not isinstance(data, str)):
-            raise quizcomp.errors.QuizValidationError(f"Cannot createquestion object from '{type(data)}' type, need dict or str (path).")
+            raise quizcomp.model.errors.QuizValidationError(f"Cannot createquestion object from '{type(data)}' type, need dict or str (path).")
 
         # If a question is being loaded from a string, it is probably a path.
         path = str(data)
@@ -90,7 +90,7 @@ class Question(quizcomp.model.base.CoreType):
             ) -> typing.Dict[str, typing.Any]:
         raw_question_type = data.get('question_type', None)
         if (raw_question_type is None):
-            raise quizcomp.errors.QuestionValidationError("Question data does not include 'question_type'.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError("Question data does not include 'question_type'.", context = context)
 
         question_type = quizcomp.model.constants.QuestionType(raw_question_type)
         context.extra['question_type'] = question_type
@@ -115,12 +115,12 @@ class Question(quizcomp.model.base.CoreType):
 
         question_type = data.get('question_type', None)
         if (not edq.util.enum.has_value(quizcomp.model.constants.QuestionType, question_type)):
-            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{question_type}'.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError(f"Unknown question type: '{question_type}'.", context = context)
 
         answers = data.get('answers', None)
         if (answers is None):
             if (question_type not in EMPTY_ANSWER_QUESTION_TYPES):
-                raise quizcomp.errors.QuestionValidationError('No answers to question provided.', context = context)
+                raise quizcomp.model.errors.QuestionValidationError('No answers to question provided.', context = context)
 
             data['answers'] = quizcomp.model.answer.TextAnswers()
 
@@ -132,12 +132,12 @@ class Question(quizcomp.model.base.CoreType):
                 output_answers_placeholders = list(sorted(answers_placeholders))
                 output_prompt_placeholders = list(sorted(prompt_placeholders))
 
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                         (f"Mismatch between the placeholders found in the question prompt ({output_prompt_placeholders})"
                             + f" and answers config ({output_answers_placeholders})."),
                         context = context)
         elif (len(prompt_placeholders) != 0):
-            raise quizcomp.errors.QuestionValidationError(
+            raise quizcomp.model.errors.QuestionValidationError(
                     f"Found placeholders in the prompt for questions that do not use placeholders: '{question_type}'.",
                     context = context)
 
@@ -174,7 +174,7 @@ class Question(quizcomp.model.base.CoreType):
 
         path = os.path.abspath(os.path.join(context.base_dir, DEFAULT_PROMPT_FILENAME))
         if (not os.path.isfile(path)):
-            raise quizcomp.errors.QuestionValidationError("Could not find any non-empty prompt.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError("Could not find any non-empty prompt.", context = context)
 
         return quizcomp.parser.document.ParsedDocument.parse_file(path, context)
 

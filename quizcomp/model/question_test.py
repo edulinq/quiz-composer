@@ -6,7 +6,7 @@ import edq.util.json
 import edq.util.serial
 
 import quizcomp.constants
-import quizcomp.errors
+import quizcomp.model.errors
 import quizcomp.model.question
 import quizcomp.uploader.instance
 import quizcomp.testing.base
@@ -105,7 +105,7 @@ def _get_question_bad_test_method(path: str) -> typing.Callable:
     """ Get a test for failing to parse a question. """
 
     def __method(self: QuestionsTest) -> None:
-        with self.assertRaises(quizcomp.errors.QuizValidationError):
+        with self.assertRaises(quizcomp.model.errors.QuizValidationError):
             self.load_question(path)
 
     return __method

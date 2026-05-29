@@ -9,8 +9,8 @@ import edq.util.git
 import edq.util.time
 
 import quizcomp.constants
-import quizcomp.errors
 import quizcomp.model.base
+import quizcomp.model.errors
 import quizcomp.model.group
 import quizcomp.model.question
 import quizcomp.parser.document
@@ -83,7 +83,7 @@ class Quiz(quizcomp.model.base.CoreType):
         """ Check if this quiz is valid. """
 
         if (self.name is None):
-            raise quizcomp.errors.QuizValidationError("Quiz name cannot be empty.", context = self)
+            raise quizcomp.model.errors.QuizValidationError("Quiz name cannot be empty.", context = self)
 
     def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
         return [self.description]
@@ -138,7 +138,7 @@ class Quiz(quizcomp.model.base.CoreType):
             description_path = os.path.abspath(description_path)
 
             if (not os.path.isfile(description_path)):
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                         f"Could not find a description at the provided path: '{data['description_path']}' (Absolute Path: '{description_path}').",
                         context = context)
 
@@ -205,12 +205,12 @@ class Quiz(quizcomp.model.base.CoreType):
             identifiers = DEFAULT_VARIANT_IDS
 
         if (count < 0):
-            raise quizcomp.errors.QuizValidationError(
+            raise quizcomp.model.errors.QuizValidationError(
                     f"Variant count must be non-negative, found: {count}.",
                     context = self)
 
         if (count > len(identifiers)):
-            raise quizcomp.errors.QuizValidationError(
+            raise quizcomp.model.errors.QuizValidationError(
                 ('"Not enough variant identifiers supplied.'
                     + f" Got {len(identifiers)} identifiers and {count} requested variants."
                     + f" Given identifiers: {identifiers}."),

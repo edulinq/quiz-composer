@@ -5,8 +5,8 @@ import typing
 import edq.util.json
 import edq.util.serial
 
-import quizcomp.errors
 import quizcomp.model.config
+import quizcomp.model.errors
 import quizcomp.parser.document
 
 DEFAULT_AVAILABLE_POINTS: float = 0.0
@@ -21,7 +21,7 @@ class CoreType(edq.util.serial.DictConverter):
 
     serialization_omit_none = True
     serialization_omit_empty = True
-    serialization_error_class = quizcomp.errors.QuizValidationError
+    serialization_error_class = quizcomp.model.errors.QuizValidationError
     serialization_skip_fields = [
         'base_dir',
         'parent',
@@ -94,7 +94,7 @@ class CoreType(edq.util.serial.DictConverter):
             child.parent = self
 
         if ((points is not None) and (points < 0)):
-            raise quizcomp.errors.QuizValidationError(f"Points must be either null/None or non-negative, found: {points}.", context = self)
+            raise quizcomp.model.errors.QuizValidationError(f"Points must be either null/None or non-negative, found: {points}.", context = self)
 
         self.points: typing.Union[float, None] = points
         """

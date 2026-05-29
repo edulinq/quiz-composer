@@ -8,8 +8,8 @@ import typing
 import edq.util.enum
 import edq.util.serial
 
-import quizcomp.errors
 import quizcomp.model.constants
+import quizcomp.model.errors
 import quizcomp.model.feedback
 
 DEFAULT_CHOICES: typing.List[str] = list(string.ascii_uppercase)
@@ -76,13 +76,15 @@ class TextOption(edq.util.serial.PODConverter):
             return TextOption(parsed_text, None)
 
         if (not isinstance(data, dict)):
-            raise quizcomp.errors.QuestionValidationError(
+            raise quizcomp.model.errors.QuestionValidationError(
                 f"{label} has text in an unknown format (not a string or dict): '{data}' (type: {type(data)}.",
                 context = context)
 
         raw_text = data.get('text', None)
         if (raw_text is None):
-            raise quizcomp.errors.QuestionValidationError(f"{label} has no 'text' field set.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError(
+                    f"{label} has no 'text' field set.",
+                    context = context)
 
         parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_text, context)
         feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), context)
@@ -134,11 +136,13 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
             ) -> 'NumericOption':
         label = context.extra.get('label', '')
 
-        quizcomp.errors.check_type(data, dict, label, context = context)
+        quizcomp.model.errors.check_type(data, dict, label, context = context)
 
         raw_answer_type = data.get('type', None)
         if (not edq.util.enum.has_value(NumericAnswerType, raw_answer_type)):
-            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{raw_answer_type}'.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError(
+                    f"{label} has an unknown answer type: '{raw_answer_type}'.",
+                    context = context)
 
         answer_type = NumericAnswerType(raw_answer_type)
 
@@ -147,16 +151,18 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
         if (answer_type == NumericAnswerType.EXACT):
             value = data.get('value', None)
             if (value is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", context = context)
+                raise quizcomp.model.errors.QuestionValidationError(
+                        f"{label} does not have a required 'value' key.",
+                        context = context)
 
             if (not isinstance(value, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} has a 'value' that is not an int or float, found '{type(value)}'.",
                         context = context)
 
             margin = data.get('margin', 0.0)
             if (not isinstance(margin, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} has a 'margin' that is not an int or float, found '{type(margin)}'.",
                         context = context)
 
@@ -164,19 +170,23 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
         elif (answer_type == NumericAnswerType.RANGE):
             min = data.get('min', None)
             if (min is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'min' key.", context = context)
+                raise quizcomp.model.errors.QuestionValidationError(
+                        f"{label} does not have a required 'min' key.",
+                        context = context)
 
             if (not isinstance(min, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} has a 'min' that is not an int or float, found '{type(min)}'.",
                         context = context)
 
             max = data.get('max', None)
             if (max is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'max' key.", context = context)
+                raise quizcomp.model.errors.QuestionValidationError(
+                        f"{label} does not have a required 'max' key.",
+                        context = context)
 
             if (not isinstance(max, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} has a 'max' that is not an int or float, found '{type(max)}'.",
                         context = context)
 
@@ -184,25 +194,31 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
         elif (answer_type == NumericAnswerType.PRECISION):
             value = data.get('value', None)
             if (value is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", context = context)
+                raise quizcomp.model.errors.QuestionValidationError(
+                        f"{label} does not have a required 'value' key.",
+                        context = context)
 
             if (not isinstance(value, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} has a 'value' that is not an int or float, found '{type(value)}'.",
                         context = context)
 
             precision = data.get('precision', None)
             if (precision is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'precision' key.", context = context)
+                raise quizcomp.model.errors.QuestionValidationError(
+                        f"{label} does not have a required 'precision' key.",
+                        context = context)
 
             if (not isinstance(precision, int)):
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} has a 'precision' that is not an int, found '{type(precision)}'.",
                         context = context)
 
             return NumericOptionPrecision(value, precision, feedback = feedback)
         else:
-            raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError(
+                    f"{label} has an unknown answer type: '{answer_type}'.",
+                    context = context)
 
     @classmethod
     def from_pod_with_error(cls: typing.Type['NumericOption'],
@@ -342,7 +358,9 @@ class QuestionAnswers(edq.util.serial.PODConverter):
         raw_question_type = context.extra.get('question_type', None)
 
         if (raw_question_type is None):
-            raise quizcomp.errors.QuestionValidationError("Could not parse question answers because of lack of question type.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError(
+                    "Could not parse question answers because of lack of question type.",
+                    context = context)
 
         question_type = quizcomp.model.constants.QuestionType(raw_question_type)
 
@@ -377,7 +395,9 @@ class QuestionAnswers(edq.util.serial.PODConverter):
         elif (question_type == quizcomp.model.constants.QuestionType.TF):
             return TFAnswers.from_pod(data, context)
         else:
-            raise quizcomp.errors.QuestionValidationError(f"Unknown question type: '{raw_question_type}'.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError(
+                    f"Unknown question type: '{raw_question_type}'.",
+                    context = context)
 
 class TextAnswers(QuestionAnswers):
     """
@@ -446,7 +466,7 @@ class TextAnswers(QuestionAnswers):
         if (isinstance(data, dict)):
             data = [data]
 
-        quizcomp.errors.check_type(data, list, "'answers'", context = context)
+        quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
 
         if (len(data) == 0):
             return TextAnswers()
@@ -496,7 +516,7 @@ class MultiplePartTextAnswers(QuestionAnswers):
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
-        quizcomp.errors.check_type(data, dict, "'answers'", context = context)
+        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
 
         parts = {}
         for (key, raw_options) in data.items():
@@ -550,12 +570,12 @@ class ChoiceAnswers(QuestionAnswers):
         min_incorrect = context.extra.get('min_incorrect', 0)
         max_incorrect = context.extra.get('max_incorrect', MAX_CHOICES)
 
-        quizcomp.errors.check_type(data, list, "'answers'", context = context)
+        quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
 
         raw_choices: typing.List[typing.Any] = typing.cast(list, data)
 
         if (len(raw_choices) == 0):
-            raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError("No answers provided, at least one answer required.", context = context)
 
         num_correct = 0
         num_incorrect = 0
@@ -565,15 +585,17 @@ class ChoiceAnswers(QuestionAnswers):
         for (i, raw_choice) in enumerate(raw_choices):
             label = f"Choice at index {i}"
 
-            quizcomp.errors.check_type(raw_choice, dict, label, context = context)
+            quizcomp.model.errors.check_type(raw_choice, dict, label, context = context)
 
             raw_correct = raw_choice.get('correct', None)
             if (raw_correct is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has no 'correct' field set.", context = context)
+                raise quizcomp.model.errors.QuestionValidationError(f"{label} has no 'correct' field set.", context = context)
 
             correct = edq.util.parse.soft_boolean(raw_correct)
             if (correct is None):
-                raise quizcomp.errors.QuestionValidationError(f"{label}'s 'correct' field does not contain a boolean: '{raw_correct}'.")
+                raise quizcomp.model.errors.QuestionValidationError(
+                        f"{label}'s 'correct' field does not contain a boolean: '{raw_correct}'.",
+                        context = context)
 
             if (correct):
                 num_correct += 1
@@ -584,22 +606,22 @@ class ChoiceAnswers(QuestionAnswers):
             choices.append(Choice(option.text, correct, option.feedback))
 
         if (num_correct < min_correct):
-            raise quizcomp.errors.QuestionValidationError(("Did not find enough correct choices."
+            raise quizcomp.model.errors.QuestionValidationError(("Did not find enough correct choices."
                 + f" Expected at least {min_correct}, found {num_correct}."),
                 context = context)
 
         if (num_correct > max_correct):
-            raise quizcomp.errors.QuestionValidationError(("Found too many correct choices."
+            raise quizcomp.model.errors.QuestionValidationError(("Found too many correct choices."
                 + f" Expected at most {max_correct}, found {num_correct}."),
                 context = context)
 
         if (num_incorrect < min_incorrect):
-            raise quizcomp.errors.QuestionValidationError(("Did not find enough incorrect choices."
+            raise quizcomp.model.errors.QuestionValidationError(("Did not find enough incorrect choices."
                 + f" Expected at least {min_incorrect}, found {num_incorrect}."),
                 context = context)
 
         if (num_incorrect > max_incorrect):
-            raise quizcomp.errors.QuestionValidationError(("Found too many incorrect choices."
+            raise quizcomp.model.errors.QuestionValidationError(("Found too many incorrect choices."
                 + f" Expected at most {max_incorrect}, found {num_incorrect}."),
                 context = context)
 
@@ -670,7 +692,7 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
-        quizcomp.errors.check_type(data, dict, "'answers'", context = context)
+        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
 
         parts = {}
         for (key, raw_options) in data.items():
@@ -833,16 +855,20 @@ class MatchingAnswers(QuestionAnswers):
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> MatchingAnswers:
-        quizcomp.errors.check_type(data, dict, "'answers'", context = context)
+        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
 
         raw_matches = data.get('matches', None)
         if (raw_matches is None):
-            raise quizcomp.errors.QuestionValidationError("The 'matches' key was not provided for a matching-type question.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError(
+                    "The 'matches' key was not provided for a matching-type question.",
+                    context = context)
 
-        quizcomp.errors.check_type(raw_matches, list, "'matches'", context = context)
+        quizcomp.model.errors.check_type(raw_matches, list, "'matches'", context = context)
 
         if (len(raw_matches) == 0):
-            raise quizcomp.errors.QuestionValidationError("At least one matching pair must be specified for matching questions.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError(
+                    "At least one matching pair must be specified for matching questions.",
+                    context = context)
 
         pairs = []
         for (i, raw_match) in enumerate(raw_matches):
@@ -850,7 +876,7 @@ class MatchingAnswers(QuestionAnswers):
 
             if (isinstance(raw_match, list)):
                 if (len(raw_match) != 2):
-                    raise quizcomp.errors.QuestionValidationError(
+                    raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} has an unexpected size. Expecting two items (left and right) found {len(raw_match)}.",
                         context = context)
 
@@ -860,12 +886,12 @@ class MatchingAnswers(QuestionAnswers):
                 pairs.append((left_option, right_option))
             elif (isinstance(raw_match, dict)):
                 if ('left' not in raw_match):
-                    raise quizcomp.errors.QuestionValidationError(
+                    raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} does not have a 'left' key.",
                         context = context)
 
                 if ('right' not in raw_match):
-                    raise quizcomp.errors.QuestionValidationError(
+                    raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} does not have a 'right' key.",
                         context = context)
 
@@ -874,7 +900,7 @@ class MatchingAnswers(QuestionAnswers):
 
                 pairs.append((left_option, right_option))
             else:
-                raise quizcomp.errors.QuestionValidationError(
+                raise quizcomp.model.errors.QuestionValidationError(
                     f"{label} has an unknown format (not a list or dict): '{raw_match}' (type: {type(raw_match)}.",
                     context = context)
 
@@ -882,7 +908,7 @@ class MatchingAnswers(QuestionAnswers):
         if (raw_distractors is None):
             raw_distractors = []
 
-        quizcomp.errors.check_type(raw_distractors, list, "'distractors'", context = context)
+        quizcomp.model.errors.check_type(raw_distractors, list, "'distractors'", context = context)
 
         distractors = []
         for (i, raw_distractor) in enumerate(raw_distractors):
@@ -892,7 +918,7 @@ class MatchingAnswers(QuestionAnswers):
             distractors.append(option)
 
         if ((len(pairs) + len(distractors)) > MAX_CHOICES):
-            raise quizcomp.errors.QuestionValidationError(
+            raise quizcomp.model.errors.QuestionValidationError(
                 f"Matching question has too many options. Found {(len(pairs) + len(distractors))}, while the max is {MAX_CHOICES}.",
                 context = context)
 
@@ -934,12 +960,12 @@ class NumericAnswers(QuestionAnswers):
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
-        quizcomp.errors.check_type(data, list, "'answers'", context = context)
+        quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
 
         raw_options: typing.List[typing.Any] = typing.cast(list, data)
 
         if (len(raw_options) == 0):
-            raise quizcomp.errors.QuestionValidationError("No answers provided, at least one answer required.", context = context)
+            raise quizcomp.model.errors.QuestionValidationError("No answers provided, at least one answer required.", context = context)
 
         options = []
         for (i, raw_option) in enumerate(raw_options):

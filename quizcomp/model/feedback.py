@@ -2,7 +2,7 @@ import typing
 
 import edq.util.serial
 
-import quizcomp.errors
+import quizcomp.model.errors
 import quizcomp.parser.document
 
 class Feedback(edq.util.serial.PODConverter):
@@ -88,7 +88,7 @@ class Feedback(edq.util.serial.PODConverter):
             parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_data, context)
             return Feedback(general = parsed_text)
 
-        quizcomp.errors.check_type(raw_data, dict, "'feedback'")
+        quizcomp.model.errors.check_type(raw_data, dict, "'feedback'")
 
         data: typing.Dict[str, typing.Any] = typing.cast(typing.Dict[str, typing.Any], raw_data)
         result = {}
@@ -98,7 +98,7 @@ class Feedback(edq.util.serial.PODConverter):
 
         bad_keys = list(sorted(set(actual_keys) - set(allowed_keys)))
         if (len(bad_keys) > 0):
-            raise quizcomp.errors.QuestionValidationError(
+            raise quizcomp.model.errors.QuestionValidationError(
                     f"Unknown keys in feedback ({bad_keys}). Allowed keys: {allowed_keys}.",
                     context = edq.util.serial.SerializationContext)
 
@@ -106,7 +106,7 @@ class Feedback(edq.util.serial.PODConverter):
             if (value is None):
                 continue
 
-            quizcomp.errors.check_type(value, str, f"'{key}' feedback value")
+            quizcomp.model.errors.check_type(value, str, f"'{key}' feedback value")
 
             value = str(value).strip()
             if (len(value) == 0):
