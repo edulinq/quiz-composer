@@ -3,7 +3,7 @@ import typing
 
 import markdown_it
 
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.parser.ast
 import quizcomp.parser.common
 import quizcomp.parser.image
@@ -54,7 +54,7 @@ HEADINGS: typing.List[str] = [
 class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRendererBase):
     """ A renderer for TeX. """
 
-    __output__ = quizcomp.constants.FORMAT_TEX
+    __output__ = quizcomp.model.constants.Format.TEX.value
 
     def _container_block(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         # Pull any style attatched to this block and put it in a copy of the context.

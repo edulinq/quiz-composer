@@ -3,7 +3,7 @@ import typing
 
 import markdown_it.token
 
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.parser.common
 import quizcomp.parser.image
 import quizcomp.parser.renderer.html
@@ -14,7 +14,7 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
     Canvas generally uses HTML, but has some special cases.
     """
 
-    __output__ = quizcomp.constants.FORMAT_CANVAS
+    __output__ = quizcomp.model.constants.Format.CANVAS.value
 
     def placeholder(self,
             tokens: typing.List[markdown_it.token.Token],

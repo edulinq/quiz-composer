@@ -5,7 +5,7 @@ import typing
 
 import edq.util.json
 
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.parser.common
 import quizcomp.parser.document
 import quizcomp.testing.base
@@ -39,14 +39,15 @@ def _add_good_parse_questions() -> None:
             context = quizcomp.parser.common.RenderContext(**test_case.get('context', {}))
             context.base_dir = base_dir
 
-            for (doc_format, expected) in test_case['formats'].items():
+            for (raw_doc_format, expected) in test_case['formats'].items():
+                doc_format = quizcomp.model.constants.Format(raw_doc_format)
                 test_name = _make_name('good_parse', path, name, doc_format)
-                options = test_case.get('options', {}).get(doc_format, {})
+                options = test_case.get('options', {}).get(doc_format.value, {})
                 setattr(TestParser, test_name, _get_good_parse_test(text, doc_format, expected, options, context))
 
 def _get_good_parse_test(
         text: str,
-        doc_format: str,
+        doc_format: quizcomp.model.constants.Format,
         base_expected: typing.Union[str, typing.List[typing.Dict[str, typing.Any]], typing.Dict[str, typing.Any]],
         options: typing.Dict[str, typing.Any],
         context: quizcomp.parser.common.RenderContext,
@@ -57,7 +58,7 @@ def _get_good_parse_test(
         document = quizcomp.parser.document.ParsedDocument.parse_text(text)
         result = document.to_format(doc_format, context = context)
 
-        if (doc_format == quizcomp.constants.FORMAT_JSON):
+        if (doc_format == quizcomp.model.constants.Format.JSON):
             result = edq.util.json.loads(result)
             expected: typing.Any = {
                 'text': text.strip(),
@@ -89,7 +90,7 @@ def _get_good_parse_test(
                 expected['ast']['children'] = expected_children
 
             self.assertJSONDictEqual(expected, result)
-        elif (doc_format in {quizcomp.constants.FORMAT_CANVAS, quizcomp.constants.FORMAT_HTML}):
+        elif (doc_format in {quizcomp.model.constants.Format.CANVAS, quizcomp.model.constants.Format.HTML}):
             # If the HTML does not have a root block, then add one.
             raw_expected = str(base_expected)
             if (options.get('strip', True)):
@@ -149,7 +150,7 @@ def _get_bad_parse_test(
 
     return __method
 
-def _make_name(prefix: str, path: str, name: str, doc_format: typing.Union[str, None] = None) -> str:
+def _make_name(prefix: str, path: str, name: str, doc_format: typing.Union[quizcomp.model.constants.Format, None] = None) -> str:
     """ Create a name for a test case. """
 
     clean_name = quizcomp.testing.base.clean_name_part(name)
@@ -159,7 +160,7 @@ def _make_name(prefix: str, path: str, name: str, doc_format: typing.Union[str, 
     test_name = f"test_{prefix}__{filename}__{clean_name}"
 
     if (doc_format is not None):
-        test_name += ('__' + doc_format)
+        test_name += ('__' + doc_format.value)
 
     return test_name
 

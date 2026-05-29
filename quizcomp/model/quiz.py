@@ -8,8 +8,8 @@ import edq.util.dirent
 import edq.util.git
 import edq.util.time
 
-import quizcomp.constants
 import quizcomp.model.base
+import quizcomp.model.constants
 import quizcomp.model.errors
 import quizcomp.model.group
 import quizcomp.model.question

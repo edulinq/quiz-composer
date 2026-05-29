@@ -4,8 +4,8 @@ import typing
 
 import edq.util.dirent
 
-import quizcomp.constants
 import quizcomp.converter.template
+import quizcomp.model.constants
 import quizcomp.model.quiz
 import quizcomp.util.html
 
@@ -22,7 +22,7 @@ class HTMLTemplateConverter(quizcomp.converter.template.TemplateConverter):
     """
 
     def __init__(self,
-            format: str = quizcomp.constants.FORMAT_HTML,
+            format: quizcomp.model.constants.Format = quizcomp.model.constants.Format.HTML,
             template_dir: str = DEFAULT_TEMPLATE_DIR,
             **kwargs: typing.Any) -> None:
         super().__init__(format, template_dir, **kwargs)
@@ -44,4 +44,4 @@ class CanvasTemplateConverter(HTMLTemplateConverter):
     def __init__(self,
             template_dir: str = DEFAULT_TEMPLATE_DIR,
             **kwargs: typing.Any) -> None:
-        super().__init__(quizcomp.constants.FORMAT_CANVAS, template_dir, **kwargs)
+        super().__init__(quizcomp.model.constants.Format.CANVAS, template_dir, **kwargs)

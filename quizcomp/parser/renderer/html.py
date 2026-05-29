@@ -6,7 +6,7 @@ import markdown_it.renderer
 import markdown_it.token
 import markdown_it.utils
 
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.parser.common
 import quizcomp.parser.image
 import quizcomp.parser.math
@@ -31,7 +31,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
     This builds of of the existing markdown_it.renderer.RendererHTML renderer.
     """
 
-    __output__ = quizcomp.constants.FORMAT_HTML
+    __output__ = quizcomp.model.constants.Format.HTML.value
 
     def image(self,  # type: ignore[override] # pylint: disable=arguments-renamed
             tokens: typing.List[markdown_it.token.Token],
@@ -121,7 +121,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
             ) -> str:
         """ Render inline math. """
 
-        return quizcomp.parser.math.render(quizcomp.constants.FORMAT_HTML, True, tokens, token_index, options, env)
+        return quizcomp.parser.math.render(quizcomp.model.constants.Format.HTML, True, tokens, token_index, options, env)
 
     def math_block(self,
             tokens: typing.List[markdown_it.token.Token],
@@ -131,7 +131,7 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
             ) -> str:
         """ Render a math block. """
 
-        return quizcomp.parser.math.render(quizcomp.constants.FORMAT_HTML, False, tokens, token_index, options, env)
+        return quizcomp.parser.math.render(quizcomp.model.constants.Format.HTML, False, tokens, token_index, options, env)
 
     def placeholder(self,
             tokens: typing.List[markdown_it.token.Token],

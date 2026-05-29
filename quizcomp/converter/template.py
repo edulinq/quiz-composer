@@ -32,6 +32,7 @@ import jinja2
 import quizcomp.converter.converter
 import quizcomp.model.base
 import quizcomp.model.config
+import quizcomp.model.constants
 import quizcomp.model.errors
 import quizcomp.model.group
 import quizcomp.model.question
@@ -59,7 +60,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
     """
 
     def __init__(self,
-            format: str,
+            format: quizcomp.model.constants.Format,
             template_dir: str,
             jinja_options: typing.Union[typing.Dict[str, typing.Any], None] = None,
             jinja_filters: typing.Union[typing.Dict[str, typing.Any], None] = None,
@@ -71,7 +72,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         if (not os.path.isdir(template_dir)):
             raise ValueError(f"Provided template dir ('{template_dir}') does not exist or is not a dir.")
 
-        self.format: str = format
+        self.format: quizcomp.model.constants.Format = format
         """ The format being converted to. """
 
         self.template_dir: str = template_dir

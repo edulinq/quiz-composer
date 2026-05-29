@@ -6,7 +6,7 @@ import edq.util.json
 import edq.util.serial
 import markdown_it.token
 
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.parser.ast
 import quizcomp.parser.render
 import quizcomp.parser.common
@@ -46,12 +46,12 @@ class ParsedDocument(edq.util.serial.PODSerializer):
     def to_canvas(self, **kwargs: typing.Any) -> str:
         """ Render this document to Canvas-specific HTML. """
 
-        return self._render(quizcomp.constants.FORMAT_CANVAS, **kwargs)
+        return self._render(quizcomp.model.constants.Format.CANVAS, **kwargs)
 
     def to_md(self, **kwargs: typing.Any) -> str:
         """ Render this document to Markdown. """
 
-        return self._render(quizcomp.constants.FORMAT_MD, **kwargs)
+        return self._render(quizcomp.model.constants.Format.MD, **kwargs)
 
     def to_json(self, indent: int = 4, sort_keys: bool = True, **kwargs: typing.Any) -> str:
         """ Render this document to JSON. """
@@ -65,20 +65,20 @@ class ParsedDocument(edq.util.serial.PODSerializer):
     def to_tex(self, **kwargs: typing.Any) -> str:
         """ Render this document to TeX. """
 
-        return self._render(quizcomp.constants.FORMAT_TEX, **kwargs)
+        return self._render(quizcomp.model.constants.Format.TEX, **kwargs)
 
     def to_text(self, **kwargs: typing.Any) -> str:
         """ Render this document to simple text. """
 
-        return self._render(quizcomp.constants.FORMAT_TEXT, **kwargs)
+        return self._render(quizcomp.model.constants.Format.TEXT, **kwargs)
 
     def to_html(self, **kwargs: typing.Any) -> str:
         """ Render this document to HTML. """
 
-        return self._render(quizcomp.constants.FORMAT_HTML, **kwargs)
+        return self._render(quizcomp.model.constants.Format.HTML, **kwargs)
 
     def _render(self,
-            format: str,
+            format: quizcomp.model.constants.Format,
             context: typing.Union[quizcomp.parser.common.RenderContext, None] = None,
             **kwargs: typing.Any) -> str:
         """ Render this document to the specified format. """
@@ -142,12 +142,12 @@ class ParsedDocument(edq.util.serial.PODSerializer):
 
         return self.is_empty()
 
-    def to_format(self, format: str, **kwargs: typing.Any) -> str:
+    def to_format(self, format: quizcomp.model.constants.Format, **kwargs: typing.Any) -> str:
         """ Convert this document to the specified format. """
 
-        formatter = getattr(self, 'to_' + format)
+        formatter = getattr(self, 'to_' + format.value)
         if (formatter is None):
-            raise ValueError(f"Unknown format '{format}'.")
+            raise ValueError(f"Unknown format '{format.value}'.")
 
         return str(formatter(**kwargs))
 

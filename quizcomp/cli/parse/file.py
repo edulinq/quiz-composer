@@ -6,7 +6,7 @@ import argparse
 import sys
 
 import quizcomp.cli.parser
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.parser.document
 
 def run_cli(args: argparse.Namespace) -> int:
@@ -14,7 +14,7 @@ def run_cli(args: argparse.Namespace) -> int:
 
     document = quizcomp.parser.document.ParsedDocument.parse_file(args.path)
 
-    content = document.to_format(args.format, pretty = True)
+    content = document.to_format(quizcomp.model.constants.Format(args.format), pretty = True)
     print(content)
 
     return 0
@@ -36,8 +36,8 @@ def _get_parser() -> argparse.ArgumentParser:
         help = 'The path to parse.')
 
     parser.add_argument('--format',
-        action = 'store', type = str, default = quizcomp.constants.FORMAT_JSON,
-        choices = quizcomp.constants.PARSER_FORMATS,
+        action = 'store', type = str, default = quizcomp.model.constants.Format.JSON,
+        choices = [choice.value for choice in quizcomp.model.constants.PARSER_FORMATS],
         help = 'Output the parsed document in this format (default: %(default)s).')
 
     return parser

@@ -3,7 +3,7 @@ import typing
 
 import edq.util.json
 
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.parser.document
 import quizcomp.testing.base
 
@@ -38,11 +38,11 @@ def _add_commonmark_tests() -> None:
         text = test_case['markdown']
         section = quizcomp.testing.base.clean_name_part(test_case['section'])
 
-        for format in quizcomp.constants.PARSER_FORMATS:
-            name = f"test_commonmark__{id:04d}__{section}__{format}"
+        for format in quizcomp.model.constants.PARSER_FORMATS:
+            name = f"test_commonmark__{id:04d}__{section}__{format.value}"
             setattr(TestCommonMark, name, _get_commonmark_test(text, format))
 
-def _get_commonmark_test(text: str, format: str) -> typing.Callable:
+def _get_commonmark_test(text: str, format: quizcomp.model.constants.Format) -> typing.Callable:
     """ Get a test method. """
 
     def __method(self: TestCommonMark) -> None:

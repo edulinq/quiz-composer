@@ -8,7 +8,7 @@ import sys
 
 import quizcomp.cli.parser
 import quizcomp.converter.convert
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.model.question
 
 def run_cli(args: argparse.Namespace) -> int:
@@ -21,7 +21,9 @@ def run_cli(args: argparse.Namespace) -> int:
         raise ValueError(f"Provided question path '{args.path}' is not a file.")
 
     question = quizcomp.model.question.Question.from_path(args.path)
-    content = quizcomp.converter.convert.convert_question(question, format = args.format,
+    content = quizcomp.converter.convert.convert_question(
+            question,
+            format = quizcomp.model.constants.Format(args.format),
             constructor_args = {'answer_key': args.answer_key})
 
     print(content)
@@ -45,8 +47,8 @@ def _get_parser() -> argparse.ArgumentParser:
         help = 'The path to a quiz question json file.')
 
     parser.add_argument('--format',
-        action = 'store', type = str, default = quizcomp.constants.FORMAT_JSON,
-        choices = quizcomp.converter.convert.SUPPORTED_FORMATS,
+        action = 'store', type = str, default = quizcomp.model.constants.Format.JSON,
+        choices = [choice.value for choice in quizcomp.converter.convert.SUPPORTED_FORMATS],
         help = 'Output the parsed document in this format (default: %(default)s).')
 
     parser.add_argument('--key', dest = 'answer_key',

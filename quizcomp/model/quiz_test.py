@@ -6,7 +6,7 @@ import typing
 import edq.util.json
 import edq.util.serial
 
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.model.errors
 import quizcomp.model.quiz
 import quizcomp.testing.base
@@ -46,7 +46,7 @@ class QuizTest(quizcomp.testing.base.BaseTest):
 def _add_quiz_tests() -> None:
     """ Add test cases for parsing good and bad quizes. """
 
-    good_glob_path = os.path.join(quizcomp.testing.base.GOOD_QUIZZES_DIR, "**", quizcomp.constants.QUIZ_FILENAME)
+    good_glob_path = os.path.join(quizcomp.testing.base.GOOD_QUIZZES_DIR, "**", quizcomp.model.constants.QUIZ_FILENAME)
     good_paths = sorted(glob.glob(good_glob_path, recursive = True))
     for path in good_paths:
         try:
@@ -54,7 +54,7 @@ def _add_quiz_tests() -> None:
         except Exception as ex:
             raise ValueError(f"Failed to parse good test case '{path}'.") from ex
 
-    bad_glob_path = os.path.join(quizcomp.testing.base.BAD_QUIZZES_DIR, "**", quizcomp.constants.QUIZ_FILENAME)
+    bad_glob_path = os.path.join(quizcomp.testing.base.BAD_QUIZZES_DIR, "**", quizcomp.model.constants.QUIZ_FILENAME)
     bad_paths = sorted(glob.glob(bad_glob_path, recursive = True))
     for path in bad_paths:
         try:

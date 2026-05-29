@@ -1,43 +1,48 @@
 import typing
 
-import quizcomp.constants
 import quizcomp.converter.converter
 import quizcomp.converter.html
 import quizcomp.converter.json
 import quizcomp.converter.markdown
 import quizcomp.converter.tex
 import quizcomp.converter.qti
+import quizcomp.model.constants
 import quizcomp.model.question
 import quizcomp.model.quiz
 
-SUPPORTED_FORMATS: typing.List[str] = [
-    quizcomp.constants.FORMAT_CANVAS,
-    quizcomp.constants.FORMAT_HTML,
-    quizcomp.constants.FORMAT_JSON,
-    quizcomp.constants.FORMAT_MD,
-    quizcomp.constants.FORMAT_TEX,
-    quizcomp.constants.FORMAT_QTI,
+SUPPORTED_FORMATS: typing.List[quizcomp.model.constants.Format] = [
+    quizcomp.model.constants.Format.CANVAS,
+    quizcomp.model.constants.Format.HTML,
+    quizcomp.model.constants.Format.JSON,
+    quizcomp.model.constants.Format.MD,
+    quizcomp.model.constants.Format.TEX,
+    quizcomp.model.constants.Format.QTI,
 ]
 
-def get_converter_class(format: str = quizcomp.constants.FORMAT_JSON) -> typing.Type[quizcomp.converter.converter.Converter]:
+def get_converter_class(
+        format: quizcomp.model.constants.Format = quizcomp.model.constants.Format.JSON,
+        ) -> typing.Type[quizcomp.converter.converter.Converter]:
     """ Get the converter class for the specified format. """
 
-    if (format == quizcomp.constants.FORMAT_JSON):
+    if (format == quizcomp.model.constants.Format.JSON):
         return quizcomp.converter.json.JSONConverter
-    elif (format == quizcomp.constants.FORMAT_HTML):
+    elif (format == quizcomp.model.constants.Format.HTML):
         return quizcomp.converter.html.HTMLTemplateConverter
-    elif (format == quizcomp.constants.FORMAT_CANVAS):
+    elif (format == quizcomp.model.constants.Format.CANVAS):
         return quizcomp.converter.html.CanvasTemplateConverter
-    elif (format == quizcomp.constants.FORMAT_MD):
+    elif (format == quizcomp.model.constants.Format.MD):
         return quizcomp.converter.markdown.MarkdownTemplateConverter
-    elif (format == quizcomp.constants.FORMAT_TEX):
+    elif (format == quizcomp.model.constants.Format.TEX):
         return quizcomp.converter.tex.TexTemplateConverter
-    elif (format == quizcomp.constants.FORMAT_QTI):
+    elif (format == quizcomp.model.constants.Format.QTI):
         return quizcomp.converter.qti.QTITemplateConverter
     else:
-        raise ValueError(f"No known converter for format '{format}'.")
+        raise ValueError(f"No known converter for format '{format.value}'.")
 
-def get_converter(format: str = quizcomp.constants.FORMAT_JSON, **kwargs: typing.Any) -> quizcomp.converter.converter.Converter:
+def get_converter(
+        format: quizcomp.model.constants.Format = quizcomp.model.constants.Format.JSON,
+        **kwargs: typing.Any,
+        ) -> quizcomp.converter.converter.Converter:
     """ Get the converter for the specified format. """
 
     converter_class = get_converter_class(format = format)
@@ -45,7 +50,7 @@ def get_converter(format: str = quizcomp.constants.FORMAT_JSON, **kwargs: typing
 
 def convert_variant(
         variant: quizcomp.model.quiz.Variant,
-        format: str = quizcomp.constants.FORMAT_JSON,
+        format: quizcomp.model.constants.Format = quizcomp.model.constants.Format.JSON,
         constructor_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
         converter_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
         ) -> str:
@@ -65,7 +70,7 @@ def convert_variant(
 
 def convert_question(
         question: quizcomp.model.question.Question,
-        format: str = quizcomp.constants.FORMAT_JSON,
+        format: quizcomp.model.constants.Format = quizcomp.model.constants.Format.JSON,
         constructor_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
         converter_args: typing.Union[typing.Dict[str, typing.Any], None] = None,
         ) -> str:

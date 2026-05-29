@@ -6,9 +6,9 @@ import typing
 
 import edq.util.serial
 
-import quizcomp.constants
 import quizcomp.model.base
 import quizcomp.model.config
+import quizcomp.model.constants
 import quizcomp.model.errors
 import quizcomp.model.question
 
@@ -153,7 +153,7 @@ class Group(quizcomp.model.base.CoreType):
             path = os.path.abspath(path)
 
             if (os.path.isdir(path)):
-                for subpath in sorted(glob.glob(os.path.join(path, '**', quizcomp.constants.QUESTION_FILENAME), recursive = True)):
+                for subpath in sorted(glob.glob(os.path.join(path, '**', quizcomp.model.constants.QUESTION_FILENAME), recursive = True)):
                     new_questions.append(subpath)
 
             else:

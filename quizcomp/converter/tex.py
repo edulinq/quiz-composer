@@ -1,8 +1,8 @@
 import os
 import typing
 
-import quizcomp.constants
 import quizcomp.converter.template
+import quizcomp.model.constants
 import quizcomp.model.quiz
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -26,7 +26,7 @@ class TexTemplateConverter(quizcomp.converter.template.TemplateConverter):
             template_dir: str = DEFAULT_TEMPLATE_DIR,
             **kwargs: typing.Any) -> None:
         super().__init__(
-            quizcomp.constants.FORMAT_TEX,
+            quizcomp.model.constants.Format.TEX,
             template_dir,
             jinja_options = JINJA_OPTIONS,
             **kwargs,

@@ -4,14 +4,14 @@ import typing
 import markdown_it
 import markdown_it.token
 
-import quizcomp.constants
 import quizcomp.external.katex
+import quizcomp.model.constants
 import quizcomp.parser.common
 
 _katex_available: typing.Union[bool, None] = None  # pylint: disable=invalid-name
 
 def render(
-        format: str,
+        format: quizcomp.model.constants.Format,
         inline: bool,
         tokens: typing.List[markdown_it.token.Token],
         token_index: int,
@@ -24,16 +24,16 @@ def render(
 
     text = tokens[token_index].content
 
-    if (format == quizcomp.constants.FORMAT_HTML):
+    if (format == quizcomp.model.constants.Format.HTML):
         return _render_html(text, inline, context)
-    elif (format == quizcomp.constants.FORMAT_MD):
+    elif (format == quizcomp.model.constants.Format.MD):
         return _render_md(text, inline, context)
-    elif (format == quizcomp.constants.FORMAT_TEX):
+    elif (format == quizcomp.model.constants.Format.TEX):
         return _render_tex(text, inline, context)
-    elif (format == quizcomp.constants.FORMAT_TEXT):
+    elif (format == quizcomp.model.constants.Format.TEXT):
         return _render_md(text, inline, context)
     else:
-        raise ValueError(f"Unknown format '{format}'.")
+        raise ValueError(f"Unknown format '{format.value}'.")
 
 def _render_tex(text: str, inline: bool, context: quizcomp.parser.common.RenderContext) -> str:
     """ Render the given token content as TeX. """

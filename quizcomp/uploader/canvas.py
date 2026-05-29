@@ -7,7 +7,7 @@ import typing
 
 import requests
 
-import quizcomp.constants
+import quizcomp.model.answer
 import quizcomp.model.base
 import quizcomp.model.config
 import quizcomp.model.constants
@@ -413,13 +413,13 @@ def _serialize_numeric_answers(
         data[f"question[answers][{i}][answer_weight]"] = 100
         data[f"question[answers][{i}][numerical_answer_type]"] = answer.type + '_answer'
 
-        if (answer.type == quizcomp.constants.NUMERICAL_ANSWER_TYPE_EXACT):
+        if (answer.type == quizcomp.model.answer.NumericAnswerType.EXACT):
             data[f"question[answers][{i}][answer_exact]"] = answer.value
             data[f"question[answers][{i}][answer_error_margin]"] = answer.margin
-        elif (answer.type == quizcomp.constants.NUMERICAL_ANSWER_TYPE_RANGE):
+        elif (answer.type == quizcomp.model.answer.NumericAnswerType.RANGE):
             data[f"question[answers][{i}][answer_range_start]"] = answer.min
             data[f"question[answers][{i}][answer_range_end]"] = answer.max
-        elif (answer.type == quizcomp.constants.NUMERICAL_ANSWER_TYPE_PRECISION):
+        elif (answer.type == quizcomp.model.answer.NumericAnswerType.PRECISION):
             data[f"question[answers][{i}][answer_approximate]"] = answer.value
             data[f"question[answers][{i}][answer_precision]"] = answer.precision
         else:

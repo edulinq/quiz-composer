@@ -2,7 +2,7 @@ import re
 
 import markdown_it
 
-import quizcomp.constants
+import quizcomp.model.constants
 import quizcomp.parser.ast
 import quizcomp.parser.common
 import quizcomp.parser.renderer.base
@@ -15,7 +15,7 @@ class QuizComposerRendererText(quizcomp.parser.renderer.base.QuizComposerRendere
     The output here is not meant to represent full documents or be sent to users.
     """
 
-    __output__ = quizcomp.constants.FORMAT_TEXT
+    __output__ = quizcomp.model.constants.Format.TEXT.value
 
     def clean_final(self, text: str, context: quizcomp.parser.common.RenderContext) -> str:
         # Clean up whitespace.

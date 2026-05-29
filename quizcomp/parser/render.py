@@ -7,6 +7,7 @@ import markdown_it.token
 import mdit_py_plugins.container
 import mdit_py_plugins.dollarmath
 
+import quizcomp.model.constants
 import quizcomp.parser.renderer.canvas
 import quizcomp.parser.renderer.html
 import quizcomp.parser.renderer.markdown
@@ -111,7 +112,7 @@ def text(
     return content.strip()
 
 def render(
-        format: str,
+        format: quizcomp.model.constants.Format,
         tokens: typing.List[markdown_it.token.Token],
         env: typing.Union[typing.Dict[str, typing.Any], None] = None,
         **kwargs: typing.Any) -> str:
@@ -120,9 +121,9 @@ def render(
     if (env is None):
         env = {}
 
-    render_function = globals().get(format, None)
+    render_function = globals().get(format.value, None)
     if (render_function is None):
-        raise ValueError(f"Could not find render function: 'quizcomp.parser.render.{format}'.")
+        raise ValueError(f"Could not find render function: 'quizcomp.parser.render.{format.value}'.")
 
     return str(render_function(tokens, env = env, **kwargs))
 

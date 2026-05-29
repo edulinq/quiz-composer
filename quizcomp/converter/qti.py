@@ -7,7 +7,6 @@ import warnings
 import bs4
 import edq.util.dirent
 
-import quizcomp.constants
 import quizcomp.converter.template
 import quizcomp.model.constants
 import quizcomp.model.quiz
@@ -52,7 +51,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
             out_path: typing.Union[str, None] = None,
             template_dir: str = DEFAULT_TEMPLATE_DIR,
             **kwargs: typing.Any) -> None:
-        super().__init__(quizcomp.constants.FORMAT_HTML, template_dir,
+        super().__init__(quizcomp.model.constants.Format.HTML, template_dir,
                 jinja_filters = {
                     'to_xml': _to_xml,
                 },

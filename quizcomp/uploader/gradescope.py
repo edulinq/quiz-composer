@@ -8,7 +8,6 @@ import edq.util.dirent
 import edq.util.json
 import requests
 
-import quizcomp.constants
 import quizcomp.model.constants
 import quizcomp.model.quiz
 
