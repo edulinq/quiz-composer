@@ -1,4 +1,3 @@
-import datetime
 import logging
 import os
 import random
@@ -9,14 +8,14 @@ import edq.util.dirent
 import edq.util.git
 import edq.util.time
 
-import quizcomp.canvas
-import quizcomp.errors
 import quizcomp.constants
 import quizcomp.errors
 import quizcomp.model.base
 import quizcomp.model.group
 import quizcomp.model.question
 import quizcomp.parser.document
+
+_logger = logging.getLogger(__name__)
 
 DUMMY_QUIZ_DATA: typing.Dict[str, typing.Any] = {
     'name': 'Dummy Name',
@@ -69,23 +68,14 @@ class Quiz(quizcomp.model.base.CoreType):
         self.description: quizcomp.parser.document.ParsedDocument = description
         """ The description/prompt for this quiz. """
 
+        if ((time_limit_mins is not None) and (time_limit_mins < 0)):
+            time_limit_mins = None
+
         self.time_limit_mins: typing.Union[int, None] = time_limit_mins
         """ The time limit (in minutes) for this quiz. """
 
         self.version: typing.Union[str, None] = version
         """ The version of this quiz. """
-
-        ''' TEST
-        if (seed is None):
-            seed = random.randint(0, 2**64)
-
-        # TEST - We probably shouldn't cary a seed. Leave it to the CLI.
-        self.seed: int = seed
-        """ The seed used for this quiz. """
-
-        self._rng: random.Random = random.Random(self.seed)
-        """ The RNG used for this quiz. """
-        '''
 
         self._validate()
 
@@ -148,7 +138,9 @@ class Quiz(quizcomp.model.base.CoreType):
             description_path = os.path.abspath(description_path)
 
             if (not os.path.isfile(description_path)):
-                raise quizcomp.errors.QuestionValidationError(f"Could not find a description at the provided path: '{data['description_path']}' (Absolute Path: '{description_path}').", context = context)
+                raise quizcomp.errors.QuestionValidationError(
+                        f"Could not find a description at the provided path: '{data['description_path']}' (Absolute Path: '{description_path}').",
+                        context = context)
 
             return quizcomp.parser.document.ParsedDocument.parse_file(description_path)
 
@@ -157,17 +149,6 @@ class Quiz(quizcomp.model.base.CoreType):
             return quizcomp.parser.document.ParsedDocument.parse_file(default_description_path)
 
         return quizcomp.parser.document.ParsedDocument()
-
-    def shuffle(self, rng: random.Random) -> None:
-        """
-        Shuffle the answers for this question.
-        This method will do nothing if question shuffling is not allowed by the config settings.
-        """
-
-        if (self.get_config(quizcomp.model.config.OPTION_SHUFFLE_ANSWERS) is not True):
-            return
-
-        self.answers.shuffle(rng)
 
     def to_pod(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
@@ -184,65 +165,12 @@ class Quiz(quizcomp.model.base.CoreType):
         data['children'] = data.pop('groups', data.get('children', None))
         return super().from_pod(data, context)
 
-    # TEST - Do some of these checks?
-    ''' TEST
-    def _validate(self, **kwargs: typing.Any) -> None:
-        """ Check if this quiz is valid, will raise if the group is not valid. """
-
-        if ((self.name is None) or (self.name == "")):
-            raise quizcomp.errors.QuizValidationError("Name cannot be empty.")
-
-        if ((self._raw_description is None) or (self._raw_description == "")):
-            raise quizcomp.errors.QuizValidationError("Description cannot be empty.")
-
-        self.description = quizcomp.parser.document.ParsedDocument.parse_text(self._raw_description, base_dir = self.base_dir)
-
-        if (self.version is None):
-            self.version = edq.util.git.get_version(self.base_dir, throw = False)
-            if (self.version == edq.util.git.UNKNOWN_VERSION):
-                logging.warning("Could not get a version for the quiz (is it in a git repo?).")
-
-        self.canvas = quizcomp.canvas.validate_options(self.canvas)
-
-        self._validate_time_limit()
-
-        if (self.date == ''):
-            self.date = datetime.date.today()
-        elif (isinstance(self.date, str)):
-            self.date = datetime.date.fromisoformat(self.date)
-        else:
-            raise quizcomp.errors.QuizValidationError(f"Date should be a string or datetime.date, found '{str(type(self.date))}'.")
-
-        for key in kwargs:
-            logging.warning("Unknown quiz option: '%s'.", key)
-
-    def _validate_time_limit(self) -> None:
-        """ Validate the time limit component of this quiz. """
-
-        if (self.time_limit_mins is None):
-            return
-
-        if (not isinstance(self.time_limit_mins, (str, int))):
-            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
-
-        try:
-            self.time_limit_mins = int(self.time_limit_mins)
-        except:
-            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")  # pylint: disable=raise-missing-from
-
-        if (self.time_limit_mins < 0):
-            raise quizcomp.errors.QuizValidationError(f"Time limit must be a positive int, found '{str(self.time_limit_mins)}'.")
-
-        if (self.time_limit_mins == 0):
-            self.time_limit_mins = None
-    '''
-
     def create_variant(self,
             seed: typing.Union[int, None] = None,
             identifiers: typing.Union[typing.List[str], None] = None,
             all_questions: bool = False,
             include_solo_identifier: bool = False,
-            ) -> Variant:
+            ) -> 'Variant':
         """ A convenience call to create_variants(). """
 
         return self.create_variants(
@@ -277,12 +205,18 @@ class Quiz(quizcomp.model.base.CoreType):
             identifiers = DEFAULT_VARIANT_IDS
 
         if (count < 0):
-            raise quizcomp.errors.QuizValidationError(f"Variant count must be non-negative, found: {count}.", context = self)
+            raise quizcomp.errors.QuizValidationError(
+                    f"Variant count must be non-negative, found: {count}.",
+                    context = self)
 
         if (count > len(identifiers)):
-            raise quizcomp.errors.QuizValidationError(f"Not enough variant identifiers supplied. Got {len(identifiers)} identifiers and {count} requested variants. Given identifiers: {identifiers}.", context = self)
+            raise quizcomp.errors.QuizValidationError(
+                ('"Not enough variant identifiers supplied.'
+                    + f" Got {len(identifiers)} identifiers and {count} requested variants."
+                    + f" Given identifiers: {identifiers}."),
+                context = self)
 
-        logging.debug("Creating %d variants with seed %d.", count, seed)
+        _logger.debug("Creating %d variants with seed %d.", count, seed)
 
         used_question_indexes: typing.List[typing.Set[int]] = [set() for _ in self.children]
         variants = []
@@ -352,17 +286,6 @@ class Variant(Quiz):
 
         self.variant_id: str = variant_id
         """ An identifier to differentiate this variant from its siblings. """
-
-    ''' TEST
-    def _validate(self, **kwargs: typing.Any) -> None:
-        """ Check if this variant is valid, will raise if the group is not valid. """
-
-        # Ensure that each group has the correct number of questions.
-        for (i, group) in enumerate(self.groups):
-            if (len(group.questions) != group.pick_count):
-                raise quizcomp.errors.QuizValidationError(
-                        f"Group at index {i} ('{group.name}') has {len(group.questions)} questions, expecting exactly {group.pick_count}.")
-    '''
 
     @staticmethod
     def get_dummy(

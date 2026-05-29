@@ -2,12 +2,11 @@ import typing
 
 import edq.util.json
 
-# TEST - Improve error output when a context is present.
-
-# TEST - Accept context or core type? Or just serialization context? Or both?
-#      - We just want something that responds to base_dir and/or source_path. Use prototype?
-
 class ContextObject(typing.Protocol):
+    """
+    Any object that can provide context to errors.
+    """
+
     base_dir: typing.Union[str, None]
     """ The base directory used when processing something the lead to an error. """
 

@@ -134,8 +134,6 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         self.prepare(quiz)
 
         quiz_id = '0'
-        quiz_number = 1
-
         children_content, _ = self._convert_children(quiz, quiz, quiz_id, self._convert_group, self._convert_group_separator, 1)
 
         context = {
@@ -171,7 +169,12 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
             # Add in a separator if we are between two children.
             if (last_child is not None):
-                children_content.append(convert_child_separator_func(quiz, parent, last_child, last_child_id, last_child_index, child, child_id, child_index))
+                separator_content = convert_child_separator_func(
+                    quiz, parent,
+                    last_child, last_child_id, last_child_index,
+                    child, child_id, child_index,
+                )
+                children_content.append(separator_content)
 
             child_content, running_question_number = convert_child_func(quiz, child, child_id, child_index, running_question_number)
             children_content.append(child_content)
@@ -189,7 +192,12 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             ) -> typing.Tuple[str, int]:
         """ Convert a group. """
 
-        children_content, running_question_number = self._convert_children(quiz, group, group_id, self._convert_question, self._convert_question_separator, running_question_number)
+        children_content, running_question_number = self._convert_children(
+            quiz,
+            group, group_id,
+            self._convert_question, self._convert_question_separator,
+            running_question_number,
+        )
 
         context = {
             'this': group,

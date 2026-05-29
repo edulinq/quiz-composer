@@ -51,12 +51,6 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
         # callback = context.get(quizcomp.parser.common.CONTEXT_KEY_IMAGE_CALLBACK, None)
         callback = None
 
-        # TEST
-        import sys
-        print('---', file = sys.stderr)
-        print(vars(context), file = sys.stderr)
-        print('---', file = sys.stderr)
-
         # Set width.
         width_float = quizcomp.parser.style.get_image_width(context.style)
         tokens[token_index].attrSet('width', f"{(width_float * 100.0):0.2f}%")

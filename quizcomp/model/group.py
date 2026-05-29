@@ -12,6 +12,8 @@ import quizcomp.model.base
 import quizcomp.model.config
 import quizcomp.model.question
 
+_logger = logging.getLogger(__name__)
+
 DEFAULT_PICK_COUNT: int = 1
 """ The default number of questions chosen from this group. """
 
@@ -39,7 +41,7 @@ class Group(quizcomp.model.base.CoreType):
         """ The number of questions to choose from this group. """
 
         if (self.pick_count > len(self.children)):
-            logging.warning("Group '%s' was asked to pick more questions than available (pick count: %d, group size: %d).",
+            _logger.warning("Group '%s' was asked to pick more questions than available (pick count: %d, group size: %d).",
                     self.name, self.pick_count, len(self.children))
             self.pick_count = len(self.children)
 
@@ -54,7 +56,7 @@ class Group(quizcomp.model.base.CoreType):
         """
 
         if ((self.pick_count == 0) or (len(self.children) == 0)):
-            logging.warning("Group '%s' will select no questions (pick_count: %d, group size: %d).",
+            _logger.warning("Group '%s' will select no questions (pick_count: %d, group size: %d).",
                     self.name, self.pick_count, len(self.children))
             return []
 
@@ -86,7 +88,10 @@ class Group(quizcomp.model.base.CoreType):
             indexes = list(set(indexes) - used_question_indexes)
 
             if (count > len(indexes)):
-                logging.warning("Group '%s' does not have enough questions to pick without replacement, now choosing questions with replacement.", self.name)
+                _logger.warning(
+                    "Group '%s' does not have enough questions to pick without replacement, now choosing questions with replacement.",
+                    self.name,
+                )
                 # Reset the selection pool.
                 indexes = list(range(len(self.children)))
                 used_question_indexes.clear()

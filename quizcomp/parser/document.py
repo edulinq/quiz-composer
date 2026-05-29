@@ -1,5 +1,4 @@
 import os
-import re
 import typing
 
 import edq.util.dirent
@@ -114,7 +113,10 @@ class ParsedDocument(edq.util.serial.PODSerializer):
 
         return self._collect_tokens(self._tokens, 'image')
 
-    def _collect_tokens(self, tokens: typing.Union[typing.List[markdown_it.token.Token], None], token_type: str) -> typing.List[markdown_it.token.Token]:
+    def _collect_tokens(self,
+            tokens: typing.Union[typing.List[markdown_it.token.Token], None],
+            token_type: str,
+            ) -> typing.List[markdown_it.token.Token]:
         """ Recursively collect tokens of the given type. """
 
         contents: typing.List[markdown_it.token.Token] = []

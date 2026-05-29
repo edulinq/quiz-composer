@@ -131,7 +131,6 @@ def make(
     variant_options = []
 
     _logger.debug("Using seed %d.", seed)
-    rng = random.Random(seed)
 
     variants = quiz.create_variants(count = num_variants, seed = seed)
 

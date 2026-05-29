@@ -12,7 +12,7 @@ class Option:
     def __init__(self,
             value_type: str,
             key: str,
-            default_value: typing.Union[edq.util.serial.POD, None] = None,
+            default_value: typing.Union[edq.util.serial.PODType, None] = None,
             ) -> None:
         self.value_type: str = value_type
         """ Where to look within the core object for the configuration. """

@@ -1,5 +1,4 @@
 import re
-import typing
 
 import markdown_it
 

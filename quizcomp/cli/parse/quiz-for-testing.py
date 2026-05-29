@@ -35,7 +35,7 @@ def run_cli(args: argparse.Namespace) -> int:
     print(f"Parsing quiz: '{args.path}'.")
 
     quiz = quizcomp.model.quiz.Quiz.from_path(args.path)
-    variant = quiz.create_variant(all_questions = args.all_questions, seed = seed)
+    variant = quiz.create_variant(all_questions = args.all_questions, seed = seed)  # pylint: disable=no-member
 
     for quiz_format in args.formats:
         print(f"Generating quiz content for '{quiz_format}'.")

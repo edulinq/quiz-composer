@@ -27,8 +27,8 @@ class TextOption(edq.util.serial.PODConverter):
     One possible text answer to a question.
     """
 
-    serialization_omit_none = True,
-    serialization_omit_empty = True,
+    serialization_omit_none = True
+    serialization_omit_empty = True
 
     def __init__(self,
             text: quizcomp.parser.document.ParsedDocument,
@@ -65,10 +65,10 @@ class TextOption(edq.util.serial.PODConverter):
         return documents
 
     @classmethod
-    def from_pod(cls: typing.Type[TextOption],
+    def from_pod(cls: typing.Type['TextOption'],
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
-            ) -> TextOption:
+            ) -> 'TextOption':
         label = context.extra.get('label', '')
 
         if (isinstance(data, str)):
@@ -90,11 +90,11 @@ class TextOption(edq.util.serial.PODConverter):
         return TextOption(parsed_text, feedback)
 
     @classmethod
-    def from_pod_with_error(cls: typing.Type[TextOption],
+    def from_pod_with_error(cls: typing.Type['TextOption'],
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             label: str,
-            ) -> TextOption:
+            ) -> 'TextOption':
         """ Wrap from_pod() with some error information. """
 
         context = context.copy()
@@ -107,8 +107,8 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
     One possible numeric answer to a question.
     """
 
-    serialization_omit_none = True,
-    serialization_omit_empty = True,
+    serialization_omit_none = True
+    serialization_omit_empty = True
 
     def __init__(self,
             type: NumericAnswerType,
@@ -128,10 +128,10 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
         """ Get a textual representation of this option. """
 
     @classmethod
-    def from_pod(cls: typing.Type[NumericOption],
+    def from_pod(cls: typing.Type['NumericOption'],
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
-            ) -> NumericOption:
+            ) -> 'NumericOption':
         label = context.extra.get('label', '')
 
         quizcomp.errors.check_type(data, dict, label, context = context)
@@ -148,11 +148,15 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
                 raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", context = context)
 
             if (not isinstance(value, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'value' that is not an int or float, found '{type(value)}'.", context = context)
+                raise quizcomp.errors.QuestionValidationError(
+                        f"{label} has a 'value' that is not an int or float, found '{type(value)}'.",
+                        context = context)
 
             margin = data.get('margin', 0.0)
             if (not isinstance(margin, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'margin' that is not an int or float, found '{type(margin)}'.", context = context)
+                raise quizcomp.errors.QuestionValidationError(
+                        f"{label} has a 'margin' that is not an int or float, found '{type(margin)}'.",
+                        context = context)
 
             return NumericOptionExact(value, margin, feedback = feedback)
         elif (answer_type == NumericAnswerType.RANGE):
@@ -161,14 +165,18 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
                 raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'min' key.", context = context)
 
             if (not isinstance(min, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'min' that is not an int or float, found '{type(min)}'.", context = context)
+                raise quizcomp.errors.QuestionValidationError(
+                        f"{label} has a 'min' that is not an int or float, found '{type(min)}'.",
+                        context = context)
 
             max = data.get('max', None)
             if (max is None):
                 raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'max' key.", context = context)
 
             if (not isinstance(max, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'max' that is not an int or float, found '{type(max)}'.", context = context)
+                raise quizcomp.errors.QuestionValidationError(
+                        f"{label} has a 'max' that is not an int or float, found '{type(max)}'.",
+                        context = context)
 
             return NumericOptionRange(min, max, feedback = feedback)
         elif (answer_type == NumericAnswerType.PRECISION):
@@ -177,25 +185,29 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
                 raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'value' key.", context = context)
 
             if (not isinstance(value, (int, float))):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'value' that is not an int or float, found '{type(value)}'.", context = context)
+                raise quizcomp.errors.QuestionValidationError(
+                        f"{label} has a 'value' that is not an int or float, found '{type(value)}'.",
+                        context = context)
 
             precision = data.get('precision', None)
             if (precision is None):
                 raise quizcomp.errors.QuestionValidationError(f"{label} does not have a required 'precision' key.", context = context)
 
             if (not isinstance(precision, int)):
-                raise quizcomp.errors.QuestionValidationError(f"{label} has a 'precision' that is not an int, found '{type(precision)}'.", context = context)
+                raise quizcomp.errors.QuestionValidationError(
+                        f"{label} has a 'precision' that is not an int, found '{type(precision)}'.",
+                        context = context)
 
             return NumericOptionPrecision(value, precision, feedback = feedback)
         else:
             raise quizcomp.errors.QuestionValidationError(f"{label} has an unknown answer type: '{answer_type}'.", context = context)
 
     @classmethod
-    def from_pod_with_error(cls: typing.Type[NumericOption],
+    def from_pod_with_error(cls: typing.Type['NumericOption'],
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             label: str,
-            ) -> NumericOption:
+            ) -> 'NumericOption':
         """ Wrap from_pod() with some error information. """
 
         context = context.copy()
@@ -272,7 +284,7 @@ class Choice(TextOption):
     This is for questions with a finite number of choices (e.g., MCQ, MA, TF).
     """
 
-    serialization_omit_none = True,
+    serialization_omit_none = True
 
     def __init__(self,
             text: quizcomp.parser.document.ParsedDocument,
@@ -312,10 +324,10 @@ class QuestionAnswers(edq.util.serial.PODConverter):
         return []
 
     @classmethod
-    def from_pod(cls: typing.Type[QuestionAnswers],
+    def from_pod(cls: typing.Type['QuestionAnswers'],
             data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
-            ) -> QuestionAnswers:
+            ) -> 'QuestionAnswers':
         """
         Create an answers object for a specific question type from some serialized data
         This data will normally come from a JSON file.
@@ -376,9 +388,8 @@ class TextAnswers(QuestionAnswers):
 
     def __init__(self,
             options: typing.Union[typing.List[TextOption], None] = None,
-            *args: typing.Any,
             **kwargs: typing.Any) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         if (options is None):
             options = []
@@ -721,9 +732,8 @@ class MatchingAnswers(QuestionAnswers):
     def __init__(self,
             pairs: typing.List[typing.Tuple[TextOption, TextOption]],
             distractors: typing.Union[typing.List[TextOption], None] = None,
-            *args: typing.Any,
             **kwargs: typing.Any) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         self.pairs: typing.List[typing.Tuple[TextOption, TextOption]] = pairs
         """ The matching pairs of items. """

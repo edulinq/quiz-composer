@@ -1,10 +1,8 @@
-import dataclasses
 import os
 import random
 import typing
 
 import edq.util.enum
-import edq.util.parse
 import edq.util.serial
 
 import quizcomp.errors

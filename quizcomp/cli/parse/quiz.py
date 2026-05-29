@@ -26,7 +26,7 @@ def run_cli(args: argparse.Namespace) -> int:
         seed = random.randint(0, 2**64)
 
     quiz = quizcomp.model.quiz.Quiz.from_path(args.path)
-    variant = quiz.create_variant(all_questions = args.all_questions, seed = seed)
+    variant = quiz.create_variant(all_questions = args.all_questions, seed = seed)  # pylint: disable=no-member
     content = quizcomp.converter.convert.convert_variant(variant, format = args.format, constructor_args = {'answer_key': args.answer_key})
 
     print(content)

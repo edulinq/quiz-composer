@@ -32,8 +32,8 @@ class CoreType(edq.util.serial.DictConverter):
             base_dir: typing.Union[str, None] = None,
             source_path: typing.Union[str, None] = None,
             name: typing.Union[str, None] = None,
-            parent: typing.Union[CoreType, None] = None,
-            children: typing.Union[typing.List[CoreType], None] = None,
+            parent: typing.Union['CoreType', None] = None,
+            children: typing.Union[typing.List['CoreType'], None] = None,
             points: typing.Union[float, None] = None,
             lms_id: typing.Union[str, None] = None,
             attributes: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
@@ -74,7 +74,7 @@ class CoreType(edq.util.serial.DictConverter):
         If not specified, general names or names derived from parents will be used.
         """
 
-        self.parent: typing.Union[CoreType, None] = parent
+        self.parent: typing.Union['CoreType', None] = parent
         """
         The parent/container fr this object.
         The general pattern is: Quiz -> Variant -> Group -> Question.
@@ -83,7 +83,7 @@ class CoreType(edq.util.serial.DictConverter):
         if (children is None):
             children = []
 
-        self.children: typing.List[CoreType] = children
+        self.children: typing.List['CoreType'] = children
         """
         Children of this object.
         The general pattern is: Quiz -> Variant -> Group -> Question.

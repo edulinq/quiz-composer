@@ -95,7 +95,7 @@ def _get_quiz_reparse_test_method(path: str) -> typing.Callable:
         quiz_data = quiz.to_pod()
 
         new_quiz = quizcomp.model.quiz.Quiz.from_pod(copy.deepcopy(quiz_data), edq.util.serial.SerializationContext())
-        new_quiz_data = new_quiz.to_pod()
+        new_quiz_data = new_quiz.to_pod()  # pylint: disable=no-member
 
         self.assertJSONDictEqual(quiz_data, new_quiz_data)
 
