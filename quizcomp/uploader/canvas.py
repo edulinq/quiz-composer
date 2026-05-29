@@ -15,6 +15,8 @@ import quizcomp.model.group
 import quizcomp.model.question
 import quizcomp.model.quiz
 
+_logger = logging.getLogger(__name__)
+
 # TODO(eriq): This code assumes there will never be more than a page of items returned.
 PAGE_SIZE: int = 75
 
@@ -87,11 +89,11 @@ def upload_quiz(
 
     existing_ids = get_matching_quiz_ids(quiz.get_name(), instance)
     if ((len(existing_ids) > 0) and (not force)):
-        logging.info("Found a quiz with a matching name '%s', skipping upload.", quiz.get_name())
+        _logger.info("Found a quiz with a matching name '%s', skipping upload.", quiz.get_name())
         return False
 
     for existing_id in existing_ids:
-        logging.debug("Deleting existing quiz '%s' (%s).", quiz.get_name(), existing_id)
+        _logger.debug("Deleting existing quiz '%s' (%s).", quiz.get_name(), existing_id)
         delete_quiz(existing_id, instance)
 
     create_quiz(quiz, instance)

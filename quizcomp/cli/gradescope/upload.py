@@ -14,6 +14,8 @@ import quizcomp.cli.parser
 import quizcomp.uploader.gradescope
 import quizcomp.util.pdf
 
+_logger = logging.getLogger(__name__)
+
 def run_cli(args: argparse.Namespace) -> int:
     """ Run the CLI. """
 
@@ -41,7 +43,7 @@ def run_cli(args: argparse.Namespace) -> int:
         uploader = quizcomp.uploader.gradescope.GradeScopeUploader(args.course_id, args.user, args.password,
                 save_http = args.save_http)
         uploader.create_assignment_group(quiz.get_name(), ids)
-        logging.info("Created GradeScope Assignment Group: '%s'.", quiz.get_name())
+        _logger.info("Created GradeScope Assignment Group: '%s'.", quiz.get_name())
 
     path = os.path.join(out_dir, quizcomp.util.pdf.OPTIONS_FILENAME)
     edq.util.json.dump_path(options, path, indent = 4)

@@ -11,6 +11,8 @@ import requests
 import quizcomp.model.constants
 import quizcomp.model.quiz
 
+_logger = logging.getLogger(__name__)
+
 URL_BASE: str = 'https://www.gradescope.com'
 URL_HOMEPAGE = URL_BASE
 URL_LOGIN: str = f"{URL_BASE}/login"
@@ -342,26 +344,26 @@ class GradeScopeUploader:
         session = requests.Session()
 
         self.login(session)
-        logging.debug("Logged in as '%s'.", self.user)
+        _logger.debug("Logged in as '%s'.", self.user)
 
         assignment_id = self.get_assignment_id(session, variant)
         if (assignment_id is not None):
             if (not self.force):
-                logging.info("Assignment '%s' (%s) already exists. Skipping upload.", variant.get_name(), assignment_id)
+                _logger.info("Assignment '%s' (%s) already exists. Skipping upload.", variant.get_name(), assignment_id)
                 return assignment_id, False
 
             self.delete_assignment(session, assignment_id)
-            logging.debug("Deleted assignment: '%s'", assignment_id)
+            _logger.debug("Deleted assignment: '%s'", assignment_id)
 
         assignment_id = self.create_assignment(session, variant, base_dir)
-        logging.debug("Created assignment: '%s'", assignment_id)
+        _logger.debug("Created assignment: '%s'", assignment_id)
 
         self.submit_outline(session, assignment_id, outline)
-        logging.debug('Submitted outline.')
+        _logger.debug('Submitted outline.')
 
         if (self.rubric):
             self.create_rubric(session, assignment_id, variant)
-            logging.debug('Created assignment rubric.')
+            _logger.debug('Created assignment rubric.')
 
         return assignment_id, True
 
@@ -496,7 +498,7 @@ class GradeScopeUploader:
 
         match = re.search(r'/assignments/(\d+)/outline/edit', response.history[0].text)
         if (match is None):
-            logging.error("--- Create Body ---\n%s\n------", response.history[0].text)
+            _logger.error("--- Create Body ---\n%s\n------", response.history[0].text)
             raise ValueError("Could not parse assignment ID from response body.")
 
         return match.group(1)

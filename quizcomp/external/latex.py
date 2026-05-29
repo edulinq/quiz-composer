@@ -5,6 +5,8 @@ import shutil
 import subprocess
 import typing
 
+_logger = logging.getLogger(__name__)
+
 _pdflatex_bin_path: typing.Union[str, None] = None  # pylint: disable=invalid-name
 _pdflatex_use_docker: bool = False  # pylint: disable=invalid-name
 
@@ -27,7 +29,7 @@ def is_available() -> bool:
 
     if (_pdflatex_use_docker):
         if (not _is_docker_available()):
-            logging.warning("Docker is not available, cannot compile PDFs.")
+            _logger.warning("Docker is not available, cannot compile PDFs.")
             return False
 
         return True
@@ -36,7 +38,7 @@ def is_available() -> bool:
         return True
 
     if (shutil.which('pdflatex') is None):
-        logging.warning("Could not find `pdflatex`, cannot compile PDFs.")
+        _logger.warning("Could not find `pdflatex`, cannot compile PDFs.")
         return False
 
     return True

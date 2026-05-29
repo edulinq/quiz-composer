@@ -5,6 +5,8 @@ import shutil
 import subprocess
 import typing
 
+_logger = logging.getLogger(__name__)
+
 _nodejs_bin_dir: typing.Union[str, None] = None  # pylint: disable=invalid-name
 
 def set_nodejs_bin_dir(path: str) -> None:
@@ -33,11 +35,11 @@ def is_available(cwd: str = '.') -> bool:
     """ Check if KaTeX is available on this system. """
 
     if ((_nodejs_bin_dir is None) and (shutil.which('npx') is None)):
-        logging.warning("Could not find `npx` (usually installed with `npm`), cannot use katex equations.")
+        _logger.warning("Could not find `npx` (usually installed with `npm`), cannot use katex equations.")
         return False
 
     if (not _has_package('katex', cwd = cwd)):
-        logging.warning("Could not find the `katex` NodeJS package, cannot use katex equations.")
+        _logger.warning("Could not find the `katex` NodeJS package, cannot use katex equations.")
         return False
 
     return True

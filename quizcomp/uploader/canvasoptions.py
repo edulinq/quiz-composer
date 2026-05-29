@@ -3,6 +3,8 @@ import typing
 
 import quizcomp.model.errors
 
+_logger = logging.getLogger(__name__)
+
 DEFAULT_CANVAS_OPTIONS: typing.Dict[str, typing.Any] = {
     'practice': True,
     'published': False,
@@ -29,7 +31,7 @@ def validate_options(old_options: typing.Dict[str, typing.Any]) -> typing.Dict[s
 
     for (key, value) in options.items():
         if (key not in DEFAULT_CANVAS_OPTIONS):
-            logging.warning("Unknown canvas options: '%s'.", key)
+            _logger.warning("Unknown canvas options: '%s'.", key)
             continue
 
         if (key in ALLOWED_VALUES):

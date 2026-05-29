@@ -356,7 +356,7 @@ def _discover_column_info(
 
         return info
 
-    logging.warning("Unexpected table node type '%s'.", type)
+    _logger.warning("Unexpected table node type '%s'.", type)
     return info
 
 def _discover_column_info_cells(
