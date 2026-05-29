@@ -36,15 +36,15 @@ class CoreType(edq.util.serial.DictConverter):
             children: typing.Union[typing.List[CoreType], None] = None,
             points: typing.Union[float, None] = None,
             lms_id: typing.Union[str, None] = None,
-            attributes: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            attributes_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            attributes_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            hints: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            hints_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            hints_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            style: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            style_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            style_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
+            attributes: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
+            attributes_first: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
+            attributes_last: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
+            hints: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
+            hints_first: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
+            hints_last: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
+            style: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
+            style_first: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
+            style_last: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             **kwargs: typing.Any) -> None:
         if (base_dir is None):
@@ -112,7 +112,7 @@ class CoreType(edq.util.serial.DictConverter):
 
         attributes.update(kwargs)
 
-        self.attributes: typing.Dict[str, edq.util.serial.POD] = attributes.copy()
+        self.attributes: typing.Dict[str, edq.util.serial.PODType] = attributes.copy()
         """
         General attributes for this object.
         Attributes are well-defined configurations for objects.
@@ -122,19 +122,19 @@ class CoreType(edq.util.serial.DictConverter):
         if (attributes_first is None):
             attributes_first = {}
 
-        self.attributes_first: typing.Dict[str, edq.util.serial.POD] = attributes_first.copy()
+        self.attributes_first: typing.Dict[str, edq.util.serial.PODType] = attributes_first.copy()
         """ Attributes to pass along to the first child of this object. """
 
         if (attributes_last is None):
             attributes_last = {}
 
-        self.attributes_last: typing.Dict[str, edq.util.serial.POD] = attributes_last.copy()
+        self.attributes_last: typing.Dict[str, edq.util.serial.PODType] = attributes_last.copy()
         """ Attributes to pass along to the last child of this object. """
 
         if (hints is None):
             hints = {}
 
-        self.hints: typing.Dict[str, edq.util.serial.POD] = hints.copy()
+        self.hints: typing.Dict[str, edq.util.serial.PODType] = hints.copy()
         """
         Hints for this objects.
         Hints generally affect layout for specific templates.
@@ -144,19 +144,19 @@ class CoreType(edq.util.serial.DictConverter):
         if (hints_first is None):
             hints_first = {}
 
-        self.hints_first: typing.Dict[str, edq.util.serial.POD] = hints_first.copy()
+        self.hints_first: typing.Dict[str, edq.util.serial.PODType] = hints_first.copy()
         """ Hints to pass along to the first child of this object. """
 
         if (hints_last is None):
             hints_last = {}
 
-        self.hints_last: typing.Dict[str, edq.util.serial.POD] = hints_last.copy()
+        self.hints_last: typing.Dict[str, edq.util.serial.PODType] = hints_last.copy()
         """ Hints to pass along to the last child of this object. """
 
         if (style is None):
             style = {}
 
-        self.style: typing.Dict[str, edq.util.serial.POD] = style.copy()
+        self.style: typing.Dict[str, edq.util.serial.PODType] = style.copy()
         """
         Styling rules for this object.
         Style may be defined in text or in JSON.
@@ -165,13 +165,13 @@ class CoreType(edq.util.serial.DictConverter):
         if (style_first is None):
             style_first = {}
 
-        self.style_first: typing.Dict[str, edq.util.serial.POD] = style_first.copy()
+        self.style_first: typing.Dict[str, edq.util.serial.PODType] = style_first.copy()
         """ Styles to pass along to the first child of this object. """
 
         if (style_last is None):
             style_last = {}
 
-        self.style_last: typing.Dict[str, edq.util.serial.POD] = style_last.copy()
+        self.style_last: typing.Dict[str, edq.util.serial.PODType] = style_last.copy()
         """ Styles to pass along to the last child of this object. """
 
     def get_name(self, default: str = '') -> str:
@@ -255,7 +255,7 @@ class CoreType(edq.util.serial.DictConverter):
         points = round(points, precision)
         return str(points)
 
-    def get_attribute(self, key: str, default_value: edq.util.serial.POD) -> edq.util.serial.POD:
+    def get_attribute(self, key: str, default_value: edq.util.serial.PODType) -> edq.util.serial.PODType:
         """
         Get an attribute value from this object or a parent.
         If the key does not exist (or the value is None), return the given default.
@@ -267,7 +267,7 @@ class CoreType(edq.util.serial.DictConverter):
 
         return value
 
-    def get_hint(self, key: str, default_value: edq.util.serial.POD) -> edq.util.serial.POD:
+    def get_hint(self, key: str, default_value: edq.util.serial.PODType) -> edq.util.serial.PODType:
         """
         Get a hint value from this object or a parent.
         If the key does not exist (or the value is None), return the given default.
@@ -279,7 +279,7 @@ class CoreType(edq.util.serial.DictConverter):
 
         return value
 
-    def get_style(self, key: str, default_value: edq.util.serial.POD) -> edq.util.serial.POD:
+    def get_style(self, key: str, default_value: edq.util.serial.PODType) -> edq.util.serial.PODType:
         """
         Get a style value from this object or a parent.
         If the key does not exist (or the value is None), return the given default.
@@ -293,8 +293,8 @@ class CoreType(edq.util.serial.DictConverter):
 
     def get_config(self,
             option: quizcomp.model.config.Option,
-            default_override: typing.Union[edq.util.serial.POD, None] = None,
-            ) -> typing.Union[edq.util.serial.POD, None]:
+            default_override: typing.Union[edq.util.serial.PODType, None] = None,
+            ) -> typing.Union[edq.util.serial.PODType, None]:
         """
         Get a value for a configuration option.
         If the key does not exist (or the value is None), return the specified default.
@@ -313,9 +313,9 @@ class CoreType(edq.util.serial.DictConverter):
 
     def get_known_config(self,
             key: str,
-            default_override: typing.Union[edq.util.serial.POD, None] = None,
+            default_override: typing.Union[edq.util.serial.PODType, None] = None,
             value_type: typing.Union[str, None] = None,
-            ) -> typing.Union[edq.util.serial.POD, None]:
+            ) -> typing.Union[edq.util.serial.PODType, None]:
         """
         Get a value for a known configuration option by key.
         If the key does not exist (or the value is None), return the specified default.
@@ -331,7 +331,7 @@ class CoreType(edq.util.serial.DictConverter):
 
     def _get_hierarchical_value(self, value_type: str, key: str,
             child: typing.Union['CoreType', None] = None,
-            ) -> typing.Union[edq.util.serial.POD, None]:
+            ) -> typing.Union[edq.util.serial.PODType, None]:
         """
         Get a value from either self or a parent (which may check its parent and so on).
         Return None if no value is found.

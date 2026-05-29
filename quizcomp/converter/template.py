@@ -342,7 +342,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         # If there is no image base dir to store images into, then just return with the newly formed source.
         if (self.image_base_dir is None):
-            return self._form_image_source(filename)
+            return self._form_image_source(filename, quiz)
 
         (basename, ext) = os.path.split(filename)
         path = os.path.join(self.image_base_dir, filename)
@@ -356,7 +356,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             if (count >= MAX_IMAGE_RENAMES):
                 raise quizcomp.errors.QuizValidationError(f"Cannot create unique filename for image: '{source}'.", context = quiz)
 
-        new_source = self._form_image_source(filename)
+        new_source = self._form_image_source(filename, quiz)
 
         if (is_http):
             response, _ = edq.net.request.make_get(source)
@@ -370,7 +370,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return new_source
 
-    def _form_image_source(self, filename: str) -> str:
+    def _form_image_source(self, filename: str, quiz: quizcomp.model.quiz.Quiz) -> str:
         """ Create the image source string that will go inside stored image tokens using the base filename. """
 
         return os.path.join('images', filename)

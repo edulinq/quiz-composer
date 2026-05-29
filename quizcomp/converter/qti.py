@@ -1,5 +1,3 @@
-# TEST
-import html
 import logging
 import os
 import shutil
@@ -12,8 +10,9 @@ import edq.util.dirent
 import quizcomp.constants
 import quizcomp.converter.template
 import quizcomp.model.constants
-import quizcomp.model.question
 import quizcomp.model.quiz
+
+_logger = logging.getLogger(__name__)
 
 THIS_DIR: str = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_TEMPLATE_DIR: str = os.path.join(THIS_DIR, '..', 'data', 'templates', 'edq-qti')
@@ -99,7 +98,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         shutil.make_archive(os.path.splitext(out_path)[0], 'zip', temp_base_dir, quiz.get_name())
 
-        logging.info("Created QTI quiz at '%s'.", out_path)
+        _logger.info("Created QTI quiz at '%s'.", out_path)
         return out_path
 
     def _convert_assessment_meta(self, quiz: quizcomp.model.quiz.Quiz, out_dir: str) -> None:
@@ -142,23 +141,8 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         path = os.path.join(out_dir, OUT_FILENAME_MANIFEST)
         edq.util.dirent.write_file(path, text)
 
-    ''' TEST
-    def _store_images(self, link: str, base_dir: str) -> str:
-        """
-        Override the final path that is returned to instead point to the Canvas path.
-        Note that this method should only be called when (self.canvas == True).
-        """
-
-        path = super()._store_images(link, base_dir)
-
-        if (self.image_base_dir is None):
-            raise ValueError("Missing image base dir.")
-
-        quiz_name = os.path.basename(os.path.dirname(self.image_base_dir))
-        filename = os.path.basename(path)
-
-        return '/'.join(['$IMS-CC-FILEBASE$', quiz_name, OUT_DIR_IMAGES, filename])
-    '''
+    def _form_image_source(self, filename: str, quiz: quizcomp.model.quiz.Quiz) -> str:
+        return '/'.join(['$IMS-CC-FILEBASE$', quiz.get_name(), OUT_DIR_IMAGES, filename])
 
 def _format_xml(text: str) -> str:
     """ Format/Prettify the XML. """

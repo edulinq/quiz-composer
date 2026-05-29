@@ -34,8 +34,8 @@ def run_cli(args: argparse.Namespace) -> int:
 
     print(f"Parsing quiz: '{args.path}'.")
 
-    quiz = quizcomp.model.quiz.Quiz.from_path(args.path, flatten_groups = args.flatten_groups)
-    variant = quiz.create_variant(all_questions = args.flatten_groups, seed = seed)
+    quiz = quizcomp.model.quiz.Quiz.from_path(args.path)
+    variant = quiz.create_variant(all_questions = args.all_questions, seed = seed)
 
     for quiz_format in args.formats:
         print(f"Generating quiz content for '{quiz_format}'.")
@@ -68,9 +68,9 @@ def _get_parser() -> argparse.ArgumentParser:
         action = 'store_true', default = False,
         help = 'Generate an answer key instead of a blank quiz (default: %(default)s).')
 
-    parser.add_argument('--flatten-groups', dest = 'flatten_groups',
+    parser.add_argument('--all-questions', dest = 'all_questions',
         action = 'store_true', default = False,
-        help = 'Flatten question groups with multiple questions to multiple groups with a single question (default: %(default)s).')
+        help = 'Include every question for each group (instead of the amount listed under `pick_count`) (default: %(default)s).')
 
     parser.add_argument('--seed', dest = 'seed',
         action = 'store', type = int, default = None,
