@@ -6,9 +6,10 @@ import markdown_it
 import quizcomp.model.constants
 import quizcomp.parser.ast
 import quizcomp.parser.common
-import quizcomp.parser.image
 import quizcomp.parser.renderer.base
 import quizcomp.parser.style
+
+_logger = logging.getLogger(__name__)
 
 TEX_REPLACEMENTS: typing.Dict[str, str] = {
     # Specially handle braces and slashes to avoid clobbering other replacements.
@@ -132,16 +133,13 @@ class QuizComposerRendererTex(quizcomp.parser.renderer.base.QuizComposerRenderer
         return f"$ {text} $"
 
     def _image(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
-        # TEST
-        # callback = context.get(quizcomp.parser.common.CONTEXT_KEY_IMAGE_CALLBACK, None)
-        callback = None
-
-        src = node.get('src', '')
-        src = quizcomp.parser.image.handle_callback(callback, src, context.base_dir)
+        src = node.get('src', None)
+        if (src is None):
+            raise ValueError('No image source provided.')
 
         width_float = quizcomp.parser.style.get_image_width(context.style)
 
-        return r"\includegraphics[width=%0.2f\textwidth]{%s}" % (width_float, src)
+        return r"\includegraphics[width=%0.2f\textwidth]{%s}" % (width_float, str(src))
 
     def _link(self, node: quizcomp.parser.ast.ASTNode, context: quizcomp.parser.common.RenderContext) -> str:
         text = ''.join([self._render_node(child, context) for child in node.children]).strip()

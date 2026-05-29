@@ -8,21 +8,12 @@ import markdown_it.utils
 
 import quizcomp.model.constants
 import quizcomp.parser.common
-import quizcomp.parser.image
 import quizcomp.parser.math
 import quizcomp.parser.renderer.base
 import quizcomp.parser.style
+import quizcomp.util.image
 
 HTML_BORDER_SPEC = '1px solid black'
-
-@typing.runtime_checkable
-class ProcessImageTokenFunction(typing.Protocol):
-    """
-    A function that is called when rendering an image to process the token before HTML rendering.
-    """
-
-    def __call__(self, token: markdown_it.token.Token, context: quizcomp.parser.common.RenderContext, path: str) -> markdown_it.token.Token:
-        """ Process the image token before rendering. """
 
 # pylint: disable=abstract-method
 class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parser.renderer.base.QuizComposerRendererBase):
@@ -39,7 +30,6 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
             options: markdown_it.utils.OptionsDict,
             env: typing.Dict[str, typing.Any],
             force_raw_image_src: bool = False,
-            process_token: typing.Union[ProcessImageTokenFunction, None] = None,
             **kwargs: typing.Any) -> str:
         """ Render an image. """
 
@@ -47,34 +37,29 @@ class QuizComposerRendererHTML(markdown_it.renderer.RendererHTML, quizcomp.parse
 
         context = typing.cast(quizcomp.parser.common.RenderContext, env[quizcomp.parser.common.ENV_KEY_CONTEXT])
 
-        # TEST
-        # callback = context.get(quizcomp.parser.common.CONTEXT_KEY_IMAGE_CALLBACK, None)
-        callback = None
-
         # Set width.
         width_float = quizcomp.parser.style.get_image_width(context.style)
         tokens[token_index].attrSet('width', f"{(width_float * 100.0):0.2f}%")
 
         original_src = str(tokens[token_index].attrGet('src'))
-        src = quizcomp.parser.image.handle_callback(callback, original_src, context.base_dir)
-        path = os.path.realpath(os.path.join(context.base_dir, src))
-        tokens[token_index].attrSet('src', src)
 
         # Check the env to see if we need to force raw images.
         force_raw_image_src = (force_raw_image_src or context.force_raw_image_src)
 
-        if (force_raw_image_src or re.match(r'^http(s)?://', src) or src.startswith('data:image')):
+        if (force_raw_image_src or re.match(r'^http(s)?://', original_src) or original_src.startswith('data:image')):
             # Do not further modify the src if we are explicitly directed not to
             # or if it is an http or data URL.
             pass
         else:
             # Otherwise, do a base64 encoding of the image and embed it.
-            mime, content = quizcomp.parser.image.encode_image(path)
-            tokens[token_index].attrSet('src', f"data:{mime};base64,{content}")
+            path = original_src
+            if (not os.path.isabs(path)):
+                path = os.path.join(context.base_dir, path)
 
-        # Last chance to change the token before HTML rendering.
-        if (process_token is not None):
-            tokens[token_index] = process_token(tokens[token_index], context, path)
+            path = os.path.abspath(path)
+
+            mime, content = quizcomp.util.image.b64_encode(path)
+            tokens[token_index].attrSet('src', f"data:{mime};base64,{content}")
 
         result = super().image(tokens, token_index, options, env)
 
