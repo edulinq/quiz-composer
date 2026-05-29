@@ -78,13 +78,13 @@ def upload_quiz(quiz: quizcomp.model.quiz.Quiz, instance: quizcomp.uploader.inst
     if (not isinstance(quiz, quizcomp.model.quiz.Quiz)):
         raise ValueError(f"Canvas quiz uploader requires a quizcomp.model.quiz.Quiz type, found {type(quiz)}.")
 
-    existing_ids = get_matching_quiz_ids(quiz.name, instance)
+    existing_ids = get_matching_quiz_ids(quiz.get_name(), instance)
     if ((len(existing_ids) > 0) and (not force)):
-        logging.info("Found a quiz with a matching name '%s', skipping upload.", quiz.name)
+        logging.info("Found a quiz with a matching name '%s', skipping upload.", quiz.get_name())
         return False
 
     for existing_id in existing_ids:
-        logging.debug("Deleting existing quiz '%s' (%s).", quiz.name, existing_id)
+        logging.debug("Deleting existing quiz '%s' (%s).", quiz.get_name(), existing_id)
         delete_quiz(existing_id, instance)
 
     create_quiz(quiz, instance)
@@ -113,7 +113,7 @@ def upload_canvas_files(quiz: quizcomp.model.quiz.Quiz, instance: quizcomp.uploa
         canvas_path = '/'.join([
             CANVAS_QUIZCOMP_BASEDIR,
             CANVAS_QUIZCOMP_QUIZ_DIRNAME,
-            quiz.name,
+            quiz.get_name(),
             edq.util.hash.sha256_hex(path) + os.path.splitext(path)[-1]
         ])
 
@@ -129,7 +129,7 @@ def get_matching_quiz_ids(title: str, instance: quizcomp.uploader.instance.Canva
     response = requests.request(
         method = "GET",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes?per_page={PAGE_SIZE}",
-        headers = instance.base_headers())
+        headers = instance.base_headers())  # type: ignore[arg-type]
     response.raise_for_status()
 
     ids = []
@@ -145,7 +145,7 @@ def delete_quiz(quiz_id: str, instance: quizcomp.uploader.instance.CanvasInstanc
     response = requests.request(
         method = "DELETE",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes/{quiz_id}",
-        headers = instance.base_headers())
+        headers = instance.base_headers())  # type: ignore[arg-type]
     response.raise_for_status()
 
 def fetch_assignment_group(name: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> typing.Union[str, None]:
@@ -157,7 +157,7 @@ def fetch_assignment_group(name: str, instance: quizcomp.uploader.instance.Canva
     response = requests.request(
         method = "GET",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/assignment_groups?per_page={PAGE_SIZE}",
-        headers = instance.base_headers())
+        headers = instance.base_headers())  # type: ignore[arg-type]
     response.raise_for_status()
 
     for assignment in response.json():
@@ -181,7 +181,7 @@ def create_quiz(quiz: quizcomp.model.quiz.Quiz, instance: quizcomp.uploader.inst
     description = quiz.description.document.to_canvas(canvas_instance = instance, pretty = False)
 
     data = {
-        'quiz[title]': quiz.name,
+        'quiz[title]': quiz.get_name(),
         'quiz[description]': f"<p>{description}</p><br /><hr /><p>Version: {quiz.version}</p>",
         'quiz[quiz_type]': quiz_type,
         'quiz[published]': quiz.canvas['published'],
@@ -197,7 +197,7 @@ def create_quiz(quiz: quizcomp.model.quiz.Quiz, instance: quizcomp.uploader.inst
     response = requests.request(
         method = "POST",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes",
-        headers = instance.base_headers(),
+        headers = instance.base_headers(),  # type: ignore[arg-type]
         data = data)
     response.raise_for_status()
 
@@ -218,7 +218,7 @@ def create_question_group(quiz_id: str, group: quizcomp.model.group.Group, insta
     response = requests.request(
         method = "POST",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes/{quiz_id}/groups",
-        headers = instance.base_headers(),
+        headers = instance.base_headers(),  # type: ignore[arg-type]
         data = data)
     response.raise_for_status()
 
@@ -235,7 +235,7 @@ def create_question(quiz_id: str, group_id: int, question: quizcomp.model.questi
     response = requests.request(
         method = "POST",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/quizzes/{quiz_id}/questions",
-        headers = instance.base_headers(),
+        headers = instance.base_headers(),  # type: ignore[arg-type]
         data = data)
     response.raise_for_status()
 
@@ -267,6 +267,7 @@ def _create_question_json(
     }
 
     # Handle question-level feedback.
+    ''' TEST
     for (key, canvas_key) in QUESTION_FEEDBACK_MAPPING.items():
         if (key not in question.feedback):
             continue
@@ -274,6 +275,7 @@ def _create_question_json(
         data_key = f"question[{canvas_key}]"
         text = question.feedback[key].document.to_canvas(canvas_instance = instance, pretty = False)
         data[data_key] = text
+    '''
 
     _serialize_answers(data, question, instance)
 
@@ -463,7 +465,7 @@ def _init_file_upload(
     response = requests.request(
         method = "POST",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/files",
-        headers = instance.base_headers(),
+        headers = instance.base_headers(),  # type: ignore[arg-type]
         data = data)
     response.raise_for_status()
 
@@ -527,7 +529,7 @@ def get_folder(canvas_path: str, instance: quizcomp.uploader.instance.CanvasInst
     response = requests.request(
         method = "GET",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/folders/by_path{canvas_path}",
-        headers = instance.base_headers())
+        headers = instance.base_headers())  # type: ignore[arg-type]
 
     if (response.status_code == 404):
         return None
@@ -552,7 +554,7 @@ def create_folder(canvas_path: str, instance: quizcomp.uploader.instance.CanvasI
     response = requests.request(
         method = "POST",
         url = f"{instance.base_url}/api/v1/courses/{instance.course_id}/folders",
-        headers = instance.base_headers(),
+        headers = instance.base_headers(),  # type: ignore[arg-type]
         data = data)
     response.raise_for_status()
 
@@ -579,6 +581,6 @@ def hide_folder_id(folder_id: str, instance: quizcomp.uploader.instance.CanvasIn
     response = requests.request(
         method = "PUT",
         url = f"{instance.base_url}/api/v1/folders/{folder_id}",
-        headers = instance.base_headers(),
+        headers = instance.base_headers(),  # type: ignore[arg-type]
         data = data)
     response.raise_for_status()

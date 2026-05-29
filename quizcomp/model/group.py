@@ -11,7 +11,6 @@ import quizcomp.constants
 import quizcomp.model.base
 import quizcomp.model.config
 import quizcomp.model.question
-import quizcomp.util.serial
 
 DEFAULT_PICK_COUNT: int = 1
 """ The default number of questions chosen from this group. """
@@ -34,7 +33,7 @@ class Group(quizcomp.model.base.CoreType):
         super().__init__(children = children, **kwargs)
 
         if (pick_count < 0):
-            raise quizcomp.errors.QuizValidationError(f"Pick count must be non-negative, found: {pick_count}.", context = context)
+            raise quizcomp.errors.QuizValidationError(f"Pick count must be non-negative, found: {pick_count}.", context = self)
 
         self.pick_count: int = pick_count
         """ The number of questions to choose from this group. """

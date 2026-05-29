@@ -16,6 +16,8 @@ class TestCoreType(edq.testing.unittest.BaseTest):
                 typing.Dict[str, typing.Any],
                 typing.Dict[str, typing.Any],
                 typing.Dict[str, typing.Any],
+                str,
+                str,
                 typing.Any,
                 typing.Union[str, None]
         ]] = [

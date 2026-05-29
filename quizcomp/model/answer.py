@@ -9,9 +9,10 @@ import edq.util.enum
 import edq.util.serial
 
 import quizcomp.errors
+import quizcomp.model.constants
 import quizcomp.model.feedback
 
-DEFAULT_CHOICES: typing.List[str] = string.ascii_uppercase
+DEFAULT_CHOICES: typing.List[str] = list(string.ascii_uppercase)
 MAX_CHOICES: int = len(DEFAULT_CHOICES)
 
 class NumericAnswerType(enum.StrEnum):
@@ -65,7 +66,7 @@ class TextOption(edq.util.serial.PODConverter):
 
     @classmethod
     def from_pod(cls: typing.Type[TextOption],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> TextOption:
         label = context.extra.get('label', '')
@@ -90,7 +91,7 @@ class TextOption(edq.util.serial.PODConverter):
 
     @classmethod
     def from_pod_with_error(cls: typing.Type[TextOption],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             label: str,
             ) -> TextOption:
@@ -128,7 +129,7 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
     @classmethod
     def from_pod(cls: typing.Type[NumericOption],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> NumericOption:
         label = context.extra.get('label', '')
@@ -191,7 +192,7 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
     @classmethod
     def from_pod_with_error(cls: typing.Type[NumericOption],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             label: str,
             ) -> NumericOption:
@@ -312,7 +313,7 @@ class QuestionAnswers(edq.util.serial.PODConverter):
 
     @classmethod
     def from_pod(cls: typing.Type[QuestionAnswers],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> QuestionAnswers:
         """
@@ -419,7 +420,7 @@ class TextAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type[TextAnswers],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> TextAnswers:
         if (data is None):
@@ -479,7 +480,7 @@ class MultiplePartTextAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type[MultiplePartTextAnswers],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
         quizcomp.errors.check_type(data, dict, "'answers'", context = context)
@@ -528,7 +529,7 @@ class ChoiceAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type[ChoiceAnswers],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> ChoiceAnswers:
         min_correct = context.extra.get('min_correct', 0)
@@ -601,7 +602,7 @@ class TFAnswers(ChoiceAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type[TFAnswers],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) ->  TFAnswers:
         if (isinstance(data, bool)):
@@ -653,7 +654,7 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type[MultiplePartTextAnswers],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
         quizcomp.errors.check_type(data, dict, "'answers'", context = context)
@@ -776,9 +777,9 @@ class MatchingAnswers(QuestionAnswers):
         lefts = []
         rights = []
 
-        for (left, right) in self.pairs:
-            lefts.append(left)
-            rights.append(right)
+        for (pair_left, pair_right) in self.pairs:
+            lefts.append(pair_left)
+            rights.append(pair_right)
 
         for distractor in self.distractors:
             rights.append(distractor)
@@ -798,7 +799,7 @@ class MatchingAnswers(QuestionAnswers):
             right = rights[right_index]
             right_marker = quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[i])
 
-            left = None
+            left: typing.Union[TextOption, None] = None
             left_marker = None
             correct_answer = None
             if (i < len(left_indexes)):
@@ -817,7 +818,7 @@ class MatchingAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type[MatchingAnswers],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> MatchingAnswers:
         quizcomp.errors.check_type(data, dict, "'answers'", context = context)
@@ -918,7 +919,7 @@ class NumericAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type[MultiplePartTextAnswers],
-            data: PODType,
+            data: edq.util.serial.PODType,
             context: edq.util.serial.SerializationContext,
             ) -> MultiplePartTextAnswers:
         quizcomp.errors.check_type(data, list, "'answers'", context = context)

@@ -19,6 +19,7 @@ Core types (quiz, group, question) will additionally include:
  - `number: int` -- The number that should be displayed for this object (if any), e.g., a question's number.
 """
 
+import logging
 import os
 import re
 import typing
@@ -36,6 +37,8 @@ import quizcomp.model.group
 import quizcomp.model.question
 import quizcomp.model.quiz
 import quizcomp.parser.document
+
+_logger = logging.getLogger(__name__)
 
 TEMPLATE_FILENAME_QUIZ: str = 'quiz.template'
 TEMPLATE_FILENAME_QUESTION_SEPARATOR: str = 'question-separator.template'
@@ -112,7 +115,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         return self._convert_quiz(quiz)
 
-    def convert_variant(self, variant: quizcomp.model.quiz.variant, **kwargs: typing.any) -> str:
+    def convert_variant(self, variant: quizcomp.model.quiz.Variant, **kwargs: typing.Any) -> str:
         """ Convert a standard quiz variant. """
 
         return self._convert_quiz(variant)
@@ -294,7 +297,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         Write images to a common directory.
         """
 
-        seen_sources = {}
+        seen_sources: typing.Dict[str, str] = {}
 
         for document in quiz.collect_all_documents():
             image_tokens = document.collect_images()
@@ -308,6 +311,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
                 if ((original_source is None) or len(str(original_source)) == 0):
                     _logger.warning("Could not locate image source for '%s'.", image_token.content)
+
+                original_source = str(original_source)
 
                 if (original_source in seen_sources):
                     new_source = seen_sources[original_source]
@@ -330,7 +335,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
         is_http = re.match(r'^http(s)?://', source)
         if (is_http):
-            url_path = urllib.parse.urlsplit(path).path
+            url_path = urllib.parse.urlsplit(source).path
             filename = url_path.split('/')[-1]
         else:
             filename = os.path.basename(source)
@@ -345,7 +350,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         count = 0
         while (os.path.exists(path)):
             filename = f"{basename}_{count:03d}{ext}"
-            path = os.path.join(image_base_dir, filename)
+            path = os.path.join(self.image_base_dir, filename)
             count += 1
 
             if (count >= MAX_IMAGE_RENAMES):
@@ -383,5 +388,5 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
                 if (original_source is None):
                     continue
 
-                image_token.attrSet('src', original_source)
-                image_token.attrSet('original_src', None)
+                image_token.attrSet('src', str(original_source))
+                image_token.attrs.pop('original_src', None)

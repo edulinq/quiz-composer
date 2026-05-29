@@ -145,7 +145,7 @@ class Question(quizcomp.model.base.CoreType):
 
     @classmethod
     def _collect_prompt(cls,
-            text: typing.Union[quizcomp.parser.document.ParsedDocument:, str, None],
+            text: typing.Union[quizcomp.parser.document.ParsedDocument, str, None],
             path: typing.Union[str, None],
             context: edq.util.serial.SerializationContext,
             ) -> quizcomp.parser.document.ParsedDocument:

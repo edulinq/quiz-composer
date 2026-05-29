@@ -45,7 +45,7 @@ class CoreType(edq.util.serial.DictConverter):
             style: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_first: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
             style_last: typing.Union[typing.Dict[str, edq.util.serial.POD], None] = None,
-            context: typing.Union[SerializationContext, None] = None,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             **kwargs: typing.Any) -> None:
         if (base_dir is None):
             if (context is not None):
@@ -217,7 +217,7 @@ class CoreType(edq.util.serial.DictConverter):
             return self.parent.get_child_points()
 
         if (check_children and (len(self.children) > 0)):
-            total = 0
+            total = 0.0
             for child in self.children:
                 total += child.get_points()
 
@@ -245,7 +245,7 @@ class CoreType(edq.util.serial.DictConverter):
         Return the output of get_points() rounded and formatted.
         """
 
-        precision = self.get_config(quizcomp.model.config.OPTION_POINT_PRECISION)
+        precision = int(self.get_config(quizcomp.model.config.OPTION_POINT_PRECISION))  # type: ignore[arg-type]
 
         points = self.get_points()
 
@@ -396,5 +396,5 @@ class CoreType(edq.util.serial.DictConverter):
 
         super().to_path(path, context)
 
-    def copy(self, context: typing.Union[SerializationContext, None] = None) -> 'CoreType':
+    def copy(self, context: typing.Union[edq.util.serial.SerializationContext, None] = None) -> 'CoreType':
         return copy.deepcopy(self)

@@ -72,7 +72,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
     def convert_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> str:
         if (self.out_path is None):
-            out_path = f'{quiz.name}.qti.zip'
+            out_path = f'{quiz.get_name()}.qti.zip'
         else:
             out_path = self.out_path
 
@@ -80,7 +80,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
 
         temp_base_dir = edq.util.dirent.get_temp_dir(prefix = 'quizcomp-qti-')
 
-        temp_dir = os.path.join(temp_base_dir, quiz.name)
+        temp_dir = os.path.join(temp_base_dir, quiz.get_name())
 
         images_dir = os.path.join(temp_dir, OUT_DIR_IMAGES)
         edq.util.dirent.mkdir(images_dir)
@@ -97,7 +97,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
         self._convert_assessment_meta(quiz, quiz_dir)
         self._convert_manifest(quiz, temp_dir)
 
-        shutil.make_archive(os.path.splitext(out_path)[0], 'zip', temp_base_dir, quiz.name)
+        shutil.make_archive(os.path.splitext(out_path)[0], 'zip', temp_base_dir, quiz.get_name())
 
         logging.info("Created QTI quiz at '%s'.", out_path)
         return out_path
@@ -127,7 +127,7 @@ class QTITemplateConverter(quizcomp.converter.template.TemplateConverter):
             files.append({
                 'type': 'image',
                 'id': os.path.splitext(filename)[0],
-                'path': '/'.join([quiz.name, OUT_DIR_IMAGES, filename]),
+                'path': '/'.join([quiz.get_name(), OUT_DIR_IMAGES, filename]),
                 'filename': filename,
             })
 

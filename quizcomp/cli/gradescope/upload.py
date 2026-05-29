@@ -40,8 +40,8 @@ def run_cli(args: argparse.Namespace) -> int:
 
         uploader = quizcomp.uploader.gradescope.GradeScopeUploader(args.course_id, args.user, args.password,
                 save_http = args.save_http)
-        uploader.create_assignment_group(quiz.name, ids)
-        logging.info("Created GradeScope Assignment Group: '%s'.", quiz.name)
+        uploader.create_assignment_group(quiz.get_name(), ids)
+        logging.info("Created GradeScope Assignment Group: '%s'.", quiz.get_name())
 
     path = os.path.join(out_dir, quizcomp.util.pdf.OPTIONS_FILENAME)
     edq.util.json.dump_path(options, path, indent = 4)

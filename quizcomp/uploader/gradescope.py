@@ -134,7 +134,7 @@ class GradeScopeUploader:
             'assignment_ids[]': gradescope_ids,
         }
 
-        response = session.post(post_url, params = data, headers = headers)
+        response = session.post(post_url, params = data, headers = headers)  # type: ignore[arg-type]
         response.raise_for_status()
 
     def get_bounding_boxes(self,
@@ -148,7 +148,7 @@ class GradeScopeUploader:
         # {NAME_BOX_ID: box, ID_BOX_ID: box, SIGNATURE_BOX_ID: box}
         special_boxes: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
 
-        path = os.path.join(base_dir, f"{variant.name}.pos")
+        path = os.path.join(base_dir, f"{variant.get_name()}.pos")
         if (not os.path.exists(path)):
             raise ValueError(f"Could not find path for quiz bounding boxes: '{path}'.")
 
@@ -334,7 +334,7 @@ class GradeScopeUploader:
             ) -> typing.Tuple[str, bool]:
         """ Upload a variant. """
 
-        path = os.path.join(base_dir, f"{variant.name}.pdf")
+        path = os.path.join(base_dir, f"{variant.get_name()}.pdf")
         if (not os.path.exists(path)):
             raise ValueError(f"Could not find path for quiz pdf: '{path}'.")
 
@@ -348,7 +348,7 @@ class GradeScopeUploader:
         assignment_id = self.get_assignment_id(session, variant)
         if (assignment_id is not None):
             if (not self.force):
-                logging.info("Assignment '%s' (%s) already exists. Skipping upload.", variant.name, assignment_id)
+                logging.info("Assignment '%s' (%s) already exists. Skipping upload.", variant.get_name(), assignment_id)
                 return assignment_id, False
 
             self.delete_assignment(session, assignment_id)
@@ -382,7 +382,7 @@ class GradeScopeUploader:
         }
 
         # Login.
-        response = session.post(URL_LOGIN, params = data)
+        response = session.post(URL_LOGIN, params = data)  # type: ignore[arg-type]
         response.raise_for_status()
 
     def get_authenticity_token(self, session: requests.Session, url: str, action: typing.Union[str, None] = None) -> str:
@@ -445,7 +445,7 @@ class GradeScopeUploader:
             id = str(row['id']).strip().removeprefix('assignment_')
             name = row['title'].strip()
 
-            if (name == variant.name):
+            if (name == variant.get_name()):
                 return id
 
         return None
@@ -473,14 +473,14 @@ class GradeScopeUploader:
 
         data = {
             'authenticity_token': token,
-            'assignment[title]': variant.name,
+            'assignment[title]': variant.get_name(),
             'assignment[submissions_anonymized]': 0,
             'assignment[student_submission]': "false",
             'assignment[when_to_create_rubric]': 'while_grading',
             'assignment[scoring_type]': 'negative',
         }
 
-        path = os.path.join(base_dir, f"{variant.name}.pdf")
+        path = os.path.join(base_dir, f"{variant.get_name()}.pdf")
         files = {
             'template_pdf': (
                 os.path.basename(path),
@@ -493,7 +493,7 @@ class GradeScopeUploader:
         response.raise_for_status()
 
         if (len(response.history) == 0):
-            raise ValueError(f"Failed to create assignment. Is the name ('{variant.name}') unique?")
+            raise ValueError(f"Failed to create assignment. Is the name ('{variant.get_name()}') unique?")
 
         match = re.search(r'/assignments/(\d+)/outline/edit', response.history[0].text)
         if (match is None):
@@ -516,7 +516,7 @@ class GradeScopeUploader:
         patch_outline_url = URL_PATCH_OUTLINE % (self.course_id, assignment_id)
         response = session.patch(patch_outline_url,
             data = edq.util.json.dumps(outline, separators = (',', ':')),
-            headers = headers,
+            headers = headers,  # type: ignore[arg-type]
         )
         response.raise_for_status()
 
@@ -553,7 +553,7 @@ class GradeScopeUploader:
             },
         }
 
-        response = session.post(url, json = data, headers = headers)
+        response = session.post(url, json = data, headers = headers)  # type: ignore[arg-type]
         response.raise_for_status()
 
     def fetch_question_ids(self, session: requests.Session, assignment_id: str) -> typing.Tuple[typing.Dict[str, typing.List[str]], str]:

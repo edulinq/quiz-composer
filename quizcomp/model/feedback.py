@@ -69,7 +69,7 @@ class Feedback(edq.util.serial.PODConverter):
         if (self.is_empty()):
             return None
 
-        if ((self.correct is None) and (self.incorrect is None)):
+        if ((self.general is not None) and (self.correct is None) and (self.incorrect is None)):
             return self.general.to_pod(context)
 
         return super().to_pod(context)

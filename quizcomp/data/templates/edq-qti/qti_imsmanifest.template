@@ -6,7 +6,7 @@
         <imsmd:lom>
             <imsmd:general>
                 <imsmd:title>
-                    <imsmd:string>{{ quiz.name }}</imsmd:string>
+                    <imsmd:string>{{ quiz.get_name() }}</imsmd:string>
                 </imsmd:title>
             </imsmd:general>
             {% if (quiz.date is not none) %}

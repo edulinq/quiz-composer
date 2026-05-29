@@ -17,7 +17,6 @@ import quizcomp.model.base
 import quizcomp.model.group
 import quizcomp.model.question
 import quizcomp.parser.document
-import quizcomp.util.serial
 
 DUMMY_QUIZ_DATA: typing.Dict[str, typing.Any] = {
     'name': 'Dummy Name',
@@ -285,7 +284,7 @@ class Quiz(quizcomp.model.base.CoreType):
 
         logging.debug("Creating %d variants with seed %d.", count, seed)
 
-        used_question_indexes = [set() for _ in self.children]
+        used_question_indexes: typing.List[typing.Set[int]] = [set() for _ in self.children]
         variants = []
 
         for i in range(count):

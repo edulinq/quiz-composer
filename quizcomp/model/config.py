@@ -53,7 +53,7 @@ A custom header for some object like a question, this would be used instead of s
 Defaults to nothing.
 """
 
-OPTION_PICK_WITH_REPLACEMENT: str = Option('attributes', 'pick_with_replacement', True)
+OPTION_PICK_WITH_REPLACEMENT: Option = Option('attributes', 'pick_with_replacement', True)
 """
 Whether or not questions are chosen with replacement between variants.
 True means that different variants can have the same questions.

@@ -105,10 +105,10 @@ def make(
     if (base_out_dir is None):
         base_out_dir = edq.util.dirent.get_temp_path(prefix = 'quizcomp_pdf_', rm = False)
 
-    out_dir = os.path.join(base_out_dir, quiz.name)
+    out_dir = os.path.join(base_out_dir, quiz.get_name())
     edq.util.dirent.mkdir(out_dir)
 
-    _logger.info("Writing TeX/PDF quiz ('%s') to '%s'.", quiz.name, out_dir)
+    _logger.info("Writing TeX/PDF quiz ('%s') to '%s'.", quiz.get_name(), out_dir)
 
     if (seed is None):
         seed = random.randint(0, 2**64)
@@ -122,7 +122,7 @@ def make(
         'out_dir': out_dir,
         'quiz': {
             'path': quiz_path,
-            'name': quiz.name,
+            'name': quiz.get_name(),
             'version': quiz.version,
         },
     }
@@ -136,12 +136,12 @@ def make(
     variants = quiz.create_variants(count = num_variants, seed = seed)
 
     for (i, variant) in enumerate(variants):
-        out_path = os.path.join(out_dir, f"{variant.name}.json")
+        out_path = os.path.join(out_dir, f"{variant.get_name()}.json")
         variant.to_path(out_path)
 
         make_pdf(variant, out_dir = out_dir, is_key = False, skip_tex = skip_tex, skip_pdf = skip_pdf)
 
-        name = variant.name
+        name = variant.get_name()
 
         has_key = False
         if (not skip_key):
@@ -192,7 +192,7 @@ def make_pdf(
 
     image_dir = os.path.join(out_dir, 'images')
 
-    out_path = os.path.join(out_dir, f"{variant.name}.tex")
+    out_path = os.path.join(out_dir, f"{variant.get_name()}.tex")
 
     if (not skip_tex):
         converter = quizcomp.converter.tex.TexTemplateConverter(
