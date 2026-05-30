@@ -17,8 +17,6 @@ _logger = logging.getLogger(__name__)
 DEFAULT_PICK_COUNT: int = 1
 """ The default number of questions chosen from this group. """
 
-# TEST - Make some tests.
-
 class Group(quizcomp.model.base.CoreType):
     """
     A group/bank of questions for a quiz.

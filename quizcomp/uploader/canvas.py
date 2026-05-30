@@ -110,7 +110,7 @@ def upload_canvas_files(
     so upload all images in one method so we don't upload duplicates.
     """
 
-    # TEST - Removed
+    # NOTE(eq) - Removed. Will be implemented in LMS Toolkit.
     return {}
 
 def get_matching_quiz_ids(title: str, instance: quizcomp.uploader.instance.CanvasInstanceInfo) -> typing.List[str]:
@@ -401,8 +401,6 @@ def _serialize_fimb_answers(
 
 def _serialize_numeric_answers(
         data: typing.Dict[str, typing.Any],
-        # TEST
-        # answers: typing.List[quizcomp.model.text.NumericChoice],
         answers: typing.List[typing.Any],
         instance: quizcomp.uploader.instance.CanvasInstanceInfo,
         ) -> None:
