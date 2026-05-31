@@ -166,18 +166,6 @@ class ParsedDocument(edq.util.serial.PODSerializer):
             ) -> str:
         return self.text
 
-    def __eq__(self, other: object) -> bool:
-        if (not isinstance(other, ParsedDocument)):
-            return False
-
-        return (self.text == other.text)
-
-    def __lt__(self, other: 'ParsedDocument') -> bool:
-        return self.text < other.text
-
-    def __hash__(self) -> int:
-        return hash(self.text)
-
     @classmethod
     def parse_text(cls,
             text: typing.Union[str, 'ParsedDocument'],

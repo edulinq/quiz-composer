@@ -102,28 +102,31 @@ class Group(quizcomp.model.base.CoreType):
 
         questions = []
         for index in indexes:
-            question = self.children[index].copy()
+            question = typing.cast(quizcomp.model.question.Question, self.children[index].copy())
             question.shuffle(rng)
 
             questions.append(question)
 
         return questions
 
-    def to_pod(self,
+    def to_dict(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
-            ) -> edq.util.serial.PODType:
-        data = super().to_pod(context)
+            ) -> typing.Dict[str, edq.util.serial.PODType]:
+        data = super().to_dict(context)
         data['questions'] = data.pop('children', data.get('questions', None))
         return data
 
     @classmethod
-    def from_pod(cls,
-            data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
+    def from_dict(cls,
+            data: typing.Dict[str, edq.util.serial.PODType],
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'Group':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
         # Expand any question paths that be directories.
         cls._expand_questions(data, context)
-        return super().from_pod(data, context)
+        return super().from_dict(data, context)
 
     @classmethod
     def _expand_questions(cls,
@@ -131,15 +134,21 @@ class Group(quizcomp.model.base.CoreType):
             context: edq.util.serial.SerializationContext,
             ) -> None:
         """
-        Expand the 'questions' field.
+        Expand the 'questions' field into the 'children' field,
+        in a form that Question.from_pod() can read
+        (which includes a path to a question).
+
         This allows questions to be provided as a path.
         If that path is a dir, then recursivley load all questions found in that dir.
         """
 
-        new_questions = []
+        new_questions: typing.List[edq.util.serial.PODType] = []
         raw_questions = data.pop('questions', data.get('children', []))
 
-        for raw_question in raw_questions:
+        quizcomp.model.errors.check_type(raw_questions, list, "'questions'", context = context)
+        old_questions = typing.cast(typing.List[edq.util.serial.PODType], raw_questions)
+
+        for raw_question in old_questions:
             if (not isinstance(raw_question, str)):
                 new_questions.append(raw_question)
                 continue

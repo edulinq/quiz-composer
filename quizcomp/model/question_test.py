@@ -71,10 +71,10 @@ def _get_question_reparse_test_method(path: str) -> typing.Callable:
 
     def __method(self: QuestionsTest) -> None:
         question = self.load_question(path)
-        question_data = question.to_pod()
+        question_data = question.to_dict()
 
-        new_question = quizcomp.model.question.Question.from_pod(question_data.copy(), edq.util.serial.SerializationContext())
-        new_question_data = new_question.to_pod()
+        new_question = quizcomp.model.question.Question.from_dict(question_data.copy(), edq.util.serial.SerializationContext())
+        new_question_data = new_question.to_dict()
 
         self.assertJSONDictEqual(question_data, new_question_data)
 
@@ -85,7 +85,7 @@ def _get_question_serial_test_method(path: str, serial_path: str) -> typing.Call
 
     def __method(self: QuestionsTest) -> None:
         question = self.load_question(path)
-        actual_data = question.to_pod()
+        actual_data = question.to_dict()
 
         expected_data = edq.util.json.load_path(serial_path)
 

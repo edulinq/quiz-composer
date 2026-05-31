@@ -91,8 +91,11 @@ class Quiz(quizcomp.model.base.CoreType):
     @classmethod
     def prep_init_data(cls,
             data: typing.Dict[str, typing.Any],
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> typing.Dict[str, typing.Any]:
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
         data = super().prep_init_data(data, context)
 
         data['description'] = cls._collect_description(data, context)
@@ -150,20 +153,20 @@ class Quiz(quizcomp.model.base.CoreType):
 
         return quizcomp.parser.document.ParsedDocument()
 
-    def to_pod(self,
+    def to_dict(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
-            ) -> edq.util.serial.PODType:
-        data = super().to_pod(context)
+            ) -> typing.Dict[str, edq.util.serial.PODType]:
+        data = super().to_dict(context)
         data['groups'] = data.pop('children', data.get('groups', None))
         return data
 
     @classmethod
-    def from_pod(cls,
-            data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
+    def from_dict(cls,
+            data: typing.Dict[str, edq.util.serial.PODType],
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'Quiz':
         data['children'] = data.pop('groups', data.get('children', None))
-        return super().from_pod(data, context)
+        return super().from_dict(data, context)
 
     def create_variant(self,
             seed: typing.Union[int, None] = None,
@@ -218,7 +221,7 @@ class Quiz(quizcomp.model.base.CoreType):
 
         _logger.debug("Creating %d variants with seed %d.", count, seed)
 
-        used_question_indexes: typing.List[typing.Set[int]] = [set() for _ in self.children]
+        all_used_question_indexes: typing.List[typing.Set[int]] = [set() for _ in self.children]
         variants = []
 
         for i in range(count):
@@ -226,21 +229,22 @@ class Quiz(quizcomp.model.base.CoreType):
             if ((count > 1) or (include_solo_identifier)):
                 variant_id = identifiers[i]
 
-            variants.append(self._create_variant(variant_id, rng, used_question_indexes, all_questions))
+            variants.append(self._create_variant(variant_id, rng, all_used_question_indexes, all_questions))
 
         return variants
 
     def _create_variant(self,
             variant_id: typing.Union[str, None],
             rng: random.Random,
-            used_question_indexes: typing.List[typing.Set[int]],
+            all_used_question_indexes: typing.List[typing.Set[int]],
             all_questions: bool,
             ) -> 'Variant':
         """ Create a single variant based on this quiz. """
 
         new_groups = []
-        for group in self.children:
-            questions = group.choose_variant_questions(all_questions, used_question_indexes, rng)
+        for (i, raw_group) in enumerate(self.children):
+            group = typing.cast(quizcomp.model.group.Group, raw_group)
+            questions = group.choose_variant_questions(all_questions, all_used_question_indexes[i], rng)
 
             group_data = vars(group).copy()
             group_data['children'] = questions
@@ -296,7 +300,7 @@ class Variant(Quiz):
         Get a "dummy" variant that has no real information.
         """
 
-        question = question.copy()
+        question = typing.cast(quizcomp.model.question.Question, question.copy())
         group = quizcomp.model.group.Group(children = [question], **DUMMY_GROUP_DATA.copy())
         quiz = Quiz(children = [group], **DUMMY_QUIZ_DATA.copy())
 

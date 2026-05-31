@@ -66,8 +66,11 @@ class Question(quizcomp.model.base.CoreType):
     @classmethod
     def from_pod(cls,
             data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'Question':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
         if (isinstance(data, dict)):
             return super().from_pod(data, context)
 
@@ -86,8 +89,11 @@ class Question(quizcomp.model.base.CoreType):
     @classmethod
     def prep_init_data(cls,
             data: typing.Dict[str, typing.Any],
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> typing.Dict[str, typing.Any]:
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
         raw_question_type = data.get('question_type', None)
         if (raw_question_type is None):
             raise quizcomp.model.errors.QuestionValidationError("Question data does not include 'question_type'.", context = context)

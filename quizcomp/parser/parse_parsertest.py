@@ -4,6 +4,7 @@ import re
 import typing
 
 import edq.util.json
+import edq.util.serial
 
 import quizcomp.model.constants
 import quizcomp.parser.common
@@ -140,8 +141,9 @@ def _get_bad_parse_test(
     """ Get a test method for an invalid document. """
 
     def __method(self: TestParser) -> None:
+        serial_context = edq.util.serial.SerializationContext(base_dir = context.base_dir, source_path = context.source_path)
         try:
-            quizcomp.parser.document.ParsedDocument.parse_text(text, context)
+            quizcomp.parser.document.ParsedDocument.parse_text(text, serial_context)
         except Exception:
             # Expected.
             return

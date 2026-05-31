@@ -6,6 +6,7 @@ import string
 import typing
 
 import edq.util.enum
+import edq.util.parse
 import edq.util.serial
 
 import quizcomp.model.constants
@@ -67,8 +68,11 @@ class TextOption(edq.util.serial.PODConverter):
     @classmethod
     def from_pod(cls: typing.Type['TextOption'],
             data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'TextOption':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
         label = context.extra.get('label', '')
 
         if (isinstance(data, str)):
@@ -86,7 +90,7 @@ class TextOption(edq.util.serial.PODConverter):
                     f"{label} has no 'text' field set.",
                     context = context)
 
-        parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(raw_text, context)
+        parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(str(raw_text), context)
         feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), context)
 
         return TextOption(parsed_text, feedback)
@@ -94,12 +98,16 @@ class TextOption(edq.util.serial.PODConverter):
     @classmethod
     def from_pod_with_error(cls: typing.Type['TextOption'],
             data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
             label: str,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'TextOption':
         """ Wrap from_pod() with some error information. """
 
-        context = context.copy()
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+        else:
+            context = context.copy()
+
         context.extra['label'] = label
 
         return cls.from_pod(data, context)
@@ -131,12 +139,16 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
     @classmethod
     def from_pod(cls: typing.Type['NumericOption'],
-            data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
+            raw_data: edq.util.serial.PODType,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'NumericOption':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
         label = context.extra.get('label', '')
 
-        quizcomp.model.errors.check_type(data, dict, label, context = context)
+        quizcomp.model.errors.check_type(raw_data, dict, label, context = context)
+        data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_data)
 
         raw_answer_type = data.get('type', None)
         if (not edq.util.enum.has_value(NumericAnswerType, raw_answer_type)):
@@ -223,12 +235,16 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
     @classmethod
     def from_pod_with_error(cls: typing.Type['NumericOption'],
             data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
             label: str,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'NumericOption':
         """ Wrap from_pod() with some error information. """
 
-        context = context.copy()
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+        else:
+            context = context.copy()
+
         context.extra['label'] = label
 
         return cls.from_pod(data, context)
@@ -317,7 +333,7 @@ class Choice(TextOption):
     def to_pod(self,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> edq.util.serial.PODType:
-        data = {
+        data: typing.Dict[str, edq.util.serial.PODType] = {
             'text': self.text.to_pod(context),
             'correct': self.correct,
         }
@@ -344,7 +360,7 @@ class QuestionAnswers(edq.util.serial.PODConverter):
     @classmethod
     def from_pod(cls: typing.Type['QuestionAnswers'],
             data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'QuestionAnswers':
         """
         Create an answers object for a specific question type from some serialized data
@@ -354,6 +370,9 @@ class QuestionAnswers(edq.util.serial.PODConverter):
 
         This function will not return a generic QuestionAnswers, but a subclass of QuestionAnswers.
         """
+
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
 
         raw_question_type = context.extra.get('question_type', None)
 
@@ -454,10 +473,13 @@ class TextAnswers(QuestionAnswers):
     @classmethod
     def from_pod(cls: typing.Type[TextAnswers],
             data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> TextAnswers:
         if (data is None):
             return TextAnswers()
+
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
 
         if (isinstance(data, str)):
             parsed_text = quizcomp.parser.document.ParsedDocument.parse_text(data, context)
@@ -467,15 +489,16 @@ class TextAnswers(QuestionAnswers):
             data = [data]
 
         quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
+        list_data = typing.cast(typing.List[edq.util.serial.PODType], data)
 
-        if (len(data) == 0):
+        if (len(list_data) == 0):
             return TextAnswers()
 
         options = []
-        for (i, raw_option) in enumerate(data):
+        for (i, raw_option) in enumerate(list_data):
             label = f"Choice at index {i}"
 
-            option = TextOption.from_pod_with_error(raw_option, context, label)
+            option = TextOption.from_pod_with_error(raw_option, label, context)
             options.append(option)
 
         return TextAnswers(options)
@@ -512,11 +535,15 @@ class MultiplePartTextAnswers(QuestionAnswers):
         return {key: value.to_pod(context) for (key, value) in self.parts.items()}
 
     @classmethod
-    def from_pod(cls: typing.Type[MultiplePartTextAnswers],
-            data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
-            ) -> MultiplePartTextAnswers:
-        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
+    def from_pod(cls: typing.Type['MultiplePartTextAnswers'],
+            raw_data: edq.util.serial.PODType,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            ) -> 'MultiplePartTextAnswers':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
+        quizcomp.model.errors.check_type(raw_data, dict, "'answers'", context = context)
+        data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_data)
 
         parts = {}
         for (key, raw_options) in data.items():
@@ -561,16 +588,20 @@ class ChoiceAnswers(QuestionAnswers):
         return [(quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[i]), choice) for (i, choice) in enumerate(self.choices)]
 
     @classmethod
-    def from_pod(cls: typing.Type[ChoiceAnswers],
-            data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
-            ) -> ChoiceAnswers:
+    def from_pod(cls: typing.Type['ChoiceAnswers'],
+            raw_data: edq.util.serial.PODType,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            ) -> 'ChoiceAnswers':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
         min_correct = context.extra.get('min_correct', 0)
         max_correct = context.extra.get('max_correct', MAX_CHOICES)
         min_incorrect = context.extra.get('min_incorrect', 0)
         max_incorrect = context.extra.get('max_incorrect', MAX_CHOICES)
 
-        quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
+        quizcomp.model.errors.check_type(raw_data, list, "'answers'", context = context)
+        data = typing.cast(typing.List[edq.util.serial.PODType], raw_data)
 
         raw_choices: typing.List[typing.Any] = typing.cast(list, data)
 
@@ -586,8 +617,9 @@ class ChoiceAnswers(QuestionAnswers):
             label = f"Choice at index {i}"
 
             quizcomp.model.errors.check_type(raw_choice, dict, label, context = context)
+            choice_data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_choice)
 
-            raw_correct = raw_choice.get('correct', None)
+            raw_correct = choice_data.get('correct', None)
             if (raw_correct is None):
                 raise quizcomp.model.errors.QuestionValidationError(f"{label} has no 'correct' field set.", context = context)
 
@@ -602,7 +634,7 @@ class ChoiceAnswers(QuestionAnswers):
             else:
                 num_incorrect += 1
 
-            option = TextOption.from_pod_with_error(raw_choice, context, label)
+            option = TextOption.from_pod_with_error(choice_data, label, context)
             choices.append(Choice(option.text, correct, option.feedback))
 
         if (num_correct < min_correct):
@@ -636,10 +668,13 @@ class TFAnswers(ChoiceAnswers):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def from_pod(cls: typing.Type[TFAnswers],
+    def from_pod(cls: typing.Type['TFAnswers'],
             data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
-            ) ->  TFAnswers:
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            ) ->  'TFAnswers':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
         if (isinstance(data, bool)):
             choices = [
                 Choice(quizcomp.parser.document.ParsedDocument.parse_text("True", context), data),
@@ -688,11 +723,15 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
         return {key: value.to_pod(context) for (key, value) in self.parts.items()}
 
     @classmethod
-    def from_pod(cls: typing.Type[MultiplePartTextAnswers],
-            data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
-            ) -> MultiplePartTextAnswers:
-        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
+    def from_pod(cls: typing.Type['MultiplePartChoiceAnswers'],
+            raw_data: edq.util.serial.PODType,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            ) -> 'MultiplePartChoiceAnswers':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
+        quizcomp.model.errors.check_type(raw_data, dict, "'answers'", context = context)
+        data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_data)
 
         parts = {}
         for (key, raw_options) in data.items():
@@ -851,11 +890,15 @@ class MatchingAnswers(QuestionAnswers):
         return options
 
     @classmethod
-    def from_pod(cls: typing.Type[MatchingAnswers],
-            data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
-            ) -> MatchingAnswers:
-        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
+    def from_pod(cls: typing.Type['MatchingAnswers'],
+            raw_data: edq.util.serial.PODType,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            ) -> 'MatchingAnswers':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
+        quizcomp.model.errors.check_type(raw_data, dict, "'answers'", context = context)
+        data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_data)
 
         raw_matches = data.get('matches', None)
         if (raw_matches is None):
@@ -864,14 +907,15 @@ class MatchingAnswers(QuestionAnswers):
                     context = context)
 
         quizcomp.model.errors.check_type(raw_matches, list, "'matches'", context = context)
+        matches = typing.cast(typing.List[edq.util.serial.PODType], raw_matches)
 
-        if (len(raw_matches) == 0):
+        if (len(matches) == 0):
             raise quizcomp.model.errors.QuestionValidationError(
                     "At least one matching pair must be specified for matching questions.",
                     context = context)
 
         pairs = []
-        for (i, raw_match) in enumerate(raw_matches):
+        for (i, raw_match) in enumerate(matches):
             label = f"Match pair at index {i}"
 
             if (isinstance(raw_match, list)):
@@ -880,8 +924,8 @@ class MatchingAnswers(QuestionAnswers):
                         f"{label} has an unexpected size. Expecting two items (left and right) found {len(raw_match)}.",
                         context = context)
 
-                left_option = TextOption.from_pod_with_error(raw_match[0], context, label + ' (left)')
-                right_option = TextOption.from_pod_with_error(raw_match[1], context, label + ' (right)')
+                left_option = TextOption.from_pod_with_error(raw_match[0], label + ' (left)', context)
+                right_option = TextOption.from_pod_with_error(raw_match[1], label + ' (right)', context)
 
                 pairs.append((left_option, right_option))
             elif (isinstance(raw_match, dict)):
@@ -895,8 +939,8 @@ class MatchingAnswers(QuestionAnswers):
                         f"{label} does not have a 'right' key.",
                         context = context)
 
-                left_option = TextOption.from_pod_with_error(raw_match['left'], context, label + ' (left)')
-                right_option = TextOption.from_pod_with_error(raw_match['right'], context, label + ' (right)')
+                left_option = TextOption.from_pod_with_error(raw_match['left'], label + ' (left)', context)
+                right_option = TextOption.from_pod_with_error(raw_match['right'], label + ' (right)', context)
 
                 pairs.append((left_option, right_option))
             else:
@@ -909,20 +953,21 @@ class MatchingAnswers(QuestionAnswers):
             raw_distractors = []
 
         quizcomp.model.errors.check_type(raw_distractors, list, "'distractors'", context = context)
+        distractors = typing.cast(typing.List[edq.util.serial.PODType], raw_distractors)
 
-        distractors = []
-        for (i, raw_distractor) in enumerate(raw_distractors):
+        claen_distractors = []
+        for (i, raw_distractor) in enumerate(distractors):
             label = f"Match distractor at index {i}"
 
-            option = TextOption.from_pod_with_error(raw_distractor, context, label)
-            distractors.append(option)
+            option = TextOption.from_pod_with_error(raw_distractor, label, context)
+            claen_distractors.append(option)
 
-        if ((len(pairs) + len(distractors)) > MAX_CHOICES):
+        if ((len(pairs) + len(claen_distractors)) > MAX_CHOICES):
             raise quizcomp.model.errors.QuestionValidationError(
-                f"Matching question has too many options. Found {(len(pairs) + len(distractors))}, while the max is {MAX_CHOICES}.",
+                f"Matching question has too many options. Found {(len(pairs) + len(claen_distractors))}, while the max is {MAX_CHOICES}.",
                 context = context)
 
-        return MatchingAnswers(pairs, distractors)
+        return MatchingAnswers(pairs, claen_distractors)
 
 class NumericAnswers(QuestionAnswers):
     """ Answers that include a finite set of numeric options. """
@@ -956,11 +1001,15 @@ class NumericAnswers(QuestionAnswers):
         return [option.to_pod(context) for option in self.options]
 
     @classmethod
-    def from_pod(cls: typing.Type[MultiplePartTextAnswers],
-            data: edq.util.serial.PODType,
-            context: edq.util.serial.SerializationContext,
-            ) -> MultiplePartTextAnswers:
-        quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
+    def from_pod(cls: typing.Type['NumericAnswers'],
+            raw_data: edq.util.serial.PODType,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            ) -> 'NumericAnswers':
+        if (context is None):
+            context = edq.util.serial.SerializationContext()
+
+        quizcomp.model.errors.check_type(raw_data, list, "'answers'", context = context)
+        data = typing.cast(typing.List[edq.util.serial.PODType], raw_data)
 
         raw_options: typing.List[typing.Any] = typing.cast(list, data)
 
@@ -971,7 +1020,7 @@ class NumericAnswers(QuestionAnswers):
         for (i, raw_option) in enumerate(raw_options):
             label = f"Option at index {i}"
 
-            option = NumericOption.from_pod_with_error(raw_option, context, label)
+            option = NumericOption.from_pod_with_error(raw_option, label, context)
             options.append(option)
 
         return NumericAnswers(options)

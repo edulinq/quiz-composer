@@ -22,18 +22,18 @@ class CoreType(edq.util.serial.DictConverter):
     serialization_omit_none = True
     serialization_omit_empty = True
     serialization_error_class = quizcomp.model.errors.QuizValidationError
-    serialization_skip_fields = [
+    serialization_skip_fields = {
         'base_dir',
         'parent',
         'source_path',
-    ]
+    }
 
     def __init__(self,
             base_dir: typing.Union[str, None] = None,
             source_path: typing.Union[str, None] = None,
             name: typing.Union[str, None] = None,
             parent: typing.Union['CoreType', None] = None,
-            children: typing.Union[typing.List['CoreType'], None] = None,
+            children: typing.Union[typing.Sequence['CoreType'], None] = None,
             points: typing.Union[float, None] = None,
             lms_id: typing.Union[str, None] = None,
             attributes: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
@@ -83,7 +83,7 @@ class CoreType(edq.util.serial.DictConverter):
         if (children is None):
             children = []
 
-        self.children: typing.List['CoreType'] = children
+        self.children: typing.List['CoreType'] = list(children)
         """
         Children of this object.
         The general pattern is: Quiz -> Variant -> Group -> Question.

@@ -7,7 +7,7 @@ class ContextObject(typing.Protocol):
     Any object that can provide context to errors.
     """
 
-    base_dir: typing.Union[str, None]
+    base_dir: str
     """ The base directory used when processing something the lead to an error. """
 
     source_path: typing.Union[str, None]
