@@ -239,10 +239,13 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             question_number = running_question_number
             running_question_number += 1
 
+        custom_header: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None
+
         raw_custom_header = question.get_config(quizcomp.model.config.OPTION_CUSTOM_HEADER)
-        custom_header = None
         if (raw_custom_header is not None):
-            custom_header = quizcomp.parser.document.ParsedDocument.parse_text(raw_custom_header)
+            quizcomp.model.errors.check_type(raw_custom_header, str, "'custom_header'", context = quiz)
+            text = typing.cast(str, raw_custom_header)
+            custom_header = quizcomp.parser.document.ParsedDocument.parse_text(text)
 
         context = {
             'this': question,

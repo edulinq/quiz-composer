@@ -1,11 +1,7 @@
 # pylint: disable=missing-timeout
 
 import logging
-import os
-import urllib.parse
 import typing
-
-import requests
 
 import quizcomp.model.answer
 import quizcomp.model.base
@@ -72,8 +68,11 @@ class CanvasUploader:
     def upload_quiz(self, quiz: quizcomp.model.quiz.Quiz, **kwargs: typing.Any) -> None:
         """ Upload a quiz to Canvas. """
 
-        upload_quiz(quiz, self.instance, force = self.force)
+        # TEST
+        # upload_quiz(quiz, self.instance, force = self.force)
 
+# pylint: disable=pointless-string-statement
+''' TEST
 def upload_quiz(
         quiz: quizcomp.model.quiz.Quiz,
         instance: quizcomp.uploader.instance.CanvasInstanceInfo,
@@ -218,7 +217,7 @@ def create_question_group(
 
     group_id = response.json()['quiz_groups'][0]['id']
 
-    for (i, question) in enumerate(group.questions):
+    for (i, question) in enumerate(group.children):
         create_question(quiz_id, group_id, question, i, instance)
 
 def create_question(
@@ -579,3 +578,4 @@ def hide_folder_id(folder_id: str, instance: quizcomp.uploader.instance.CanvasIn
         headers = instance.base_headers(),  # type: ignore[arg-type]
         data = data)
     response.raise_for_status()
+'''

@@ -139,7 +139,7 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
     @classmethod
     def from_pod(cls: typing.Type['NumericOption'],
-            raw_data: edq.util.serial.PODType,
+            data: edq.util.serial.PODType,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'NumericOption':
         if (context is None):
@@ -147,10 +147,10 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
         label = context.extra.get('label', '')
 
-        quizcomp.model.errors.check_type(raw_data, dict, label, context = context)
-        data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_data)
+        quizcomp.model.errors.check_type(data, dict, label, context = context)
+        dict_data = typing.cast(typing.Dict[str, edq.util.serial.PODType], data)
 
-        raw_answer_type = data.get('type', None)
+        raw_answer_type = dict_data.get('type', None)
         if (not edq.util.enum.has_value(NumericAnswerType, raw_answer_type)):
             raise quizcomp.model.errors.QuestionValidationError(
                     f"{label} has an unknown answer type: '{raw_answer_type}'.",
@@ -158,10 +158,10 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
         answer_type = NumericAnswerType(raw_answer_type)
 
-        feedback = quizcomp.model.feedback.Feedback.from_raw_data(data.get('feedback', None), context = context)
+        feedback = quizcomp.model.feedback.Feedback.from_raw_data(dict_data.get('feedback', None), context = context)
 
         if (answer_type == NumericAnswerType.EXACT):
-            value = data.get('value', None)
+            value = dict_data.get('value', None)
             if (value is None):
                 raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} does not have a required 'value' key.",
@@ -172,7 +172,7 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
                         f"{label} has a 'value' that is not an int or float, found '{type(value)}'.",
                         context = context)
 
-            margin = data.get('margin', 0.0)
+            margin = dict_data.get('margin', 0.0)
             if (not isinstance(margin, (int, float))):
                 raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} has a 'margin' that is not an int or float, found '{type(margin)}'.",
@@ -180,7 +180,7 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
             return NumericOptionExact(value, margin, feedback = feedback)
         elif (answer_type == NumericAnswerType.RANGE):
-            min = data.get('min', None)
+            min = dict_data.get('min', None)
             if (min is None):
                 raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} does not have a required 'min' key.",
@@ -191,7 +191,7 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
                         f"{label} has a 'min' that is not an int or float, found '{type(min)}'.",
                         context = context)
 
-            max = data.get('max', None)
+            max = dict_data.get('max', None)
             if (max is None):
                 raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} does not have a required 'max' key.",
@@ -204,7 +204,7 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
 
             return NumericOptionRange(min, max, feedback = feedback)
         elif (answer_type == NumericAnswerType.PRECISION):
-            value = data.get('value', None)
+            value = dict_data.get('value', None)
             if (value is None):
                 raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} does not have a required 'value' key.",
@@ -215,7 +215,7 @@ class NumericOption(edq.util.serial.PODConverter, abc.ABC):
                         f"{label} has a 'value' that is not an int or float, found '{type(value)}'.",
                         context = context)
 
-            precision = data.get('precision', None)
+            precision = dict_data.get('precision', None)
             if (precision is None):
                 raise quizcomp.model.errors.QuestionValidationError(
                         f"{label} does not have a required 'precision' key.",
@@ -536,17 +536,17 @@ class MultiplePartTextAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type['MultiplePartTextAnswers'],
-            raw_data: edq.util.serial.PODType,
+            data: edq.util.serial.PODType,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'MultiplePartTextAnswers':
         if (context is None):
             context = edq.util.serial.SerializationContext()
 
-        quizcomp.model.errors.check_type(raw_data, dict, "'answers'", context = context)
-        data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_data)
+        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
+        dict_data = typing.cast(typing.Dict[str, edq.util.serial.PODType], data)
 
         parts = {}
-        for (key, raw_options) in data.items():
+        for (key, raw_options) in dict_data.items():
             # Try to parse the key, even though we are not storing it right now.
             quizcomp.parser.document.ParsedDocument.parse_text(key, context)
 
@@ -589,7 +589,7 @@ class ChoiceAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type['ChoiceAnswers'],
-            raw_data: edq.util.serial.PODType,
+            data: edq.util.serial.PODType,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'ChoiceAnswers':
         if (context is None):
@@ -600,10 +600,8 @@ class ChoiceAnswers(QuestionAnswers):
         min_incorrect = context.extra.get('min_incorrect', 0)
         max_incorrect = context.extra.get('max_incorrect', MAX_CHOICES)
 
-        quizcomp.model.errors.check_type(raw_data, list, "'answers'", context = context)
-        data = typing.cast(typing.List[edq.util.serial.PODType], raw_data)
-
-        raw_choices: typing.List[typing.Any] = typing.cast(list, data)
+        quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
+        raw_choices = typing.cast(typing.List[edq.util.serial.PODType], data)
 
         if (len(raw_choices) == 0):
             raise quizcomp.model.errors.QuestionValidationError("No answers provided, at least one answer required.", context = context)
@@ -724,17 +722,17 @@ class MultiplePartChoiceAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type['MultiplePartChoiceAnswers'],
-            raw_data: edq.util.serial.PODType,
+            data: edq.util.serial.PODType,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'MultiplePartChoiceAnswers':
         if (context is None):
             context = edq.util.serial.SerializationContext()
 
-        quizcomp.model.errors.check_type(raw_data, dict, "'answers'", context = context)
-        data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_data)
+        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
+        dict_data = typing.cast(typing.Dict[str, edq.util.serial.PODType], data)
 
         parts = {}
-        for (key, raw_options) in data.items():
+        for (key, raw_options) in dict_data.items():
             # Try to parse the key, even though we are not storing it right now.
             quizcomp.parser.document.ParsedDocument.parse_text(key, context)
 
@@ -891,16 +889,16 @@ class MatchingAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type['MatchingAnswers'],
-            raw_data: edq.util.serial.PODType,
+            data: edq.util.serial.PODType,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'MatchingAnswers':
         if (context is None):
             context = edq.util.serial.SerializationContext()
 
-        quizcomp.model.errors.check_type(raw_data, dict, "'answers'", context = context)
-        data = typing.cast(typing.Dict[str, edq.util.serial.PODType], raw_data)
+        quizcomp.model.errors.check_type(data, dict, "'answers'", context = context)
+        dict_data = typing.cast(typing.Dict[str, edq.util.serial.PODType], data)
 
-        raw_matches = data.get('matches', None)
+        raw_matches = dict_data.get('matches', None)
         if (raw_matches is None):
             raise quizcomp.model.errors.QuestionValidationError(
                     "The 'matches' key was not provided for a matching-type question.",
@@ -948,7 +946,7 @@ class MatchingAnswers(QuestionAnswers):
                     f"{label} has an unknown format (not a list or dict): '{raw_match}' (type: {type(raw_match)}.",
                     context = context)
 
-        raw_distractors = data.get('distractors', None)
+        raw_distractors = dict_data.get('distractors', None)
         if (raw_distractors is None):
             raw_distractors = []
 
@@ -1002,16 +1000,14 @@ class NumericAnswers(QuestionAnswers):
 
     @classmethod
     def from_pod(cls: typing.Type['NumericAnswers'],
-            raw_data: edq.util.serial.PODType,
+            data: edq.util.serial.PODType,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
             ) -> 'NumericAnswers':
         if (context is None):
             context = edq.util.serial.SerializationContext()
 
-        quizcomp.model.errors.check_type(raw_data, list, "'answers'", context = context)
-        data = typing.cast(typing.List[edq.util.serial.PODType], raw_data)
-
-        raw_options: typing.List[typing.Any] = typing.cast(list, data)
+        quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
+        raw_options = typing.cast(typing.List[edq.util.serial.PODType], data)
 
         if (len(raw_options) == 0):
             raise quizcomp.model.errors.QuestionValidationError("No answers provided, at least one answer required.", context = context)
