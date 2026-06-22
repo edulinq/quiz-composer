@@ -125,3 +125,10 @@ The width to use for this object.
 
 Defaults to 1,0.
 """
+
+OPTION_LMS_ASSIGNMENT_GROUP: Option = Option('attributes', 'custom_header', None)
+"""
+A custom header for some object like a question, this would be used instead of something generic like "Question 4".
+
+Defaults to nothing.
+"""

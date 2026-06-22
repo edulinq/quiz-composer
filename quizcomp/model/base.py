@@ -174,6 +174,11 @@ class CoreType(edq.util.serial.DictConverter):
         self.style_last: typing.Dict[str, edq.util.serial.PODType] = style_last.copy()
         """ Styles to pass along to the last child of this object. """
 
+    def child_count(self) -> int:
+        """ Get the number of children for this object. """
+
+        return len(self.children)
+
     def get_name(self, default: str = '') -> str:
         """ Get the name of this object, using the default value if name is None. """
 
@@ -216,7 +221,7 @@ class CoreType(edq.util.serial.DictConverter):
         if (self.parent is not None):
             return self.parent.get_child_points()
 
-        if (check_children and (len(self.children) > 0)):
+        if (check_children and (self.child_count() > 0)):
             total = 0.0
             for child in self.children:
                 total += child.get_points()
@@ -235,7 +240,7 @@ class CoreType(edq.util.serial.DictConverter):
 
         split = 1
         if (self.children is not None):
-            split = len(self.children)
+            split = self.child_count()
 
         # Make sure to not try to use the children to compute the available points.
         return self.get_points(check_children = False) / split
@@ -369,7 +374,7 @@ class CoreType(edq.util.serial.DictConverter):
                     value = context_container[key]
 
             # Check if the child is a last.
-            if (child_index == (len(self.children) - 1)):
+            if (child_index == (self.child_count() - 1)):
                 context_container = getattr(self, value_type + '_last')
                 if ((context_container is not None) and (key in context_container)):
                     found = True

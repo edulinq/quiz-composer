@@ -38,10 +38,15 @@ class Group(quizcomp.model.base.CoreType):
         self.pick_count: int = pick_count
         """ The number of questions to choose from this group. """
 
-        if (self.pick_count > len(self.children)):
+        if (self.pick_count > self.child_count()):
             _logger.warning("Group '%s' was asked to pick more questions than available (pick count: %d, group size: %d).",
-                    self.name, self.pick_count, len(self.children))
-            self.pick_count = len(self.children)
+                    self.name, self.pick_count, self.child_count())
+            self.pick_count = self.child_count()
+
+    def get_questions(self) -> typing.List[quizcomp.model.question.Question]:
+        """ Get all questions for this group. """
+
+        return [typing.cast(quizcomp.model.question.Question, child) for child in self.children]
 
     def choose_variant_questions(self,
             all_questions: bool,
@@ -53,14 +58,14 @@ class Group(quizcomp.model.base.CoreType):
         The returned questions will be copies of the original and shuffled (if set in config).
         """
 
-        if ((self.pick_count == 0) or (len(self.children) == 0)):
+        if ((self.pick_count == 0) or (self.child_count() == 0)):
             _logger.warning("Group '%s' will select no questions (pick_count: %d, group size: %d).",
-                    self.name, self.pick_count, len(self.children))
+                    self.name, self.pick_count, self.child_count())
             return []
 
         count = self.pick_count
         if (all_questions):
-            count = len(self.children)
+            count = self.child_count()
 
         questions = self._choose_questions(count, used_question_indexes, rng)
 
@@ -78,7 +83,7 @@ class Group(quizcomp.model.base.CoreType):
             ) -> typing.List[quizcomp.model.question.Question]:
         """ Internally, choose a list of questions to use for an instantiated variant of this group. """
 
-        indexes = list(range(len(self.children)))
+        indexes = list(range(self.child_count()))
 
         with_replacement = (self.get_config(quizcomp.model.config.OPTION_PICK_WITH_REPLACEMENT) is True)
 
@@ -91,7 +96,7 @@ class Group(quizcomp.model.base.CoreType):
                     self.name,
                 )
                 # Reset the selection pool.
-                indexes = list(range(len(self.children)))
+                indexes = list(range(self.child_count()))
                 used_question_indexes.clear()
 
         rng.shuffle(indexes)

@@ -1,3 +1,4 @@
+import enum
 import logging
 import os
 import random
@@ -34,6 +35,31 @@ DEFAULT_VARIANT_IDS: typing.List[str] = list(string.ascii_uppercase)
 
 DEFAULT_MAX_VARIANTS: int = len(DEFAULT_VARIANT_IDS)
 
+class HideResultsBehavior(enum.Enum):
+    """
+    The allowed behaviors for hiding results from students for a quiz with multiple attempts.
+    """
+
+    ALWASY_HIDE = 'always'
+    """ Students can never see their results. """
+
+    NEVER_HIDE = 'never'
+    """ Students can see their results after each attempt. """
+
+    UNTIL_AFTER_LAST_ATTEMPT = 'until_after_last_attempt'
+    """ Students can see their results after each attempt. """
+
+class ScoringPolicy(enum.Enum):
+    """
+    The allowed scoring policies for quizzes with multiple attempts.
+    """
+
+    KEEP_HIGHEST = 'keep_highest'
+    """ Keep the highest score from all attempts. """
+
+    KEEP_LATEST = 'keep_latest'
+    """ Keep the most recent score from all attempts. """
+
 class Quiz(quizcomp.model.base.CoreType):
     """
     A quiz object represents multiple possible assessments (called "variants").
@@ -47,6 +73,13 @@ class Quiz(quizcomp.model.base.CoreType):
             date: typing.Union[edq.util.time.Timestamp, None] = None,
             time_limit_mins: typing.Union[int, None] = None,
             version: typing.Union[str, None] = None,
+            practice: typing.Union[bool, None] = None,
+            publish: typing.Union[bool, None] = None,
+            assignment_group: typing.Union[str, None] = None,
+            allowed_attempts: typing.Union[int, None] = None,
+            show_correct_answers: typing.Union[bool, None] = None,
+            hide_results: typing.Union[HideResultsBehavior, None] = None,
+            scoring_policy: typing.Union[ScoringPolicy, None] = None,
             **kwargs: typing.Any) -> None:
         # Remove aliases before super construction.
         kwargs.pop('groups', None)
@@ -77,6 +110,36 @@ class Quiz(quizcomp.model.base.CoreType):
         self.version: typing.Union[str, None] = version
         """ The version of this quiz. """
 
+        self.practice: typing.Union[bool, None] = practice
+        """
+        Whether this quiz should be considered a "practice" quiz.
+        This may change the behavior of different quizzes when uploaded to different platforms.
+        """
+
+        self.publish: typing.Union[bool, None] = publish
+        """
+        Whether this quiz should be considered published on upload.
+        "Published" quizzes are typically visible to students after upload.
+        """
+
+        self.assignment_group: typing.Union[str, None] = assignment_group
+        """
+        The name of the assignment group that this quiz should be uploaded under.
+        Unnecessary if this quiz is not uploaded.
+        """
+
+        self.allowed_attempts: typing.Union[int, None] = allowed_attempts
+        """ The number of attempts a student should have when taking this quiz. """
+
+        self.show_correct_answers: typing.Union[bool, None] = show_correct_answers
+        """ Show students the correct answer after submission. """
+
+        self.hide_results: typing.Union[HideResultsBehavior, None] = hide_results
+        """ The behavior for showing results to students when multiple attempts are allowed. """
+
+        self.scoring_policy: typing.Union[ScoringPolicy, None] = scoring_policy
+        """ The scoring behavior when multiple attempts are allowed. """
+
         self._validate()
 
     def _validate(self) -> None:
@@ -84,6 +147,11 @@ class Quiz(quizcomp.model.base.CoreType):
 
         if (self.name is None):
             raise quizcomp.model.errors.QuizValidationError("Quiz name cannot be empty.", context = self)
+
+    def get_groups(self) -> typing.List[quizcomp.model.group.Group]:
+        """ Get all groups for this quiz. """
+
+        return [typing.cast(quizcomp.model.group.Group, child) for child in self.children]
 
     def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
         return [self.description]
