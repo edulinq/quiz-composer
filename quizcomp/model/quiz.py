@@ -6,6 +6,7 @@ import string
 import typing
 
 import edq.util.dirent
+import edq.util.enum
 import edq.util.git
 import edq.util.time
 
@@ -67,7 +68,7 @@ class Quiz(quizcomp.model.base.CoreType):
 
     def __init__(self,
             children: typing.Union[typing.List[quizcomp.model.group.Group], None] = None,
-            description: typing.Union[quizcomp.parser.document.ParsedDocument, None] = None,
+            description: typing.Union[quizcomp.parser.document.ParsedDocument, str, None] = None,
             course_name: typing.Union[str, None] = None,
             term_name: typing.Union[str, None] = None,
             date: typing.Union[edq.util.time.Timestamp, None] = None,
@@ -78,8 +79,8 @@ class Quiz(quizcomp.model.base.CoreType):
             assignment_group: typing.Union[str, None] = None,
             allowed_attempts: typing.Union[int, None] = None,
             show_correct_answers: typing.Union[bool, None] = None,
-            hide_results: typing.Union[HideResultsBehavior, None] = None,
-            scoring_policy: typing.Union[ScoringPolicy, None] = None,
+            hide_results: typing.Union[HideResultsBehavior, str, None] = None,
+            scoring_policy: typing.Union[ScoringPolicy, str, None] = None,
             **kwargs: typing.Any) -> None:
         # Remove aliases before super construction.
         kwargs.pop('groups', None)
@@ -97,6 +98,9 @@ class Quiz(quizcomp.model.base.CoreType):
 
         if (description is None):
             description = quizcomp.parser.document.ParsedDocument()
+
+        if (isinstance(description, str)):
+            description = quizcomp.parser.document.ParsedDocument.parse_text(description)
 
         self.description: quizcomp.parser.document.ParsedDocument = description
         """ The description/prompt for this quiz. """
@@ -134,8 +138,22 @@ class Quiz(quizcomp.model.base.CoreType):
         self.show_correct_answers: typing.Union[bool, None] = show_correct_answers
         """ Show students the correct answer after submission. """
 
+        if (isinstance(hide_results, str)):
+            if (not edq.util.enum.has_value(HideResultsBehavior, hide_results)):
+                _logger.warning("Unknown enum value for 'hide_results': '%s'. Setting to null.", hide_results)
+                hide_results = None
+            else:
+                hide_results = HideResultsBehavior(hide_results)
+
         self.hide_results: typing.Union[HideResultsBehavior, None] = hide_results
         """ The behavior for showing results to students when multiple attempts are allowed. """
+
+        if (isinstance(scoring_policy, str)):
+            if (not edq.util.enum.has_value(ScoringPolicy, scoring_policy)):
+                _logger.warning("Unknown enum value for 'scoring_policy': '%s'. Setting to null.", scoring_policy)
+                scoring_policy = None
+            else:
+                scoring_policy = ScoringPolicy(scoring_policy)
 
         self.scoring_policy: typing.Union[ScoringPolicy, None] = scoring_policy
         """ The scoring behavior when multiple attempts are allowed. """
@@ -334,6 +352,43 @@ class Quiz(quizcomp.model.base.CoreType):
             data['version'] = f"{self.version}, Variant: {variant_id}"
 
         return Variant(**data)
+
+    def to_dir(self,
+            base_dir: str,
+            fetch_images: bool = True,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            quiz_base_filename: str = 'quiz',
+            **kwargs: typing.Any) -> None:
+        quiz = typing.cast(Quiz, self.copy())
+
+        quiz.base_dir = os.path.abspath(base_dir)
+        edq.util.dirent.mkdir(quiz.base_dir)
+
+        if (fetch_images):
+            quiz.fetch_and_update_images()
+
+        output_data = quiz.to_dict(context = context)
+
+        # Write the groups in the quiz, but the questions in their own dirs.
+        for (group_index, group) in enumerate(quiz.get_groups()):
+            group_name = f"{group_index:03d} - {group.get_name('Group')}"
+            group_reldir = os.path.join('questions', group_name)
+
+            # Rewrite the group to use question paths.
+            output_data['groups'][group_index]['questions'] = [group_reldir]  # type: ignore[index,call-overload]
+
+            # Output each question.
+            for (question_index, question) in enumerate(group.get_questions()):
+                question_name = f"{question_index:03d} - {question.get_name('Question')}"
+                question_out_dir = os.path.join(quiz.base_dir, group_reldir, question_name)
+                question.to_dir(question_out_dir, fetch_images = fetch_images, context = context, **kwargs)
+
+        # Move the description to a different file.
+        output_data.pop('description', None)
+        if (not quiz.description.is_empty()):
+            edq.util.dirent.write_file(os.path.join(quiz.base_dir, f"{quiz_base_filename}.md"), quiz.description.to_md())
+
+        edq.util.json.dump_path(output_data, os.path.join(quiz.base_dir, f"{quiz_base_filename}.json"), indent = 4)
 
 class Variant(Quiz):
     """

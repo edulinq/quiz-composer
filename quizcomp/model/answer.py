@@ -255,7 +255,7 @@ class NumericOptionExact(NumericOption):
     def __init__(self,
             value: typing.Union[float, int],
             margin: typing.Union[float, int] = 0.0,
-            **kwargs) -> None:
+            **kwargs: typing.Any) -> None:
         super().__init__(type = NumericAnswerType.EXACT, **kwargs)
 
         self.value: typing.Union[float, int] = value
@@ -277,7 +277,7 @@ class NumericOptionRange(NumericOption):
     def __init__(self,
             min: typing.Union[float, int],
             max: typing.Union[float, int],
-            **kwargs) -> None:
+            **kwargs: typing.Any) -> None:
         super().__init__(type = NumericAnswerType.RANGE, **kwargs)
 
         self.min: typing.Union[float, int] = min
@@ -296,7 +296,7 @@ class NumericOptionPrecision(NumericOption):
     def __init__(self,
             value: typing.Union[float, int],
             precision: int,
-            **kwargs) -> None:
+            **kwargs: typing.Any) -> None:
         super().__init__(type = NumericAnswerType.PRECISION, **kwargs)
 
         self.value: typing.Union[float, int] = value

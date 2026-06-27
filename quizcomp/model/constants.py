@@ -4,6 +4,8 @@ import typing
 QUIZ_FILENAME: str = 'quiz.json'
 QUESTION_FILENAME: str = 'question.json'
 
+MAX_IMAGE_RENAMES: int = 1000
+
 class Format(enum.Enum):
     """ Different formats that are available for output document or parser rendering. """
 

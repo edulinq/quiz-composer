@@ -1,13 +1,20 @@
 import copy
+import logging
+import mimetypes
 import os
+import re
 import typing
+import urllib.parse
 
+import edq.net.request
 import edq.util.json
 import edq.util.serial
 
 import quizcomp.model.config
 import quizcomp.model.errors
 import quizcomp.parser.document
+
+_logger = logging.getLogger(__name__)
 
 DEFAULT_AVAILABLE_POINTS: float = 0.0
 """ The default available points for an object. """
@@ -400,6 +407,92 @@ class CoreType(edq.util.serial.DictConverter):
         context.json_options.setdefault('indent', 4)
 
         super().to_path(path, context)
+
+    def to_dir(self,
+            base_dir: str,
+            fetch_images: bool = True,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            **kwargs: typing.Any) -> None:
+        """
+        Write this object to the given directory.
+        This is different than to_path(), as that function just serializes the to a single JSON file,
+        whereas this method writes a directory in the Quiz Composer style.
+        """
+
+    def fetch_and_update_images(self, image_dirname: str = 'images') -> None:
+        """
+        Collect all the images for this object (not including children),
+        place them in the os.path.join(self.base_dir, image_dirname),
+        and update all documents with the new path.
+        """
+
+        # {old source: new source, ...}
+        new_sources = {}
+
+        out_dir = os.path.join(self.base_dir, image_dirname)
+
+        for document in self.collect_documents():
+            modified_tokens = False
+            for image_token in document.collect_images():
+                source = image_token.attrGet('src')
+                if ((source is None) or len(str(source)) == 0):
+                    _logger.warning("Could not locate image source for '%s'.", image_token.content)
+
+                source = str(source)
+                if (source not in new_sources):
+                    filename = self._fetch_image(source, out_dir, document.context.base_dir)
+                    new_sources[source] = f"{image_dirname}/{filename}"
+
+                image_token.attrSet('src', new_sources[source])
+
+            if (modified_tokens):
+                document.tokens_updated()
+
+    def _fetch_image(self, source: str, out_dir: str, base_dir: str) -> str:
+        """
+        Fetch an image and return its new filename.
+        """
+
+        edq.util.dirent.mkdir(out_dir)
+
+        is_http = re.match(r'^http(s)?://', source)
+        if (is_http):
+            url_path = urllib.parse.urlsplit(source).path
+            filename = url_path.split('/')[-1]
+        else:
+            filename = os.path.basename(source)
+
+        (basename, ext) = os.path.splitext(filename)
+        path = os.path.join(out_dir, filename)
+
+        count = 0
+        while (os.path.exists(path)):
+            filename = f"{basename}_{count:03d}{ext}"
+            path = os.path.join(out_dir, filename)
+            count += 1
+
+            if (count >= quizcomp.model.constants.MAX_IMAGE_RENAMES):
+                raise quizcomp.model.errors.QuizValidationError(f"Cannot create unique filename for image: '{source}'.", context = self)
+
+        if (is_http):
+            response, _ = edq.net.request.make_get(source)
+
+            # If the image source did not include an extension, try to parse one from the HTTP request.
+            if (len(ext) == 0):
+                new_ext = mimetypes.guess_extension(response.headers.get('content-type', None))  # type: ignore[arg-type]
+                if (new_ext is not None):
+                    filename += new_ext
+                    path = os.path.join(out_dir, filename)
+
+            edq.util.dirent.write_file_bytes(path, response.content)
+        else:
+            if (not os.path.isabs(source)):
+                source = os.path.join(base_dir, source)
+
+            source = os.path.abspath(source)
+            edq.util.dirent.copy(source, path)
+
+        return filename
 
     def copy(self, context: typing.Union[edq.util.serial.SerializationContext, None] = None) -> 'CoreType':
         return copy.deepcopy(self)

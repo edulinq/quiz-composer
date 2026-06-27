@@ -14,6 +14,7 @@ import quizcomp.model.feedback
 import quizcomp.parser.document
 
 DEFAULT_PROMPT_FILENAME: str = 'prompt.md'
+DEFAULT_QUESTION_FILENAME: str = 'question.json'
 
 EMPTY_ANSWER_QUESTION_TYPES: typing.Set[quizcomp.model.constants.QuestionType] = {
     quizcomp.model.constants.QuestionType.ESSAY,
@@ -33,7 +34,7 @@ class Question(quizcomp.model.base.CoreType):
 
     def __init__(self,
             question_type: quizcomp.model.constants.QuestionType,
-            prompt: quizcomp.parser.document.ParsedDocument,
+            prompt: typing.Union[quizcomp.parser.document.ParsedDocument, str],
             answers: typing.Union[quizcomp.model.answer.QuestionAnswers, None] = None,
             feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = None,
             **kwargs: typing.Any) -> None:
@@ -41,6 +42,9 @@ class Question(quizcomp.model.base.CoreType):
 
         self.question_type: quizcomp.model.constants.QuestionType = question_type
         """ The type of this question. """
+
+        if (isinstance(prompt, str)):
+            prompt = quizcomp.parser.document.ParsedDocument.parse_text(prompt)
 
         self.prompt: quizcomp.parser.document.ParsedDocument = prompt
         """ The parsed prompt of this question. """
@@ -194,3 +198,23 @@ class Question(quizcomp.model.base.CoreType):
             return
 
         self.answers.shuffle(rng)
+
+    def to_dir(self,
+            base_dir: str,
+            fetch_images: bool = True,
+            context: typing.Union[edq.util.serial.SerializationContext, None] = None,
+            **kwargs: typing.Any) -> None:
+        self.base_dir = os.path.abspath(base_dir)
+        edq.util.dirent.mkdir(self.base_dir)
+
+        if (fetch_images):
+            self.fetch_and_update_images()
+
+        output_data = self.to_dict(context = context)
+
+        # Move the prompt to a different file.
+        output_data.pop('prompt', None)
+        if (not self.prompt.is_empty()):
+            edq.util.dirent.write_file(os.path.join(self.base_dir, DEFAULT_PROMPT_FILENAME), self.prompt.to_md())
+
+        edq.util.json.dump_path(output_data, os.path.join(self.base_dir, DEFAULT_QUESTION_FILENAME), indent = 4)

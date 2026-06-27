@@ -14,6 +14,16 @@ class QuizComposerRendererCanvas(quizcomp.parser.renderer.html.QuizComposerRende
 
     __output__ = quizcomp.model.constants.Format.CANVAS.value
 
+    def image(self,
+            *args: typing.Any,
+            **kwargs: typing.Any,
+            ) -> str:
+        # Override image behavior, don't try to base64 encode (unless explicitly told otherwise).
+        if ('force_raw_image_src' not in kwargs):
+            kwargs['force_raw_image_src'] = True
+
+        return super().image(*args, **kwargs)
+
     def placeholder(self,
             tokens: typing.List[markdown_it.token.Token],
             token_index: int,

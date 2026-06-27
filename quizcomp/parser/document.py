@@ -12,7 +12,11 @@ import quizcomp.parser.render
 import quizcomp.parser.common
 
 class ParsedDocument(edq.util.serial.PODSerializer):
-    """ The result of parsing some text. """
+    """
+    The result of parsing some text.
+
+    Users that modify the tokens of a document directly should call tokens_updated() after.
+    """
 
     def __init__(self,
             text: typing.Union[str, None] = None,
@@ -42,6 +46,11 @@ class ParsedDocument(edq.util.serial.PODSerializer):
 
         self.context: edq.util.serial.SerializationContext = context
         """ The context the text was parsed in. """
+
+    def tokens_updated(self) -> None:
+        """ Update the cached text in the document under the assumption that tokens were modified. """
+
+        self.text = self.to_md()
 
     def to_canvas(self, **kwargs: typing.Any) -> str:
         """ Render this document to Canvas-specific HTML. """

@@ -3,6 +3,7 @@ import glob
 import os
 import typing
 
+import edq.util.dirent
 import edq.util.json
 import edq.util.serial
 
@@ -78,6 +79,9 @@ def _add_good_quiz_test(path: str) -> None:
         test_name = 'test_quiz_serial_' + base_test_name
         setattr(QuizTest, test_name, _get_quiz_serial_test_method(path, serial_path))
 
+    test_name = 'test_quiz_todir_' + base_test_name
+    setattr(QuizTest, test_name, _get_quiz_todir_test_method(path))
+
 def _get_quiz_parse_test_method(path: str) -> typing.Callable:
     """ Get a test for just parsing a quiz file. """
 
@@ -96,6 +100,31 @@ def _get_quiz_reparse_test_method(path: str) -> typing.Callable:
 
         new_quiz = quizcomp.model.quiz.Quiz.from_dict(copy.deepcopy(quiz_data), edq.util.serial.SerializationContext())
         new_quiz_data = new_quiz.to_dict()  # pylint: disable=no-member
+
+        self.assertJSONDictEqual(quiz_data, new_quiz_data)
+
+    return __method
+
+def _get_quiz_todir_test_method(path: str) -> typing.Callable:
+    """ Get a test for writing a quiz to a directory and reading it back. """
+
+    def __method(self: QuizTest) -> None:
+        temp_dir = edq.util.dirent.get_temp_dir('edq-test-quiz-todir-')
+
+        quiz = copy.deepcopy(self.load_quiz(path))
+        quiz_data = quiz.to_dict()
+
+        quiz.to_dir(temp_dir)
+
+        new_quiz = self.load_quiz(os.path.join(temp_dir, 'quiz.json'))
+        new_quiz_data = new_quiz.to_dict()
+
+        # Update any image paths and stylistic changes in the old quiz.
+        text = edq.util.json.dumps(quiz_data)
+        text = text.replace('](../../../images', '](images')
+        text = text.replace('\\/', '/')
+        text = text.replace('\\-', '-')
+        quiz_data = edq.util.json.loads(text)
 
         self.assertJSONDictEqual(quiz_data, new_quiz_data)
 

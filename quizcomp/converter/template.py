@@ -52,8 +52,6 @@ DEFAULT_JINJA_OPTIONS: typing.Dict[str, typing.Any] = {
     'autoescape': jinja2.select_autoescape(),
 }
 
-MAX_IMAGE_RENAMES: int = 1000
-
 class TemplateConverter(quizcomp.converter.converter.Converter):
     """
     The base class for a converter that uses templates.
@@ -312,11 +310,8 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         seen_sources: typing.Dict[str, str] = {}
 
         for document in quiz.collect_all_documents():
-            image_tokens = document.collect_images()
-            if (len(image_tokens) == 0):
-                continue
-
-            for image_token in image_tokens:
+            modified_tokens = False
+            for image_token in document.collect_images():
                 original_source = image_token.attrGet('original_src')
                 if (original_source is None):
                     original_source = image_token.attrGet('src')
@@ -334,6 +329,10 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
 
                 image_token.attrSet('original_src', original_source)
                 image_token.attrSet('src', new_source)
+                modified_tokens = True
+
+            if (modified_tokens):
+                document.tokens_updated()
 
     def _handle_image(self, quiz: quizcomp.model.quiz.Quiz, source: str, document_base_dir: str) -> str:
         """
@@ -356,7 +355,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         if (self.image_base_dir is None):
             return self._form_image_source(filename, quiz)
 
-        (basename, ext) = os.path.split(filename)
+        (basename, ext) = os.path.splitext(filename)
         path = os.path.join(self.image_base_dir, filename)
 
         count = 0
@@ -365,7 +364,7 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
             path = os.path.join(self.image_base_dir, filename)
             count += 1
 
-            if (count >= MAX_IMAGE_RENAMES):
+            if (count >= quizcomp.model.constants.MAX_IMAGE_RENAMES):
                 raise quizcomp.model.errors.QuizValidationError(f"Cannot create unique filename for image: '{source}'.", context = quiz)
 
         new_source = self._form_image_source(filename, quiz)
@@ -391,14 +390,14 @@ class TemplateConverter(quizcomp.converter.converter.Converter):
         """ Replace any modified image sources with their original source. """
 
         for document in quiz.collect_all_documents():
-            image_tokens = document.collect_images()
-            if (len(image_tokens) == 0):
-                continue
-
-            for image_token in image_tokens:
+            modified_tokens = False
+            for image_token in document.collect_images():
                 original_source = image_token.attrGet('original_src')
                 if (original_source is None):
                     continue
 
                 image_token.attrSet('src', str(original_source))
                 image_token.attrs.pop('original_src', None)
+
+            if (modified_tokens):
+                document.tokens_updated()

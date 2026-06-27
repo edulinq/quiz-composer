@@ -181,7 +181,7 @@ class GradeScopeUploader:
                     extend_box_right = True
 
                     # There is a special case for inline MA questions.
-                    if (raw_question_type == quizcomp.model.constants.QuestionType.MA):
+                    if (raw_question_type == quizcomp.model.constants.QuestionType.MA.value):
                         extend_box_right = False
 
                 (x1, y1), (x2, y2) = self._compute_box(ll_x, ll_y, ur_x, ur_y, page_width, page_height, extend_box_right = extend_box_right)

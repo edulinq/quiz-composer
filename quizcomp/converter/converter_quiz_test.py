@@ -1,3 +1,4 @@
+import copy
 import glob
 import os
 import typing
@@ -33,7 +34,7 @@ def _get_template_test(path: str, format: quizcomp.model.constants.Format, is_ke
     def __method(self: TestQuizConverter) -> None:
         constructor_args = {'answer_key': is_key}
 
-        quiz = self.load_quiz(path)
+        quiz = copy.deepcopy(self.load_quiz(path))
         variant = quiz.create_variant(all_questions = True, seed = SEED)
         content = quizcomp.converter.convert.convert_variant(
             variant,
