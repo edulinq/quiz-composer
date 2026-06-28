@@ -69,17 +69,25 @@ def _add_good_quiz_test(path: str) -> None:
     base_test_name = os.path.splitext(os.path.basename(os.path.dirname(path)))[0]
 
     test_name = 'test_quiz_parse_' + base_test_name
+    if (hasattr(QuizTest, test_name)):
+        raise ValueError(f"Name conflict on QuizTest: '{test_name}'.")
     setattr(QuizTest, test_name, _get_quiz_parse_test_method(path))
 
     test_name = 'test_quiz_reparse_' + base_test_name
+    if (hasattr(QuizTest, test_name)):
+        raise ValueError(f"Name conflict on QuizTest: '{test_name}'.")
     setattr(QuizTest, test_name, _get_quiz_reparse_test_method(path))
 
     serial_path = os.path.join(os.path.dirname(path), SERIAL_FILENAME)
     if (os.path.exists(serial_path)):
         test_name = 'test_quiz_serial_' + base_test_name
+        if (hasattr(QuizTest, test_name)):
+            raise ValueError(f"Name conflict on QuizTest: '{test_name}'.")
         setattr(QuizTest, test_name, _get_quiz_serial_test_method(path, serial_path))
 
     test_name = 'test_quiz_todir_' + base_test_name
+    if (hasattr(QuizTest, test_name)):
+        raise ValueError(f"Name conflict on QuizTest: '{test_name}'.")
     setattr(QuizTest, test_name, _get_quiz_todir_test_method(path))
 
 def _get_quiz_parse_test_method(path: str) -> typing.Callable:
@@ -149,6 +157,8 @@ def _add_bad_quiz_test(path: str) -> None:
     base_test_name = os.path.splitext(os.path.basename(os.path.dirname(path)))[0]
 
     test_name = 'test_quiz_bad_' + base_test_name
+    if (hasattr(QuizTest, test_name)):
+        raise ValueError(f"Name conflict on QuizTest: '{test_name}'.")
     setattr(QuizTest, test_name, _get_quiz_bad_test_method(path))
 
 def _get_quiz_bad_test_method(path: str) -> typing.Callable:
