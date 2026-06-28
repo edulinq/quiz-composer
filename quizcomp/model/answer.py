@@ -672,6 +672,8 @@ class TFAnswers(ChoiceAnswers):
             ) ->  'TFAnswers':
         if (context is None):
             context = edq.util.serial.SerializationContext()
+        else:
+            context = context.copy()
 
         if (isinstance(data, bool)):
             choices = [
