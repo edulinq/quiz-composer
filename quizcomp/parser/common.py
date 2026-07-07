@@ -1,8 +1,6 @@
 import copy
 import typing
 
-import quizcomp.uploader.instance
-
 ENCODING: str = 'utf-8'
 
 ENV_KEY_CONTEXT: str = 'qg_context'
@@ -31,7 +29,6 @@ class RenderContext:
             text_allow_all_characters: bool = False,
             text_allow_special_text: bool = False,
             force_raw_image_src: bool = False,
-            canvas_instance: typing.Union[quizcomp.uploader.instance.CanvasInstanceInfo, None] = None,
             **kwargs: typing.Any) -> None:
         if (base_dir is None):
             base_dir = '.'
@@ -56,9 +53,6 @@ class RenderContext:
 
         self.force_raw_image_src: bool = force_raw_image_src
         """ Do not do any processing on an image's source. """
-
-        self.canvas_instance: typing.Union[quizcomp.uploader.instance.CanvasInstanceInfo, None] = canvas_instance
-        """ A Canvas instance to use. """
 
     def copy(self) -> 'RenderContext':
         """ Get a deep copy. """

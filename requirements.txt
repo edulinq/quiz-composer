@@ -1,9 +1,9 @@
 Jinja2>=3.1.0
 beautifulsoup4>=4.10
-edq-utils>=0.4.6,==0.*
+edq-lms-toolkit>=2.0.0,==2.*
+edq-utils>=1.0.0,==1.*
 lxml>=5.3.0
 lxml-stubs>=0.5.1
-json5>=0.9.14
 markdown-it-py>=3.0.0
 mdformat>=0.7.19
 mdformat_tables>=1.0.0

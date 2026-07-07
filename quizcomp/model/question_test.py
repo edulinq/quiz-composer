@@ -8,7 +8,6 @@ import edq.util.serial
 import quizcomp.model.constants
 import quizcomp.model.errors
 import quizcomp.model.question
-import quizcomp.uploader.instance
 import quizcomp.testing.base
 
 SERIAL_FILENAME: str = 'serial.json'
