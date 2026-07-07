@@ -103,6 +103,9 @@ class CoreType(edq.util.serial.DictConverter):
         if ((points is not None) and (points < 0)):
             raise quizcomp.model.errors.QuizValidationError(f"Points must be either null/None or non-negative, found: {points}.", context = self)
 
+        if (points is not None):
+            points = float(points)
+
         self.points: typing.Union[float, None] = points
         """
         The number of points associated with this object.

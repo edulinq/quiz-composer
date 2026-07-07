@@ -55,6 +55,9 @@ class Question(quizcomp.model.base.CoreType):
         self.answers: quizcomp.model.answer.QuestionAnswers = answers
         """ The answers for this question. """
 
+        if ((feedback is not None) and feedback.is_empty()):
+            feedback = None
+
         self.feedback: typing.Union[quizcomp.model.feedback.Feedback, None] = feedback
         """ Object-level feedback. """
 
