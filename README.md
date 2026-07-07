@@ -49,6 +49,20 @@ Documentation Table of Contents:
 
 ## Installation / Requirements
 
+### Cloning
+
+This repository includes submodules.
+To fetch these submodules on clone, add the `--recurse-submodules` flag.
+For example:
+```sh
+git clone --recurse-submodules git@github.com:edulinq/quiz-composer.git
+```
+
+To fetch the submodules after cloning, you can use:
+```sh
+git submodule update --init --recursive
+```
+
 ### Python
 
 This project requires [Python](https://www.python.org/) >= 3.9.
