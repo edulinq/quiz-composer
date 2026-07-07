@@ -1,0 +1,6 @@
+{
+    "cli": "quizcomp.cli.version",
+    "arguments": [],
+}
+---
+<VERSION>
