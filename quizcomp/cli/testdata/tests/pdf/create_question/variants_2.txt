@@ -3,7 +3,7 @@
     "arguments": [
         "__DATA_DIR__(../../../testdata/questions/good/mcq-basic/question.json)",
         "--skip-pdf",
-        "--outdir", "__TEMP_DIR__()",
+        "--out-dir", "__TEMP_DIR__()",
         "--variants", "2",
         "--seed", "4",
     ]

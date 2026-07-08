@@ -1,5 +1,5 @@
-%%% BEGIN Group {<< id >> -- << this.name >>} %%%
+%%% BEGIN Group {<< id >> -- << this.get_name() >>} %%%
 
 << children_content >>
 
-%%% END Group {<< id >> -- << this.name >>} %%%
+%%% END Group {<< id >> -- << this.get_name() >>} %%%

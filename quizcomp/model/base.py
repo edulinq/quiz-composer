@@ -11,6 +11,7 @@ import edq.util.json
 import edq.util.serial
 
 import quizcomp.model.config
+import quizcomp.model.constants
 import quizcomp.model.errors
 import quizcomp.parser.document
 
@@ -189,13 +190,44 @@ class CoreType(edq.util.serial.DictConverter):
 
         return len(self.children)
 
-    def get_name(self, default: str = '') -> str:
-        """ Get the name of this object, using the default value if name is None. """
+    def get_name(self,
+            default: str = '',
+            check_parent: bool = True,
+            shorten_only_children: bool = True,
+            ) -> str:
+        """
+        Get the name of this object.
+        If no name is set and `check_parent` is True, then a generic name based off of the child's position within the parent will be used;
+        otherwise, the default will be used.
+        """
 
-        if (self.name is None):
+        if (self.name is not None):
+            return self.name
+
+        if (self.parent is None):
             return default
 
-        return self.name
+        parent_name = self.parent.get_name()
+        if (shorten_only_children and (len(self.parent.children) == 1)):
+            return parent_name
+
+        child_index = self.get_parent_index()
+        if (child_index is None):
+            return default
+
+        return f"{self.parent.get_name()} - {type(self).__name__} {quizcomp.model.constants.DEFAULT_CHOICES[child_index]}"
+
+    def get_parent_index(self) -> typing.Union[int, None]:
+        """ Get the index of this child within the parent's children (or None if there is no parent). """
+
+        if (self.parent is None):
+            return None
+
+        for (i, child) in enumerate(self.parent.children):
+            if (child is self):
+                return i
+
+        raise quizcomp.model.errors.QuizValidationError('Parent does not contain self as a child.', context = self)
 
     def collect_documents(self) -> typing.List[quizcomp.parser.document.ParsedDocument]:
         """

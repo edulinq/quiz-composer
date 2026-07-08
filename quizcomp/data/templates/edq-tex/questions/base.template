@@ -2,7 +2,7 @@
     \newpage
 <% endif %>
 
-%%% BEGIN Question {<< id >> -- << this.name >>} %%%
+%%% BEGIN Question {<< id >> -- << this.get_name() >>} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -33,7 +33,7 @@
     <% endblock %>
 \end{minipage}
 
-%%% END Question {<< id >> -- << this.name >>} %%%
+%%% END Question {<< id >> -- << this.get_name() >>} %%%
 
 <% if this.get_known_config('pagebreak_after') %>
     \newpage

@@ -246,7 +246,7 @@ python3 -m quizcomp.cli.pdf.create <path to quiz JSON file>
 ```
 
 Some additional options that may be useful:
- - `--outdir <dir>` -- Choose where the output (TeX, PDF, etc) will be written to.
+ - `--out-dir <dir>` -- Choose where the output (TeX, PDF, etc) will be written to.
  - `--variants <X>` -- Create X variants (alternate versions) if the quiz. X may be in [1, 26].
 
 ### Canvas

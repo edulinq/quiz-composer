@@ -271,18 +271,16 @@ class GradeScopeUploader:
             ) -> typing.Dict[str, typing.Any]:
         """ Create GradeScope outline data. """
 
-        # TEST
-        # pylint: disable=pointless-string-statement
-        '''
         question_data = []
         for (question_id, parts) in bounding_boxes.items():
-            question_index = int(float(question_id))
+            (_, group_index, question_index) = map(int, question_id.split('.'))
+            question = variant.children[group_index].children[question_index]
 
             if (len(parts) == 1):
                 # Single-part question.
                 question_data.append({
-                    'title': variant.questions[question_index].name,
-                    'weight': variant.questions[question_index].points,
+                    'title': question.get_name(),
+                    'weight': question.get_points(),
                     'crop_rect_list': list(parts.values()),
                 })
             else:
@@ -290,14 +288,14 @@ class GradeScopeUploader:
                 children = []
                 for (part_id, box) in parts.items():
                     children.append({
-                        'title': f"{variant.questions[question_index].name} - {part_id}",
-                        'weight': round(variant.questions[question_index].points / len(parts), 2),
+                        'title': f"{question.get_name()} - {part_id}",
+                        'weight': round(question.get_points() / len(parts), 2),
                         'crop_rect_list': [box],
                     })
 
                 question_data.append({
-                    'title': variant.questions[question_index].name,
-                    'weight': variant.questions[question_index].points,
+                    'title': question.get_name(),
+                    'weight': question.get_points(),
                     # The top-level question just needs one of the bounding boxes.
                     'crop_rect_list': [list(parts.values())[0]],
                     'children': children,
@@ -329,9 +327,6 @@ class GradeScopeUploader:
         }
 
         return outline
-        '''
-
-        return {}
 
     def upload(self,
             variant: quizcomp.model.quiz.Variant,
@@ -530,21 +525,18 @@ class GradeScopeUploader:
     def create_rubric(self, session: requests.Session, assignment_id: str, variant: quizcomp.model.quiz.Variant) -> None:
         """ Create rubric items for a quiz. """
 
-        # TEST
-        # pylint: disable=pointless-string-statement
-        '''
         questions_ids, csrf_token = self.fetch_question_ids(session, assignment_id)
 
-        for question in variant.questions:
-            if (question.name not in questions_ids):
-                continue
+        for group in variant.get_groups():
+            for question in group.get_questions():
+                if (question.get_name() not in questions_ids):
+                    continue
 
-            question_ids = questions_ids[question.name]
-            score = round(question.points / len(question_ids), 2)
+                question_ids = questions_ids[question.get_name()]
+                score = round(question.get_points() / len(question_ids), 2)
 
-            for question_id in question_ids:
-                self.add_rubric_item(session, csrf_token, question_id, "Incorrect", score)
-        '''
+                for question_id in question_ids:
+                    self.add_rubric_item(session, csrf_token, question_id, "Incorrect", score)
 
     def add_rubric_item(self, session: requests.Session, csrf_token: str, question_id: str, description: str, score: float) -> None:
         """ Add a single rubric item to a quiz. """

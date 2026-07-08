@@ -328,8 +328,7 @@ class Quiz(quizcomp.model.base.CoreType):
         """ Create a single variant based on this quiz. """
 
         new_groups = []
-        for (i, raw_group) in enumerate(self.children):
-            group = typing.cast(quizcomp.model.group.Group, raw_group)
+        for (i, group) in enumerate(self.get_groups()):
             questions = group.choose_variant_questions(all_questions, all_used_question_indexes[i], rng)
 
             group_data = vars(group).copy()
@@ -345,7 +344,7 @@ class Quiz(quizcomp.model.base.CoreType):
 
         data['variant_id'] = variant_id
         data['quiz_name'] = self.name
-        data['groups'] = new_groups
+        data['children'] = new_groups
 
         data['version'] = self.version
         if ((self.version is not None) and (variant_id is not None)):

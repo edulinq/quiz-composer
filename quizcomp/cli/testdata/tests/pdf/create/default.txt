@@ -3,7 +3,7 @@
     "arguments": [
         "__DATA_DIR__(../../../testdata/quizzes/good/simple/quiz.json)",
         "--skip-pdf",
-        "--outdir", "__TEMP_DIR__()",
+        "--out-dir", "__TEMP_DIR__()",
         "--seed", "4",
     ]
 }

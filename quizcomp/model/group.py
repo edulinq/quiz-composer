@@ -69,11 +69,6 @@ class Group(quizcomp.model.base.CoreType):
 
         questions = self._choose_questions(count, used_question_indexes, rng)
 
-        # Rename questions if there are more than one.
-        if (len(questions) > 1):
-            for (i, question) in enumerate(questions):
-                question.name = f"{self.name} - {i + 1}"
-
         return questions
 
     def _choose_questions(self,

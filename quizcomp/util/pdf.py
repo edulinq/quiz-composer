@@ -135,10 +135,7 @@ def make(
     variants = quiz.create_variants(count = num_variants, seed = seed)
 
     for (i, variant) in enumerate(variants):
-        out_path = os.path.join(out_dir, f"{variant.get_name()}.json")
-        variant.to_path(out_path)
-
-        make_pdf(variant, out_dir = out_dir, is_key = False, skip_tex = skip_tex, skip_pdf = skip_pdf)
+        variant_out_dir = make_pdf(variant, out_dir = out_dir, is_key = False, skip_tex = skip_tex, skip_pdf = skip_pdf)
 
         name = variant.get_name()
 
@@ -160,6 +157,7 @@ def make(
             'variant_index': i,
             'seed': seed,
             'has_key': has_key,
+            'out_dir': variant_out_dir,
         })
 
         _logger.info("Completed variant: '%s'.", name)
@@ -189,6 +187,9 @@ def make_pdf(
 
     edq.util.dirent.mkdir(out_dir)
 
+    out_json_path = os.path.join(out_dir, f"{variant.get_name()}.json")
+    variant.to_path(out_json_path)
+
     image_dir = os.path.join(out_dir, 'images')
 
     out_path = os.path.join(out_dir, f"{variant.get_name()}.tex")
@@ -215,7 +216,7 @@ def modify_parser(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
         type = str,
         help = 'The path to a JSON file.')
 
-    parser.add_argument('--outdir', dest = 'out_dir',
+    parser.add_argument('--out-dir', dest = 'out_dir',
         action = 'store', type = str, default = '.',
         help = 'The directory to put the output (default: %(default)s).')
 

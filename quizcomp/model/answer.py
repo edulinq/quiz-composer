@@ -2,7 +2,6 @@ import abc
 import enum
 import math
 import random
-import string
 import typing
 
 import edq.util.enum
@@ -12,9 +11,6 @@ import edq.util.serial
 import quizcomp.model.constants
 import quizcomp.model.errors
 import quizcomp.model.feedback
-
-DEFAULT_CHOICES: typing.List[str] = list(string.ascii_uppercase)
-MAX_CHOICES: int = len(DEFAULT_CHOICES)
 
 class NumericAnswerType(enum.Enum):
     """ The types of numeric answers supported by the Quiz Composer. """
@@ -585,7 +581,11 @@ class ChoiceAnswers(QuestionAnswers):
     def get_choices_with_markers(self) -> typing.List[typing.Tuple[quizcomp.parser.document.ParsedDocument, Choice]]:
         """ Get the choices for this answer along with markers for each (e.g., "A", "B", "C"). """
 
-        return [(quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[i]), choice) for (i, choice) in enumerate(self.choices)]
+        return [
+            (quizcomp.parser.document.ParsedDocument.parse_text(quizcomp.model.constants.DEFAULT_CHOICES[i]), choice)
+            for (i, choice)
+            in enumerate(self.choices)
+        ]
 
     @classmethod
     def from_pod(cls: typing.Type['ChoiceAnswers'],
@@ -596,9 +596,9 @@ class ChoiceAnswers(QuestionAnswers):
             context = edq.util.serial.SerializationContext()
 
         min_correct = context.extra.get('min_correct', 0)
-        max_correct = context.extra.get('max_correct', MAX_CHOICES)
+        max_correct = context.extra.get('max_correct', quizcomp.model.constants.MAX_CHOICES)
         min_incorrect = context.extra.get('min_incorrect', 0)
-        max_incorrect = context.extra.get('max_incorrect', MAX_CHOICES)
+        max_incorrect = context.extra.get('max_incorrect', quizcomp.model.constants.MAX_CHOICES)
 
         quizcomp.model.errors.check_type(data, list, "'answers'", context = context)
         raw_choices = typing.cast(typing.List[edq.util.serial.PODType], data)
@@ -870,7 +870,7 @@ class MatchingAnswers(QuestionAnswers):
         options = []
         for (i, right_index) in enumerate(right_indexes):
             right = rights[right_index]
-            right_marker = quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[i])
+            right_marker = quizcomp.parser.document.ParsedDocument.parse_text(quizcomp.model.constants.DEFAULT_CHOICES[i])
 
             left: typing.Union[TextOption, None] = None
             left_marker = None
@@ -882,7 +882,8 @@ class MatchingAnswers(QuestionAnswers):
                 matching_right_marker_index = right_indexes.index(left_index)
 
                 left = lefts[left_index]
-                left_marker = quizcomp.parser.document.ParsedDocument.parse_text(DEFAULT_CHOICES[matching_right_marker_index])
+                left_marker = quizcomp.parser.document.ParsedDocument.parse_text(
+                        quizcomp.model.constants.DEFAULT_CHOICES[matching_right_marker_index])
                 correct_answer = rights[left_index]
 
             options.append(MatchingAnswerRow(left, right, right_marker, left_marker, correct_answer))
@@ -962,9 +963,10 @@ class MatchingAnswers(QuestionAnswers):
             option = TextOption.from_pod_with_error(raw_distractor, label, context)
             claen_distractors.append(option)
 
-        if ((len(pairs) + len(claen_distractors)) > MAX_CHOICES):
+        if ((len(pairs) + len(claen_distractors)) > quizcomp.model.constants.MAX_CHOICES):
             raise quizcomp.model.errors.QuestionValidationError(
-                f"Matching question has too many options. Found {(len(pairs) + len(claen_distractors))}, while the max is {MAX_CHOICES}.",
+                (f"Matching question has too many options. Found {(len(pairs) + len(claen_distractors))},"
+                f" while the max is {quizcomp.model.constants.MAX_CHOICES}."),
                 context = context)
 
         return MatchingAnswers(pairs, claen_distractors)
