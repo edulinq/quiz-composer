@@ -32,7 +32,7 @@
                 <% set fill = '[red]' if (answer_key and choice.correct) else '' %>
                 \begin{tabular}{ >{\centering\arraybackslash}m{0.06\textwidth} m{<< width >>\textwidth} }
                     \radio<< fill >>{multiple_dropdowns}{<< id >>}{<< id >>.<< part_id >>}{<< loop.index0 >>}
-                        & << choice.text >> \\
+                        & << choice.text.to_tex() >> \\
                 \end{tabular}
             <% endfor %>
         <% else %>
@@ -40,7 +40,7 @@
                 <% for choice in part.choices %>
                     <% set fill = '[red]' if (answer_key and choice.correct) else '' %>
                     \radio<< fill >>{multiple_dropdowns}{<< id >>}{<< id >>.<< part_id >>}{<< loop.index0 >>}
-                        & << choice.text >> \\
+                        & << choice.text.to_tex() >> \\
                 <% endfor %>
             \end{tabular}
         <% endif %>
