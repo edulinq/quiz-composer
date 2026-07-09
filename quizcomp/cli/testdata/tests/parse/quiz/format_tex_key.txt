@@ -225,7 +225,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.0 -- essay-basic} %%%
 
 
-%%% BEGIN Question {0.0.0 -- None} %%%
+%%% BEGIN Question {0.0.0 -- essay-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -253,7 +253,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.0.0 -- None} %%%
+%%% END Question {0.0.0 -- essay-basic} %%%
 
 
 
@@ -262,7 +262,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.1 -- fimb-basic} %%%
 
 
-%%% BEGIN Question {0.1.0 -- None} %%%
+%%% BEGIN Question {0.1.0 -- fimb-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -292,7 +292,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.1.0 -- None} %%%
+%%% END Question {0.1.0 -- fimb-basic} %%%
 
 
 
@@ -301,7 +301,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.2 -- fitb-basic} %%%
 
 
-%%% BEGIN Question {0.2.0 -- None} %%%
+%%% BEGIN Question {0.2.0 -- fitb-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -324,7 +324,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.2.0 -- None} %%%
+%%% END Question {0.2.0 -- fitb-basic} %%%
 
 
 
@@ -333,7 +333,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.3 -- ma-basic} %%%
 
 
-%%% BEGIN Question {0.3.0 -- None} %%%
+%%% BEGIN Question {0.3.0 -- ma-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -365,7 +365,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.3.0 -- None} %%%
+%%% END Question {0.3.0 -- ma-basic} %%%
 
 
 
@@ -374,7 +374,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.4 -- matching-basic} %%%
 
 
-%%% BEGIN Question {0.4.0 -- None} %%%
+%%% BEGIN Question {0.4.0 -- matching-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -408,7 +408,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
     \end{tabular}
 \end{minipage}
 
-%%% END Question {0.4.0 -- None} %%%
+%%% END Question {0.4.0 -- matching-basic} %%%
 
 
 
@@ -417,7 +417,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.5 -- mcq-basic} %%%
 
 
-%%% BEGIN Question {0.5.0 -- None} %%%
+%%% BEGIN Question {0.5.0 -- mcq-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -449,7 +449,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.5.0 -- None} %%%
+%%% END Question {0.5.0 -- mcq-basic} %%%
 
 
 
@@ -458,7 +458,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.6 -- mdd-basic} %%%
 
 
-%%% BEGIN Question {0.6.0 -- None} %%%
+%%% BEGIN Question {0.6.0 -- mdd-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -517,7 +517,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
             \end{center}
 \end{minipage}
 
-%%% END Question {0.6.0 -- None} %%%
+%%% END Question {0.6.0 -- mdd-basic} %%%
 
 
 
@@ -526,7 +526,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.7 -- numeric-basic} %%%
 
 
-%%% BEGIN Question {0.7.0 -- None} %%%
+%%% BEGIN Question {0.7.0 -- numeric-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -549,7 +549,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.7.0 -- None} %%%
+%%% END Question {0.7.0 -- numeric-basic} %%%
 
 
 
@@ -558,7 +558,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.8 -- sa-basic} %%%
 
 
-%%% BEGIN Question {0.8.0 -- None} %%%
+%%% BEGIN Question {0.8.0 -- sa-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -581,7 +581,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.8.0 -- None} %%%
+%%% END Question {0.8.0 -- sa-basic} %%%
 
 
 
@@ -590,7 +590,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.9 -- textonly-basic} %%%
 
 
-%%% BEGIN Question {0.9.0 -- None} %%%
+%%% BEGIN Question {0.9.0 -- textonly-basic} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -605,7 +605,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \end{minipage}
 
-%%% END Question {0.9.0 -- None} %%%
+%%% END Question {0.9.0 -- textonly-basic} %%%
 
 
 
@@ -614,7 +614,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.10 -- tf-true} %%%
 
 
-%%% BEGIN Question {0.10.0 -- None} %%%
+%%% BEGIN Question {0.10.0 -- tf-true} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -642,7 +642,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.10.0 -- None} %%%
+%%% END Question {0.10.0 -- tf-true} %%%
 
 
 

@@ -7,6 +7,9 @@
 }
 ---
 {
+    "attributes": {
+        "shuffle_answers": false
+    },
     "course_name": "Dummy Course",
     "description": "Dummy description.",
     "groups": [

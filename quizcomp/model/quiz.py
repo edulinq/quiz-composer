@@ -25,6 +25,7 @@ DUMMY_QUIZ_DATA: typing.Dict[str, typing.Any] = {
     'course_name': 'Dummy Course',
     'term_name': 'Dummy Term',
     'version': '0.0.0',
+    'shuffle_answers': False,
 }
 
 DUMMY_GROUP_DATA: typing.Dict[str, typing.Any] = {

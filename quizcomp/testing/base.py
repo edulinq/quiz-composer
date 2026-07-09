@@ -34,11 +34,15 @@ class BaseTest(edq.testing.unittest.BaseTest):
 
     @classmethod
     def setUpClass(cls) -> None:
+        super().setUpClass()
+
         # Disable KaTeX for testing.
         quizcomp.parser.math._katex_available = False
 
     @classmethod
     def tearDownClass(cls) -> None:
+        super().tearDownClass()
+
         quizcomp.parser.math._katex_available = None
 
     def load_question(self, path: str) -> quizcomp.model.question.Question:

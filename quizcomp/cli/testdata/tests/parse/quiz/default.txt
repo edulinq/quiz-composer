@@ -6,6 +6,9 @@
 }
 ---
 {
+    "attributes": {
+        "shuffle_answers": false
+    },
     "groups": [
         {
             "name": "A",

@@ -1,6 +1,7 @@
 {
     "attributes": {
-        "description_path": "my_description.md"
+        "description_path": "my_description.md",
+        "shuffle_answers": false
     },
     "description": "Description\n\nThis is a quiz description that lives in a **file**!",
     "groups": [

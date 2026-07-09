@@ -21,10 +21,12 @@ def run_cli(args: argparse.Namespace) -> int:
         raise ValueError(f"Provided question path '{args.path}' is not a file.")
 
     question = quizcomp.model.question.Question.from_path(args.path)
+
     content = quizcomp.converter.convert.convert_question(
-            question,
-            format = quizcomp.model.constants.Format(args.format),
-            constructor_args = {'answer_key': args.answer_key})
+        question,
+        format = quizcomp.model.constants.Format(args.format),
+        constructor_args = {'answer_key': args.answer_key},
+    )
 
     print(content)
 

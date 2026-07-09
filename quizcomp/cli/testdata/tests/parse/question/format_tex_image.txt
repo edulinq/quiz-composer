@@ -228,7 +228,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 %%% BEGIN Group {0.0 -- Dummy Question} %%%
 
 
-%%% BEGIN Question {0.0.0 -- None} %%%
+%%% BEGIN Question {0.0.0 -- Dummy Question} %%%
 
 \begin{minipage}{\textwidth}
     \noindent
@@ -262,7 +262,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
         \end{center}
 \end{minipage}
 
-%%% END Question {0.0.0 -- None} %%%
+%%% END Question {0.0.0 -- Dummy Question} %%%
 
 
 
