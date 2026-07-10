@@ -11,7 +11,7 @@
 Dummy Course -- Dummy Term
 
 
-Total Points: 0.0
+Total Points: 0
 
 Dummy description.
 
@@ -19,7 +19,7 @@ Dummy description.
 
 ---
 
-**Question 1** (0.0 Points)
+**Question 1** (0 Points)
 
 Multiple Choice: Basic
 

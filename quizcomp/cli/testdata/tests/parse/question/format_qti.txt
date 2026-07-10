@@ -28,7 +28,7 @@
                         </selection_number>
                         <selection_extension>
                             <points_per_item>
-                                0.0
+                                0
                             </points_per_item>
                         </selection_extension>
                     </selection>

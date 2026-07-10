@@ -1,6 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
+        "--no-shuffle",
         "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
         "--format", "qti"
     ],
@@ -1386,7 +1387,7 @@
                         </selection_number>
                         <selection_extension>
                             <points_per_item>
-                                0.0
+                                0
                             </points_per_item>
                         </selection_extension>
                     </selection>

@@ -1,5 +1,6 @@
 import copy
 import logging
+import math
 import mimetypes
 import os
 import re
@@ -17,7 +18,7 @@ import quizcomp.parser.document
 
 _logger = logging.getLogger(__name__)
 
-DEFAULT_AVAILABLE_POINTS: float = 0.0
+DEFAULT_AVAILABLE_POINTS: int = 0
 """ The default available points for an object. """
 
 class CoreType(edq.util.serial.DictConverter):
@@ -42,7 +43,7 @@ class CoreType(edq.util.serial.DictConverter):
             name: typing.Union[str, None] = None,
             parent: typing.Union['CoreType', None] = None,
             children: typing.Union[typing.Sequence['CoreType'], None] = None,
-            points: typing.Union[float, None] = None,
+            points: typing.Union[float, int, None] = None,
             lms_id: typing.Union[str, None] = None,
             attributes: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
             attributes_first: typing.Union[typing.Dict[str, edq.util.serial.PODType], None] = None,
@@ -106,8 +107,10 @@ class CoreType(edq.util.serial.DictConverter):
 
         if (points is not None):
             points = float(points)
+            if (math.isclose(points, int(points))):
+                points = int(points)
 
-        self.points: typing.Union[float, None] = points
+        self.points: typing.Union[float, int, None] = points
         """
         The number of points associated with this object.
         This means different things depending on the context, e.g.,
@@ -246,7 +249,7 @@ class CoreType(edq.util.serial.DictConverter):
 
         return documents
 
-    def get_points(self, check_children: bool = True) -> float:
+    def get_points(self, check_children: bool = True) -> typing.Union[float, int]:
         """
         Get the total points available for this object.
 
@@ -268,24 +271,31 @@ class CoreType(edq.util.serial.DictConverter):
             for child in self.children:
                 total += child.get_points()
 
+            if (math.isclose(total, int(total))):
+                total = int(total)
+
             return total
 
         # Finally, return default.
         return DEFAULT_AVAILABLE_POINTS
 
-    def get_child_points(self) -> float:
+    def get_child_points(self) -> typing.Union[float, int]:
         """
         Get the points available for a child of this object.
         By default, this is the number of available points divided evenly amongst the children.
         If no point configuration can be found, DEFAULT_AVAILABLE_POINTS should be returned.
         """
 
-        split = 1
+        split = 1.0
         if (self.children is not None):
-            split = self.child_count()
+            split = float(self.child_count())
 
         # Make sure to not try to use the children to compute the available points.
-        return self.get_points(check_children = False) / split
+        value = self.get_points(check_children = False) / split
+        if (math.isclose(value, int(value))):
+            value = int(value)
+
+        return value
 
     def get_display_points(self) -> str:
         """

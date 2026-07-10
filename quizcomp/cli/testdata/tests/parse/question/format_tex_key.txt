@@ -190,7 +190,7 @@
 
 \vspace{1.0cm}
 
-\textbf{Total Points: 0.0}
+\textbf{Total Points: 0}
 
 Dummy description.
 
@@ -233,7 +233,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \begin{minipage}{\textwidth}
     \noindent
-        \textbf{Question 1} (0.0 Points)
+        \textbf{Question 1} (0 Points)
     \vspace{0.25cm}
 
     \noindent

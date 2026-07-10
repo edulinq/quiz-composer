@@ -1,6 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
+        "--no-shuffle",
         "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
         "--format", "tex",
         "--key",
@@ -189,7 +190,7 @@
 
 \vspace{1.0cm}
 
-\textbf{Total Points: 12.0}
+\textbf{Total Points: 12}
 
 Collect the basic version of each question type.
 
@@ -229,7 +230,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \begin{minipage}{\textwidth}
     \noindent
-        \textbf{Question 1} (0.0 Points)
+        \textbf{Question 1} (0 Points)
     \vspace{0.25cm}
 
     \noindent
@@ -266,7 +267,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \begin{minipage}{\textwidth}
     \noindent
-        \textbf{Question 2} (1.0 Points)
+        \textbf{Question 2} (1 Points)
     \vspace{0.25cm}
 
     \noindent
@@ -337,7 +338,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \begin{minipage}{\textwidth}
     \noindent
-        \textbf{Question 4} (2.0 Points)
+        \textbf{Question 4} (2 Points)
     \vspace{0.25cm}
 
     \noindent
@@ -530,7 +531,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \begin{minipage}{\textwidth}
     \noindent
-        \textbf{Question 8} (1.0 Points)
+        \textbf{Question 8} (1 Points)
     \vspace{0.25cm}
 
     \noindent
@@ -562,7 +563,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \begin{minipage}{\textwidth}
     \noindent
-        \textbf{Question 9} (1.0 Points)
+        \textbf{Question 9} (1 Points)
     \vspace{0.25cm}
 
     \noindent
@@ -594,7 +595,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \begin{minipage}{\textwidth}
     \noindent
-        \textbf{Question 10} (0.0 Points)
+        \textbf{Question 10} (0 Points)
     \vspace{0.25cm}
 
     \noindent
@@ -618,7 +619,7 @@ e.g., you crossed out answers or needed space outside a designated answer box. \
 
 \begin{minipage}{\textwidth}
     \noindent
-        \textbf{Question 11} (1.0 Points)
+        \textbf{Question 11} (1 Points)
     \vspace{0.25cm}
 
     \noindent

@@ -1,6 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
+        "--no-shuffle",
         "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
         "--format", "json"
     ],

@@ -1,7 +1,4 @@
 {
-    "attributes": {
-        "shuffle_answers": false
-    },
     "description": "Description\n\nThis is a quiz description that lives in a **file**!",
     "groups": [
         {

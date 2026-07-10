@@ -1,6 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
+        "--no-shuffle",
         "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
         "--format", "html",
         "--key",
@@ -288,7 +289,7 @@
       2025-02-25
      </p>
      <p>
-      Total Points: 12.0
+      Total Points: 12
      </p>
     </div>
     <div class="qg-quiz-description">
@@ -300,11 +301,11 @@
     </div>
     <div class="qg-quiz-body">
      <hr/>
-     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="1" data-points="0.0" data-type="essay">
+     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="1" data-points="0" data-type="essay">
       <h2 class="qg-quiz-question-name">
        Question 1
        <span class="qg-quiz-question-points">
-        (0.0 Points)
+        (0 Points)
        </span>
       </h2>
       <div class="qg-quiz-question-prompt">
@@ -322,11 +323,11 @@
       </div>
      </div>
      <hr/>
-     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="2" data-points="1.0" data-type="fill_in_multiple_blanks">
+     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="2" data-points="1" data-type="fill_in_multiple_blanks">
       <h2 class="qg-quiz-question-name">
        Question 2
        <span class="qg-quiz-question-points">
-        (1.0 Points)
+        (1 Points)
        </span>
       </h2>
       <div class="qg-quiz-question-prompt">
@@ -393,11 +394,11 @@
       </div>
      </div>
      <hr/>
-     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="4" data-points="2.0" data-type="multiple_answers">
+     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="4" data-points="2" data-type="multiple_answers">
       <h2 class="qg-quiz-question-name">
        Question 4
        <span class="qg-quiz-question-points">
-        (2.0 Points)
+        (2 Points)
        </span>
       </h2>
       <div class="qg-quiz-question-prompt">
@@ -783,11 +784,11 @@
       </div>
      </div>
      <hr/>
-     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="8" data-points="1.0" data-type="numerical">
+     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="8" data-points="1" data-type="numerical">
       <h2 class="qg-quiz-question-name">
        Question 8
        <span class="qg-quiz-question-points">
-        (1.0 Points)
+        (1 Points)
        </span>
       </h2>
       <div class="qg-quiz-question-prompt">
@@ -805,11 +806,11 @@
       </div>
      </div>
      <hr/>
-     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="9" data-points="1.0" data-type="short_answer">
+     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="9" data-points="1" data-type="short_answer">
       <h2 class="qg-quiz-question-name">
        Question 9
        <span class="qg-quiz-question-points">
-        (1.0 Points)
+        (1 Points)
        </span>
       </h2>
       <div class="qg-quiz-question-prompt">
@@ -827,11 +828,11 @@
       </div>
      </div>
      <hr/>
-     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="10" data-points="0.0" data-type="text_only">
+     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="10" data-points="0" data-type="text_only">
       <h2 class="qg-quiz-question-name">
        Question 10
        <span class="qg-quiz-question-points">
-        (0.0 Points)
+        (0 Points)
        </span>
       </h2>
       <div class="qg-quiz-question-prompt">
@@ -849,11 +850,11 @@
       </div>
      </div>
      <hr/>
-     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="11" data-points="1.0" data-type="true_false">
+     <div class="qg-quiz-question qg-answer-key" data-name="None" data-number="11" data-points="1" data-type="true_false">
       <h2 class="qg-quiz-question-name">
        Question 11
        <span class="qg-quiz-question-points">
-        (1.0 Points)
+        (1 Points)
        </span>
       </h2>
       <div class="qg-quiz-question-prompt">

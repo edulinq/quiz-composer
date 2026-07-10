@@ -1,6 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.quiz",
     "arguments": [
+        "--no-shuffle",
         "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
         "--format", "md",
         "--key",
@@ -12,7 +13,7 @@
 
 2025-02-25
 
-Total Points: 12.0
+Total Points: 12
 
 Collect the basic version of each question type.
 
@@ -20,7 +21,7 @@ Collect the basic version of each question type.
 
 ---
 
-**Question 1** (0.0 Points)
+**Question 1** (0 Points)
 
 Essay: Basic
 
@@ -33,7 +34,7 @@ Write your response below.
 
 ---
 
-**Question 2** (1.0 Points)
+**Question 2** (1 Points)
 
 Fill in Multiple Blanks: Basic -- <placeholder>A</placeholder> <placeholder>B</placeholder> <placeholder>C</placeholder> <placeholder>D</placeholder>
 
@@ -60,7 +61,7 @@ Fill in the blank below:
 
 ---
 
-**Question 4** (2.0 Points)
+**Question 4** (2 Points)
 
 Multiple Answers: Basic
 
@@ -130,7 +131,7 @@ C. 3
 
 ---
 
-**Question 8** (1.0 Points)
+**Question 8** (1 Points)
 
 Basic Number Question with All Answer Types
 
@@ -147,7 +148,7 @@ Provide a numerical answer below:
 
 ---
 
-**Question 9** (1.0 Points)
+**Question 9** (1 Points)
 
 Short Answer: Basic
 
@@ -160,7 +161,7 @@ Write your answer below.
 
 ---
 
-**Question 10** (0.0 Points)
+**Question 10** (0 Points)
 
 Text-Only: Basic
 
@@ -168,7 +169,7 @@ Text-Only: Basic
 
 ---
 
-**Question 11** (1.0 Points)
+**Question 11** (1 Points)
 
 True/False: True
 

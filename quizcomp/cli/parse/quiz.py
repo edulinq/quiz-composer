@@ -26,6 +26,9 @@ def run_cli(args: argparse.Namespace) -> int:
         seed = random.randint(0, 2**64)
 
     quiz = quizcomp.model.quiz.Quiz.from_path(args.path)
+    if (args.no_shuffle):
+        quiz.attributes['shuffle_answers'] = False  # pylint: disable=no-member
+
     variant = quiz.create_variant(all_questions = args.all_questions, seed = seed)  # pylint: disable=no-member
     content = quizcomp.converter.convert.convert_variant(
             variant,
@@ -64,6 +67,10 @@ def _get_parser() -> argparse.ArgumentParser:
     parser.add_argument('--all-questions', dest = 'all_questions',
         action = 'store_true', default = False,
         help = 'Include every question for each group (instead of the amount listed under `pick_count`) (default: %(default)s).')
+
+    parser.add_argument('--no-shuffle', dest = 'no_shuffle',
+        action = 'store_true', default = False,
+        help = "Don't shuffle any question answers. (default: %(default)s).")
 
     parser.add_argument('--seed', dest = 'seed',
         action = 'store', type = int, default = None,

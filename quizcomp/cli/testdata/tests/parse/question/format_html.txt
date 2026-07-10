@@ -287,7 +287,7 @@
       Dummy Course — Dummy Term
      </p>
      <p>
-      Total Points: 0.0
+      Total Points: 0
      </p>
     </div>
     <div class="qg-quiz-description">
@@ -299,11 +299,11 @@
     </div>
     <div class="qg-quiz-body">
      <hr/>
-     <div class="qg-quiz-question" data-name="None" data-number="1" data-points="0.0" data-type="multiple_choice">
+     <div class="qg-quiz-question" data-name="None" data-number="1" data-points="0" data-type="multiple_choice">
       <h2 class="qg-quiz-question-name">
        Question 1
        <span class="qg-quiz-question-points">
-        (0.0 Points)
+        (0 Points)
        </span>
       </h2>
       <div class="qg-quiz-question-prompt">
