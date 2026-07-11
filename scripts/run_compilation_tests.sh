@@ -66,7 +66,7 @@ function run_tests() {
         rm -rf "${case_dir}"
         mkdir -p "${case_dir}"
 
-        python3 -m "${cli_module}" "${case_path}" --outdir "${case_dir}" > "${log_path}" 2>&1
+        python3 -m "${cli_module}" "${case_path}" --out-dir "${case_dir}" > "${log_path}" 2>&1
         local status=$?
         if (( status != 0 )) ; then
             echo "    FAIL: PDF creation failed."
