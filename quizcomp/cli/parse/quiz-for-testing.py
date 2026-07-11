@@ -13,6 +13,7 @@ import sys
 
 import quizcomp.cli.parser
 import quizcomp.converter.convert
+import quizcomp.model.constants
 import quizcomp.model.quiz
 
 def run_cli(args: argparse.Namespace) -> int:
@@ -25,7 +26,8 @@ def run_cli(args: argparse.Namespace) -> int:
         raise ValueError(f"Provided path '{args.path}' is not a file.")
 
     for quiz_format in args.formats:
-        if (quiz_format not in quizcomp.converter.convert.SUPPORTED_FORMATS):
+        parsed_format = quizcomp.model.constants.Format(quiz_format)
+        if (parsed_format not in quizcomp.converter.convert.SUPPORTED_FORMATS):
             raise ValueError(f"Unknown quiz format '{quiz_format}', must be one of: {quizcomp.converter.convert.SUPPORTED_FORMATS}.")
 
     seed = args.seed
@@ -39,7 +41,8 @@ def run_cli(args: argparse.Namespace) -> int:
 
     for quiz_format in args.formats:
         print(f"Generating quiz content for '{quiz_format}'.")
-        quizcomp.converter.convert.convert_variant(variant, format = quiz_format,
+        quizcomp.converter.convert.convert_variant(variant,
+                format = quizcomp.model.constants.Format(quiz_format),
                 constructor_args = {'answer_key': args.answer_key})
 
     return 0

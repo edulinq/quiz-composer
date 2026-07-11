@@ -1,0 +1,18 @@
+{
+    "cli": "quizcomp.cli.parse.quiz-for-testing",
+    "arguments": [
+        "__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)",
+        "html",
+        "json",
+        "md",
+        "qti",
+        "tex",
+    ],
+}
+---
+Parsing quiz: '__DATA_DIR__(../../../testdata/quizzes/good/all-basic-questions/quiz.json)'.
+Generating quiz content for 'html'.
+Generating quiz content for 'json'.
+Generating quiz content for 'md'.
+Generating quiz content for 'qti'.
+Generating quiz content for 'tex'.
