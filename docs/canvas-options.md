@@ -1,6 +1,6 @@
-# Canvas Quiz Options
+# LMS Quiz Options
 
-Quiz behavior in Canvas can be configured through the `canvas` key in the quiz JSON file.
+Quiz behavior in an LMS (e.g., Canvas) can be configured through some of the following options.
 
 Table of Contents:
  - [Options](#options)
@@ -15,15 +15,18 @@ Table of Contents:
 
 ## Options
 
-| Key                      | Type    | Default Value  | Allowed Values                                     | Notes                                           |
-|--------------------------|---------|----------------|----------------------------------------------------|-------------------------------------------------|
-| `practice`               | boolean | `true`         | {`true`, `false`}                                  | Whether the quiz is a practice (ungraded) quiz. |
-| `published`              | boolean | `false`        | {`true`, `false`}                                  | Whether the quiz is visible to students.        |
-| `hide_results`           | string  | `null`         | {`null`, `"always"`, `"until_after_last_attempt"`} | Controls result visibility after submission.    |
-| `show_correct_answers`   | boolean | `true`         | {`true`, `false`}                                  | Whether correct answers are shown.              |
-| `allowed_attempts`       | integer | `1`            | Positive integer or `-1`                           | How many times students can take the quiz.      |
-| `scoring_policy`         | string  | `keep_highest` | {`"keep_highest"`, `"keep_latest"`}                | Which attempt score is recorded.                |
-| `assignment_group_name`  | string  | `Quizzes`      | Any string                                         | Canvas assignment group for the quiz.           |
+| Key                    | Type    | Default Value  | Allowed Values                                     | Notes                                           |
+|------------------------|---------|----------------|----------------------------------------------------|-------------------------------------------------|
+| `practice`             | boolean | `true`         | {`true`, `false`}                                  | Whether the quiz is a practice (ungraded) quiz. |
+| `published`            | boolean | `false`        | {`true`, `false`}                                  | Whether the quiz is visible to students.        |
+| `hide_results`         | string  | `null`         | {`null`, `"always"`, `"until_after_last_attempt"`} | Controls result visibility after submission.    |
+| `show_correct_answers` | boolean | `true`         | {`true`, `false`}                                  | Whether correct answers are shown.              |
+| `allowed_attempts`     | integer | `1`            | Positive integer or `-1`                           | How many times students can take the quiz.      |
+| `scoring_policy`       | string  | `keep_highest` | {`"keep_highest"`, `"keep_latest"`}                | Which attempt score is recorded.                |
+| `assignment_group`     | string  | `null`         | Any string                                         | Assignment group for the quiz.                  |
+
+The above table shows the attempted default values that will be used.
+However, the specific LMS in-use may alter these values.
 
 ### Quiz Type
 
@@ -69,8 +72,7 @@ When only one attempt is allowed, this option has no practical effect.
 
 ### Assignment Group
 
-The `assignment_group_name` key specifies which Canvas assignment group the quiz belongs to.
-If the named group does not exist in the course, no assignment group ID is sent to Canvas.
+The `assignment_group` key specifies which LMS assignment group the quiz belongs to.
 
 ## Example
 
@@ -79,16 +81,14 @@ Correct answers are shown only after the student has used all attempts.
 
 ```json
 {
-    "title": "Final Exam",
-    "canvas": {
-        "practice": false,
-        "published": true,
-        "hide_results": "until_after_last_attempt",
-        "show_correct_answers": true,
-        "allowed_attempts": 3,
-        "scoring_policy": "keep_highest",
-        "assignment_group_name": "Exams"
-    },
+    "name": "Final Exam",
+    "practice": false,
+    "published": true,
+    "hide_results": "until_after_last_attempt",
+    "show_correct_answers": true,
+    "allowed_attempts": 3,
+    "scoring_policy": "keep_highest",
+    "assignment_group": "Exams"
     "groups": [...]
 }
 ```

@@ -38,8 +38,8 @@ Parsed strings are text that will be parsed by the QuizComp parser
 (see [the syntax documentation](/docs/syntax.md)),
 and therefore must be valid syntax.
 When using some output formats (like Canvas),
-it may seem odd why some fields need to be parsed (like a question's title).
-However, remember that some output formats (like TeX) will need to parse a question's title to produce valid TeX.
+it may seem odd why some fields need to be parsed (like a question's name).
+However, remember that some output formats (like TeX) will need to parse a question's name to produce valid TeX.
 
 ## Common Fields
 

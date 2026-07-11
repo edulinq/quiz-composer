@@ -3,7 +3,7 @@
 A tool for generating quizzes from a standard, text-based definition.
 Quizzes can be taken from the standard definition and converted into:
  - PDFs
- - Canvas Quizzes (Uploaded to Canvas)
+ - LMS Quizzes (Uploaded to an LMS (e.g., Canvas))
  - GradeScope Quizzes
    - Both GradeScope-Compatible PDFs and Uploaded to GradeScope
  - HTML Forms
@@ -19,7 +19,6 @@ Documentation Table of Contents:
    - [Python](#python)
    - [PDF Files](#pdf-files)
    - [Math Equations in HTML](#math-equations-in-html)
-   - [Canvas Uploading](#canvas-uploading)
    - [GradeScope Uploading](#gradescope-uploading)
  - [Development](docs/development.md)
  - [Usage](#usage)
@@ -32,10 +31,10 @@ Documentation Table of Contents:
    - [Parsing a Specific Question](#parsing-a-specific-question)
    - [Parsing a Specific File](#parsing-a-specific-file)
    - [Creating a PDF Quiz](#creating-a-pdf-quiz)
-   - [Canvas](#canvas)
-     - [Uploading a Quiz to Canvas](#uploading-a-quiz-to-canvas)
-        - [Canvas Quiz Options](/docs/canvas-options.md)
-     - [Downloading a Quiz from Canvas](#downloading-a-quiz-from-canvas)
+   - [LMS](#lms-learning-management-system)
+     - [Uploading a Quiz to an LMS](#uploading-a-quiz-to-an-lms)
+     - [Downloading a Quiz from an LMS](#downloading-a-quiz-from-an-lms)
+     - [LMS Quiz Options](/docs/lms-options.md)
    - [Uploading a Quiz to GradeScope](#uploading-a-quiz-to-gradescope)
  - [Quiz Format](#quiz-format)
    - [Answer Shuffling](#answer-shuffling)
@@ -110,20 +109,6 @@ npm install katex
 
 By default, your [PATH](https://en.wikipedia.org/wiki/PATH_(variable)) will be searched for `npm` and `npx`.
 To specify the directory where they both live, you can use the `--nodejs-bin-dir` flag.
-
-### Canvas Uploading
-
-To upload quizzes to Canvas, you will need three things:
- - The Canvas Base URL
-   - The base URL for the Canvas instance you are using.
-   - Ex: `https://canvas.ucsc.edu`
- - The Canvas Course ID
-   - The numeric ID for the course you want to upload the quiz under.
-   - You can find this by going to the main page for your course (or almost any page related to your course), and looking at the url.
-   - Ex: For `https://canvas.ucsc.edu/courses/12345`, the course ID is `12345`.
- - A Canvas Access Token
-   - A token is specific for each user, and that user should the have ability to make quizzes for your specific course.
-   - To get a new token, go to your account settings ("Account" -> "Settings"), and under "Approved Integrations" click "+ New Access Token".
 
 ### GradeScope Uploading
 
@@ -249,35 +234,36 @@ Some additional options that may be useful:
  - `--out-dir <dir>` -- Choose where the output (TeX, PDF, etc) will be written to.
  - `--variants <X>` -- Create X variants (alternate versions) if the quiz. X may be in [1, 26].
 
-### Canvas
+### LMS (Learning Management System)
 
-#### Uploading a Quiz to Canvas
+To manage quizzes in the context of a LMS (like Blackboard, Brightspace, Canvas, or Moodle),
+we recommend using the [LMS Toolkit](https://github.com/edulinq/lms-toolkit).
+The LMS Toolkit represents quizzes the same was as the Quiz Composer.
+All LMT Toolkit command in this documentation assume that you have already
+[configured your LMS Toolkit instance](https://github.com/edulinq/lms-toolkit/#authentication).
 
-To upload a quiz to Canvas, the `quizcomp.cli.canvas.upload` module can be used.
-The basic usage is as follows:
+#### Uploading a Quiz to an LMS
+
+A quiz can be uploaded to an LMS using the LMS Toolkit's `lms.cli.courses.quizzes.upload` command:
 ```
-python3 -m quizcomp.cli.canvas.upload <path to quiz JSON file> --course <canvas course id> --token <canvas access token>
+python3 -m lms.cli.courses.quizzes.upload <path to quiz JSON file>
 ```
 
 If an existing quiz with the same name is found, then nothing will be uploaded unless the `--force` flag is given.
 
-For details on Canvas-specific quiz options, see the [Canvas Quiz Options](/docs/canvas-options.md) documentation.
+See the [LMS Toolkit's documentation](https://github.com/edulinq/lms-toolkit/#upload-quizzes) for more information.
 
-#### Downloading a Quiz from Canvas
+#### Downloading a Quiz from an LMS
 
-To download quizzes or questions from Canvas, please use the [LMS Toolkit](https://github.com/edulinq/lms-toolkit).
-
-For example, you can download the quiz 'Regular Expressions' from the course 'Course 101' with
-the [lms.cli.courses.quizzes.write](https://edulinq.github.io/lms-toolkit/docs/latest/lms/cli/courses/quizzes/write.html) command:
-```sh
-python3 -m lms.cli.courses.quizzes.write --course 'Course 101' --out-dir 'out' 'Regular Expressions'
+A quiz can be downloaded to an LMS using the LMS Toolkit's `lms.cli.courses.quizzes.download` command:
+```
+python3 -m lms.cli.courses.quizzes.download <name or id of the quiz>
 ```
 
-Note that the above command assumes you have already [prepared your credentials](https://github.com/edulinq/lms-toolkit?tab=readme-ov-file#authentication).
+Because of how LMSs store data you may have to manually tweak some things,
+so be sure to always inspect quizzes downloaded from an LMS.
 
-Quizzes will be downloaded in the Quiz Composer format.
-Because of how Canvas data you may have to manually tweak some things,
-so be sure to always inspect quizzes downloaded from Canvas.
+See the [LMS Toolkit's documentation](https://github.com/edulinq/lms-toolkit/#download-quizzes) for more information.
 
 ### Uploading a Quiz to GradeScope
 
@@ -296,15 +282,15 @@ Below are some common fields used in the **quiz** JSON configuration.
 
 | Key                     | Type           | Required? | Default      | Description |
 |-------------------------|----------------|-----------|--------------|-------------|
-| `title`                 | Plain String   | true      |              | The title of the quiz. |
-| `course_title`          | Plain String   | false     | empty string | The title of the course for this quiz. |
-| `term_title`            | Plain String   | false     | empty string | The title of the term this quiz is given in. |
+| `name`                  | Plain String   | true      |              | The name of the quiz. |
+| `course_name`           | Plain String   | false     | empty string | The name of the course for this quiz. |
+| `term_name`             | Plain String   | false     | empty string | The name of the term this quiz is given in. |
 | `description`           | Parsed String  | true      |              | The description of the quiz. May also be [provided in MD file](#quiz-descriptions). |
 | `date`                  | Plain String   | false     | today        | An [ISO 8601](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat) date string. |
 | `time_limit_mins`       | Integer        | false     | null/None    | The time limit of the quiz, null/None for no limit. |
 | `shuffle_answers`       | Boolean        | false     | true         | Whether to shuffle question answers/choices, see [Answer Shuffling](#answer-shuffling). |
 | `pick_with_replacement` | Boolean        | false     | true         | Whether to select questions from groups with replacement, see [Question Selection from Groups](#question-selection-from-groups). |
-| `version`               | Plain String   | false     | current git commit hash | The title of the quiz. |
+| `version`               | Plain String   | false     | current git commit hash | The name of the quiz. |
 | `groups`                | Object         | true      |              | The question groups. |
 
 
@@ -356,7 +342,7 @@ Putting the prompt directly in the JSON can be convenient for questions with sho
 But for larger prompts that may involve things like tables and images,
 having a whole file just for the prompt is generally recommended.
 
-**WARNING**: Remember that in JSON backslashes will need to be escaped.
+**WARNING**: Remember that in JSON backslashes (`\`) will need to be escaped.
 So prompts written in JSON will need to escape backslashes
 (which then in-turn may be used to escape characters in QuizComp markdown).
 
