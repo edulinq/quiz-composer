@@ -1,0 +1,3 @@
+[submodule "testdata/cse-cracks-course"]
+	path = testdata/cse-cracks-course
+	url = https://github.com/edulinq/cse-cracks-course.git
