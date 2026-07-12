@@ -21,7 +21,7 @@
         \begin{minipage}{\textwidth}
 
         \noindent
-        << label >>:
+        << label | clean_label >>:
 
         <% if center %>
             \begin{center}

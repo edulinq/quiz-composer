@@ -18,7 +18,7 @@
     <% for (label, text_answers) in this.answers.parts.items() %>
         <% if (inline) %>
             \begin{tabular}{ >{\centering\arraybackslash}m{0.05\textwidth} >{\centering\arraybackslash}m{<< width + 0.01 >>\textwidth} }
-                << label >>: &
+                << label | clean_label >>: &
                 <% if (answer_key) %>
                     \bigAnswerBox[<< text_answers.get_first_option_text().to_text() >>]{<< height >>}{<< width >>}{fill_in_multiple_blanks}{<< id >>}{<< id >>.<< loop.index0 >>}{0} \\
                 <% else %>
@@ -26,7 +26,7 @@
                 <% endif %>
             \end{tabular}
         <% else %>
-            << label >>: \\
+            << label | clean_label >>: \\
             <% if (answer_key) %>
                 \bigAnswerBox[<< text_answers.get_first_option_text().to_text() >>]{<< height >>}{<< width >>}{fill_in_multiple_blanks}{<< id >>}{<< id >>.<< loop.index0 >>}{0} \\
             <% else %>
