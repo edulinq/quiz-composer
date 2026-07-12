@@ -467,10 +467,10 @@ class TextAnswers(QuestionAnswers):
         return self.options[0].text
 
     @classmethod
-    def from_pod(cls: typing.Type[TextAnswers],
+    def from_pod(cls: typing.Type['TextAnswers'],
             data: edq.util.serial.PODType,
             context: typing.Union[edq.util.serial.SerializationContext, None] = None,
-            ) -> TextAnswers:
+            ) -> 'TextAnswers':
         if (data is None):
             return TextAnswers()
 
