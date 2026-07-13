@@ -1,5 +1,7 @@
 {
     "cli": "quizcomp.cli.parse.question",
+    /* Output has paths. */
+    "platform_skip": "win",
     "arguments": [
         "__DATA_DIR__(../../../testdata/questions/good/prompt-image/question.json)",
         "--format", "tex"
