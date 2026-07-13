@@ -1,5 +1,6 @@
 import glob
 import logging
+import math
 import os
 import random
 import typing
@@ -47,6 +48,17 @@ class Group(quizcomp.model.base.CoreType):
         """ Get all questions for this group. """
 
         return [typing.cast(quizcomp.model.question.Question, child) for child in self.children]
+
+    def get_child_points(self) -> typing.Union[float, int]:
+        if (self.pick_count == 0):
+            return 0
+
+        # Make sure to not try to use the children to compute the available points.
+        value = self.get_points(check_children = False) / float(self.pick_count)
+        if (math.isclose(value, int(value))):
+            value = int(value)
+
+        return value
 
     def choose_variant_questions(self,
             all_questions: bool,
