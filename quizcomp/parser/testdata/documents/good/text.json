@@ -372,7 +372,7 @@
         "formats": {
             "md": "^",
             "html": "<p>^</p>",
-            "tex": "\\^",
+            "tex": "\\textasciicircum{}",
             "text": "",
             "json": {
                 "type": "paragraph",
@@ -397,7 +397,7 @@
         "formats": {
             "md": "**^**",
             "html": "<p><strong>^</strong></p>",
-            "tex": "\\textbf{\\^}",
+            "tex": "\\textbf{\\textasciicircum{}}",
             "text": "",
             "json": {
                 "type": "paragraph",

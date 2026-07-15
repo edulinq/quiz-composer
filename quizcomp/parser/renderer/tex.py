@@ -12,23 +12,21 @@ import quizcomp.parser.style
 _logger = logging.getLogger(__name__)
 
 TEX_REPLACEMENTS: typing.Dict[str, str] = {
-    # Specially handle braces and slashes to avoid clobbering other replacements.
-    '{': 'ZZZzzz  OPEN BRACE REPLACEMENT  zzzZZZ',
-    '}': 'ZZZzzz  CLOSE BRACE REPLACEMENT  zzzZZZ',
-    '\\': 'ZZZzzz  BACKSLASH REPLACEMENT  zzzZZZ',
-
+    # Keep this as a character-level mapping so replacement values cannot be
+    # mistaken for source text during a later replacement pass.
+    '\\': '\\textbackslash{}',
+    '{': '\\{',
+    '}': '\\}',
     '|': '\\textbar{}',
     '$': '\\$',
+    '&': '\\&',
     '#': '\\#',
     '%': '\\%',
-    '^': '\\^',
+    '^': '\\textasciicircum{}',
     '_': '\\_',
+    '~': '\\textasciitilde{}',
     'π': '$\\pi$',
     '`': '\\`{}',
-
-    'ZZZzzz  OPEN BRACE REPLACEMENT  zzzZZZ': '\\{',
-    'ZZZzzz  CLOSE BRACE REPLACEMENT  zzzZZZ': '\\}',
-    'ZZZzzz  BACKSLASH REPLACEMENT  zzzZZZ': '\\textbackslash{}',
 }
 
 VERB_CHARACTERS: typing.List[str] = ['|', '!', '@', '#', '$', '^', '&', '-', '_', '=', '+']
@@ -295,10 +293,7 @@ def tex_escape(text: str) -> str:
     Prepare normal text for tex.
     """
 
-    for key, value in TEX_REPLACEMENTS.items():
-        text = text.replace(key, value)
-
-    return text
+    return ''.join(TEX_REPLACEMENTS.get(char, char) for char in text)
 
 def _apply_tex_table_style(style: typing.Dict[str, typing.Any], lines: typing.List[str]) -> typing.List[str]:
     """ Build the style for a table. """

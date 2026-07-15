@@ -149,4 +149,12 @@
         }
     }
 
+    ,{
+        "name": "TeX Special Characters",
+        "text": "ZZZzzz  OPEN BRACE REPLACEMENT  zzzZZZ { } \\ | $ & # % ^ _ ~ `.",
+        "formats": {
+            "tex": "ZZZzzz  OPEN BRACE REPLACEMENT  zzzZZZ \\{ \\} \\textbackslash{} \\textbar{} \\$ \\& \\# \\% \\textasciicircum{} \\_ \\textasciitilde{} \\`{}."
+        }
+    }
+
 ]
