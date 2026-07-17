@@ -113,6 +113,73 @@ jobs:
         shell: bash
         run: ./scripts/run_compilation_tests.sh
 
+  docs:
+    needs: advanced-test
+    if: ${{ github.event_name == 'push' && github.repository_owner == 'edulinq' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) }}
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    strategy:
+      matrix:
+        python-version: ['3.11']
+        os: ['ubuntu-24.04']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Set Git Config
+        shell: bash
+        run: |
+            git config --global core.protectNTFS false
+            git config --global core.longpaths true
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: recursive
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache Python Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-os:${{ matrix.os }}-python:${{ matrix.python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}
+
+      - name: Install Dependencies
+        shell: bash
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build Site
+        shell: bash
+        run: |
+            git checkout main
+            ./scripts/build_site.sh
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'build/site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
   deploy:
     needs: advanced-test
 
