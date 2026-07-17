@@ -20,6 +20,7 @@ Documentation Table of Contents:
    - [PDF Files](#pdf-files)
    - [Math Equations in HTML](#math-equations-in-html)
    - [GradeScope Uploading](#gradescope-uploading)
+ - [API Documentation](https://edulinq.github.io/quiz-composer/)
  - [Development](docs/development.md)
  - [Usage](#usage)
    - [Parsing a Specific Quiz](#parsing-a-specific-quiz)
@@ -279,6 +280,7 @@ All the same options for creating PDFs (`quizcomp.cli.pdf.create`) can be used.
 ## Quiz Format
 
 Below are some common fields used in the **quiz** JSON configuration.
+For all available options, see the [API Documentation](https://edulinq.github.io/quiz-composer/docs/latest/quizcomp/model/quiz.html#Quiz).
 
 | Key                     | Type           | Required? | Default      | Description |
 |-------------------------|----------------|-----------|--------------|-------------|
@@ -296,6 +298,7 @@ Below are some common fields used in the **quiz** JSON configuration.
 
 Below are some common fields used in the **group** JSON configuration.
 The `Inherited?` column indicates values that will be inherited by questions within the group.
+For all available options, see the [API Documentation](https://edulinq.github.io/quiz-composer/docs/latest/quizcomp/model/group.html#Group).
 
 | Key                     | Type           | Required? | Default      | Inherited? | Description |
 |-------------------------|----------------|-----------|--------------|------------|-------------|
